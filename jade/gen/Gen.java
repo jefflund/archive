@@ -4,9 +4,8 @@ import jade.core.World;
 
 public interface Gen
 {
-	public static final int SimpleDungeon = 0;
-	public static final int SimpleWilderness = 1;
-	public static final int CelluarDungeon = 2;
+	public static final int SimpleWilderness = 0;
+	public static final int CelluarDungeon = 1;
 	
 	public void generate(World world, long seed);
 
@@ -16,8 +15,6 @@ public interface Gen
 		{
 			switch(algorithm)
 			{
-			case SimpleDungeon:
-				return new SimpleDunGen();
 			case SimpleWilderness:
 				return new SimpleWildGen();
 			case CelluarDungeon:
