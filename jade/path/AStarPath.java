@@ -26,7 +26,7 @@ public class AStarPath implements Path
 		Set<Node> open = new TreeSet<Node>();
 		open.add(getNode(start));
 		getNode(start).gScore = 0;
-		getNode(start).hScore = distace(start, goal);
+		getNode(start).hScore = hEstimate(start, goal);
 		getNode(start).fScore = getNode(start).hScore;
 		while(!open.isEmpty())
 		{
@@ -39,12 +39,12 @@ public class AStarPath implements Path
 			{
 				if(closed.contains(y))
 					continue;
-				double tentativeGScore = x.gScore + distace(x.coord, y.coord);
+				double tentativeGScore = x.gScore + hEstimate(x.coord, y.coord);
 				boolean tentativeIsBetter = false;
 				if(!open.contains(y))
 				{
 					open.add(y);
-					y.hScore = distace(y.coord, goal);
+					y.hScore = hEstimate(y.coord, goal);
 					tentativeIsBetter = true;
 				}
 				else if(tentativeGScore < y.gScore)
@@ -100,14 +100,14 @@ public class AStarPath implements Path
 	  return min;
   }
 
-	private double distace(Coord c1, Coord c2)
+	private double hEstimate(Coord c1, Coord c2)
   {
 		int a = c1.x() - c2.x();
 		int b = c1.y() - c2.y();
 	  return Math.sqrt(a * a + b * b);
   }
 
-	public Node getNode(Coord coord)
+	private Node getNode(Coord coord)
 	{
 		Node result = nodes.get(coord);
 		if(result == null)

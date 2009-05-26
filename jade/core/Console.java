@@ -49,9 +49,14 @@ public class Console extends JPanel implements Serializable
 
 	public void buffChar(int x, int y, ColoredChar ch)
 	{
-		buffer.put(new Coord(x, y), ch);
+		buffChar(new Coord(x, y), ch);
 	}
-	
+
+	public void buffChar(Coord coord, ColoredChar ch)
+	{
+		buffer.put(coord, ch);
+	}
+
 	public void buffString(int x, int y, String str, Color color)
 	{
 		for(char ch : str.toCharArray())

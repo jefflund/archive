@@ -8,6 +8,7 @@ public interface FoV
 {
 	public static final int Simple = 0;
 	public static final int SimpleCircle = 1;
+	public static final int ShadowCast = 2;
 	
 	public Collection<Coord> calcFoV(World world, int x, int y, int range);
 
@@ -21,6 +22,8 @@ public interface FoV
 				return new SimpleFoV();
 			case SimpleCircle:
 				return new SimpleCircleFoV();
+			case ShadowCast:
+				return new ShadowCastFoV();
 			default:
 				throw new IllegalArgumentException();
 			}
