@@ -5,7 +5,7 @@ import jade.core.World;
 public interface Gen
 {
 	public static final int Wilderness = 0;
-	public static final int Celluar = 1;
+	public static final int Cellular = 1;
 	
 	public void generate(World world, long seed);
 
@@ -17,8 +17,8 @@ public interface Gen
 			{
 			case Wilderness:
 				return new Wilderness();
-			case Celluar:
-				return new Celluar();
+			case Cellular:
+				return new Cellular();
 			default:
 				throw new IllegalArgumentException();
 			}

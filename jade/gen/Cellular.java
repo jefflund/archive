@@ -6,7 +6,7 @@ import jade.util.Dice;
 import java.awt.Color;
 import java.util.Stack;
 
-public class Celluar implements Gen
+public class Cellular implements Gen
 {
 	private static final char UNCONNECTED_TILE = '%';
 	private static final char OPEN_TILE = '.';
@@ -16,7 +16,7 @@ public class Celluar implements Gen
 	private static final float TILE_PERCENT = .4f;
 	private Dice random;
 
-	public Celluar()
+	public Cellular()
 	{
 		random = new Dice();
 	}
