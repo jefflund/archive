@@ -1,4 +1,4 @@
-package jade;
+package rl;
 
 import jade.core.Console;
 import jade.core.World;
