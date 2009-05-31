@@ -5,7 +5,7 @@ import jade.util.Coord;
 import java.util.Collection;
 import java.util.TreeSet;
 
-public class SimpleCircleFoV extends SimpleFoV
+public class CircularRay extends SquareRay
 {
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{

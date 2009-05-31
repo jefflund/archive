@@ -5,7 +5,7 @@ import jade.util.Coord;
 import java.util.Collection;
 import java.util.TreeSet;
 
-public class SimpleFoV implements FoV
+public class SquareRay implements FoV
 {
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{

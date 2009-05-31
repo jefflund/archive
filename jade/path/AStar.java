@@ -10,11 +10,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class AStarPath implements Path
+public class AStar implements Path
 {
 	private Map<Coord, Node> nodes;
 	
-	public AStarPath()
+	public AStar()
 	{
 		nodes = new TreeMap<Coord, Node>();
 	}

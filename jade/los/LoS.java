@@ -16,7 +16,7 @@ public interface LoS
 			switch(algorithm)
 			{
 			case Bresenham:
-				return new BresenhamLoS();
+				return new Bresenham();
 			default:
 				throw new IllegalArgumentException();
 			}

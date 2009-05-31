@@ -4,7 +4,7 @@ import jade.core.World;
 import jade.util.Dice;
 import java.awt.Color;
 
-public class SimpleWilderness implements Gen
+public class Wilderness implements Gen
 {
 	private Dice random;
 	private static final char TREE_CHAR = '%';
@@ -15,7 +15,7 @@ public class SimpleWilderness implements Gen
 	private static final Color OPEN_COLOR2 = Color.green;
 	private static final float TREE_CHANCE = .05f;
 	
-	public SimpleWilderness()
+	public Wilderness()
 	{
 		random = new Dice();
 	}

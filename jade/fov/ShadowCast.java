@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.TreeSet;
 
-public class ShadowCastFoV implements FoV
+public class ShadowCast implements FoV
 {
 	private enum Quad
 	{

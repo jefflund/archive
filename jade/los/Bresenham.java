@@ -3,7 +3,7 @@ package jade.los;
 import jade.core.World;
 import jade.util.Coord;
 
-public class BresenhamLoS implements LoS
+public class Bresenham implements LoS
 {
 	public boolean canSee(World world, Coord source, Coord target)
 	{

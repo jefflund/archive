@@ -9,11 +9,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class DijkstraPath implements Path
+public class Dijkstra implements Path
 {
 	private Map<Coord, Node> nodes;
 
-	public DijkstraPath()
+	public Dijkstra()
 	{
 		nodes = new TreeMap<Coord, Node>();
 	}

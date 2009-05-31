@@ -19,9 +19,9 @@ public interface Path
 			switch(algorithm)
 			{
 			case AStar:
-				return new AStarPath();
+				return new AStar();
 			case Dijkstra:
-				return new DijkstraPath();
+				return new Dijkstra();
 			default:
 				throw new IllegalArgumentException();
 			}
