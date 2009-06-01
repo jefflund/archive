@@ -1,5 +1,7 @@
 package jade.core;
 
+import jade.util.Tools;
+
 public class Messenger
 {
 	private String messages;
@@ -16,7 +18,12 @@ public class Messenger
 
 	public void appendMessage(String message)
 	{
-		messages += message;
+		messages += Tools.strEnsureSuffix(message, ". ");
+	}
+	
+	public void retrieveMessages(Messenger messenger)
+	{
+		messages += messenger.getMessages();
 	}
 
 	public String getMessages()

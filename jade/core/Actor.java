@@ -119,4 +119,9 @@ public abstract class Actor extends Messenger
 		for(Actor held : holds)
 			held.setWorld(world);
 	}
+	
+	public String toString()
+	{
+		return face.toString();
+	}
 }

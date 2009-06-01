@@ -23,7 +23,7 @@ public class Demo
 			{
 			}
 		};
-		Gen gen = GenFactory.get(Gen.Celluar);
+		Gen gen = GenFactory.get(Gen.Cellular);
 		FoV fov = FoVFactory.get(FoV.ShadowCast);
 		Coord player = null;
 		player = generate(world, gen);

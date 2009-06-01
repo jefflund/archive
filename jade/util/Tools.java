@@ -1,6 +1,6 @@
 package jade.util;
 
-public class Tools
+public abstract class Tools
 {
 	public static Coord keyToDir(char key, boolean vi, boolean numeric)
 	{
@@ -25,7 +25,7 @@ public class Tools
 			case 'y':
 				return new Coord(-1, -1);
 			case '.':
-				return new Coord(0,0);
+				return new Coord(0, 0);
 			}
 		}
 		else if(numeric && Character.isDigit(key))
@@ -49,9 +49,23 @@ public class Tools
 			case '7':
 				return new Coord(-1, -1);
 			case '5':
-				return new Coord(0,0);
+				return new Coord(0, 0);
 			}
 		}
 		return null;
+	}
+
+	public static boolean strHasSuffix(String str, String suffix)
+	{
+		assert (str.length() >= suffix.length());
+		return str.substring(str.length() - suffix.length()).equals(suffix);
+	}
+
+	public static String strEnsureSuffix(String str, String suffix)
+	{
+		if(strHasSuffix(str, suffix))
+			return str;
+		else
+			return str + suffix;
 	}
 }
