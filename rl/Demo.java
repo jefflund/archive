@@ -1,65 +1,31 @@
 package rl;
 
 import jade.core.Console;
-import jade.core.World;
-import jade.fov.FoV;
-import jade.fov.FoV.FoVFactory;
-import jade.gen.Gen;
-import jade.gen.Gen.GenFactory;
-import jade.util.ColoredChar;
-import jade.util.Coord;
-import jade.util.Tools;
 import java.awt.Color;
 import java.util.Random;
+import rl.creature.Monster;
+import rl.creature.Player;
+import rl.world.Level;
 
 public class Demo
 {
 	public static void main(String[] args)
 	{
-		Console console = Console.getFramedConsole("Demo");
-		World world = new World(80, 24)
-		{
-			public void tick()
-			{
-			}
-		};
-		Gen gen = GenFactory.get(Gen.Cellular);
-		FoV fov = FoVFactory.get(FoV.ShadowCast);
-		Coord player = null;
-		player = generate(world, gen);
-		char key = '\0';
+		Level level = new Level();
+		Console console = Console.getFramedConsole("Jade");
+		Player player = new Player(console);
+		level.addActor(player, new Random(0));
+		level.addActor(new Monster('D', Color.red), new Random(0));
 		do
 		{
-			for(int x = 0; x < world.width; x++)
-				for(int y = 0; y < world.height; y++)
-					console.buffChar(x, y, new ColoredChar(world.look(x, y).ch(),
-					    Color.darkGray));
-			console.buffChar(player, new ColoredChar('@', Color.red));
-			for(Coord coord : fov.calcFoV(world, player.x(), player.y(), 2))
-				console.buffChar(coord, world.look(coord.x(), coord.y()));
-			console.buffChar(player, new ColoredChar('@', Color.red));
+			for(int x = 0; x < level.width; x++)
+				for(int y = 0; y < level.height; y++)
+					console.buffChar(x, y, level.look(x, y));
+			console.buffString(0, level.height, level.getMessages(), Color.white);
 			console.repaint();
-			key = console.getKey();
-			switch(key)
-			{
-			case 'r':
-				player = generate(world, gen);
-				break;
-			default:
-				Coord dir = Tools.keyToDir(key, true, false);
-				if(dir != null)
-					player.translate(dir);
-			}
+			level.tick();
 		}
-		while(key != 'q');
+		while(!player.isExpired());
 		System.exit(0);
-	}
-
-	private static Coord generate(World world, Gen gen)
-	{
-		Coord player;
-		gen.generate(world, new Random().nextLong());
-		player = world.getOpenTile(new Random());
-		return player;
 	}
 }

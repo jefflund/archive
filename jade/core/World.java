@@ -110,7 +110,7 @@ public abstract class World extends Messenger
 			x = random.nextInt(width);
 			y = random.nextInt(height);
 		}
-		while(!passable(x, y) && getActorsAt(x, y, Actor.class).size() == 0);
+		while(!passable(x, y) || getActorsAt(x, y, Actor.class).size() > 0);
 		return new Coord(x, y);
 	}
 

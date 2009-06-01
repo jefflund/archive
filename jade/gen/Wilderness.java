@@ -6,7 +6,7 @@ import java.awt.Color;
 
 public class Wilderness implements Gen
 {
-	private Dice random;
+	private Dice dice;
 	private static final char TREE_CHAR = '%';
 	private static final Color TREE_COLOR2 = Color.green;
 	private static final Color TREE_COLOR1 = Color.yellow;
@@ -17,22 +17,22 @@ public class Wilderness implements Gen
 	
 	public Wilderness()
 	{
-		random = new Dice();
+		dice = new Dice();
 	}
 
 	public void generate(World world, long seed)
 	{
-		random.setSeed(seed);
+		dice.setSeed(seed);
 		for(int x = 0; x < world.width; x++)
 			for(int y = 0; y < world.height; y++)
-				if(random.nextFloat() < TREE_CHANCE)
+				if(dice.nextFloat() < TREE_CHANCE)
 				{
-					Color color = random.nextBoolean() ? TREE_COLOR1 : TREE_COLOR2;
+					Color color = dice.nextBoolean() ? TREE_COLOR1 : TREE_COLOR2;
 					world.tile(x, y).setTile(TREE_CHAR, color, false);
 				}
 				else
 				{
-					Color color = random.nextBoolean() ? OPEN_COLOR1 : OPEN_COLOR2;
+					Color color = dice.nextBoolean() ? OPEN_COLOR1 : OPEN_COLOR2;
 					world.tile(x, y).setTile(OPEN, color, true);
 				}
 		for(int x = 0; x < world.width; x++)

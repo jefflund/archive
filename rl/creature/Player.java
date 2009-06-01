@@ -25,6 +25,9 @@ public class Player extends Creature
 			moved = true;
 			switch(key)
 			{
+			case 'q':
+				expire();
+				break;
 			default:
 				Coord dir = Tools.keyToDir(key, true, false);
 				if(dir != null)

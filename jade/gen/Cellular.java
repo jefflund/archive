@@ -14,15 +14,16 @@ public class Cellular implements Gen
 	private static final int MIN_COUNT1 = 5;
 	private static final int MAX_COUNT2 = 3;
 	private static final float TILE_PERCENT = .4f;
-	private Dice random;
+	private Dice dice;
 
 	public Cellular()
 	{
-		random = new Dice();
+		dice = new Dice();
 	}
 
 	public void generate(World world, long seed)
 	{
+		dice.setSeed(seed);
 		do
 		{
 			initialize(world);
@@ -35,7 +36,7 @@ public class Cellular implements Gen
 
 	private boolean connected(World world)
 	{
-		float filled = floodAreaOpen(world, world.getOpenTile(random))
+		float filled = floodAreaOpen(world, world.getOpenTile(dice))
 		    / (world.width * world.height);
 		if(filled > TILE_PERCENT)
 		{
@@ -82,7 +83,7 @@ public class Cellular implements Gen
 			{
 				if(x == 0 || x == world.width - 1 || y == 0 || y == world.height - 1)
 					setWallTile(world, x, y);
-				else if(random.nextDouble() < TILE_PERCENT)
+				else if(dice.nextDouble() < TILE_PERCENT)
 					setWallTile(world, x, y);
 				else
 					setOpenTile(world, x, y);
