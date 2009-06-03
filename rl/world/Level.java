@@ -6,6 +6,7 @@ import jade.gen.Gen;
 import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
 import rl.creature.Creature;
+import rl.item.Item;
 
 public class Level extends World
 {
@@ -23,13 +24,15 @@ public class Level extends World
 			retrieveMessages(creature);
 		removeExpired();
 	}
-	
+
 	public ColoredChar look(int x, int y)
 	{
 		Creature creature = (Creature)getActorAt(x, y, Creature.class);
-		if(creature == null)
-			return super.look(x, y);
-		else
+		if(creature != null)
 			return creature.look();
+		Item item = (Item)getActorAt(x, y, Item.class);
+		if(item != null)
+			return item.look();
+		return super.look(x, y);
 	}
 }

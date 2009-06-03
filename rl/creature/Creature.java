@@ -14,9 +14,9 @@ public abstract class Creature extends Actor
 	{
 		int x = x() + dx;
 		int y = y() + dy;
-		Creature bump = (Creature)world().getActorAt(x, y, Creature.class);
-		if(bump != null && bump != this)
-			attack(bump);
+		Creature bumped = (Creature)world().getActorAt(x, y, Creature.class);
+		if(bumped != null && bumped != this)
+			attack(bumped);
 		else if(world().passable(x() + dx, y() + dy))
 			super.move(dx, dy);
 	}

@@ -8,7 +8,8 @@ public abstract class Tools
 			return viToDir(key);
 		else if(numeric && Character.isDigit(key))
 			return numToDir(key);
-		else return null;
+		else
+			return null;
 	}
 
 	private static Coord numToDir(char key)
@@ -77,5 +78,12 @@ public abstract class Tools
 			return str;
 		else
 			return str + suffix;
+	}
+
+	public static String strEnsureLength(String str, int length)
+	{
+		while(str.length() < length)
+			str += " ";
+		return str;
 	}
 }
