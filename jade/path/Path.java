@@ -11,6 +11,7 @@ public interface Path
 	public static final int Dijkstra = 1;
 	
 	public List<Coord> getPath(World world, Coord start, Coord goal);
+	public boolean hasPath(World world, Coord start, Coord goal);
 
 	public class PathFactory
 	{

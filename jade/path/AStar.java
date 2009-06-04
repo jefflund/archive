@@ -60,6 +60,11 @@ public class AStar implements Path
 		return null;
 	}
 	
+	public boolean hasPath(World world, Coord start, Coord goal)
+	{
+		return getPath(world, start, goal) != null;
+	}
+	
 	private Set<Node> getAdjacentNodes(Node node, World world)
   {
 		Set<Node> adjacent = new TreeSet<Node>();

@@ -39,6 +39,11 @@ public class Dijkstra implements Path
 		return reconstructPath(goalNode);
 	}
 	
+	public boolean hasPath(World world, Coord start, Coord goal)
+	{
+		return getPath(world, start, goal) != null;
+	}
+	
 	private List<Coord> reconstructPath(Node node)
   {
 		if(node.previous != null)
