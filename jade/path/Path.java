@@ -9,6 +9,7 @@ public interface Path
 {
 	public static final int AStar = 0;
 	public static final int Dijkstra = 1;
+	public static final int Bresenham = 2;
 	
 	public List<Coord> getPath(World world, Coord start, Coord goal);
 	public boolean hasPath(World world, Coord start, Coord goal);
@@ -23,6 +24,8 @@ public interface Path
 				return new AStar();
 			case Dijkstra:
 				return new Dijkstra();
+			case Bresenham:
+				return new Bresenham();
 			default:
 				throw new IllegalArgumentException();
 			}

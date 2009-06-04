@@ -123,6 +123,11 @@ public abstract class World extends Messenger
 	{
 		return grid[x][y].passable;
 	}
+	
+	public boolean passable(Coord coord)
+	{
+		return passable(coord.x(), coord.y());
+	}
 
 	void addToGrid(Actor actor)
 	{
