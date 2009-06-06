@@ -59,8 +59,9 @@ public abstract class Actor extends Messenger
 
 	public void attachTo(Actor holder)
 	{
-		assert (!bound());
 		assert (!held());
+		if(bound())
+			world().removeActor(this);
 		setWorld(holder.world);
 		this.holder = holder;
 		holder.holds.add(this);
@@ -71,10 +72,11 @@ public abstract class Actor extends Messenger
 		assert (held());
 		assert (bound());
 		holder.holds.remove(this);
-		setPos(holder.x(), holder.y());
+		Coord pos = holder.pos;
 		holder = null;
+		setPos(pos.x(), pos.y());
 	}
-
+	
 	public boolean held()
 	{
 		return holder != null;
@@ -119,7 +121,7 @@ public abstract class Actor extends Messenger
 		for(Actor held : holds)
 			held.setWorld(world);
 	}
-	
+
 	public String toString()
 	{
 		return face.toString();

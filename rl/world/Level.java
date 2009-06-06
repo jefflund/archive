@@ -6,6 +6,8 @@ import jade.gen.Gen;
 import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
 import rl.creature.Creature;
+import rl.creature.Monster;
+import rl.creature.Player;
 import rl.item.Item;
 
 public class Level extends World
@@ -18,10 +20,14 @@ public class Level extends World
 
 	public void tick()
 	{
-		for(Actor creature : getActors(Creature.class))
-			creature.act();
-		for(Actor creature : getActors(Creature.class))
-			retrieveMessages(creature);
+		for(Actor player : getActors(Player.class))
+			player.act();
+		for(Actor monster : getActors(Monster.class))
+			monster.act();
+
+		for(Actor actor : getActors(Actor.class))
+			retrieveMessages(actor);
+		
 		removeExpired();
 	}
 

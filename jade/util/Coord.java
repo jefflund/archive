@@ -56,15 +56,14 @@ public class Coord implements Comparable<Coord>
 	{
 		if(x == other.x)
 			return y - other.y;
-		else
-			return x - other.x;
+		return x - other.x;
 	}
-	
+
 	public boolean equals(Coord other)
 	{
-	  return x() == other.x() && y() == other.y();
+		return x() == other.x() && y() == other.y();
 	}
-	
+
 	public String toString()
 	{
 		return "(" + x + ", " + y + ")";

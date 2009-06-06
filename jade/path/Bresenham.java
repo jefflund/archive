@@ -9,11 +9,18 @@ public class Bresenham implements Path
 {
 	public List<Coord> getPath(World world, Coord start, Coord goal)
 	{
-		List<Coord> path = castray(world, start.x(), start.y(), goal.x(), goal.y());
-		if(path.get(path.size() - 1).equals(goal))
-			return path;
-		else
-			return null;
+		List<Coord> path = castray(world, start, goal);
+		return path.get(path.size() - 1).equals(goal) ? path : null;
+	}
+
+	public boolean hasPath(World world, Coord start, Coord goal)
+	{
+		return getPath(world, start, goal) != null;
+	}
+	
+	public List<Coord> castray(World world, Coord start, Coord goal)
+	{
+		return castray(world, start.x(), start.y(), goal.x(), goal.y());
 	}
 
 	public List<Coord> castray(World world, int x1, int y1, int x2, int y2)
@@ -61,9 +68,4 @@ public class Bresenham implements Path
 		}
 		return path;
 	}// end castray
-
-	public boolean hasPath(World world, Coord start, Coord goal)
-	{
-		return getPath(world, start, goal) != null;
-	}
 }

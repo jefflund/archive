@@ -76,8 +76,7 @@ public abstract class Tools
 	{
 		if(strHasSuffix(str, suffix))
 			return str;
-		else
-			return str + suffix;
+		return str + suffix;
 	}
 
 	public static String strEnsureLength(String str, int length)
@@ -85,5 +84,15 @@ public abstract class Tools
 		while(str.length() < length)
 			str += " ";
 		return str;
+	}
+	
+	public static char intToAlpha(int i)
+	{
+		return (char)(i + 'a');
+	}
+	
+	public static int alphaToInt(char ch)
+	{
+		return (int)(ch - 'a');
 	}
 }

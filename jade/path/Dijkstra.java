@@ -38,33 +38,32 @@ public class Dijkstra implements Path
 		}
 		return reconstructPath(goalNode);
 	}
-	
+
 	public boolean hasPath(World world, Coord start, Coord goal)
 	{
 		return getPath(world, start, goal) != null;
 	}
-	
+
 	private List<Coord> reconstructPath(Node node)
-  {
+	{
 		if(node.previous != null)
 		{
 			List<Coord> path = reconstructPath(node.previous);
 			path.add(node.coord);
 			return path;
 		}
-		else
-			return new LinkedList<Coord>();
-  }
+		return new LinkedList<Coord>();
+	}
 
 	private double distance(Coord c1, Coord c2)
-  {
+	{
 		int a = c1.x() - c2.x();
 		int b = c1.y() - c2.y();
-	  return Math.sqrt(a * a + b * b);
-  }
+		return Math.sqrt(a * a + b * b);
+	}
 
 	private Set<Node> getAdjacentNodes(Node node)
-  {
+	{
 		Set<Node> adjacent = new TreeSet<Node>();
 		for(int x = node.coord.x() - 1; x <= node.coord.x() + 1; x++)
 			for(int y = node.coord.y() - 1; y <= node.coord.y() + 1; y++)
@@ -74,7 +73,7 @@ public class Dijkstra implements Path
 					adjacent.add(nodes.get(coord));
 			}
 		return adjacent;
-  }
+	}
 
 	private Node getMinDist()
 	{

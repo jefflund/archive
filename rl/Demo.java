@@ -19,6 +19,7 @@ public class Demo
 		level.addActor(player, new Random(0));
 		level.addActor(new Monster('D', Color.red), new Random(0));
 		level.addActor(new Item('$', Color.yellow), new Random(0));
+
 		do
 		{
 			for(int x = 0; x < level.width; x++)
@@ -30,6 +31,7 @@ public class Demo
 			level.tick();
 		}
 		while(!player.isExpired());
+		
 		System.exit(0);
 	}
 }

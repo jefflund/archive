@@ -2,7 +2,6 @@ package jade.path;
 
 import jade.core.World;
 import jade.util.Coord;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.TreeSet;
 public class AStar implements Path
 {
 	private Map<Coord, Node> nodes;
-	
+
 	public AStar()
 	{
 		nodes = new TreeMap<Coord, Node>();
@@ -59,58 +58,57 @@ public class AStar implements Path
 		}
 		return null;
 	}
-	
+
 	public boolean hasPath(World world, Coord start, Coord goal)
 	{
 		return getPath(world, start, goal) != null;
 	}
-	
+
 	private Set<Node> getAdjacentNodes(Node node, World world)
-  {
+	{
 		Set<Node> adjacent = new TreeSet<Node>();
 		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y())));
-		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y() - 1)));	
+		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y() - 1)));
 		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y() + 1)));
 		adjacent.add(getNode(new Coord(node.coord.x() - 1, node.coord.y())));
-		adjacent.add(getNode(new Coord(node.coord.x() - 1, node.coord.y() - 1)));	
+		adjacent.add(getNode(new Coord(node.coord.x() - 1, node.coord.y() - 1)));
 		adjacent.add(getNode(new Coord(node.coord.x() - 1, node.coord.y() + 1)));
-		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() - 1)));	
+		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() - 1)));
 		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() + 1)));
 		Set<Node> nonpassable = new TreeSet<Node>();
 		for(Node n : adjacent)
 			if(!world.passable(n.coord.x(), n.coord.y()))
 				nonpassable.add(n);
 		adjacent.removeAll(nonpassable);
-	  return adjacent;
-  }
+		return adjacent;
+	}
 
 	private List<Coord> reconstructPath(Node current)
-  {
+	{
 		if(current.cameFrom != null)
 		{
 			List<Coord> path = reconstructPath(current.cameFrom);
 			path.add(current.coord);
 			return path;
 		}
-		else
-			return new LinkedList<Coord>();
-  }
+		return new LinkedList<Coord>();
+	}
 
 	private Node minFScore(Set<Node> set)
-  {
+	{
 		Node min = null;
 		for(Node node : set)
 			if(min == null || node.fScore < min.fScore)
 				min = node;
-	  return min;
-  }
+		return min;
+	}
 
 	private double hEstimate(Coord c1, Coord c2)
-  {
+	{
 		int a = c1.x() - c2.x();
 		int b = c1.y() - c2.y();
-	  return Math.sqrt(a * a + b * b);
-  }
+		return Math.sqrt(a * a + b * b);
+	}
 
 	private Node getNode(Coord coord)
 	{
@@ -122,7 +120,7 @@ public class AStar implements Path
 		}
 		return result;
 	}
-	
+
 	private class Node implements Comparable<Node>
 	{
 		private Coord coord;
@@ -130,12 +128,12 @@ public class AStar implements Path
 		private double hScore;
 		private double fScore;
 		private Node cameFrom;
-		
+
 		public Node(Coord coord)
 		{
 			this.coord = coord;
 		}
-		
+
 		public int compareTo(Node other)
 		{
 			return coord.compareTo(other.coord);

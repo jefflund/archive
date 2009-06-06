@@ -43,8 +43,7 @@ public class Cellular implements Gen
 			deleteUnconnected(world);
 			return true;
 		}
-		else
-			return false;
+		return false;
 	}
 
 	private void deleteUnconnected(World world)
