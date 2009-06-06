@@ -6,9 +6,8 @@ import jade.gen.Gen;
 import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
 import rl.creature.Creature;
-import rl.creature.Monster;
-import rl.creature.Player;
 import rl.item.Item;
+import rl.magic.Weave;
 
 public class Level extends World
 {
@@ -20,11 +19,11 @@ public class Level extends World
 
 	public void tick()
 	{
-		for(Actor player : getActors(Player.class))
-			player.act();
-		for(Actor monster : getActors(Monster.class))
-			monster.act();
-
+		for(Actor creature : getActors(Creature.class))
+			creature.act();
+		for(Actor weave : getActors(Weave.class))
+			weave.act();
+		
 		for(Actor actor : getActors(Actor.class))
 			retrieveMessages(actor);
 		
@@ -39,6 +38,9 @@ public class Level extends World
 		Item item = (Item)getActorAt(x, y, Item.class);
 		if(item != null)
 			return item.look();
+		Weave weave = (Weave)getActorAt(x, y, Weave.class);
+		if(weave != null)
+			return weave.look();
 		return super.look(x, y);
 	}
 }

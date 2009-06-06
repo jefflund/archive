@@ -7,12 +7,14 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 import rl.item.Item;
+import rl.magic.Spell;
 
 public class Player extends Creature
 {
 	private Console console;
 	private List<Item> inventory;
 	private List<Item> equipment;
+	private List<Spell> spellbook;
 
 	public Player(Console console)
 	{
@@ -20,6 +22,8 @@ public class Player extends Creature
 		this.console = console;
 		inventory = new LinkedList<Item>();
 		equipment = new LinkedList<Item>();
+		spellbook = new LinkedList<Spell>();
+		spellbook.add(new Spell(this, 5));
 	}
 
 	public void act()
@@ -34,6 +38,13 @@ public class Player extends Creature
 			{
 			case 'q':
 				expire();
+				break;
+			case 'b':
+				spellbook();
+				moved = false;
+				break;
+			case 'm':
+				cast();
 				break;
 			case 'i':
 				inventory();
@@ -63,6 +74,30 @@ public class Player extends Creature
 					moved = false;
 				break;
 			}
+		}
+	}
+	
+	private int spellbook()
+	{
+		console.saveBuffer();
+		console.buffString(0, 0, "Spellbook", Color.gray);
+		for(int i = 0; i < spellbook.size(); i++)
+			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + spellbook.get(i),
+			    Color.gray);
+		console.repaint();
+		int result = Tools.alphaToInt(console.getKey());
+		console.repaint();
+		return result;		
+	}
+	
+	private void cast()
+	{
+		int index = spellbook();
+		if(index < 0 || index >= spellbook.size())
+			appendMessage("Invalid selection");
+		else
+		{
+			spellbook.get(index).cast();
 		}
 	}
 
