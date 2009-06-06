@@ -7,31 +7,32 @@ import java.util.Random;
 import rl.creature.Monster;
 import rl.creature.Player;
 import rl.item.Item;
-import rl.world.Level;
+import rl.world.Dungeon;
+import rl.world.Feature;
 
 public class Demo
 {
 	public static void main(String[] args)
 	{
-		Level level = new Level();
 		Console console = Console.getFramedConsole("Jade");
-		Player player = new Player(console);
-		level.addActor(player, new Random(0));
-		level.addActor(new Monster('D', Color.red), new Random(0));
-		level.addActor(new Item('$', Color.yellow), new Random(0));
-
+		Dungeon dungeon = new Dungeon();
+		Player player = new Player(console, dungeon);
+		Random random = new Random();
+		dungeon.getLevel().addActor(player, random);
+		dungeon.getLevel().addActor(new Monster('D', Color.red), random);
+		dungeon.getLevel().addActor(new Item('$', Color.yellow), random);
+		dungeon.getLevel().addActor(new Feature('^', Color.blue), random);
 		do
 		{
-			for(int x = 0; x < level.width; x++)
-				for(int y = 0; y < level.height; y++)
-					console.buffChar(x, y, level.look(x, y));
-			console.buffString(0, level.height, Tools.strEnsureLength(level
-			    .getMessages(), level.width), Color.white);
+			for(int x = 0; x < dungeon.getLevel().width; x++)
+				for(int y = 0; y < dungeon.getLevel().height; y++)
+					console.buffChar(x, y, dungeon.getLevel().look(x, y));
+			console.buffString(0, dungeon.getLevel().height, Tools.strEnsureLength(dungeon.getLevel()
+			    .getMessages(), dungeon.getLevel().width), Color.white);
 			console.repaint();
-			level.tick();
+			dungeon.getLevel().tick();
 		}
 		while(!player.isExpired());
-		
 		System.exit(0);
 	}
 }

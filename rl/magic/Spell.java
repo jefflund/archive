@@ -18,4 +18,9 @@ public class Spell
 	{
 		caster.world().addActor(new Weave(duration), caster.x(), caster.y());
 	}
+	
+	public String toString()
+	{
+		return "trap:" + duration;
+	}
 }

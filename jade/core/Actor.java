@@ -115,7 +115,7 @@ public abstract class Actor extends Messenger
 		return world;
 	}
 
-	void setWorld(World world)
+	protected void setWorld(World world)
 	{
 		this.world = world;
 		for(Actor held : holds)

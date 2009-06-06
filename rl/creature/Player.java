@@ -1,13 +1,19 @@
 package rl.creature;
 
 import jade.core.Console;
+import jade.core.World;
+import jade.fov.FoV;
+import jade.fov.FoV.FoVFactory;
 import jade.util.Coord;
 import jade.util.Tools;
 import java.awt.Color;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import rl.item.Item;
 import rl.magic.Spell;
+import rl.world.Dungeon;
 
 public class Player extends Creature
 {
@@ -15,17 +21,20 @@ public class Player extends Creature
 	private List<Item> inventory;
 	private List<Item> equipment;
 	private List<Spell> spellbook;
+	private Collection<Coord> fov;
+	private Dungeon dungeon;
 
-	public Player(Console console)
+	public Player(Console console, Dungeon dungeon)
 	{
 		super('@', Color.white);
 		this.console = console;
+		this.dungeon = dungeon;
 		inventory = new LinkedList<Item>();
 		equipment = new LinkedList<Item>();
 		spellbook = new LinkedList<Spell>();
-		spellbook.add(new Spell(this, 5));
+		spellbook.add(new Spell(this, 15));
 	}
-
+	
 	public void act()
 	{
 		char key = '\0';
@@ -39,7 +48,7 @@ public class Player extends Creature
 			case 'q':
 				expire();
 				break;
-			case 'b':
+			case 'p':
 				spellbook();
 				moved = false;
 				break;
@@ -66,6 +75,9 @@ public class Player extends Creature
 			case 't':
 				unequip();
 				break;
+			case '>':
+				descend();
+				break;
 			default:
 				Coord dir = Tools.keyToDir(key, true, false);
 				if(dir != null)
@@ -75,20 +87,48 @@ public class Player extends Creature
 				break;
 			}
 		}
+		calcFoV();
+	}
+
+	private void descend()
+  {
+	 dungeon.descend(); 
+	 world().removeActor(this);
+	 dungeon.getLevel().addActor(this, new Random());
+  }
+
+	private void calcFoV()
+  {
+	  fov = FoVFactory.get(FoV.SquareRay).calcFoV(world(), x(), y(), 5);
+  }
+	
+	public Collection<Coord> getFoV()
+	{
+		return fov;
+	}
+	
+	public void setWorld(World world)
+	{
+	  super.setWorld(world);
 	}
 	
 	private int spellbook()
 	{
-		console.saveBuffer();
-		console.buffString(0, 0, "Spellbook", Color.gray);
-		for(int i = 0; i < spellbook.size(); i++)
-			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + spellbook.get(i),
+		return choose(spellbook, "Spellbook");		
+	}
+
+	private int choose(List list, String title)
+  {
+	  console.saveBuffer();
+		console.buffString(0, 0, title, Color.gray);
+		for(int i = 0; i < list.size(); i++)
+			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + list.get(i),
 			    Color.gray);
 		console.repaint();
 		int result = Tools.alphaToInt(console.getKey());
 		console.repaint();
-		return result;		
-	}
+		return result;
+  }
 	
 	private void cast()
 	{
@@ -103,15 +143,7 @@ public class Player extends Creature
 
 	private int equipment()
   {
-		console.saveBuffer();
-		console.buffString(0, 0, "Equipment", Color.gray);
-		for(int i = 0; i < equipment.size(); i++)
-			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + equipment.get(i),
-			    Color.gray);
-		console.repaint();
-		int result = Tools.alphaToInt(console.getKey());
-		console.repaint();
-		return result;		
+		return choose(equipment, "Equipment");
   }
 	
 	private void equip()
@@ -142,15 +174,7 @@ public class Player extends Creature
 
 	private int inventory()
 	{
-		console.saveBuffer();
-		console.buffString(0, 0, "Inventory", Color.gray);
-		for(int i = 0; i < inventory.size(); i++)
-			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + inventory.get(i),
-			    Color.gray);
-		console.repaint();
-		int result = Tools.alphaToInt(console.getKey());
-		console.repaint();
-		return result;
+		return choose(inventory, "Inventory");
 	}
 
 	private void get()
