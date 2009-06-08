@@ -8,10 +8,13 @@ import jade.util.Coord;
 import jade.util.Tools;
 import java.awt.Color;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import rl.item.Item;
+import rl.item.Item.Slot;
 import rl.magic.Spell;
 import rl.world.Dungeon;
 
@@ -19,7 +22,7 @@ public class Player extends Creature
 {
 	private Console console;
 	private List<Item> inventory;
-	private List<Item> equipment;
+	private Map<Slot, Item> equipment;
 	private List<Spell> spellbook;
 	private Collection<Coord> fov;
 	private Dungeon dungeon;
@@ -30,11 +33,11 @@ public class Player extends Creature
 		this.console = console;
 		this.dungeon = dungeon;
 		inventory = new LinkedList<Item>();
-		equipment = new LinkedList<Item>();
+		equipment = new HashMap<Slot, Item>();
 		spellbook = new LinkedList<Spell>();
 		spellbook.add(new Spell(this, 15));
 	}
-	
+
 	public void act()
 	{
 		char key = '\0';
@@ -91,45 +94,49 @@ public class Player extends Creature
 	}
 
 	private void descend()
-  {
-	 dungeon.descend(); 
-	 world().removeActor(this);
-	 dungeon.getLevel().addActor(this, new Random());
-  }
+	{
+		dungeon.descend();
+		world().removeActor(this);
+		dungeon.getLevel().addActor(this, new Random());
+	}
 
 	private void calcFoV()
-  {
-	  fov = FoVFactory.get(FoV.SquareRay).calcFoV(world(), x(), y(), 5);
-  }
-	
+	{
+		fov = FoVFactory.get(FoV.SquareRay).calcFoV(world(), x(), y(), 5);
+	}
+
 	public Collection<Coord> getFoV()
 	{
 		return fov;
 	}
-	
+
 	public void setWorld(World world)
 	{
-	  super.setWorld(world);
-	}
-	
-	private int spellbook()
-	{
-		return choose(spellbook, "Spellbook");		
+		super.setWorld(world);
 	}
 
-	private int choose(List list, String title)
-  {
-	  console.saveBuffer();
+	private int spellbook()
+	{
+		return choose(spellbook, "Spellbook");
+	}
+
+	private int choose(Collection elements, String title)
+	{
+		console.saveBuffer();
 		console.buffString(0, 0, title, Color.gray);
-		for(int i = 0; i < list.size(); i++)
-			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + list.get(i),
+		int i = 0;
+		for(Object element : elements)
+		{
+			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + element,
 			    Color.gray);
+			i++;
+		}
 		console.repaint();
 		int result = Tools.alphaToInt(console.getKey());
 		console.repaint();
 		return result;
-  }
-	
+	}
+
 	private void cast()
 	{
 		int index = spellbook();
@@ -142,35 +149,33 @@ public class Player extends Creature
 	}
 
 	private int equipment()
-  {
-		return choose(equipment, "Equipment");
-  }
-	
+	{
+		return choose(equipment.values(), "Equipment");
+	}
+
 	private void equip()
-  {
+	{
 		int index = inventory();
 		if(index < 0 || index >= inventory.size())
 			appendMessage("Invalid selection");
 		else
 		{
-			Item item = inventory.remove(index);
-			equipment.add(item);
-			appendMessage(item + " equiped");
+			Item item = inventory.get(index);
+			if(equipment.get(item.slot()) != null)
+				appendMessage(equipment.get(item.slot()) + " already equiped");
+			else
+			{
+				inventory.remove(item);
+				equipment.put(item.slot(), item);
+				appendMessage(item + " equiped");
+			}
 		}
-  }
-	
+	}
+
 	private void unequip()
-  {
-		int index = equipment();
-		if(index < 0 || index >= equipment.size())
-			appendMessage("Invalid selection");
-		else
-		{
-			Item item = equipment.remove(index);
-			inventory.add(item);
-			appendMessage(item + " unequiped");
-		}
-  }
+	{
+		
+	}
 
 	private int inventory()
 	{
@@ -189,9 +194,9 @@ public class Player extends Creature
 		else
 			appendMessage("Nothing to pick up");
 	}
-	
+
 	private void drop()
-  {
+	{
 		int index = inventory();
 		if(index < 0 || index >= inventory.size())
 			appendMessage("Invalid selection");
@@ -202,5 +207,5 @@ public class Player extends Creature
 			inventory.remove(item);
 			appendMessage(this + " drops " + item);
 		}
-  }
+	}
 }
