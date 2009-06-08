@@ -1,7 +1,7 @@
 package rl;
 
 import jade.core.Console;
-import jade.util.Tools;
+import jade.util.Coord;
 import java.awt.Color;
 import java.util.Random;
 import rl.creature.Monster;
@@ -10,6 +10,7 @@ import rl.item.Item;
 import rl.item.Item.Slot;
 import rl.world.Dungeon;
 import rl.world.Feature;
+import rl.world.Level;
 
 public class Demo
 {
@@ -26,14 +27,13 @@ public class Demo
 		dungeon.getLevel().addActor(new Feature('^', Color.blue), random);
 		do
 		{
-			for(int x = 0; x < dungeon.getLevel().width; x++)
-				for(int y = 0; y < dungeon.getLevel().height; y++)
-					console.buffChar(x, y, dungeon.getLevel().look(x, y));
-			console.buffString(0, dungeon.getLevel().height, Tools.strEnsureLength(
-			    dungeon.getLevel().getMessages(), dungeon.getLevel().width),
-			    Color.white);
+			Level level = dungeon.getLevel();
+			console.clearBuffer();
+			for(Coord coord : level.player().getFoV())
+				console.buffChar(coord, level.look(coord));
+			console.buffString(0, level.height, level.getMessages(), Color.white);
 			console.repaint();
-			dungeon.getLevel().tick();
+			level.tick();
 		}
 		while(!player.isExpired());
 		System.exit(0);

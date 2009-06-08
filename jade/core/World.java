@@ -118,6 +118,11 @@ public abstract class World extends Messenger
 	{
 		return grid[x][y].tile;
 	}
+	
+	public ColoredChar look(Coord coord)
+	{
+		return look(coord.x(), coord.y());
+	}
 
 	public boolean passable(int x, int y)
 	{

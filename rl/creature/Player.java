@@ -100,7 +100,7 @@ public class Player extends Creature
 		dungeon.getLevel().addActor(this, new Random());
 	}
 
-	private void calcFoV()
+	public void calcFoV()
 	{
 		fov = FoVFactory.get(FoV.SquareRay).calcFoV(world(), x(), y(), 5);
 	}

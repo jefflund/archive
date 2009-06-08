@@ -28,7 +28,10 @@ public class Level extends World
 	{
 		super.addActor(actor, x, y);
 		if(actor instanceof Player)
+		{
 			player = (Player)actor;
+			player.calcFoV();
+		}
 	}
 
 	public Player player()
