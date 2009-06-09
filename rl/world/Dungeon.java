@@ -2,6 +2,9 @@ package rl.world;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+
+import rl.creature.Player;
 
 public class Dungeon
 {
@@ -27,6 +30,20 @@ public class Dungeon
 	
 	public void descend()
 	{
-		depth++;
+		changeLevel(depth + 1);
+	}
+	
+	public void ascend()
+  {
+		if(depth != 0)
+			changeLevel(depth - 1);
+  }
+	
+	private void changeLevel(int newDepth)
+	{
+		Player player = getLevel().player();
+		getLevel().removeActor(player);
+		depth = newDepth;
+		getLevel().addActor(player, new Random(0));
 	}
 }

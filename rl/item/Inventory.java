@@ -52,19 +52,25 @@ public class Inventory
 	{
 		if(item == null)
 			owner.appendMessage("Invalid selection");
+		else
+		{
+			equipment.remove(item.slot());
+			inventory.add(item);
+			owner.appendMessage(owner + " unequips " + item);
+		}
 	}
 
 	public void get()
 	{
 		Item item = owner.world().getActorAt2(owner.x(), owner.y(), Item.class);
-		if(item != null)
+		if(item == null)
+			owner.appendMessage("Nothing to pick up");
+		else
 		{
 			item.attachTo(owner);
 			inventory.add(item);
 			owner.appendMessage(owner + " picks up " + item);
 		}
-		else
-			owner.appendMessage("Nothing to pick up");
 	}
 
 	public void drop(Item item)

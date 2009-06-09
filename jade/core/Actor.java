@@ -41,14 +41,12 @@ public abstract class Actor extends Messenger
 	public int x()
 	{
 		assert (bound());
-		assert (!held());
 		return pos.x();
 	}
 
 	public int y()
 	{
 		assert (bound());
-		assert (!held());
 		return pos.y();
 	}
 
@@ -65,6 +63,7 @@ public abstract class Actor extends Messenger
 		setWorld(holder.world);
 		this.holder = holder;
 		holder.holds.add(this);
+		pos = holder.pos;
 	}
 
 	public void detachFrom()
@@ -72,7 +71,7 @@ public abstract class Actor extends Messenger
 		assert (held());
 		assert (bound());
 		holder.holds.remove(this);
-		Coord pos = holder.pos;
+		Coord pos = new Coord(holder.pos);
 		holder = null;
 		setPos(pos.x(), pos.y());
 	}
@@ -122,6 +121,7 @@ public abstract class Actor extends Messenger
 
 	protected void setWorld(World world)
 	{
+		assert(!held() || holder.world == world);
 		this.world = world;
 		for(Actor held : holds)
 			held.setWorld(world);

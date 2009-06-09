@@ -6,11 +6,12 @@ import jade.fov.FoV;
 import jade.fov.FoV.FoVFactory;
 import jade.util.Coord;
 import jade.util.Tools;
+
 import java.awt.Color;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+
 import rl.item.Inventory;
 import rl.item.Item;
 import rl.magic.Spell;
@@ -75,8 +76,11 @@ public class Player extends Creature
 				inventory.unequip(equipment());
 				break;
 			case '>':
-				descend();
+				dungeon.descend();
 				break;
+			case '<':
+				dungeon.ascend();
+				break;				
 			default:
 				Coord dir = Tools.keyToDir(key, true, false);
 				if(dir != null)
@@ -102,13 +106,6 @@ public class Player extends Creature
 	public void setWorld(World world)
 	{
 		super.setWorld(world);
-	}
-	
-	private void descend()
-	{
-		dungeon.descend();
-		world().removeActor(this);
-		dungeon.getLevel().addActor(this, new Random());
 	}
 	
 	private <T> T choose(List<T> elements, String title)
