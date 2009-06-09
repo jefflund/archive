@@ -30,7 +30,7 @@ public class Town extends Wilderness
 		Site site = findBuildingSite(world);
 		for(int x = site.x; x < site.x + site.w; x++)
 			for(int y = site.y; y < site.y + site.h; y++)
-				world.tile(x, y).setTile(BUILDING_TILE, BUILDING_COLOR, false);
+				world.setTile(x, y, BUILDING_TILE, BUILDING_COLOR, false);
 	}
 
 	private Site findBuildingSite(World world)

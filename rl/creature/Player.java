@@ -1,7 +1,6 @@
 package rl.creature;
 
 import jade.core.Console;
-import jade.core.World;
 import jade.fov.FoV;
 import jade.fov.FoV.FoVFactory;
 import jade.util.Coord;
@@ -103,11 +102,6 @@ public class Player extends Creature
 		return fov;
 	}
 
-	public void setWorld(World world)
-	{
-		super.setWorld(world);
-	}
-	
 	private <T> T choose(List<T> elements, String title)
 	{
 		console.saveBuffer();

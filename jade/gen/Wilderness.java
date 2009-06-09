@@ -28,22 +28,22 @@ public class Wilderness implements Gen
 				if(dice.nextFloat() < TREE_CHANCE)
 				{
 					Color color = dice.nextBoolean() ? TREE_COLOR1 : TREE_COLOR2;
-					world.tile(x, y).setTile(TREE_CHAR, color, false);
+					world.setTile(x, y, TREE_CHAR, color, false);
 				}
 				else
 				{
 					Color color = dice.nextBoolean() ? OPEN_COLOR1 : OPEN_COLOR2;
-					world.tile(x, y).setTile(OPEN, color, true);
+					world.setTile(x, y, OPEN, color, true);
 				}
 		for(int x = 0; x < world.width; x++)
 		{
-			world.tile(x, 0).setTile('#', OPEN_COLOR1, false);
-			world.tile(x, world.height - 1).setTile('#', OPEN_COLOR1, false);
+			world.setTile(x, 0, '#', OPEN_COLOR1, false);
+			world.setTile(x, world.height - 1, '#', OPEN_COLOR1, false);
 		}
 		for(int y = 0; y < world.height; y++)
 		{
-			world.tile(0, y).setTile('#', OPEN_COLOR1, false);
-			world.tile(world.width - 1, y).setTile('#', OPEN_COLOR1, false);
+			world.setTile(0, y, '#', OPEN_COLOR1, false);
+			world.setTile(world.width - 1, y, '#', OPEN_COLOR1, false);
 		}
 	}
 }

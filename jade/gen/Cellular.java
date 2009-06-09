@@ -51,7 +51,7 @@ public class Cellular implements Gen
 		for(int x = 0; x < world.width; x++)
 			for(int y = 0; y < world.height; y++)
 				if(world.look(x, y).ch() == UNCONNECTED_TILE)
-					world.tile(x, y).setTile(CLOSED_TILE, Color.white, false);
+					world.setTile(x, y, CLOSED_TILE, Color.white, false);
 	}
 
 	private float floodAreaOpen(World world, Coord coord)
@@ -65,7 +65,7 @@ public class Cellular implements Gen
 			if(world.look(curr.x(), curr.y()).ch() == UNCONNECTED_TILE)
 			{
 				count++;
-				world.tile(curr.x(), curr.y()).setTile(OPEN_TILE, Color.white, true);
+				world.setTile(curr.x(), curr.y(), OPEN_TILE, Color.white, true);
 				stack.push(new Coord(curr.x() + 1, curr.y()));
 				stack.push(new Coord(curr.x() - 1, curr.y()));
 				stack.push(new Coord(curr.x(), curr.y() + 1));
@@ -129,11 +129,11 @@ public class Cellular implements Gen
 
 	private void setOpenTile(World world, int x, int y)
 	{
-		world.tile(x, y).setTile(UNCONNECTED_TILE, Color.white, true);
+		world.setTile(x, y, UNCONNECTED_TILE, Color.white, true);
 	}
 
 	private void setWallTile(World world, int x, int y)
 	{
-		world.tile(x, y).setTile(CLOSED_TILE, Color.white, false);
+		world.setTile(x, y, CLOSED_TILE, Color.white, false);
 	}
 }

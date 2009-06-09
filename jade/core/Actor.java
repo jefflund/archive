@@ -224,13 +224,7 @@ public abstract class Actor extends Messenger
 		return world;
 	}
 
-	/**
-	 * Sets the actors world. Called by world.addActor and should be
-	 * used/overridden with caution.
-	 * 
-	 * @param world the actor's new world.
-	 */
-	protected void setWorld(World world)
+	void setWorld(World world)
 	{
 		assert (!held() || holder.world == world);
 		this.world = world;
