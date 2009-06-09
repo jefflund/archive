@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import rl.creature.Creature;
 import rl.item.Item.Slot;
 
@@ -55,8 +56,7 @@ public class Inventory
 
 	public void get()
 	{
-		Item item = (Item)owner.world()
-		    .getActorAt(owner.x(), owner.y(), Item.class);
+		Item item = owner.world().getActorAt2(owner.x(), owner.y(), Item.class);
 		if(item != null)
 		{
 			item.attachTo(owner);

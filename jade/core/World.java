@@ -42,35 +42,32 @@ public abstract class World extends Messenger
 		addActor(actor, pos.x(), pos.y());
 	}
 
-  public Actor getActorAt(int x, int y, Class cls)
+  @SuppressWarnings("unchecked")
+  public <T extends Actor> T getActorAt2(int x, int y, Class<T> cls)
 	{
-		if(cls == null)
-			cls = Actor.class;
-		for(Actor actor : grid[x][y].actors)
+  	for(Actor actor : grid[x][y].actors)
 			if(cls.isInstance(actor))
-				return actor;
+				return (T)actor;
 		return null;
 	}
-
-	public Collection<Actor> getActors(Class cls)
+  
+	@SuppressWarnings("unchecked")
+  public <T extends Actor> Collection<T> getActors2(Class<T> cls)
 	{
-		if(cls == null || cls == Actor.class)
-			return actorRegister;
-		Collection<Actor> result = new HashSet<Actor>();
+		Collection<T> result = new HashSet<T>();
 		for(Actor actor : actorRegister)
 			if(cls.isInstance(actor))
-				result.add(actor);
+				result.add((T)actor);
 		return result;
 	}
 
-	public Collection<Actor> getActorsAt(int x, int y, Class cls)
+	@SuppressWarnings("unchecked")
+  public <T extends Actor> Collection<T> getActorsAt2(int x, int y, Class<T> cls)
 	{
-		if(cls == null || cls == Actor.class)
-			return grid[x][y].actors;
-		Collection<Actor> result = new HashSet<Actor>();
+		Collection<T> result = new HashSet<T>();
 		for(Actor actor : grid[x][y].actors)
 			if(cls.isInstance(actor))
-				result.add(actor);
+				result.add((T)actor);
 		return result;
 	}
 
@@ -107,7 +104,7 @@ public abstract class World extends Messenger
 			x = random.nextInt(width);
 			y = random.nextInt(height);
 		}
-		while(!passable(x, y) || getActorsAt(x, y, Actor.class).size() > 0);
+		while(!passable(x, y) || getActorsAt2(x, y, Actor.class).size() > 0);
 		return new Coord(x, y);
 	}
 

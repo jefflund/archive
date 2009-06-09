@@ -25,7 +25,7 @@ public class Item extends Actor
 	public void act()
 	{
 		if(enchant != null && held())
-			enchant.doIt((Creature)world().getActorAt(x(), y(), Creature.class));
+			enchant.doIt(world().getActorAt2(x(), y(), Creature.class));
 	}
 	
 	public Slot slot()

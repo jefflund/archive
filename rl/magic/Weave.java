@@ -20,7 +20,7 @@ public class Weave extends Actor
 
 	public void act()
 	{
-		Creature target = (Creature)world().getActorAt(x(), y(), Creature.class); 
+		Creature target = world().getActorAt2(x(), y(), Creature.class); 
 		activated = activated ? true : instant.doIt(target);
 		if(activated)
 			duration--;

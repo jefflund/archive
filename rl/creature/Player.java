@@ -111,7 +111,7 @@ public class Player extends Creature
 		dungeon.getLevel().addActor(this, new Random());
 	}
 	
-	private Object choose(List elements, String title)
+	private <T> T choose(List<T> elements, String title)
 	{
 		console.saveBuffer();
 		console.buffString(0, 0, title, Color.gray);
@@ -133,17 +133,17 @@ public class Player extends Creature
 	
 	private Item inventory()
 	{
-		return (Item)choose(inventory.getItems(), "Inventory");
+		return choose(inventory.getItems(), "Inventory");
 	}
 	
 	private Item equipment()
 	{
-		return (Item)choose(inventory.getEquiped(), "Equipment");
+		return choose(inventory.getEquiped(), "Equipment");
 	}
 
 	private Spell spellbook()
 	{
-		return (Spell)choose(spellbook, "Spellbook");
+		return choose(spellbook, "Spellbook");
 	}
 
 	private void cast()

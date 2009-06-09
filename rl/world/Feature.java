@@ -13,7 +13,7 @@ public class Feature extends Actor
 	
 	public void act()
 	{
-		Actor target = world().getActorAt(x(), y(), Creature.class);
+		Creature target = world().getActorAt2(x(), y(), Creature.class);
 		if(target != null)
 		{
 			target.expire();
