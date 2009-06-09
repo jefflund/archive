@@ -25,10 +25,10 @@ public class Level extends World
 		GenFactory.get(algorithm).generate(this, depth);
 		Random random = new Random(0);
 		addActor(new Monster('D', Color.red), random);
-		addActor(new Item('|', Color.white, Slot.Weapon), random);
-		addActor(new Item(']', Color.white, Slot.Weapon), random);
-		addActor(new Item('|', Color.gray, Slot.Weapon), random);
-		addActor(new Item(']', Color.gray, Slot.Weapon), random);
+		addActor(new Item('|', Color.white, Slot.Weapon, null), random);
+		addActor(new Item(']', Color.white, Slot.Armor, null), random);
+		addActor(new Item('|', Color.gray, Slot.Weapon, null), random);
+		addActor(new Item(']', Color.gray, Slot.Armor, null), random);
 		addActor(new Feature('^', Color.blue), random);		
 	}
 

@@ -7,7 +7,6 @@ public class Spell
 	private Creature caster;
 	private int duration;
 	
-	
 	public Spell(Creature caster, int duration)
 	{
 		this.caster = caster;
@@ -16,7 +15,8 @@ public class Spell
 	
 	public void cast()
 	{
-		caster.world().addActor(new Weave(duration), caster.x(), caster.y());
+		Instant instant = new Instant();
+		caster.world().addActor(new Weave(instant, duration), caster.x() + 1, caster.y());
 	}
 	
 	public String toString()

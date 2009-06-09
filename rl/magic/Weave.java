@@ -2,27 +2,28 @@ package rl.magic;
 
 import jade.core.Actor;
 import java.awt.Color;
-import rl.creature.Monster;
+import rl.creature.Creature;
 
 public class Weave extends Actor
 {
+	private Instant instant;
 	private int duration;
+	private boolean activated;
 
-	public Weave(int duration)
+	public Weave(Instant instant, int duration)
 	{
 		super('*', Color.red);
+		this.instant = instant;
 		this.duration = duration;
+		activated = false;
 	}
 
 	public void act()
 	{
-		duration--;
-		Actor monster = world().getActorAt(x(), y(), Monster.class);
-		if(monster != null)
-		{
-			monster.expire();
-			appendMessage(monster + " disappears in a flash");
-		}
+		Creature target = (Creature)world().getActorAt(x(), y(), Creature.class); 
+		activated = activated ? true : instant.doIt(target);
+		if(activated)
+			duration--;
 		if(duration < 0)
 			expire();
 	}

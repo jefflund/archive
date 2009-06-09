@@ -2,6 +2,8 @@ package rl.item;
 
 import jade.core.Actor;
 import java.awt.Color;
+import rl.creature.Creature;
+import rl.magic.Instant;
 
 public class Item extends Actor
 {
@@ -11,15 +13,19 @@ public class Item extends Actor
 	};
 	
 	private Slot slot;
+	private Instant enchant;
 	
-	public Item(char face, Color color, Slot slot)
+	public Item(char face, Color color, Slot slot, Instant enchant)
 	{
 		super(face, color);
 		this.slot = slot;
+		this.enchant = enchant;
 	}
 
 	public void act()
 	{
+		if(enchant != null && held())
+			enchant.doIt((Creature)world().getActorAt(x(), y(), Creature.class));
 	}
 	
 	public Slot slot()

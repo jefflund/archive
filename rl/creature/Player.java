@@ -8,23 +8,20 @@ import jade.util.Coord;
 import jade.util.Tools;
 import java.awt.Color;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+import rl.item.Inventory;
 import rl.item.Item;
-import rl.item.Item.Slot;
 import rl.magic.Spell;
 import rl.world.Dungeon;
 
 public class Player extends Creature
 {
 	private Console console;
-	private List<Item> inventory;
-	private Map<Slot, Item> equipment;
 	private List<Spell> spellbook;
 	private Collection<Coord> fov;
+	private Inventory inventory;
 	private Dungeon dungeon;
 
 	public Player(Console console, Dungeon dungeon)
@@ -32,8 +29,7 @@ public class Player extends Creature
 		super('@', Color.white);
 		this.console = console;
 		this.dungeon = dungeon;
-		inventory = new LinkedList<Item>();
-		equipment = new HashMap<Slot, Item>();
+		inventory = new Inventory(this);
 		spellbook = new LinkedList<Spell>();
 		spellbook.add(new Spell(this, 15));
 	}
@@ -63,20 +59,20 @@ public class Player extends Creature
 				moved = false;
 				break;
 			case 'g':
-				get();
+				inventory.get();
 				break;
 			case 'd':
-				drop();
+				inventory.drop(inventory());
 				break;
 			case 'e':
 				equipment();
 				moved = false;
 				break;
 			case 'w':
-				equip();
+				inventory.equip(inventory());
 				break;
 			case 't':
-				unequip();
+				inventory.unequip(equipment());
 				break;
 			case '>':
 				descend();
@@ -93,13 +89,6 @@ public class Player extends Creature
 		calcFoV();
 	}
 
-	private void descend()
-	{
-		dungeon.descend();
-		world().removeActor(this);
-		dungeon.getLevel().addActor(this, new Random());
-	}
-
 	public void calcFoV()
 	{
 		fov = FoVFactory.get(FoV.CircularRay).calcFoV(world(), x(), y(), 5);
@@ -114,8 +103,15 @@ public class Player extends Creature
 	{
 		super.setWorld(world);
 	}
-
-	private int choose(Collection elements, String title)
+	
+	private void descend()
+	{
+		dungeon.descend();
+		world().removeActor(this);
+		dungeon.getLevel().addActor(this, new Random());
+	}
+	
+	private Object choose(List elements, String title)
 	{
 		console.saveBuffer();
 		console.buffString(0, 0, title, Color.gray);
@@ -127,85 +123,37 @@ public class Player extends Creature
 			i++;
 		}
 		console.refreshScreen();
-		int result = Tools.alphaToInt(console.getKey());
+		int index = Tools.alphaToInt(console.getKey());
+		console.recallBuffer();
 		console.refreshScreen();
-		return result;
+		if(index < 0 || index >= elements.size())
+			return null;
+		return elements.get(index);
 	}
 	
-	private int spellbook()
+	private Item inventory()
 	{
-		return choose(spellbook, "Spellbook");
+		return (Item)choose(inventory.getItems(), "Inventory");
+	}
+	
+	private Item equipment()
+	{
+		return (Item)choose(inventory.getEquiped(), "Equipment");
+	}
+
+	private Spell spellbook()
+	{
+		return (Spell)choose(spellbook, "Spellbook");
 	}
 
 	private void cast()
 	{
-		int index = spellbook();
-		if(index < 0 || index >= spellbook.size())
+		Spell spell = spellbook();
+		if(spell == null)
 			appendMessage("Invalid selection");
 		else
 		{
-			spellbook.get(index).cast();
-		}
-	}
-
-	private int equipment()
-	{
-		return choose(equipment.values(), "Equipment");
-	}
-
-	private void equip()
-	{
-		int index = inventory();
-		if(index < 0 || index >= inventory.size())
-			appendMessage("Invalid selection");
-		else
-		{
-			Item item = inventory.get(index);
-			if(equipment.get(item.slot()) != null)
-				appendMessage(equipment.get(item.slot()) + " already equiped");
-			else
-			{
-				inventory.remove(item);
-				equipment.put(item.slot(), item);
-				appendMessage(item + " equiped");
-			}
-		}
-	}
-
-	private void unequip()
-	{
-		
-	}
-
-	private int inventory()
-	{
-		return choose(inventory, "Inventory");
-	}
-
-	private void get()
-	{
-		Item item = (Item)world().getActorAt(x(), y(), Item.class);
-		if(item != null)
-		{
-			item.attachTo(this);
-			inventory.add(item);
-			appendMessage(this + " picks up " + item);
-		}
-		else
-			appendMessage("Nothing to pick up");
-	}
-
-	private void drop()
-	{
-		int index = inventory();
-		if(index < 0 || index >= inventory.size())
-			appendMessage("Invalid selection");
-		else
-		{
-			Item item = inventory.get(index);
-			item.detachFrom();
-			inventory.remove(item);
-			appendMessage(this + " drops " + item);
+			spell.cast();
 		}
 	}
 }

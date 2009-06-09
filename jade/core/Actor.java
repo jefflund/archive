@@ -81,6 +81,11 @@ public abstract class Actor extends Messenger
 	{
 		return holder != null;
 	}
+	
+	public Actor holder()
+	{
+		return holder;
+	}
 
 	public boolean bound()
 	{
