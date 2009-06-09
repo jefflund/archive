@@ -16,7 +16,7 @@ public class Cellular implements Gen
 	private static final float TILE_PERCENT = .4f;
 	private Dice dice;
 
-	public Cellular()
+	protected Cellular()
 	{
 		dice = new Dice();
 	}

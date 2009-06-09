@@ -13,6 +13,10 @@ public class ShadowCast implements FoV
 	{
 		E, NE, N, NW, W, SW, S, SE, C
 	};
+	
+	protected ShadowCast()
+  {
+  }
 
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{

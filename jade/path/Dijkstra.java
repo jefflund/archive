@@ -13,7 +13,7 @@ public class Dijkstra implements Path
 {
 	private Map<Coord, Node> nodes;
 
-	public Dijkstra()
+	protected Dijkstra()
 	{
 		nodes = new TreeMap<Coord, Node>();
 	}

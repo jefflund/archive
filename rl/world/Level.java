@@ -5,10 +5,13 @@ import jade.core.World;
 import jade.gen.Gen;
 import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
+import java.awt.Color;
+import java.util.Random;
 import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
 import rl.item.Item;
+import rl.item.Item.Slot;
 import rl.magic.Weave;
 
 public class Level extends World
@@ -18,10 +21,15 @@ public class Level extends World
 	public Level(int depth)
 	{
 		super(80, 23);
-		if(depth == 0)
-			GenFactory.get(Gen.Wilderness).generate(this, 0);
-		else
-			GenFactory.get(Gen.Cellular).generate(this, depth);
+		int algorithm = depth == 0 ? Gen.Town : Gen.Cellular;
+		GenFactory.get(algorithm).generate(this, depth);
+		Random random = new Random(0);
+		addActor(new Monster('D', Color.red), random);
+		addActor(new Item('|', Color.white, Slot.Weapon), random);
+		addActor(new Item(']', Color.white, Slot.Weapon), random);
+		addActor(new Item('|', Color.gray, Slot.Weapon), random);
+		addActor(new Item(']', Color.gray, Slot.Weapon), random);
+		addActor(new Feature('^', Color.blue), random);		
 	}
 
 	public void addActor(Actor actor, int x, int y)

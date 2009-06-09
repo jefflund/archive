@@ -102,7 +102,7 @@ public class Player extends Creature
 
 	public void calcFoV()
 	{
-		fov = FoVFactory.get(FoV.SquareRay).calcFoV(world(), x(), y(), 5);
+		fov = FoVFactory.get(FoV.CircularRay).calcFoV(world(), x(), y(), 5);
 	}
 
 	public Collection<Coord> getFoV()
@@ -113,11 +113,6 @@ public class Player extends Creature
 	public void setWorld(World world)
 	{
 		super.setWorld(world);
-	}
-
-	private int spellbook()
-	{
-		return choose(spellbook, "Spellbook");
 	}
 
 	private int choose(Collection elements, String title)
@@ -131,10 +126,15 @@ public class Player extends Creature
 			    Color.gray);
 			i++;
 		}
-		console.repaint();
+		console.refreshScreen();
 		int result = Tools.alphaToInt(console.getKey());
-		console.repaint();
+		console.refreshScreen();
 		return result;
+	}
+	
+	private int spellbook()
+	{
+		return choose(spellbook, "Spellbook");
 	}
 
 	private void cast()

@@ -6,7 +6,7 @@ import java.awt.Color;
 
 public class Wilderness implements Gen
 {
-	private Dice dice;
+	protected Dice dice;
 	private static final char TREE_CHAR = '%';
 	private static final Color TREE_COLOR2 = Color.green;
 	private static final Color TREE_COLOR1 = Color.yellow;
@@ -15,7 +15,7 @@ public class Wilderness implements Gen
 	private static final Color OPEN_COLOR2 = Color.green;
 	private static final float TREE_CHANCE = .05f;
 	
-	public Wilderness()
+	protected Wilderness()
 	{
 		dice = new Dice();
 	}

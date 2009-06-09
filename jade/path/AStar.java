@@ -13,7 +13,7 @@ public class AStar implements Path
 {
 	private Map<Coord, Node> nodes;
 
-	public AStar()
+	protected AStar()
 	{
 		nodes = new TreeMap<Coord, Node>();
 	}

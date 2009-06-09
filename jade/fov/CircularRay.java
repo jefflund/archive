@@ -7,6 +7,10 @@ import java.util.TreeSet;
 
 public class CircularRay extends SquareRay
 {
+	protected CircularRay()
+  {
+  }
+	
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{
 		Collection<Coord> result = super.calcFoV(world, x, y, range);

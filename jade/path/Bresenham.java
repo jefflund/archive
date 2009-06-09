@@ -7,6 +7,10 @@ import java.util.List;
 
 public class Bresenham implements Path
 {
+	protected Bresenham()
+	{
+	}
+	
 	public List<Coord> getPath(World world, Coord start, Coord goal)
 	{
 		List<Coord> path = castray(world, start, goal);

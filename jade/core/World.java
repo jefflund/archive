@@ -42,7 +42,6 @@ public abstract class World extends Messenger
 		addActor(actor, pos.x(), pos.y());
 	}
 
-	@SuppressWarnings("unchecked")
   public Actor getActorAt(int x, int y, Class cls)
 	{
 		if(cls == null)
@@ -53,7 +52,6 @@ public abstract class World extends Messenger
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<Actor> getActors(Class cls)
 	{
 		if(cls == null || cls == Actor.class)
@@ -65,7 +63,6 @@ public abstract class World extends Messenger
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<Actor> getActorsAt(int x, int y, Class cls)
 	{
 		if(cls == null || cls == Actor.class)

@@ -47,25 +47,40 @@ public class Console extends JPanel implements Serializable
 		return console;
 	}
 
-	public void buffChar(int x, int y, ColoredChar ch)
-	{
-		buffChar(new Coord(x, y), ch);
-	}
-
 	public void buffChar(Coord coord, ColoredChar ch)
 	{
 		buffer.put(coord, ch);
 	}
 
+	public void buffChar(int x, int y, ColoredChar ch)
+	{
+		buffChar(new Coord(x, y), ch);
+	}
+
+	public void buffChar(int x, int y, char ch, Color color)
+	{
+		buffChar(new Coord(x, y), new ColoredChar(ch, color));
+	}
+
+	public void buffChar(Coord coord, char ch, Color color)
+	{
+		buffChar(coord, new ColoredChar(ch, color));
+	}
+
 	public void buffString(int x, int y, String str, Color color)
 	{
 		for(char ch : str.toCharArray())
-			buffChar(x++, y, new ColoredChar(ch, color));
+			buffChar(x++, y, ch, color);
 	}
 
 	public ColoredChar charAt(int x, int y)
 	{
-		return buffer.get(new Coord(x, y));
+		return charAt(new Coord(x, y));
+	}
+	
+	public ColoredChar charAt(Coord coord)
+	{
+		return buffer.get(coord);
 	}
 
 	public void saveBuffer()
@@ -109,6 +124,11 @@ public class Console extends JPanel implements Serializable
 		catch(ConcurrentModificationException dontWorry)
 		{
 		}
+	}
+
+	public void refreshScreen()
+	{
+		repaint();
 	}
 
 	public void setMainThread()
