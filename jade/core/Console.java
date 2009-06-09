@@ -14,6 +14,14 @@ import java.util.TreeMap;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * This class allows the JPanel to have console functionality simular to what
+ * curses does in c. The api differs from curses but is fairly simple to use.
+ * Any changes to the screen are written to a buffer which then must be painted
+ * on the screen by use of the refreshScreen method. A second buffer is also
+ * provided to allow for saving and restoring of screen. A getKey method is also
+ * provided, which blocks until the next key press like getch in curses.
+ */
 public class Console extends JPanel implements Serializable
 {
 	private static final int tileHeight = 12;
@@ -23,9 +31,12 @@ public class Console extends JPanel implements Serializable
 	private TreeMap<Coord, ColoredChar> buffer;
 	private TreeMap<Coord, ColoredChar> saved;
 
+	/**
+	 * Constructs a new console with a default size of 80 x 24 tiles;
+	 */
 	public Console()
 	{
-		setMainThread();
+		onDeserialize();
 		listener = new InputListener();
 		addKeyListener(listener);
 		buffer = new TreeMap<Coord, ColoredChar>();
@@ -36,6 +47,12 @@ public class Console extends JPanel implements Serializable
 		setFocusable(true);
 	}
 
+	/**
+	 * Returns a new console which has been placed with a JFrame.
+	 * 
+	 * @param frameTitle the title of the JFrame
+	 * @return a new instance of Console
+	 */
 	public static Console getFramedConsole(String frameTitle)
 	{
 		JFrame frame = new JFrame(frameTitle);
@@ -47,59 +64,137 @@ public class Console extends JPanel implements Serializable
 		return console;
 	}
 
+	/**
+	 * Places a specified character in the buffer at the given location.
+	 * 
+	 * @param coord the location of the character
+	 * @param ch the character to be buffered
+	 */
 	public void buffChar(Coord coord, ColoredChar ch)
 	{
 		buffer.put(coord, ch);
 	}
 
+	/**
+	 * Places a specified character in the buffer at the given location.
+	 * 
+	 * @param x the x-coordinate of the character
+	 * @param y the y-coordinate of the character
+	 * @param ch the character to be buffered
+	 */
 	public void buffChar(int x, int y, ColoredChar ch)
 	{
 		buffChar(new Coord(x, y), ch);
 	}
 
+	/**
+	 * Places a specified character in the buffer at the given location.
+	 * 
+	 * @param x the x-coordinate of the character
+	 * @param y the y-coordinate of the character
+	 * @param ch the character to be buffered
+	 * @param color the color of the character to be buffered
+	 */
 	public void buffChar(int x, int y, char ch, Color color)
 	{
 		buffChar(new Coord(x, y), new ColoredChar(ch, color));
 	}
 
+	/**
+	 * Places a specified character in the buffer at the given location.
+	 * 
+	 * @param coord the location of the character
+	 * @param ch the character to be buffered
+	 * @param color the color of the character to be buffered
+	 */
 	public void buffChar(Coord coord, char ch, Color color)
 	{
 		buffChar(coord, new ColoredChar(ch, color));
 	}
 
+	/**
+	 * Places a string in the buffer at the given location. This method does not
+	 * wrap the text.
+	 * 
+	 * @param x the x-coordinate of the string
+	 * @param y the y-coordinate of the string
+	 * @param str the string to be buffered
+	 * @param color the color of the string
+	 */
 	public void buffString(int x, int y, String str, Color color)
 	{
 		for(char ch : str.toCharArray())
 			buffChar(x++, y, ch, color);
 	}
 
+	/**
+	 * Places a string in the buffer at the given location. This method does not
+	 * wrap the text.
+	 * 
+	 * @param coord the location of the string
+	 * @param str the string to be buffered
+	 * @param color the color of the string
+	 */
+	public void buffString(Coord coord, String str, Color color)
+	{
+		buffString(coord.x(), coord.y(), str, color);
+	}
+
+	/**
+	 * Returns the character at the specified location.
+	 * 
+	 * @param x the x-coordinate to be checked
+	 * @param y the y-coordinate to be checked
+	 * @return the character at the specified location.
+	 */
 	public ColoredChar charAt(int x, int y)
 	{
 		return charAt(new Coord(x, y));
 	}
-	
+
+	/**
+	 * Returns the character at the specified location.
+	 * 
+	 * @param coord the location to be checked
+	 * @return the character at the specified location.
+	 */
 	public ColoredChar charAt(Coord coord)
 	{
 		return buffer.get(coord);
 	}
 
+	/**
+	 * Saves the current buffer to the secondary buffer.
+	 */
 	public void saveBuffer()
 	{
 		saved.clear();
 		saved.putAll(buffer);
 	}
 
+	/**
+	 * Overwrites the current buffer with the secondary buffer.
+	 */
 	public void recallBuffer()
 	{
 		buffer.clear();
 		buffer.putAll(saved);
 	}
 
+	/**
+	 * Clears the current buffer.
+	 */
 	public void clearBuffer()
 	{
 		buffer.clear();
 	}
 
+	/**
+	 * Returns the character of the next key press. This function will block until
+	 * a key is pressed, simular to getch in c curses.
+	 * 
+	 * @return the character of the next key press.
+	 */
 	@SuppressWarnings("deprecation")
 	public char getKey()
 	{
@@ -126,12 +221,20 @@ public class Console extends JPanel implements Serializable
 		}
 	}
 
+	/**
+	 * Paints the current buffer to the screen.
+	 */
 	public void refreshScreen()
 	{
 		repaint();
 	}
 
-	public void setMainThread()
+	/**
+	 * In order for getKey to work, console must know about the main thread.
+	 * However, since Threads are transient, this method must be called upon
+	 * deserialization to avoid NullPointerExceptions when using getKey.
+	 */
+	public void onDeserialize()
 	{
 		mainThread = Thread.currentThread();
 	}

@@ -43,7 +43,7 @@ public abstract class World extends Messenger
 	}
 
   @SuppressWarnings("unchecked")
-  public <T extends Actor> T getActorAt2(int x, int y, Class<T> cls)
+  public <T extends Actor> T getActorAt(int x, int y, Class<T> cls)
 	{
   	for(Actor actor : grid[x][y].actors)
 			if(cls.isInstance(actor))
@@ -52,7 +52,7 @@ public abstract class World extends Messenger
 	}
   
 	@SuppressWarnings("unchecked")
-  public <T extends Actor> Collection<T> getActors2(Class<T> cls)
+  public <T extends Actor> Collection<T> getActors(Class<T> cls)
 	{
 		Collection<T> result = new HashSet<T>();
 		for(Actor actor : actorRegister)
@@ -62,7 +62,7 @@ public abstract class World extends Messenger
 	}
 
 	@SuppressWarnings("unchecked")
-  public <T extends Actor> Collection<T> getActorsAt2(int x, int y, Class<T> cls)
+  public <T extends Actor> Collection<T> getActorsAt(int x, int y, Class<T> cls)
 	{
 		Collection<T> result = new HashSet<T>();
 		for(Actor actor : grid[x][y].actors)
@@ -104,7 +104,7 @@ public abstract class World extends Messenger
 			x = random.nextInt(width);
 			y = random.nextInt(height);
 		}
-		while(!passable(x, y) || getActorsAt2(x, y, Actor.class).size() > 0);
+		while(!passable(x, y) || getActorsAt(x, y, Actor.class).size() > 0);
 		return new Coord(x, y);
 	}
 

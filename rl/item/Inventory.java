@@ -62,7 +62,7 @@ public class Inventory
 
 	public void get()
 	{
-		Item item = owner.world().getActorAt2(owner.x(), owner.y(), Item.class);
+		Item item = owner.world().getActorAt(owner.x(), owner.y(), Item.class);
 		if(item == null)
 			owner.appendMessage("Nothing to pick up");
 		else

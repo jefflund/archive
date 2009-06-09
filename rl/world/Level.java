@@ -50,29 +50,29 @@ public class Level extends World
 	public void tick()
 	{
 		player.act();
-		for(Monster monster : getActors2(Monster.class))
+		for(Monster monster : getActors(Monster.class))
 			monster.act();
-		for(Weave weave : getActors2(Weave.class))
+		for(Weave weave : getActors(Weave.class))
 			weave.act();
-		for(Feature feature : getActors2(Feature.class))
+		for(Feature feature : getActors(Feature.class))
 			feature.act();
-		for(Actor actor : getActors2(Actor.class))
+		for(Actor actor : getActors(Actor.class))
 			retrieveMessages(actor);
 		removeExpired();
 	}
 
 	public ColoredChar look(int x, int y)
 	{
-		Creature creature = getActorAt2(x, y, Creature.class);
+		Creature creature = getActorAt(x, y, Creature.class);
 		if(creature != null)
 			return creature.look();
-		Weave weave = getActorAt2(x, y, Weave.class);
+		Weave weave = getActorAt(x, y, Weave.class);
 		if(weave != null)
 			return weave.look();
-		Item item = getActorAt2(x, y, Item.class);
+		Item item = getActorAt(x, y, Item.class);
 		if(item != null)
 			return item.look();
-		Feature feature = getActorAt2(x, y, Feature.class);
+		Feature feature = getActorAt(x, y, Feature.class);
 		if(feature != null)
 			return feature.look();
 		return super.look(x, y);
