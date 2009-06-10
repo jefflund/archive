@@ -48,7 +48,7 @@ public class Console extends JPanel implements Serializable
 	}
 
 	/**
-	 * Returns a new console which has been placed with a JFrame.
+	 * Returns a new console which has been placed within a JFrame.
 	 * 
 	 * @param frameTitle the title of the JFrame
 	 * @return a new instance of Console

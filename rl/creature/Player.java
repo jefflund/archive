@@ -83,7 +83,7 @@ public class Player extends Creature
 			default:
 				Coord dir = Tools.keyToDir(key, true, false);
 				if(dir != null)
-					super.move(dir.x(), dir.y());
+					move(dir.x(), dir.y());
 				else
 					moved = false;
 				break;
