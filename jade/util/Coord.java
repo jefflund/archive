@@ -55,22 +55,39 @@ public class Coord implements Comparable<Coord>
 		move(coord.x, coord.y);
 	}
 
+	/**
+	 * Translates the coord by the specified amount.
+	 * @param dx the change in x
+	 * @param dy the change in y
+	 */
 	public void translate(int dx, int dy)
 	{
 		x += dx;
 		y += dy;
 	}
 
+	/**
+	 * Translates the coord by the specified amount.
+	 * @param coord the change in this coord
+	 */
 	public void translate(Coord coord)
 	{
 		translate(coord.x, coord.y);
 	}
 
+	/**
+	 * Returns the x-coordinate of the coord
+	 * @return the x-coordinate of the coord
+	 */
 	public int x()
 	{
 		return x;
 	}
 
+	/**
+	 * Returns the y-coordinate of the coord
+	 * @return the y-coordinate of the coord
+	 */
 	public int y()
 	{
 		return y;
