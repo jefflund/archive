@@ -5,13 +5,6 @@ import java.awt.Color;
 
 public class Town extends Wilderness
 {
-	private static final int MIN_BUILD = 5;
-	private static final int MAX_BUILD = 10;
-	private static final int MIN_SIZE = 3;
-	private static final int MAX_SIZE = 7;
-	private static final char BUILDING_TILE = '#';
-	private static final Color BUILDING_COLOR = Color.white;
-
 	protected Town()
 	{
 	}
@@ -20,8 +13,7 @@ public class Town extends Wilderness
 	{
 		super.generate(world, seed);
 		dice.setSeed(seed);
-		buildBuilding(world);
-		for(int i = 1; i < dice.nextInt(MIN_BUILD, MAX_BUILD); i++)
+		for(int i = 0; i < dice.nextInt(5, 10); i++)
 			buildBuilding(world);
 	}
 
@@ -30,7 +22,7 @@ public class Town extends Wilderness
 		Site site = findBuildingSite(world);
 		for(int x = site.x; x < site.x + site.w; x++)
 			for(int y = site.y; y < site.y + site.h; y++)
-				world.setTile(x, y, BUILDING_TILE, BUILDING_COLOR, false);
+				world.setTile(x, y, '#', Color.white, false);
 	}
 
 	private Site findBuildingSite(World world)
@@ -40,8 +32,8 @@ public class Town extends Wilderness
 		{
 			int x = dice.nextInt(1, world.width - 2);
 			int y = dice.nextInt(1, world.height - 2);
-			int w = dice.nextInt(MIN_SIZE, MAX_SIZE);
-			int h = dice.nextInt(MIN_SIZE, MAX_SIZE);
+			int w = dice.nextInt(4, 10);
+			int h = dice.nextInt(4, 10);
 			result = new Site(x, y, w, h);
 		}
 		while(!isValidSite(world, result));
@@ -54,7 +46,7 @@ public class Town extends Wilderness
 		for(int x = site.x; x < site.x + site.w; x++)
 			for(int y = site.y; y < site.y + site.h; y++)
 				if((x < 1 || x > world.width - 2 || y < 1 || y > world.height - 2)
-				    || (world.look(x, y).ch() == BUILDING_TILE))
+				    || (world.look(x, y).ch() == '#'))
 					result = false;
 		return result;
 	}
