@@ -18,6 +18,7 @@ public class Dice extends Random
 
 	/**
 	 * Constructs a new Dice with a user provided seed.
+	 * 
 	 * @param seed the pseudorandom generator seed
 	 */
 	public Dice(long seed)
@@ -28,6 +29,7 @@ public class Dice extends Random
 	/**
 	 * Returns a random integer between the min and max inclusive. Actually, it
 	 * doesnt matter the order of the two parameters.
+	 * 
 	 * @param min the minimum result
 	 * @param max the maximum result
 	 * @return a random integer between the min and max inclusive.
@@ -37,12 +39,17 @@ public class Dice extends Random
 		int range = Math.abs(max - min);
 		return nextInt(range + 1) + Math.min(min, max);
 	}
-	
+
 	/**
-	 * Performs a 
-	 * @param x
-	 * @param y
-	 * @return
+	 * Performs an xdy dice roll where x number of y sided dice are rolled. Thus
+	 * the minimum value returned from this function is x (ie all the dice were
+	 * 1s). The maximum value this function could take is x * y (ie all dice
+	 * rolled their highest value). However, as x increases, the probability curve
+	 * becomes more normally distributed.
+	 * 
+	 * @param x the number of dice to roll
+	 * @param y the number of sides the dice have
+	 * @return the total value of all the dice rolled.
 	 */
 	public int diceXdY(int x, int y)
 	{
