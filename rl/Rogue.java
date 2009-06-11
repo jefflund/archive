@@ -8,7 +8,7 @@ import rl.creature.Player;
 import rl.world.Dungeon;
 import rl.world.Level;
 
-public class Demo
+public class Rogue
 {
 	private static Console console;
 	private static Dungeon dungeon;
