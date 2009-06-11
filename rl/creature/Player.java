@@ -2,7 +2,7 @@ package rl.creature;
 
 import jade.core.Console;
 import jade.fov.FoV;
-import jade.fov.FoV.FoVFactory;
+import jade.fov.FoV.Factory;
 import jade.util.Coord;
 import jade.util.Tools;
 
@@ -94,7 +94,7 @@ public class Player extends Creature
 
 	public void calcFoV()
 	{
-		fov = FoVFactory.get(FoV.CircularRay).calcFoV(world(), x(), y(), 5);
+		fov = Factory.get(FoV.CircularRay).calcFoV(world(), x(), y(), 5);
 	}
 
 	public Collection<Coord> getFoV()

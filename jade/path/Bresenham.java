@@ -5,12 +5,19 @@ import jade.util.Coord;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This implentation of Path uses Bresenhams Line Drawing algorithm to find
+ * straight line paths between start and goal. The failure of this algorithm to
+ * find a path does not mean that there is not path, only that there is no
+ * straight lined path. Thus, this implementation of Path is suitible for line
+ * of sight.
+ */
 public class Bresenham implements Path
 {
 	protected Bresenham()
 	{
 	}
-	
+
 	public List<Coord> getPath(World world, Coord start, Coord goal)
 	{
 		List<Coord> path = castray(world, start, goal);
@@ -21,7 +28,7 @@ public class Bresenham implements Path
 	{
 		return getPath(world, start, goal) != null;
 	}
-	
+
 	public List<Coord> castray(World world, Coord start, Coord goal)
 	{
 		return castray(world, start.x(), start.y(), goal.x(), goal.y());

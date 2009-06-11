@@ -9,6 +9,13 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/**
+ * This implementation of Path uses a terrible and incorrect implementation of
+ * Dijkstra's algorithm. If there is a path, this algorithm will meander around
+ * that path and will be close to the shortest, but will not be the shortest.
+ * However, if you want a meandering path for some reason, use the
+ * implementation instead of AStar.
+ */
 public class Dijkstra implements Path
 {
 	private Map<Coord, Node> nodes;

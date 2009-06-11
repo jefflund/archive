@@ -5,12 +5,16 @@ import jade.util.Coord;
 import java.util.Collection;
 import java.util.TreeSet;
 
+/**
+ * This implementation of FoV uses raycasting with a circular range limit. It is
+ * fast and simple.
+ */
 public class CircularRay extends SquareRay
 {
 	protected CircularRay()
-  {
-  }
-	
+	{
+	}
+
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{
 		Collection<Coord> result = super.calcFoV(world, x, y, range);

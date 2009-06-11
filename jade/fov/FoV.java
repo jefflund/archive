@@ -40,7 +40,7 @@ public interface FoV
 	/**
 	 * Used for retrieving varius singleton instances of FoV implementing classes.
 	 */
-	public class FoVFactory
+	public class Factory
 	{
 		private static final Map<Integer, FoV> singletons = new HashMap<Integer, FoV>();
 

@@ -6,12 +6,17 @@ import jade.util.Coord;
 import java.util.Collection;
 import java.util.TreeSet;
 
+/**
+ * This implementation of FoV uses raycasting with a square range limit. It is
+ * fast and simple. It works well when the screen is always centered on the
+ * source of the field of vision.
+ */
 public class SquareRay extends Bresenham implements FoV
 {
 	protected SquareRay()
-  {
-  }
-	
+	{
+	}
+
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{
 		Collection<Coord> result = new TreeSet<Coord>();

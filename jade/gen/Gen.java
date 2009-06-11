@@ -33,7 +33,7 @@ public interface Gen
 	/**
 	 * Used for retrieving varius singleton instances of Gen implementing classes.
 	 */
-	public class GenFactory
+	public class Factory
 	{
 		private static Map<Integer, Gen> singletons = new HashMap<Integer, Gen>();
 

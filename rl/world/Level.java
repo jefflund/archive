@@ -3,7 +3,7 @@ package rl.world;
 import jade.core.Actor;
 import jade.core.World;
 import jade.gen.Gen;
-import jade.gen.Gen.GenFactory;
+import jade.gen.Gen.Factory;
 import jade.util.ColoredChar;
 import java.awt.Color;
 import java.util.Random;
@@ -22,7 +22,7 @@ public class Level extends World
 	{
 		super(80, 23);
 		int algorithm = depth == 0 ? Gen.Town : Gen.Cellular;
-		GenFactory.get(algorithm).generate(this, depth);
+		Factory.get(algorithm).generate(this, depth);
 		Random random = new Random(0);
 		addActor(new Monster('D', Color.red), random);
 		addActor(new Item('|', Color.white, Slot.Weapon, null), random);

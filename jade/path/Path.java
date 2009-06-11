@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An interface for pathfinding on a jade world.
+ * An interface for pathfinding on a jade world. Implementations of Path should
+ * use the jade world passable method to determine if a tile is traversable or
+ * not.
  */
 public interface Path
 {
@@ -49,9 +51,10 @@ public interface Path
 	public boolean hasPath(World world, Coord start, Coord goal);
 
 	/**
-	 * Used for retrieving varius singleton instances of Path implementing classes.
+	 * Used for retrieving varius singleton instances of Path implementing
+	 * classes.
 	 */
-	public class PathFactory
+	public class Factory
 	{
 		private static Map<Integer, Path> singletons = new HashMap<Integer, Path>();
 
@@ -60,8 +63,8 @@ public interface Path
 		 * 
 		 * @param algorithm the algorithm to be implemented. Static integer
 		 * constants are provided in Path
-		 * @return a singleton instance of an object implementing Path with specified
-		 * algorithm
+		 * @return a singleton instance of an object implementing Path with
+		 * specified algorithm
 		 */
 		public static Path get(int algorithm)
 		{

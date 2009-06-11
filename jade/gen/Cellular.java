@@ -6,6 +6,12 @@ import jade.util.Dice;
 import java.awt.Color;
 import java.util.Stack;
 
+/**
+ * This implementation of Gen uses cellular automata to generate interesting
+ * cave level. The maps will always be connected either by throwing away
+ * disconnected maps for small worlds, or filling in small disconnected parts on
+ * large maps.
+ */
 public class Cellular implements Gen
 {
 	private static final char UNCONNECTED_TILE = '%';

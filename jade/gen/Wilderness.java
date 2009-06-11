@@ -4,6 +4,10 @@ import jade.core.World;
 import jade.util.Dice;
 import java.awt.Color;
 
+/**
+ * This implemenatation of Gen generates a simple wilderness. It will be
+ * surrounded in walls, with trees in about 1 in 20 tiles.
+ */
 public class Wilderness implements Gen
 {
 	protected Dice dice;
@@ -14,7 +18,7 @@ public class Wilderness implements Gen
 	private static final Color OPEN_COLOR1 = Color.white;
 	private static final Color OPEN_COLOR2 = Color.green;
 	private static final float TREE_CHANCE = .05f;
-	
+
 	protected Wilderness()
 	{
 		dice = new Dice();

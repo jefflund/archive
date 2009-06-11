@@ -9,6 +9,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/**
+ * This implementation of Path uses the A* pathfinding algorithm. It is very
+ * fast and efficient due to its use of a heuristic estimate. It will find the
+ * shortest path from start to goal if one exist.
+ */
 public class AStar implements Path
 {
 	private Map<Coord, Node> nodes;

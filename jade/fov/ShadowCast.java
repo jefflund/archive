@@ -7,16 +7,20 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.TreeSet;
 
+/**
+ * This implementation of FoV uses spiral path shadowcasting. It works well in
+ * traditional roguelike dungeons but is very strange in other map types.
+ */
 public class ShadowCast implements FoV
 {
 	private enum Quad
 	{
 		E, NE, N, NW, W, SW, S, SE, C
 	};
-	
+
 	protected ShadowCast()
-  {
-  }
+	{
+	}
 
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{

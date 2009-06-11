@@ -3,6 +3,10 @@ package jade.gen;
 import jade.core.World;
 import java.awt.Color;
 
+/**
+ * This implementation of Gen takes a simple wilderness and adds a few
+ * buildings.
+ */
 public class Town extends Wilderness
 {
 	protected Town()
