@@ -3,6 +3,7 @@ package jade.core;
 import jade.util.ColoredChar;
 import jade.util.Coord;
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
@@ -13,7 +14,7 @@ import java.util.Random;
  * world's behavior is controled. Most likely, the tick method will call the act
  * method on the appropriate actors.
  */
-public abstract class World extends Messenger
+public abstract class World extends Messenger implements Serializable
 {
 	/**
 	 * The width of the world

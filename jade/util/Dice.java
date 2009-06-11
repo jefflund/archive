@@ -1,12 +1,13 @@
 package jade.util;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
  * Dice basically extends Random and adds two methods. Eventually, I may
  * reimplement Random as a Mersenne Twister.
  */
-public class Dice extends Random
+public class Dice extends Random implements Serializable
 {
 	/**
 	 * Constructs a new Dice with a seed based on the current time.

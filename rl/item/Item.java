@@ -2,10 +2,12 @@ package rl.item;
 
 import jade.core.Actor;
 import java.awt.Color;
+import java.io.Serializable;
+
 import rl.creature.Creature;
 import rl.magic.Instant;
 
-public class Item extends Actor
+public class Item extends Actor implements Serializable
 {
 	public enum Slot 
 	{

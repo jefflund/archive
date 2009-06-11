@@ -2,9 +2,11 @@ package rl.world;
 
 import jade.core.Actor;
 import java.awt.Color;
+import java.io.Serializable;
+
 import rl.creature.Creature;
 
-public class Feature extends Actor
+public class Feature extends Actor implements Serializable
 {
 	public Feature(char face, Color color)
 	{

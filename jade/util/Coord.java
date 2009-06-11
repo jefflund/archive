@@ -1,9 +1,11 @@
 package jade.util;
 
+import java.io.Serializable;
+
 /**
  *	Represents an integer cartesian coordinate.
  */
-public class Coord implements Comparable<Coord>
+public class Coord implements Comparable<Coord>, Serializable
 {
 	private int x;
 	private int y;

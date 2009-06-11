@@ -7,6 +7,7 @@ import jade.util.Coord;
 import jade.util.Tools;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +17,7 @@ import rl.item.Item;
 import rl.magic.Spell;
 import rl.world.Dungeon;
 
-public class Player extends Creature
+public class Player extends Creature implements Serializable
 {
 	private Console console;
 	private List<Spell> spellbook;

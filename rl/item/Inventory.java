@@ -1,5 +1,6 @@
 package rl.item;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Map;
 import rl.creature.Creature;
 import rl.item.Item.Slot;
 
-public class Inventory
+public class Inventory implements Serializable
 {
 	private Creature owner;
 	private List<Item> inventory;

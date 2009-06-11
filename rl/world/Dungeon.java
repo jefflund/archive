@@ -1,12 +1,13 @@
 package rl.world;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import rl.creature.Player;
 
-public class Dungeon
+public class Dungeon implements Serializable
 {
 	private int depth;
 	private Map<Integer, Level> levels;

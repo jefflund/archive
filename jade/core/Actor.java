@@ -4,6 +4,7 @@ import jade.util.ColoredChar;
 import jade.util.Coord;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -14,7 +15,7 @@ import java.util.HashSet;
  * meaning that they should be ignored by all actors and discarded as soon as
  * possible.
  */
-public abstract class Actor extends Messenger
+public abstract class Actor extends Messenger implements Serializable
 {
 	private ColoredChar face;
 	private Coord pos;

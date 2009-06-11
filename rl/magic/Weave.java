@@ -2,9 +2,11 @@ package rl.magic;
 
 import jade.core.Actor;
 import java.awt.Color;
+import java.io.Serializable;
+
 import rl.creature.Creature;
 
-public class Weave extends Actor
+public class Weave extends Actor implements Serializable
 {
 	private Instant instant;
 	private int duration;

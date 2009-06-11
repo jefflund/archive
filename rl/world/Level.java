@@ -6,6 +6,7 @@ import jade.gen.Gen;
 import jade.gen.Gen.Factory;
 import jade.util.ColoredChar;
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Random;
 import rl.creature.Creature;
 import rl.creature.Monster;
@@ -14,7 +15,7 @@ import rl.item.Item;
 import rl.item.Item.Slot;
 import rl.magic.Weave;
 
-public class Level extends World
+public class Level extends World implements Serializable
 {
 	private Player player;
 

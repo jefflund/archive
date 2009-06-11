@@ -1,5 +1,7 @@
 package jade.core;
 
+import java.io.Serializable;
+
 import jade.util.Tools;
 
 /**
@@ -8,7 +10,7 @@ import jade.util.Tools;
  * this class with the motivation that the world could then retrieve all the
  * messages of its actors and store them in one place for easy access.
  */
-public class Messenger
+public class Messenger implements Serializable
 {
 	private String messages;
 

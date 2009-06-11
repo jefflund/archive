@@ -1,5 +1,6 @@
 package jade.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +17,7 @@ import java.util.TreeSet;
  * @param <K> the type of the keys in this multimap
  * @param <V> the type of the values in this multimap
  */
-public class Multimap<K, V>
+public class Multimap<K, V> implements Serializable
 {
 	private TreeMap<K, Collection<V>> map;
 

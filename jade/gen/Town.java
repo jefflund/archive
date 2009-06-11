@@ -1,6 +1,7 @@
 package jade.gen;
 
 import jade.core.World;
+
 import java.awt.Color;
 
 /**
@@ -9,6 +10,9 @@ import java.awt.Color;
  */
 public class Town extends Wilderness
 {
+	private static final int MAX_SIZE = 9;
+	private static final int MIN_SIZE = 3;
+
 	protected Town()
 	{
 	}
@@ -17,57 +21,16 @@ public class Town extends Wilderness
 	{
 		super.generate(world, seed);
 		dice.setSeed(seed);
-		for(int i = 0; i < dice.nextInt(5, 10); i++)
-			buildBuilding(world);
-	}
-
-	private void buildBuilding(World world)
-	{
-		Site site = findBuildingSite(world);
-		for(int x = site.x; x < site.x + site.w; x++)
-			for(int y = site.y; y < site.y + site.h; y++)
-				world.setTile(x, y, '#', Color.white, false);
-	}
-
-	private Site findBuildingSite(World world)
-	{
-		Site result;
-		do
-		{
-			int x = dice.nextInt(1, world.width - 2);
-			int y = dice.nextInt(1, world.height - 2);
-			int w = dice.nextInt(4, 10);
-			int h = dice.nextInt(4, 10);
-			result = new Site(x, y, w, h);
-		}
-		while(!isValidSite(world, result));
-		return result;
-	}
-
-	private boolean isValidSite(World world, Site site)
-	{
-		boolean result = true;
-		for(int x = site.x; x < site.x + site.w; x++)
-			for(int y = site.y; y < site.y + site.h; y++)
-				if((x < 1 || x > world.width - 2 || y < 1 || y > world.height - 2)
-				    || (world.look(x, y).ch() == '#'))
-					result = false;
-		return result;
-	}
-
-	private class Site
-	{
-		private int x;
-		private int y;
-		private int w;
-		private int h;
-
-		public Site(int x, int y, int w, int h)
-		{
-			this.x = x;
-			this.y = y;
-			this.w = w;
-			this.h = h;
-		}
+		for(int x = 0; x + MAX_SIZE < world.width - 2; x += MAX_SIZE)
+			for(int y = 0; y + MAX_SIZE < world.height - 2; y += MAX_SIZE)
+			{
+				int x1 = dice.nextInt(x + 1, x + MAX_SIZE - MIN_SIZE - 1);
+				int x2 = dice.nextInt(x1 + MIN_SIZE - 1, x + MAX_SIZE - 1);
+				int y1 = dice.nextInt(y + 1, y + MAX_SIZE - MIN_SIZE - 1);
+				int y2 = dice.nextInt(y1 + MIN_SIZE - 1, y + MAX_SIZE - 1);				
+				for(int i = x1; i <= x2; i++)
+					for(int j = y1; j <= y2; j++)
+					world.setTile(i, j, '#', Color.white, false);
+			}
 	}
 }

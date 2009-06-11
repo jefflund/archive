@@ -1,12 +1,13 @@
 package jade.util;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 /**
  * Represents a char with an associated color. ColoredChars are immutable once
  * created.
  */
-public class ColoredChar
+public class ColoredChar implements Serializable
 {
 	private char ch;
 	private Color color;

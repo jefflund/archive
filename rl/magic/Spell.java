@@ -1,8 +1,10 @@
 package rl.magic;
 
+import java.io.Serializable;
+
 import rl.creature.Creature;
 
-public class Spell
+public class Spell implements Serializable
 {
 	private Creature caster;
 	private int duration;
