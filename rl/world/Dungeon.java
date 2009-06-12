@@ -1,23 +1,22 @@
 package rl.world;
 
+import jade.util.Coord;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-
 import rl.creature.Player;
 
 public class Dungeon implements Serializable
 {
 	private int depth;
 	private Map<Integer, Level> levels;
-	
+
 	public Dungeon()
 	{
 		depth = 0;
 		levels = new HashMap<Integer, Level>();
 	}
-	
+
 	public Level getLevel()
 	{
 		Level level = levels.get(depth);
@@ -28,23 +27,32 @@ public class Dungeon implements Serializable
 		}
 		return level;
 	}
-	
+
 	public void descend()
 	{
-		changeLevel(depth + 1);
+		Player player = getLevel().player();
+		if(getLevel().tile(player.x(), player.y()).look().ch() != '>')
+			player.appendMessage("No stairs here");
+		else
+			changeLevel(depth + 1);
 	}
-	
+
 	public void ascend()
-  {
-		if(depth != 0)
+	{
+		Player player = getLevel().player();
+		if(getLevel().tile(player.x(), player.y()).look().ch() != '<')
+			player.appendMessage("No stairs here");
+		else
 			changeLevel(depth - 1);
-  }
-	
+	}
+
 	private void changeLevel(int newDepth)
 	{
+		boolean goingDown = newDepth > depth;
 		Player player = getLevel().player();
 		getLevel().removeActor(player);
 		depth = newDepth;
-		getLevel().addActor(player, new Random(0));
+		Coord pos = goingDown ? getLevel().upStairs() : getLevel().downStairs();
+		getLevel().addActor(player, pos);
 	}
 }

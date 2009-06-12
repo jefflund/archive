@@ -69,6 +69,19 @@ public abstract class World extends Messenger implements Serializable
 	}
 
 	/**
+	 * Adds an actor on the world at the specified location. The actors world will
+	 * be set to this world. Also, any actors attached to the actor will also be
+	 * added to this world.
+	 * 
+	 * @param actor the actor to be added
+	 * @param coord the coordinate where the actor will be placed
+	 */
+	public void addActor(Actor actor, Coord coord)
+	{
+		addActor(actor, coord.x(), coord.y());
+	}
+
+	/**
 	 * Adds an actor to a random, open tile. A tile is open if there are no actors
 	 * on the tile and the tile is passable.
 	 * 
@@ -176,18 +189,26 @@ public abstract class World extends Messenger implements Serializable
 	}
 
 	/**
-	 * Changes the specified tile's appearance, but does not modify the actors on
-	 * that tile in any way.
+	 * Returns the tile at the specifed location.
 	 * 
-	 * @param x the x-coordinate of the tile
-	 * @param y the y-coordinate of the tile
-	 * @param ch the new character representation of the tile
-	 * @param color the new color of the tile
-	 * @param passable sets the tile's passable characteristic
+	 * @param x the x-coordinate of the tile to be returned
+	 * @param y the y-coordinate of the tile to be returned
+	 * @return the tile at the specifed location.
 	 */
-	public void setTile(int x, int y, char ch, Color color, boolean passable)
+	public Tile tile(int x, int y)
 	{
-		grid[x][y].setTile(ch, color, passable);
+		return grid[x][y];
+	}
+
+	/**
+	 * Returns the tile at the specifed location.
+	 * 
+	 * @param coord the coordinate of the tile to be returned
+	 * @return the tile at the specifed location.
+	 */
+	public Tile tile(Coord coord)
+	{
+		return tile(coord.x(), coord.y());
 	}
 
 	/**
@@ -250,7 +271,7 @@ public abstract class World extends Messenger implements Serializable
 	{
 		return grid[x][y].passable;
 	}
-	
+
 	/**
 	 * Returns true if the specified tile is passable, false otherwise. By
 	 * default, this method only examins the passable property of the tile, but
@@ -306,6 +327,11 @@ public abstract class World extends Messenger implements Serializable
 		{
 			tile = new ColoredChar(ch, color);
 			this.passable = passable;
+		}
+
+		public ColoredChar look()
+		{
+			return tile;
 		}
 	}
 }

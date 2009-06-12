@@ -5,6 +5,7 @@ import jade.core.World;
 import jade.gen.Gen;
 import jade.gen.Gen.Factory;
 import jade.util.ColoredChar;
+import jade.util.Coord;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.Random;
@@ -18,13 +19,20 @@ import rl.magic.Weave;
 public class Level extends World implements Serializable
 {
 	private Player player;
+	private Coord upStairs;
+	private Coord downStairs;
 
 	public Level(int depth)
 	{
 		super(80, 23);
 		int algorithm = depth == 0 ? Gen.Town : Gen.Traditional;
 		Factory.get(algorithm).generate(this, depth);
-		Random random = new Random(0);
+		Random random = new Random(depth);
+		upStairs = depth > 0 ? getOpenTile(random) : null;
+		if(upStairs != null)
+			tile(upStairs).setTile('<', Color.white, true);
+		downStairs = getOpenTile(random);
+		tile(downStairs).setTile('>', Color.white, true);
 		addActor(new Monster('D', Color.red), random);
 		addActor(new Item('|', Color.white, Slot.Weapon, null), random);
 		addActor(new Item(']', Color.white, Slot.Armor, null), random);
@@ -46,6 +54,16 @@ public class Level extends World implements Serializable
 	public Player player()
 	{
 		return player;
+	}
+
+	public Coord upStairs()
+	{
+		return upStairs;
+	}
+
+	public Coord downStairs()
+	{
+		return downStairs;
 	}
 
 	public void tick()

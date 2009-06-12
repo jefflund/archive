@@ -23,29 +23,6 @@ public class Traditional implements Gen
 		floodWalls(world);
 		List<Room> rooms = getRooms(world);
 		digRooms(world, rooms);
-		boolean left = false;
-		for(Room start : rooms)
-		{
-			Room end = rooms.get(dice.nextInt(rooms.size()));
-			int startX = dice.nextInt(start.x1, start.x2);
-			int startY = dice.nextInt(start.y1, start.y2);
-			int endX = dice.nextInt(end.x1, end.x2);
-			int endY = dice.nextInt(end.y1, end.y2);
-			for(int x = startX; x != endX; x += startX < endX ? 1 : -1)
-			{
-				if(!world.passable(x, startY))
-					left = true;
-				if(left && world.passable(x, startY))
-					endX = x;
-				world.setTile(x, startY, '.', Color.white, true);
-			}
-			for(int y = startY; y != endY; y += startY < endY ? 1 : -1)
-			{
-				if(world.passable(endX, y))
-					endY = y;
-				world.setTile(endX, y, '.', Color.white, true);
-			}
-		}
 	}
 
 	private void digRooms(World world, List<Room> rooms)
@@ -53,7 +30,7 @@ public class Traditional implements Gen
 		for(Room room : rooms)
 			for(int x = room.x1; x <= room.x2; x++)
 				for(int y = room.y1; y <= room.y2; y++)
-					world.setTile(x, y, '.', Color.white, true);
+					world.tile(x, y).setTile('.', Color.white, true);
 	}
 
 	private List<Room> getRooms(World world)
@@ -69,7 +46,7 @@ public class Traditional implements Gen
 	{
 		for(int x = 0; x < world.width; x++)
 			for(int y = 0; y < world.height; y++)
-				world.setTile(x, y, '#', Color.white, false);
+				world.tile(x, y).setTile('#', Color.white, false);
 	}
 
 	private class Room

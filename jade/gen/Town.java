@@ -29,7 +29,7 @@ public class Town extends Wilderness
 				int y2 = dice.nextInt(y1 + MIN_SIZE - 1, y + MAX_SIZE - 1);				
 				for(int i = x1; i <= x2; i++)
 					for(int j = y1; j <= y2; j++)
-					world.setTile(i, j, '#', Color.white, false);
+					world.tile(i, j).setTile('#', Color.white, false);
 			}
 	}
 }
