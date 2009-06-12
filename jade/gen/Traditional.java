@@ -2,6 +2,7 @@ package jade.gen;
 
 import jade.core.World;
 import jade.util.Dice;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;

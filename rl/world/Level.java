@@ -25,9 +25,9 @@ public class Level extends World implements Serializable
 	public Level(int depth)
 	{
 		super(80, 23);
+		Random random = new Random(depth);
 		int algorithm = depth == 0 ? Gen.Town : Gen.Traditional;
 		Factory.get(algorithm).generate(this, depth);
-		Random random = new Random(depth);
 		upStairs = depth > 0 ? getOpenTile(random) : null;
 		if(upStairs != null)
 			tile(upStairs).setTile('<', Color.white, true);

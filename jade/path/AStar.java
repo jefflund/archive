@@ -108,7 +108,7 @@ public class AStar implements Path
 		return min;
 	}
 
-	private double hEstimate(Coord c1, Coord c2)
+	protected double hEstimate(Coord c1, Coord c2)
 	{
 		int a = c1.x() - c2.x();
 		int b = c1.y() - c2.y();
