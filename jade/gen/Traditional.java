@@ -1,25 +1,26 @@
 package jade.gen;
 
 import jade.core.World;
-
+import jade.util.Dice;
 import java.awt.Color;
 
-/**
- * This implementation of Gen takes a simple wilderness and adds a few
- * buildings.
- */
-public class Town extends Wilderness
+public class Traditional implements Gen
 {
-	private static final int MAX_SIZE = 9;
-	private static final int MIN_SIZE = 3;
-
-	protected Town()
+	private static final int MAX_SIZE = 10;
+	private static final int MIN_SIZE = 4;
+	private Dice dice;
+	
+	protected Traditional()
 	{
+		dice = new Dice();
 	}
-
+	
 	public void generate(World world, long seed)
 	{
-		super.generate(world, seed);
+		dice.setSeed(seed);
+		for(int x = 0; x < world.width; x++)
+			for(int y = 0; y < world.height; y++)
+				world.setTile(x, y, '#', Color.white, false);
 		for(int x = 0; x + MAX_SIZE < world.width - 2; x += MAX_SIZE)
 			for(int y = 0; y + MAX_SIZE < world.height - 2; y += MAX_SIZE)
 			{
@@ -29,7 +30,7 @@ public class Town extends Wilderness
 				int y2 = dice.nextInt(y1 + MIN_SIZE - 1, y + MAX_SIZE - 1);				
 				for(int i = x1; i <= x2; i++)
 					for(int j = y1; j <= y2; j++)
-					world.setTile(i, j, '#', Color.white, false);
+					world.setTile(i, j, '.', Color.white, true);
 			}
 	}
 }

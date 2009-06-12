@@ -21,6 +21,8 @@ public interface Gen
 	 * Takes a simple wilderness and adds a few buildings.
 	 */
 	public static final int Town = 2;
+	
+	public static final int Traditional = 3;
 
 	/**
 	 * Generates a random map on the given world based on a seed. Implementations
@@ -63,6 +65,8 @@ public interface Gen
 				return new Cellular();
 			case Town:
 				return new Town();
+			case Traditional:
+				return new Traditional();
 			default:
 				throw new IllegalArgumentException();
 			}

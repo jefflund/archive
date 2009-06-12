@@ -22,7 +22,7 @@ public class Level extends World implements Serializable
 	public Level(int depth)
 	{
 		super(80, 23);
-		int algorithm = depth == 0 ? Gen.Town : Gen.Cellular;
+		int algorithm = depth == 0 ? Gen.Town : Gen.Traditional;
 		Factory.get(algorithm).generate(this, depth);
 		Random random = new Random(0);
 		addActor(new Monster('D', Color.red), random);
