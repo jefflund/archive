@@ -19,14 +19,10 @@ public interface Path
 	 */
 	public static final int AStar = 0;
 	/**
-	 * I implemented Dijkstra's rather poorly. Until I fix it use AStar.
-	 */
-	public static final int Dijkstra = 1;
-	/**
 	 * Uses Bresenham's Line Drawing to draw a straight line. Suitible for line of
 	 * sight.
 	 */
-	public static final int Bresenham = 2;
+	public static final int Bresenham = 1;
 
 	/**
 	 * Returns a list with a path from start to the goal, or null if no path
@@ -80,8 +76,6 @@ public interface Path
 			{
 			case AStar:
 				return new AStar();
-			case Dijkstra:
-				return new Dijkstra();
 			case Bresenham:
 				return new Bresenham();
 			default:

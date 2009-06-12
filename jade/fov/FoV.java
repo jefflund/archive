@@ -20,10 +20,6 @@ public interface FoV
 	 * Uses raycasting but limits its range to a circular radius.
 	 */
 	public static final int CircularRay = 1;
-	/**
-	 * Uses spiral path shadowcasting. Useful for traditional roguelike maps.
-	 */
-	public static final int ShadowCast = 2;
 
 	/**
 	 * Calculates field of vision from a given tile on world. The passable method
@@ -69,8 +65,6 @@ public interface FoV
 				return new SquareRay();
 			case CircularRay:
 				return new CircularRay();
-			case ShadowCast:
-				return new ShadowCast();
 			default:
 				throw new IllegalArgumentException();
 			}
