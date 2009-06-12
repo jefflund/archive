@@ -20,6 +20,7 @@ public class ShadowCast implements FoV
 
 	protected ShadowCast()
 	{
+		throw new IllegalAccessError("This algorithm needs work");
 	}
 
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
