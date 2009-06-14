@@ -2,7 +2,6 @@ package jade.core;
 
 import jade.util.ColoredChar;
 import jade.util.Coord;
-import java.awt.Color;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -111,7 +110,7 @@ public abstract class World extends Messenger implements Serializable
 	@SuppressWarnings("unchecked")
 	public <T extends Actor> T getActorAt(int x, int y, Class<T> cls)
 	{
-		for(Actor actor : grid[x][y].actors)
+		for(Actor actor : grid[x][y].actors())
 			if(cls.isInstance(actor))
 				return (T)actor;
 		return null;
@@ -132,7 +131,7 @@ public abstract class World extends Messenger implements Serializable
 	public <T extends Actor> Collection<T> getActorsAt(int x, int y, Class<T> cls)
 	{
 		Collection<T> result = new HashSet<T>();
-		for(Actor actor : grid[x][y].actors)
+		for(Actor actor : grid[x][y].actors())
 			if(cls.isInstance(actor))
 				result.add((T)actor);
 		return result;
@@ -242,7 +241,7 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public ColoredChar look(int x, int y)
 	{
-		return grid[x][y].tile;
+		return grid[x][y].look();
 	}
 
 	/**
@@ -269,7 +268,7 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public boolean passable(int x, int y)
 	{
-		return grid[x][y].passable;
+		return grid[x][y].passable();
 	}
 
 	/**
@@ -288,13 +287,13 @@ public abstract class World extends Messenger implements Serializable
 	void addToGrid(Actor actor)
 	{
 		assert (actor.boundTo(this));
-		grid[actor.x()][actor.y()].actors.add(actor);
+		grid[actor.x()][actor.y()].actors().add(actor);
 	}
 
 	void removeFromGrid(Actor actor)
 	{
 		assert (actor.boundTo(this));
-		grid[actor.x()][actor.y()].actors.remove(actor);
+		grid[actor.x()][actor.y()].actors().remove(actor);
 	}
 
 	void registerActor(Actor actor)
@@ -309,29 +308,5 @@ public abstract class World extends Messenger implements Serializable
 		actorRegister.remove(actor);
 		for(Actor held : actor.holds())
 			unregisterActor(held);
-	}
-
-	public class Tile
-	{
-		private ColoredChar tile;
-		private boolean passable;
-		private HashSet<Actor> actors;
-
-		private Tile()
-		{
-			setTile('.', Color.white, true);
-			actors = new HashSet<Actor>();
-		}
-
-		public void setTile(char ch, Color color, boolean passable)
-		{
-			tile = new ColoredChar(ch, color);
-			this.passable = passable;
-		}
-
-		public ColoredChar look()
-		{
-			return tile;
-		}
 	}
 }

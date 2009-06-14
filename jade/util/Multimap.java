@@ -111,7 +111,7 @@ public class Multimap<K, V> implements Serializable
 	 * preserved.
 	 * 
 	 * @param key
-	 * @return
+	 * @return a collection with all values previously associated with the key
 	 */
 	public Collection<V> removeKey(K key)
 	{
@@ -180,7 +180,7 @@ public class Multimap<K, V> implements Serializable
 	 * Returns a multimap with the values for every key that is greater than the
 	 * specified key. This can be either inclusive or exclusive.
 	 * 
-	 * @param toKey the lowest key allowed in the tailmap
+	 * @param fromKey the lowest key allowed in the tailmap
 	 * @param inclusive if true, then the key will be allowed in the tailmap
 	 * @return multimap with the values for every key that is greater than the key
 	 */
