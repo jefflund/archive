@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
   <ModulePrefs title="javadoc" /> 
-  <Content type="url" href="index.html" /> 
+  <Content type="url" href="http://jaderogue.googlecode.com/svn/trunk/doc/index.html" /> 
 </Module>
 
