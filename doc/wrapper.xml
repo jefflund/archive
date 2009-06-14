@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
   <ModulePrefs title="javadoc" /> 
-  <Content type="url" href="overview-summary.html" /> 
+  <Content type="html" href="overview-summary.html" /> 
 </Module>
 
