@@ -24,44 +24,80 @@ import javax.swing.JPanel;
  */
 public class Console extends JPanel implements Serializable
 {
-	private static final int tileHeight = 12;
-	private static final int tileWidth = tileHeight * 2 / 3;
+	private final int tileHeight;
+	private final int tileWidth;
 	private transient Thread mainThread;
 	private InputListener listener;
 	private TreeMap<Coord, ColoredChar> buffer;
 	private TreeMap<Coord, ColoredChar> saved;
 
 	/**
-	 * Constructs a new console with a default size of 80 x 24 tiles;
+	 * Constructs a new default console with a default size of 80 x 24 tiles;
 	 */
 	public Console()
 	{
+		this(12, 80, 24);
+	}
+
+	/**
+	 * Constructs a new console with a specific starting size.
+	 * @param tileSize the size of the tiles. The default is 12.
+	 * @param width the number of columns. The default is 80.
+	 * @param height the number of rows. The default is 24.
+	 */
+	public Console(int tileSize, int width, int height)
+	{
+		tileHeight = tileSize;
+		tileWidth = tileHeight * 2 / 3;
 		onDeserialize();
 		listener = new InputListener();
 		addKeyListener(listener);
 		buffer = new TreeMap<Coord, ColoredChar>();
 		saved = new TreeMap<Coord, ColoredChar>();
-		setPreferredSize(new Dimension(80 * tileWidth, 24 * tileHeight));
+		setPreferredSize(new Dimension(width * tileWidth, height * tileHeight));
 		setFont(new Font(Font.MONOSPACED, Font.PLAIN, tileHeight));
 		setBackground(Color.black);
 		setFocusable(true);
 	}
 
 	/**
-	 * Returns a new console which has been placed within a JFrame.
+	 * Returns a new default console which has been placed within a JFrame.
 	 * 
 	 * @param frameTitle the title of the JFrame
 	 * @return a new instance of Console
 	 */
 	public static Console getFramedConsole(String frameTitle)
 	{
-		JFrame frame = new JFrame(frameTitle);
 		Console console = new Console();
+		frameConsole(console, frameTitle);
+		return console;
+	}
+
+	/**
+	 * Returns a new console of the specifed size which has been placed within a
+	 * JFrame.
+	 * 
+	 * @param frameTitle the title of the JFrame
+	 * @param tileSize the size of the console tiles. The default is 12.
+	 * @param width the number of console columns. The default is 80.
+	 * @param height the console number of rows. The default is 24.
+	 * @return a new instance of Console
+	 */
+	public static Console getFramedConsole(String frameTitle, int tileSize,
+	    int width, int height)
+	{
+		Console console = new Console(tileSize, width, height);
+		frameConsole(console, frameTitle);
+		return console;
+	}
+
+	private static void frameConsole(Console console, String frameTitle)
+	{
+		JFrame frame = new JFrame(frameTitle);
 		frame.add(console);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
-		return console;
 	}
 
 	/**

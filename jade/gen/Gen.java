@@ -21,7 +21,9 @@ public interface Gen
 	 * Takes a simple wilderness and adds a few buildings.
 	 */
 	public static final int Town = 2;
-	
+	/**
+	 * Creates a set of rectangular rooms connected by corridors.
+	 */
 	public static final int Traditional = 3;
 
 	/**
