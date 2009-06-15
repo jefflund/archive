@@ -13,15 +13,6 @@ import java.util.Map;
 public interface FoV
 {
 	/**
-	 * Uses raycasting in a square. Useful for player centric cameras.
-	 */
-	public static final int SquareRay = 0;
-	/**
-	 * Uses raycasting but limits its range to a circular radius.
-	 */
-	public static final int CircularRay = 1;
-
-	/**
 	 * Calculates field of vision from a given tile on world. The passable method
 	 * is used to determine if light can continue through a square. The field of
 	 * vision is limited by the range.
@@ -37,8 +28,25 @@ public interface FoV
 	/**
 	 * Used for retrieving varius singleton instances of FoV implementing classes.
 	 */
-	public class Factory
+	public class FoVFactory
 	{
+		/**
+		 * Uses raycasting in a square. Useful for player centric cameras.
+		 */
+		public static final int SquareRay = 0;
+		/**
+		 * Uses raycasting but limits its range to a circular radius.
+		 */
+		public static final int CircularRay = 1;
+		/**
+		 * Uses recursive shadowcasting
+		 */
+		public static final int Shadowcast = 2;
+		/**
+		 * Uses precise permissive field of vision.
+		 */
+		public static final int Permissive = 3;
+		
 		private static final Map<Integer, FoV> singletons = new HashMap<Integer, FoV>();
 
 		/**
@@ -65,6 +73,10 @@ public interface FoV
 				return new SquareRay();
 			case CircularRay:
 				return new CircularRay();
+			case Shadowcast:
+				return new Shadowcast();
+			case Permissive:
+				return new Permissive();
 			default:
 				throw new IllegalArgumentException();
 			}

@@ -14,17 +14,6 @@ import java.util.Map;
 public interface Path
 {
 	/**
-	 * Uses heuristic estimates to quickly find the shortest path between two
-	 * points.
-	 */
-	public static final int AStar = 0;
-	/**
-	 * Uses Bresenham's Line Drawing to draw a straight line. Suitible for line of
-	 * sight.
-	 */
-	public static final int Bresenham = 1;
-
-	/**
 	 * Returns a list with a path from start to the goal, or null if no path
 	 * exist. Depending on the algorithm, this may or not be the most efficient
 	 * path, or it may erroneously fail to find a connectiong path.
@@ -50,8 +39,18 @@ public interface Path
 	 * Used for retrieving varius singleton instances of Path implementing
 	 * classes.
 	 */
-	public class Factory
+	public class PathFactory
 	{
+		/**
+		 * Uses heuristic estimates to quickly find the shortest path between two
+		 * points.
+		 */
+		public static final int AStar = 0;
+		/**
+		 * Uses Bresenham's Line Drawing to draw a straight line. Suitible for line of
+		 * sight.
+		 */
+		public static final int Bresenham = 1;
 		private static Map<Integer, Path> singletons = new HashMap<Integer, Path>();
 
 		/**

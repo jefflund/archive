@@ -2,13 +2,14 @@ package rl.world;
 
 import jade.core.Actor;
 import jade.core.World;
-import jade.gen.Gen;
-import jade.gen.Gen.Factory;
+import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
 import jade.util.Coord;
+
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.Random;
+
 import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
@@ -26,8 +27,8 @@ public class Level extends World implements Serializable
 	{
 		super(80, 23);
 		Random random = new Random(depth);
-		int algorithm = depth == 0 ? Gen.Town : Gen.Traditional;
-		Factory.get(algorithm).generate(this, depth);
+		int algorithm = depth == 0 ? GenFactory.Town : GenFactory.Traditional;
+		GenFactory.get(algorithm).generate(this, depth);
 		upStairs = depth > 0 ? getOpenTile(random) : null;
 		if(upStairs != null)
 			tile(upStairs).setTile('<', Color.white, true);

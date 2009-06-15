@@ -3,8 +3,7 @@ package jade;
 import jade.core.Actor;
 import jade.core.Console;
 import jade.core.World;
-import jade.gen.Gen;
-import jade.gen.Gen.Factory;
+import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
 import jade.util.Coord;
 import jade.util.Tools;
@@ -74,7 +73,7 @@ public class Demo
 		{
 			super(80, 23);
 			Random random = new Random();
-			Factory.get(Gen.Cellular).generate(this, random.nextLong());
+			GenFactory.get(GenFactory.Cellular).generate(this, random.nextLong());
 			addActor(player, random);
 			this.player = player;
 		}

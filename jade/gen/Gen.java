@@ -10,23 +10,6 @@ import java.util.Map;
 public interface Gen
 {
 	/**
-	 * A simple wilderness.
-	 */
-	public static final int Wilderness = 0;
-	/**
-	 * Uses cellular autamaton to generate interesting caves.
-	 */
-	public static final int Cellular = 1;
-	/**
-	 * Takes a simple wilderness and adds a few buildings.
-	 */
-	public static final int Town = 2;
-	/**
-	 * Creates a set of rectangular rooms connected by corridors.
-	 */
-	public static final int Traditional = 3;
-
-	/**
 	 * Generates a random map on the given world based on a seed. Implementations
 	 * of this method should generate the same map for any particular seed.
 	 * @param world the world on which to generate the map
@@ -37,8 +20,26 @@ public interface Gen
 	/**
 	 * Used for retrieving varius singleton instances of Gen implementing classes.
 	 */
-	public class Factory
+	public class GenFactory
 	{
+		/**
+		 * A simple wilderness.
+		 */
+		public static final int Wilderness = 0;
+		/**
+		 * Uses cellular autamaton to generate interesting caves.
+		 */
+		public static final int Cellular = 1;
+		/**
+		 * Takes a simple wilderness and adds a few buildings.
+		 */
+		public static final int Town = 2;
+		/**
+		 * Creates a set of rectangular rooms connected by corridors.
+		 */
+		public static final int Traditional = 3;
+		public static final int BSP = 4;
+		
 		private static Map<Integer, Gen> singletons = new HashMap<Integer, Gen>();
 
 		/**
@@ -69,6 +70,8 @@ public interface Gen
 				return new Town();
 			case Traditional:
 				return new Traditional();
+			case BSP:
+				return new BSP();
 			default:
 				throw new IllegalArgumentException();
 			}
