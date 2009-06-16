@@ -23,23 +23,22 @@ public class BSP implements Gen
 	public void generate(World world, long seed)
 	{
 		dice.setSeed(seed);
+		Color[] colors =
+		{Color.white, Color.green, Color.yellow, Color.blue, Color.gray,
+		    Color.orange, Color.red, Color.darkGray, Color.lightGray,
+		    Color.magenta, Color.pink};
 		for(int x = 0; x < world.width; x++)
 			for(int y = 0; y < world.height; y++)
 				world.tile(x, y).setTile('.', Color.white, true);
-		Node bsp = new Node(world, 3);
+		Node bsp = new Node(world, 5);
 		Collection<Node> leaves = bsp.getLeaves();
+		int color = 0;
 		for(Node node : leaves)
 		{
 			for(int x = node.x1; x <= node.x2; x++)
-			{
-				world.tile(x, node.y1).setTile('#', Color.white, false);
-				world.tile(x, node.y2).setTile('#', Color.white, false);
-			}
-			for(int y = node.y1; y <= node.y2; y++)
-			{
-				world.tile(node.x1, y).setTile('#', Color.white, false);
-				world.tile(node.x2, y).setTile('#', Color.white, false);
-			}
+				for(int y = node.y1; y <= node.y2; y++)
+					world.tile(x, y).setTile('#', colors[color], false);
+			color = (color + 1 ) % colors.length;
 		}
 	}
 
