@@ -17,7 +17,6 @@ public class BSP implements Gen
 	protected BSP()
 	{
 		dice = new Dice();
-		// throw new UnsupportedOperationException("BSP not implemented yet");
 	}
 
 	public void generate(World world, long seed)
@@ -30,7 +29,7 @@ public class BSP implements Gen
 		for(int x = 0; x < world.width; x++)
 			for(int y = 0; y < world.height; y++)
 				world.tile(x, y).setTile('.', Color.white, true);
-		Node bsp = new Node(world, 5);
+		Node bsp = new Node(world);
 		Collection<Node> leaves = bsp.getLeaves();
 		int color = 0;
 		for(Node node : leaves)
@@ -38,7 +37,7 @@ public class BSP implements Gen
 			for(int x = node.x1; x <= node.x2; x++)
 				for(int y = node.y1; y <= node.y2; y++)
 					world.tile(x, y).setTile('#', colors[color], false);
-			color = (color + 1 ) % colors.length;
+			color = (color + 1) % colors.length;
 		}
 	}
 
@@ -50,11 +49,9 @@ public class BSP implements Gen
 		private int y2;
 		private Node left;
 		private Node right;
-		private int depth;
 
-		public Node(World world, int depth)
+		public Node(World world)
 		{
-			this.depth = depth;
 			x1 = 0;
 			y1 = 0;
 			x2 = world.width - 1;
@@ -62,9 +59,8 @@ public class BSP implements Gen
 			divide();
 		}
 
-		private Node(Node parent, int div, boolean vert, boolean left, int depth)
+		private Node(Node parent, int div, boolean vert, boolean left)
 		{
-			this.depth = depth;
 			if(vert)
 			{
 				if(left)
@@ -99,18 +95,37 @@ public class BSP implements Gen
 					y2 = parent.y2;
 				}
 			}
-			divide();
 		}
 
 		private void divide()
 		{
-			if(depth > 0)
+			while(divideAux());
+		}
+		
+		private boolean divideAux()
+		{
+			if(!leaf())
 			{
-				boolean vert = dice.nextBoolean();
-				int div = vert ? (x2 - x1) / 2 : (y2 - y1) / 2;
-				left = new Node(this, div, vert, true, depth - 1);
-				right = new Node(this, div, vert, false, depth - 1);
+				boolean divleft = left.divideAux();
+				boolean divRight = right.divideAux();
+				return divleft || divRight;
 			}
+			boolean vert = dice.nextBoolean();
+			int min = 6;
+			if(divTooSmall(vert, min))
+				vert = !vert;
+			if(divTooSmall(vert, min))
+				return false;
+			int div = dice.nextInt(min, (vert ? x2 - x1 : y2 - y1) - min);
+			left = new Node(this, div, vert, true);
+			right = new Node(this, div, vert, false);
+			return true;
+		}
+
+		private boolean divTooSmall(boolean vert, int min)
+		{
+			min *= 2;
+			return vert ? (x2 - x1) < min : (y2 - y1) < min;
 		}
 
 		public Collection<Node> getLeaves()

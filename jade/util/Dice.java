@@ -28,8 +28,8 @@ public class Dice extends Random implements Serializable
 	}
 
 	/**
-	 * Returns a random integer between the min and max inclusive. Actually, it
-	 * doesnt matter the order of the two parameters.
+	 * Returns a random integer between the min and max inclusive. In order for
+	 * this method to work, min must be less than max.
 	 * 
 	 * @param min the minimum result
 	 * @param max the maximum result
@@ -37,8 +37,9 @@ public class Dice extends Random implements Serializable
 	 */
 	public int nextInt(int min, int max)
 	{
-		int range = Math.abs(max - min);
-		return nextInt(range + 1) + Math.min(min, max);
+		assert(min <= max);
+		int range = max - min;
+		return nextInt(range + 1) + min;
 	}
 
 	/**
