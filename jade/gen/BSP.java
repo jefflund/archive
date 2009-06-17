@@ -13,6 +13,7 @@ import java.util.HashSet;
 public class BSP implements Gen
 {
 	private Dice dice;
+	private static final int MIN_SIZE = 3;
 
 	protected BSP()
 	{
@@ -49,6 +50,8 @@ public class BSP implements Gen
 		private int y2;
 		private Node left;
 		private Node right;
+		private Node parent;
+		private boolean connected;
 
 		public Node(World world)
 		{
@@ -61,6 +64,8 @@ public class BSP implements Gen
 
 		private Node(Node parent, int div, boolean vert, boolean left)
 		{
+			this.parent = parent;
+			connected = false;
 			if(vert)
 			{
 				if(left)
@@ -111,7 +116,7 @@ public class BSP implements Gen
 				return divleft || divRight;
 			}
 			boolean vert = dice.nextBoolean();
-			int min = 6;
+			int min = MIN_SIZE + 3;
 			if(divTooSmall(vert, min))
 				vert = !vert;
 			if(divTooSmall(vert, min))
