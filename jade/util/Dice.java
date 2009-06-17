@@ -1,5 +1,6 @@
 package jade.util;
 
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.Random;
 
@@ -59,5 +60,28 @@ public class Dice extends Random implements Serializable
 		for(int i = 0; i < x; i++)
 			sum += nextInt(1, y);
 		return sum;
+	}
+	
+	public Color nextColor()
+	{
+		int r = nextInt(256);
+		int g = nextInt(256);
+		int b = nextInt(256);
+		return new Color(r, g, b);
+	}
+	
+	public char nextChar()
+	{
+		return (char)nextInt();
+	}
+	
+	public char nextChar(char ch)
+	{
+		return (char)nextInt(ch);
+	}
+	
+	public char nextChar(char min, char max)
+	{
+		return (char)nextInt(min, max);
 	}
 }

@@ -5,11 +5,9 @@ import jade.core.World;
 import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
 import jade.util.Coord;
-
+import jade.util.Dice;
 import java.awt.Color;
 import java.io.Serializable;
-import java.util.Random;
-
 import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
@@ -26,7 +24,7 @@ public class Level extends World implements Serializable
 	public Level(int depth)
 	{
 		super(80, 23);
-		Random random = new Random(depth);
+		Dice random = new Dice(depth);
 		int algorithm = depth == 0 ? GenFactory.Town : GenFactory.Traditional;
 		GenFactory.get(algorithm).generate(this, depth);
 		upStairs = depth > 0 ? getOpenTile(random) : null;

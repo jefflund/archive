@@ -6,10 +6,9 @@ import jade.core.World;
 import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
 import jade.util.Coord;
+import jade.util.Dice;
 import jade.util.Tools;
-
 import java.awt.Color;
-import java.util.Random;
 
 public class Demo
 {
@@ -72,7 +71,7 @@ public class Demo
 		public DemoWorld(DemoPlayer player)
 		{
 			super(80, 23);
-			Random random = new Random();
+			Dice random = new Dice();
 			GenFactory.get(GenFactory.Cellular).generate(this, random.nextLong());
 			addActor(player, random);
 			this.player = player;

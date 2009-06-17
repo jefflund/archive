@@ -2,8 +2,8 @@ package rl;
 
 import jade.core.Console;
 import jade.util.Coord;
+import jade.util.Dice;
 import java.awt.Color;
-import java.util.Random;
 import rl.creature.Player;
 import rl.world.Dungeon;
 import rl.world.Level;
@@ -39,6 +39,6 @@ public class Rogue
 		console = Console.getFramedConsole("Jade");
 		dungeon = new Dungeon();
 		player = new Player(console, dungeon);
-		dungeon.getLevel().addActor(player, new Random(0));
+		dungeon.getLevel().addActor(player, new Dice(0));
 	}
 }
