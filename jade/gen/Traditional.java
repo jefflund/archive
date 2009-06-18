@@ -4,6 +4,8 @@ import jade.core.World;
 import jade.util.Coord;
 import jade.util.Dice;
 import java.awt.Color;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This implementation of Gen uses a binary space partition tree to generate a
@@ -27,6 +29,7 @@ public class Traditional implements Gen
 		head.divide();
 		head.makeRooms(world);
 		head.connect(world);
+		head.removeUnconnected(world);
 	}
 
 	private void floodWalls(World world)
@@ -71,16 +74,14 @@ public class Traditional implements Gen
 					y1 = parent.y1;
 					x2 = parent.x1 + div;
 					y2 = parent.y2;
-				}
-				else
+				} else
 				{
 					x1 = parent.x1 + div + 1;
 					y1 = parent.y1;
 					x2 = parent.x2;
 					y2 = parent.y2;
 				}
-			}
-			else
+			} else
 			{
 				if(left)
 				{
@@ -88,8 +89,7 @@ public class Traditional implements Gen
 					y1 = parent.y1;
 					x2 = parent.x2;
 					y2 = parent.y1 + div;
-				}
-				else
+				} else
 				{
 					x1 = parent.x1;
 					y1 = parent.y1 + div + 1;
@@ -100,6 +100,28 @@ public class Traditional implements Gen
 			connected = false;
 		}
 
+		public void removeUnconnected(World world)
+		{
+			if(leaf())
+			{
+				boolean connected = false;
+				for(int x = rx1; x <= rx2; x++)
+					if(world.passable(x, ry1 - 1) || world.passable(x, ry2 + 1))
+						connected = true;
+				for(int y = ry1; y <= ry2; y++)
+					if(world.passable(rx1 - 1, y) || world.passable(rx2 + 1, y))
+						connected = true;
+				if(!connected)
+					for(int x = rx1; x <= rx2; x++)
+						for(int y = ry1; y <= ry2; y++)
+							world.tile(x, y).setTile('#', Color.white, false);
+			}
+			else
+			{
+				left.removeUnconnected(world);
+				right.removeUnconnected(world);
+			}
+		}
 		public void makeRooms(World world)
 		{
 			if(leaf())
@@ -111,8 +133,7 @@ public class Traditional implements Gen
 				for(int x = rx1; x <= rx2; x++)
 					for(int y = ry1; y <= ry2; y++)
 						world.tile(x, y).setTile('.', Color.white, true);
-			}
-			else
+			} else
 			{
 				left.makeRooms(world);
 				right.makeRooms(world);
@@ -121,8 +142,17 @@ public class Traditional implements Gen
 
 		public void divide()
 		{
-			while(divideAux())
-				;
+			while(divideAux());
+		}
+		
+		public void connect(World world)
+		{
+			if(!leaf())
+			{
+				left.connect(world);
+				right.connect(world);
+			}
+			connectToSibling(world);
 		}
 
 		private boolean divideAux()
@@ -156,16 +186,6 @@ public class Traditional implements Gen
 			return left == null && right == null;
 		}
 
-		public void connect(World world)
-		{
-			if(!leaf())
-			{
-				left.connect(world);
-				right.connect(world);
-			}
-			connectToSibling(world);
-		}
-
 		private void connectToSibling(World world)
 		{
 			if(connected)
@@ -173,17 +193,35 @@ public class Traditional implements Gen
 			BSP sibling = this == parent.left ? parent.right : parent.left;
 			Coord start = world.getOpenTile(dice, x1, y1, x2, y2);
 			Coord end = world.getOpenTile(dice, sibling.x1, sibling.y1, sibling.x2,
-			    sibling.y2);
-			Color newColor = dice.nextColor();
-			char newChar = dice.nextChar('a', 'z');
-			world.tile(start).setTile(newChar, newColor, true);
-			world.tile(end).setTile(newChar, newColor, true);
-			for(int x = start.x(); x != end.x(); x += start.x() < end.x() ? 1 : -1)
-				world.tile(x, start.y()).setTile(newChar, newColor, true);
-			for(int y = start.y(); y != end.y(); y += start.y() < end.y() ? 1 : -1)
-				world.tile(end.x(), y).setTile(newChar, newColor, true);
+					sibling.y2);
+			Coord curr = new Coord(start);
+			List<Coord> corridor = new LinkedList<Coord>();
+			while(!curr.equals(end))
+			{
+				corridor.add(new Coord(curr));
+				boolean digging = !world.passable(curr);
+				if(curr.x() == end.x())
+					curr.translate(0, curr.y() < end.y() ? 1 : -1);
+				else
+					curr.translate(curr.x() < end.x() ? 1 : -1, 0);
+				if(digging && world.passable(curr))
+				{
+					if(sibling.inside(curr))
+						break;
+					else
+						corridor.clear();
+				}
+			}
+			for(Coord coord : corridor)
+				world.tile(coord).setTile('.', Color.white, true);
 			connected = true;
 			sibling.connected = true;
+		}
+
+		private boolean inside(Coord coord)
+		{
+			return coord.x() < x2 && coord.x() > x1 && coord.y() < y2
+					&& coord.y() > y1;
 		}
 	}
 }

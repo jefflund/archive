@@ -62,7 +62,6 @@ public class Console extends JPanel implements Serializable
 
 	/**
 	 * Returns a new default console which has been placed within a JFrame.
-	 * 
 	 * @param frameTitle the title of the JFrame
 	 * @return a new instance of Console
 	 */
@@ -76,7 +75,6 @@ public class Console extends JPanel implements Serializable
 	/**
 	 * Returns a new console of the specifed size which has been placed within a
 	 * JFrame.
-	 * 
 	 * @param frameTitle the title of the JFrame
 	 * @param tileSize the size of the console tiles. The default is 12.
 	 * @param width the number of console columns. The default is 80.
@@ -84,7 +82,7 @@ public class Console extends JPanel implements Serializable
 	 * @return a new instance of Console
 	 */
 	public static Console getFramedConsole(String frameTitle, int tileSize,
-	    int width, int height)
+			int width, int height)
 	{
 		Console console = new Console(tileSize, width, height);
 		frameConsole(console, frameTitle);
@@ -102,7 +100,6 @@ public class Console extends JPanel implements Serializable
 
 	/**
 	 * Places a specified character in the buffer at the given location.
-	 * 
 	 * @param coord the location of the character
 	 * @param ch the character to be buffered
 	 */
@@ -113,7 +110,6 @@ public class Console extends JPanel implements Serializable
 
 	/**
 	 * Places a specified character in the buffer at the given location.
-	 * 
 	 * @param x the x-coordinate of the character
 	 * @param y the y-coordinate of the character
 	 * @param ch the character to be buffered
@@ -125,7 +121,6 @@ public class Console extends JPanel implements Serializable
 
 	/**
 	 * Places a specified character in the buffer at the given location.
-	 * 
 	 * @param x the x-coordinate of the character
 	 * @param y the y-coordinate of the character
 	 * @param ch the character to be buffered
@@ -138,7 +133,6 @@ public class Console extends JPanel implements Serializable
 
 	/**
 	 * Places a specified character in the buffer at the given location.
-	 * 
 	 * @param coord the location of the character
 	 * @param ch the character to be buffered
 	 * @param color the color of the character to be buffered
@@ -151,7 +145,6 @@ public class Console extends JPanel implements Serializable
 	/**
 	 * Places a string in the buffer at the given location. This method does not
 	 * wrap the text.
-	 * 
 	 * @param x the x-coordinate of the string
 	 * @param y the y-coordinate of the string
 	 * @param str the string to be buffered
@@ -166,7 +159,6 @@ public class Console extends JPanel implements Serializable
 	/**
 	 * Places a string in the buffer at the given location. This method does not
 	 * wrap the text.
-	 * 
 	 * @param coord the location of the string
 	 * @param str the string to be buffered
 	 * @param color the color of the string
@@ -178,7 +170,6 @@ public class Console extends JPanel implements Serializable
 
 	/**
 	 * Returns the character at the specified location.
-	 * 
 	 * @param x the x-coordinate to be checked
 	 * @param y the y-coordinate to be checked
 	 * @return the character at the specified location.
@@ -190,7 +181,6 @@ public class Console extends JPanel implements Serializable
 
 	/**
 	 * Returns the character at the specified location.
-	 * 
 	 * @param coord the location to be checked
 	 * @return the character at the specified location.
 	 */
@@ -228,7 +218,6 @@ public class Console extends JPanel implements Serializable
 	/**
 	 * Returns the character of the next key press. This function will block until
 	 * a key is pressed, simular to getch in c curses.
-	 * 
 	 * @return the character of the next key press.
 	 */
 	@SuppressWarnings("deprecation")
@@ -249,12 +238,13 @@ public class Console extends JPanel implements Serializable
 			{
 				page.setColor(buffer.get(coord).color());
 				page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
-				    (coord.y() + 1) * tileHeight);
+						(coord.y() + 1) * tileHeight);
 			}
-		}
+		} 
 		catch(ConcurrentModificationException dontWorry)
-		{
-		}
+		{} 
+		catch(NullPointerException dontWorry)
+		{}
 	}
 
 	/**
