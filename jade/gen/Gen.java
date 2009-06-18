@@ -38,7 +38,6 @@ public interface Gen
 		 * Creates a set of rectangular rooms connected by corridors.
 		 */
 		public static final int Traditional = 3;
-		public static final int BSP = 4;
 		
 		private static Map<Integer, Gen> singletons = new HashMap<Integer, Gen>();
 
@@ -70,8 +69,6 @@ public interface Gen
 				return new Town();
 			case Traditional:
 				return new Traditional();
-			case BSP:
-				return new BSP();
 			default:
 				throw new IllegalArgumentException();
 			}
