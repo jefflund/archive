@@ -29,7 +29,6 @@ public class Traditional implements Gen
 		head.divide();
 		head.makeRooms(world);
 		head.connect(world);
-		head.removeUnconnected(world);
 	}
 
 	private void floodWalls(World world)
@@ -53,77 +52,27 @@ public class Traditional implements Gen
 		private BSP right;
 		private BSP parent;
 		private boolean connected;
+		private boolean readyConnect;
 
 		public BSP(World world)
 		{
+			connected = true;
+			readyConnect = true;
 			x1 = 0;
 			y1 = 0;
 			x2 = world.width - 1;
 			y2 = world.height - 1;
-			connected = true;
 		}
 
 		private BSP(BSP parent, int div, boolean vert, boolean left)
 		{
 			this.parent = parent;
-			if(vert)
-			{
-				if(left)
-				{
-					x1 = parent.x1;
-					y1 = parent.y1;
-					x2 = parent.x1 + div;
-					y2 = parent.y2;
-				}
-				else
-				{
-					x1 = parent.x1 + div + 1;
-					y1 = parent.y1;
-					x2 = parent.x2;
-					y2 = parent.y2;
-				}
-			}
-			else
-			{
-				if(left)
-				{
-					x1 = parent.x1;
-					y1 = parent.y1;
-					x2 = parent.x2;
-					y2 = parent.y1 + div;
-				}
-				else
-				{
-					x1 = parent.x1;
-					y1 = parent.y1 + div + 1;
-					x2 = parent.x2;
-					y2 = parent.y2;
-				}
-			}
 			connected = false;
-		}
-
-		public void removeUnconnected(World world)
-		{
-			if(leaf())
-			{
-				boolean connected = false;
-				for(int x = rx1; x <= rx2; x++)
-					if(world.passable(x, ry1 - 1) || world.passable(x, ry2 + 1))
-						connected = true;
-				for(int y = ry1; y <= ry2; y++)
-					if(world.passable(rx1 - 1, y) || world.passable(rx2 + 1, y))
-						connected = true;
-				if(!connected)
-					for(int x = rx1; x <= rx2; x++)
-						for(int y = ry1; y <= ry2; y++)
-							world.tile(x, y).setTile('#', Color.white, false);
-			}
-			else
-			{
-				left.removeUnconnected(world);
-				right.removeUnconnected(world);
-			}
+			readyConnect = true;
+			x1 = parent.x1 + (vert && !left ? div + 1 : 0);
+			y1 = parent.y1 + (!vert && !left? div + 1 : 0);
+			x2 = vert && left ? parent.x1 + div : parent.x2;
+			y2 = !vert && left ? parent.y1 + div : parent.y2;
 		}
 
 		public void makeRooms(World world)
@@ -147,8 +96,7 @@ public class Traditional implements Gen
 
 		public void divide()
 		{
-			while(divideAux())
-				;
+			while(divideAux());
 		}
 
 		public void connect(World world)
@@ -158,6 +106,7 @@ public class Traditional implements Gen
 				left.connect(world);
 				right.connect(world);
 			}
+			readyConnect = true;
 			connectToSibling(world);
 		}
 
@@ -178,6 +127,7 @@ public class Traditional implements Gen
 			int div = dice.nextInt(min, (vert ? x2 - x1 : y2 - y1) - min);
 			left = new BSP(this, div, vert, true);
 			right = new BSP(this, div, vert, false);
+			readyConnect = false;
 			return true;
 		}
 
@@ -197,11 +147,13 @@ public class Traditional implements Gen
 			if(connected)
 				return;
 			BSP sibling = this == parent.left ? parent.right : parent.left;
+			if(!sibling.readyConnect)
+				return;
 			Coord start = world.getOpenTile(dice, x1, y1, x2, y2);
 			Coord end = world.getOpenTile(dice, sibling.x1, sibling.y1, sibling.x2,
-			    sibling.y2);
-			Coord curr = new Coord(start);
+					sibling.y2);
 			List<Coord> corridor = new LinkedList<Coord>();
+			Coord curr = new Coord(start);			
 			while(!curr.equals(end))
 			{
 				corridor.add(new Coord(curr));
@@ -226,7 +178,7 @@ public class Traditional implements Gen
 		private boolean inside(Coord coord)
 		{
 			return coord.x() < x2 && coord.x() > x1 && coord.y() < y2
-			    && coord.y() > y1;
+					&& coord.y() > y1;
 		}
 	}
 }
