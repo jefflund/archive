@@ -62,8 +62,8 @@ public class Multimap<K, V> implements Serializable
 	 */
 	public boolean containsValue(Object value)
 	{
-		for (Collection<V> mapping : map.values())
-			if (mapping.contains(value))
+		for(Collection<V> mapping : map.values())
+			if(mapping.contains(value))
 				return true;
 		return false;
 	}
@@ -76,7 +76,7 @@ public class Multimap<K, V> implements Serializable
 	 * contain v; otherwise it returns null.
 	 * @param key the whose values will be returned
 	 * @return a collection with the values the key is mapped to, or null if there
-	 *         is no mapping for the key
+	 * is no mapping for the key
 	 */
 	public Collection<V> get(Object key)
 	{
@@ -92,7 +92,7 @@ public class Multimap<K, V> implements Serializable
 	public void put(K key, V value)
 	{
 		Collection<V> set = map.get(key);
-		if (set == null)
+		if(set == null)
 			set = new HashSet<V>();
 		set.add(value);
 		map.put(key, set);
@@ -115,7 +115,7 @@ public class Multimap<K, V> implements Serializable
 	 * Returns a set of all the keys currently mapped to at least one value in the
 	 * multimap.
 	 * @return a set of all the keys currently mapped to at least one value in the
-	 *         multimap.
+	 * multimap.
 	 */
 	public Set<K> keys()
 	{
@@ -127,12 +127,12 @@ public class Multimap<K, V> implements Serializable
 	 * one key in the multimap. If more than one key both map to the same value,
 	 * then the value will only be included once in the collection.
 	 * @return a collection of all the values currently associated with at least
-	 *         one key
+	 * one key
 	 */
 	public Collection<V> values()
 	{
 		Collection<V> values = new TreeSet<V>();
-		for (Collection<V> mapping : map.values())
+		for(Collection<V> mapping : map.values())
 			values.addAll(mapping);
 		return values;
 	}
@@ -146,7 +146,7 @@ public class Multimap<K, V> implements Serializable
 	public int size()
 	{
 		int size = 0;
-		for (Collection<V> mapping : map.values())
+		for(Collection<V> mapping : map.values())
 			size += mapping.size();
 		return size;
 	}

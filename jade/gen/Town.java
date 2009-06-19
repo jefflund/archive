@@ -1,7 +1,6 @@
 package jade.gen;
 
 import jade.core.World;
-
 import java.awt.Color;
 
 /**
@@ -26,10 +25,10 @@ public class Town extends Wilderness
 				int x1 = dice.nextInt(x + 1, x + MAX_SIZE - MIN_SIZE - 1);
 				int x2 = dice.nextInt(x1 + MIN_SIZE - 1, x + MAX_SIZE - 1);
 				int y1 = dice.nextInt(y + 1, y + MAX_SIZE - MIN_SIZE - 1);
-				int y2 = dice.nextInt(y1 + MIN_SIZE - 1, y + MAX_SIZE - 1);				
+				int y2 = dice.nextInt(y1 + MIN_SIZE - 1, y + MAX_SIZE - 1);
 				for(int i = x1; i <= x2; i++)
 					for(int j = y1; j <= y2; j++)
-					world.tile(i, j).setTile('#', Color.white, false);
+						world.tile(i, j).setTile('#', Color.white, false);
 			}
 	}
 }

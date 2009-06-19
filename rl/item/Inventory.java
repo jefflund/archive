@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import rl.creature.Creature;
 import rl.item.Item.Slot;
 
@@ -14,7 +13,7 @@ public class Inventory implements Serializable
 	private Creature owner;
 	private List<Item> inventory;
 	private Map<Slot, Item> equipment;
-	
+
 	public Inventory(Creature owner)
 	{
 		this.owner = owner;
@@ -26,12 +25,12 @@ public class Inventory implements Serializable
 	{
 		return new LinkedList<Item>(equipment.values());
 	}
-	
+
 	public List<Item> getItems()
 	{
 		return inventory;
 	}
-	
+
 	public void equip(Item item)
 	{
 		if(item == null)

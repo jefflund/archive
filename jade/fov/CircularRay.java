@@ -2,7 +2,6 @@ package jade.fov;
 
 import jade.core.World;
 import jade.util.Coord;
-
 import java.util.Collection;
 import java.util.TreeSet;
 

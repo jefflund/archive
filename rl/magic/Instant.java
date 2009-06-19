@@ -1,7 +1,6 @@
 package rl.magic;
 
 import java.io.Serializable;
-
 import rl.creature.Creature;
 
 public class Instant implements Serializable

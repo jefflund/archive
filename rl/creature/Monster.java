@@ -4,7 +4,6 @@ import jade.util.Coord;
 import jade.util.Dice;
 import java.awt.Color;
 import java.io.Serializable;
-
 import rl.world.Level;
 
 public class Monster extends Creature implements Serializable

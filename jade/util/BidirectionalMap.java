@@ -72,7 +72,7 @@ public class BidirectionalMap<K, V> implements Serializable
 	}
 
 	/**
-	 * Returns the value assciated with they key, or null if there is no mapping. 
+	 * Returns the value assciated with they key, or null if there is no mapping.
 	 * @param key the key to query
 	 * @return the value assciated with they key
 	 */
@@ -81,12 +81,11 @@ public class BidirectionalMap<K, V> implements Serializable
 		Pair pair = keys.get(key);
 		if(pair != null)
 			return pair.value;
-		else
-			return null;
+		return null;
 	}
 
 	/**
-	 * Returns the key assciated with they value, or null if there is no mapping. 
+	 * Returns the key assciated with they value, or null if there is no mapping.
 	 * @param value the value to query
 	 * @return the key assciated with they value
 	 */
@@ -95,8 +94,7 @@ public class BidirectionalMap<K, V> implements Serializable
 		Pair pair = values.get(value);
 		if(pair != null)
 			return pair.key;
-		else
-			return null;
+		return null;
 	}
 
 	/**

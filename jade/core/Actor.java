@@ -2,7 +2,6 @@ package jade.core;
 
 import jade.util.ColoredChar;
 import jade.util.Coord;
-
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.Collection;

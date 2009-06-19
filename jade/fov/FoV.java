@@ -2,7 +2,6 @@ package jade.fov;
 
 import jade.core.World;
 import jade.util.Coord;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +45,6 @@ public interface FoV
 		 * Uses precise permissive field of vision.
 		 */
 		public static final int Permissive = 3;
-		
 		private static final Map<Integer, FoV> singletons = new HashMap<Integer, FoV>();
 
 		/**

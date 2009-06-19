@@ -235,9 +235,12 @@ public abstract class World extends Messenger implements Serializable
 	 * @param random the psuedorandom number generator to be used in finding the
 	 * open tile
 	 * @param x1 the left boundry of the area from which to choose the random tile
-	 * @param y1 the upper boundry of the area from which to choose the random tile
-	 * @param x2 the right boundry of the area from which to choose the random tile
-	 * @param y2 the lower boundry of the area from which to choose the random tile
+	 * @param y1 the upper boundry of the area from which to choose the random
+	 * tile
+	 * @param x2 the right boundry of the area from which to choose the random
+	 * tile
+	 * @param y2 the lower boundry of the area from which to choose the random
+	 * tile
 	 * @return a random open tile on the world
 	 */
 	public Coord getOpenTile(Dice random, int x1, int y1, int x2, int y2)

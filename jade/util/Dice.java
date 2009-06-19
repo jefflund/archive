@@ -38,7 +38,7 @@ public class Dice extends Random implements Serializable
 	 */
 	public int nextInt(int min, int max)
 	{
-		assert(min <= max);
+		assert (min <= max);
 		int range = max - min;
 		return nextInt(range + 1) + min;
 	}
@@ -61,7 +61,7 @@ public class Dice extends Random implements Serializable
 			sum += nextInt(1, y);
 		return sum;
 	}
-	
+
 	/**
 	 * Returns a psuedorandom color with r,g,b values from 0 to 255.
 	 * @return a psuedorandom color with r,g,b values from 0 to 255.
@@ -73,10 +73,10 @@ public class Dice extends Random implements Serializable
 		int b = nextInt(256);
 		return new Color(r, g, b);
 	}
-	
 
 	/**
-	 * Returns a random char between the min and max char on the ascii table (inclusive).
+	 * Returns a random char between the min and max char on the ascii table
+	 * (inclusive).
 	 * @param min the minium ascii value that could be returned
 	 * @param max the maximuc ascii value that could be returned
 	 * @return a random char between the min and max char on the ascii table

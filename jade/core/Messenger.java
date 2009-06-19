@@ -1,7 +1,6 @@
 package jade.core;
 
 import java.io.Serializable;
-
 import jade.util.Tools;
 
 /**
@@ -52,7 +51,6 @@ public class Messenger implements Serializable
 		messages += messenger.getMessages();
 	}
 
-	
 	/**
 	 * Returns and clears this messengers messages.
 	 * @return The messengers messegages.

@@ -63,7 +63,6 @@ public class Demo
 				appendMessage(this + " bumps the wall");
 		}
 	}
-
 	private static class DemoWorld extends World
 	{
 		private DemoPlayer player;

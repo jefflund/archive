@@ -2,7 +2,6 @@ package rl.creature;
 
 import java.awt.Color;
 import java.io.Serializable;
-
 import jade.core.Actor;
 
 public abstract class Creature extends Actor implements Serializable

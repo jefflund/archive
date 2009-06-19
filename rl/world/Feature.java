@@ -3,7 +3,6 @@ package rl.world;
 import jade.core.Actor;
 import java.awt.Color;
 import java.io.Serializable;
-
 import rl.creature.Creature;
 
 public class Feature extends Actor implements Serializable
@@ -12,7 +11,7 @@ public class Feature extends Actor implements Serializable
 	{
 		super(face, color);
 	}
-	
+
 	public void act()
 	{
 		Creature target = world().getActorAt(x(), y(), Creature.class);

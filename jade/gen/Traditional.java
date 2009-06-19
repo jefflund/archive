@@ -74,14 +74,16 @@ public class Traditional implements Gen
 					y1 = parent.y1;
 					x2 = parent.x1 + div;
 					y2 = parent.y2;
-				} else
+				}
+				else
 				{
 					x1 = parent.x1 + div + 1;
 					y1 = parent.y1;
 					x2 = parent.x2;
 					y2 = parent.y2;
 				}
-			} else
+			}
+			else
 			{
 				if(left)
 				{
@@ -89,7 +91,8 @@ public class Traditional implements Gen
 					y1 = parent.y1;
 					x2 = parent.x2;
 					y2 = parent.y1 + div;
-				} else
+				}
+				else
 				{
 					x1 = parent.x1;
 					y1 = parent.y1 + div + 1;
@@ -122,6 +125,7 @@ public class Traditional implements Gen
 				right.removeUnconnected(world);
 			}
 		}
+
 		public void makeRooms(World world)
 		{
 			if(leaf())
@@ -133,7 +137,8 @@ public class Traditional implements Gen
 				for(int x = rx1; x <= rx2; x++)
 					for(int y = ry1; y <= ry2; y++)
 						world.tile(x, y).setTile('.', Color.white, true);
-			} else
+			}
+			else
 			{
 				left.makeRooms(world);
 				right.makeRooms(world);
@@ -142,9 +147,10 @@ public class Traditional implements Gen
 
 		public void divide()
 		{
-			while(divideAux());
+			while(divideAux())
+				;
 		}
-		
+
 		public void connect(World world)
 		{
 			if(!leaf())
@@ -193,7 +199,7 @@ public class Traditional implements Gen
 			BSP sibling = this == parent.left ? parent.right : parent.left;
 			Coord start = world.getOpenTile(dice, x1, y1, x2, y2);
 			Coord end = world.getOpenTile(dice, sibling.x1, sibling.y1, sibling.x2,
-					sibling.y2);
+			    sibling.y2);
 			Coord curr = new Coord(start);
 			List<Coord> corridor = new LinkedList<Coord>();
 			while(!curr.equals(end))
@@ -208,8 +214,7 @@ public class Traditional implements Gen
 				{
 					if(sibling.inside(curr))
 						break;
-					else
-						corridor.clear();
+					corridor.clear();
 				}
 			}
 			for(Coord coord : corridor)
@@ -221,7 +226,7 @@ public class Traditional implements Gen
 		private boolean inside(Coord coord)
 		{
 			return coord.x() < x2 && coord.x() > x1 && coord.y() < y2
-					&& coord.y() > y1;
+			    && coord.y() > y1;
 		}
 	}
 }

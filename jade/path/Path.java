@@ -47,8 +47,8 @@ public interface Path
 		 */
 		public static final int AStar = 0;
 		/**
-		 * Uses Bresenham's Line Drawing to draw a straight line. Suitible for line of
-		 * sight.
+		 * Uses Bresenham's Line Drawing to draw a straight line. Suitible for line
+		 * of sight.
 		 */
 		public static final int Bresenham = 1;
 		private static Map<Integer, Path> singletons = new HashMap<Integer, Path>();

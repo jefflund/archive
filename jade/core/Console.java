@@ -82,7 +82,7 @@ public class Console extends JPanel implements Serializable
 	 * @return a new instance of Console
 	 */
 	public static Console getFramedConsole(String frameTitle, int tileSize,
-			int width, int height)
+	    int width, int height)
 	{
 		Console console = new Console(tileSize, width, height);
 		frameConsole(console, frameTitle);
@@ -238,13 +238,15 @@ public class Console extends JPanel implements Serializable
 			{
 				page.setColor(buffer.get(coord).color());
 				page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
-						(coord.y() + 1) * tileHeight);
+				    (coord.y() + 1) * tileHeight);
 			}
-		} 
+		}
 		catch(ConcurrentModificationException dontWorry)
-		{} 
+		{
+		}
 		catch(NullPointerException dontWorry)
-		{}
+		{
+		}
 	}
 
 	/**

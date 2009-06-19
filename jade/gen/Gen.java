@@ -38,7 +38,6 @@ public interface Gen
 		 * Creates a set of rectangular rooms connected by corridors.
 		 */
 		public static final int Traditional = 3;
-		
 		private static Map<Integer, Gen> singletons = new HashMap<Integer, Gen>();
 
 		/**

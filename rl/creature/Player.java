@@ -4,13 +4,11 @@ import jade.core.Console;
 import jade.fov.FoV.FoVFactory;
 import jade.util.Coord;
 import jade.util.Tools;
-
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import rl.item.Inventory;
 import rl.item.Item;
 import rl.magic.Spell;
@@ -79,7 +77,7 @@ public class Player extends Creature implements Serializable
 				break;
 			case '<':
 				dungeon.ascend();
-				break;				
+				break;
 			default:
 				Coord dir = Tools.keyToDir(key, true, false);
 				if(dir != null)
@@ -121,12 +119,12 @@ public class Player extends Creature implements Serializable
 			return null;
 		return elements.get(index);
 	}
-	
+
 	private Item inventory()
 	{
 		return choose(inventory.getItems(), "Inventory");
 	}
-	
+
 	private Item equipment()
 	{
 		return choose(inventory.getEquiped(), "Equipment");
