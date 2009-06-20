@@ -9,12 +9,13 @@ import java.util.TreeSet;
 /**
  * This implementation of FoV uses raycasting with a square range limit. It is
  * fast and simple. It works well when the screen is always centered on the
- * source of the field of vision.
+ * source of the field of vision. Optionally, the fov can be trimmed to a
+ * circular radius.
  */
 public class Raycast extends Bresenham implements FoV
 {
 	private boolean circular;
-	
+
 	protected Raycast(boolean circular)
 	{
 		this.circular = circular;
@@ -38,16 +39,16 @@ public class Raycast extends Bresenham implements FoV
 			filterCircle(result, x, y, range);
 		return result;
 	}
-	
+
 	private void filterCircle(Collection<Coord> fov, int x, int y, int range)
-  {
+	{
 		Collection<Coord> out = new TreeSet<Coord>();
 		range++;
 		for(Coord coord : fov)
 			if(!inCircle(x, y, coord.x(), coord.y(), range))
 				out.add(coord);
 		fov.removeAll(out);
-  }
+	}
 
 	private boolean inCircle(int x1, int y1, int x2, int y2, int r)
 	{

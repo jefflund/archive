@@ -6,7 +6,8 @@ import java.awt.Color;
 
 /**
  * This implemenatation of Gen generates a simple wilderness. It will be
- * surrounded in walls, with trees in about 1 in 20 tiles.
+ * surrounded in walls, with trees in about 1 in 20 tiles. Optionally, rooms can
+ * be added to the the wilderness.
  */
 public class Wilderness implements Gen
 {
@@ -56,7 +57,7 @@ public class Wilderness implements Gen
 		if(rooms)
 			addRooms(world);
 	}
-	
+
 	private void addRooms(World world)
 	{
 		for(int x = 0; x + MAX_ROOM_SIZE < world.width - 2; x += MAX_ROOM_SIZE)
