@@ -41,10 +41,6 @@ public interface FoV
 		 * Uses recursive shadowcasting
 		 */
 		public static final int Shadowcast = 2;
-		/**
-		 * Uses precise permissive field of vision.
-		 */
-		public static final int Permissive = 3;
 		private static final Map<Integer, FoV> singletons = new HashMap<Integer, FoV>();
 
 		/**
@@ -68,13 +64,11 @@ public interface FoV
 			switch(algorithm)
 			{
 			case SquareRay:
-				return new SquareRay();
+				return new Raycast(false);
 			case CircularRay:
-				return new CircularRay();
+				return new Raycast(true);
 			case Shadowcast:
 				return new Shadowcast();
-			case Permissive:
-				return new Permissive();
 			default:
 				throw new IllegalArgumentException();
 			}
