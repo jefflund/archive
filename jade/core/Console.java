@@ -141,7 +141,20 @@ public class Console extends JPanel implements Serializable
 	{
 		buffChar(coord, new ColoredChar(ch, color));
 	}
-
+	
+	public char echoChar(Coord coord, Color color)
+	{
+		char key = getKey();
+		buffChar(coord, key, color);
+		refreshScreen();
+		return key;
+	}
+	
+	public char echoChar(int x, int y, Color color)
+	{
+		return echoChar(new Coord(x, y), color);
+	}
+	
 	/**
 	 * Places a string in the buffer at the given location. This method does not
 	 * wrap the text.
@@ -166,6 +179,25 @@ public class Console extends JPanel implements Serializable
 	public void buffString(Coord coord, String str, Color color)
 	{
 		buffString(coord.x(), coord.y(), str, color);
+	}
+	
+	public String echoString(int x, int y, Color color, char terminator)
+	{
+		String str = "";
+		char key = getKey();
+		while(key != terminator)
+		{
+			buffChar(x++, y, key, color);
+			refreshScreen();
+			str += key;
+			key = getKey();
+		}
+		return str;
+	}
+	
+	public String echoString(Coord coord, Color color, char terminator)
+	{
+		return echoString(coord.x(), coord.y(), color, terminator);
 	}
 
 	/**
