@@ -61,11 +61,11 @@ public interface Gen
 			switch(algorithm)
 			{
 			case Wilderness:
-				return new Wilderness();
+				return new Wilderness(false);
 			case Cellular:
 				return new Cellular();
 			case Town:
-				return new Town();
+				return new Wilderness(true);
 			case Traditional:
 				return new Traditional();
 			default:

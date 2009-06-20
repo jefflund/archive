@@ -11,11 +11,11 @@ import java.util.TreeSet;
  * fast and simple. It works well when the screen is always centered on the
  * source of the field of vision.
  */
-public class SquareRay extends Bresenham implements FoV
+public class Raycast extends Bresenham implements FoV
 {
 	private boolean circular;
 	
-	protected SquareRay(boolean circular)
+	protected Raycast(boolean circular)
 	{
 		this.circular = circular;
 	}
