@@ -38,43 +38,49 @@ public class Coord implements Comparable<Coord>, Serializable
 	}
 
 	/**
-	 * Moves this coord to the specified coordinate
+	 * Moves this coord to the specified coordinate.
 	 * @param x the new x-coordinate
 	 * @param y the new y-coordinate
+	 * @return this coord after being moved
 	 */
-	public void move(int x, int y)
+	public Coord move(int x, int y)
 	{
 		this.x = x;
 		this.y = y;
+		return this;
 	}
 
 	/**
 	 * Moves the coordinate to the location of the given coordinate
 	 * @param coord the coordinate to move this coord to
+	 * @return this coord after being moved
 	 */
-	public void move(Coord coord)
+	public Coord move(Coord coord)
 	{
-		move(coord.x, coord.y);
+		return move(coord.x, coord.y);
 	}
 
 	/**
 	 * Translates the coord by the specified amount.
 	 * @param dx the change in x
 	 * @param dy the change in y
+	 * @return this Coord after being translated
 	 */
-	public void translate(int dx, int dy)
+	public Coord translate(int dx, int dy)
 	{
 		x += dx;
 		y += dy;
+		return this;
 	}
 
 	/**
 	 * Translates the coord by the specified amount.
 	 * @param coord the change in this coord
+	 * @return this Coord after being translated 
 	 */
-	public void translate(Coord coord)
+	public Coord translate(Coord coord)
 	{
-		translate(coord.x, coord.y);
+		return translate(coord.x, coord.y);
 	}
 
 	/**

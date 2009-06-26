@@ -2,7 +2,6 @@ package jade.fov;
 
 import jade.core.World;
 import jade.util.Coord;
-
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -14,8 +13,7 @@ import java.util.TreeSet;
 public class Shadowcast implements FoV
 {
 	protected Shadowcast()
-	{
-	}
+	{}
 
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{
@@ -32,23 +30,32 @@ public class Shadowcast implements FoV
 	{
 		if(depth > range)
 			return;
-		int x = depth;
-		int y = Math.round(startslope * x);
-		while(slope(x, y) >= endslope)
+		int y = Math.round(startslope * depth);
+		while(slope(depth, y) >= endslope)
 		{
-			Coord curr = getCurr(orig, x, y, octant);
-			Coord prev = getPrev(orig, x, y, octant);
+			Coord curr = getCurr(orig, depth, y, octant);
+			Coord prev = getPrev(orig, depth, y, octant, world);
 			if(world.passable(curr) && !world.passable(prev))
-				startslope = slope(x + .5f, y - .5f);
+				startslope = newStartslope(depth, endslope, y);
 			if(!world.passable(curr) && world.passable(prev))
-				scan(depth + 1, startslope, slope(x - .5f, y + .5f), orig, fov, world, range,
-						octant);
+				scan(depth + 1, startslope, newEndslope(depth, startslope, y), orig,
+						fov, world, range, octant);
 			fov.add(curr);
 			y--;
 		}
 		y++;
-		if(world.passable(getCurr(orig, x, y, octant)))
+		if(world.passable(getCurr(orig, depth, y, octant)))
 			scan(depth + 1, startslope, endslope, orig, fov, world, range, octant);
+	}
+
+	private float newEndslope(int depth, float startslope, int y)
+	{
+		return slope(depth - .5f, y + .5f);
+	}
+
+	private float newStartslope(int depth, float endslope, int y)
+	{
+		return Math.max(slope(depth + .5f, y - .5f), endslope);
 	}
 
 	private float slope(float x, float y)
@@ -77,32 +84,38 @@ public class Shadowcast implements FoV
 		case 7:
 			return new Coord(orig.x() + y, orig.y() - x);
 		case 8:
-			return new Coord(orig.x() - y, orig.y() - x);			
+			return new Coord(orig.x() - y, orig.y() - x);
+		default:
+			throw new IllegalArgumentException("octant must be between 1 and 8");
 		}
-		return null;
 	}
 
-	private Coord getPrev(Coord orig, int x, int y, int octant)
+	private Coord getPrev(Coord orig, int x, int y, int octant, World world)
 	{
+		Coord curr = getCurr(orig, x, y, octant);
+		if(curr.x() == 0 || curr.y() == 0 || curr.x() == world.width - 1
+				|| curr.y() == world.height - 1)
+			return curr;
 		switch(octant)
 		{
 		case 1:
-			return new Coord(orig.x() + x, orig.y() + y + 1);
+			return curr.translate(0, 1);
 		case 2:
-			return new Coord(orig.x() + x, orig.y() - y - 1);
+			return curr.translate(0, -1);
 		case 3:
-			return new Coord(orig.x() + y + 1, orig.y() + x);
+			return curr.translate(1, 0);
 		case 4:
-			return new Coord(orig.x() - y - 1, orig.y() + x);
+			return curr.translate(-1, 0);
 		case 5:
-			return new Coord(orig.x() - x, orig.y() + y + 1);
+			return curr.translate(0, 1);
 		case 6:
-			return new Coord(orig.x() - x, orig.y() - y - 1);
+			return curr.translate(0, -1);
 		case 7:
-			return new Coord(orig.x() + y + 1, orig.y() - x);
+			return curr.translate(1, 0);
 		case 8:
-			return new Coord(orig.x() - y - 1, orig.y() - x);			
+			return curr.translate(-1, 0);
+		default:
+			throw new IllegalArgumentException("octant must be between 1 and 8");
 		}
-		return null;
 	}
 }
