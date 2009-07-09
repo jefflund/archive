@@ -2,6 +2,7 @@ package jade.fov;
 
 import jade.core.World;
 import jade.util.Coord;
+import jade.util.Tools;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -12,8 +13,12 @@ import java.util.TreeSet;
  */
 public class Shadowcast implements FoV
 {
-	protected Shadowcast()
-	{}
+	private final boolean circular;
+	
+	protected Shadowcast(boolean circular)
+	{
+		this.circular = circular;
+	}
 
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{
@@ -22,6 +27,8 @@ public class Shadowcast implements FoV
 		fov.add(orig);
 		for(int octant = 1; octant <= 8; octant++)
 			scan(1, 1f, 0, orig, fov, world, range, octant);
+		if(circular)
+			Tools.filterCircle(fov, x, y, range);	
 		return fov;
 	}
 

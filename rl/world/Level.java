@@ -40,6 +40,7 @@ public class Level extends World implements Serializable
 		addActor(new Feature('^', Color.blue), random);
 	}
 
+	@Override
 	public void addActor(Actor actor, int x, int y)
 	{
 		super.addActor(actor, x, y);
@@ -65,6 +66,7 @@ public class Level extends World implements Serializable
 		return downStairs;
 	}
 
+	@Override
 	public void tick()
 	{
 		player.act();
@@ -79,6 +81,7 @@ public class Level extends World implements Serializable
 		removeExpired();
 	}
 
+	@Override
 	public ColoredChar look(int x, int y)
 	{
 		Creature creature = getActorAt(x, y, Creature.class);

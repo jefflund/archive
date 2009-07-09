@@ -41,6 +41,7 @@ public class ColoredChar implements Serializable
 		return color;
 	}
 
+	@Override
 	public String toString()
 	{
 		return Character.toString(ch);

@@ -40,6 +40,7 @@ public class Demo
 			this.console = console;
 		}
 
+		@Override
 		public void act()
 		{
 			char key = console.getKey();
@@ -55,6 +56,7 @@ public class Demo
 			}
 		}
 
+		@Override
 		public void move(int dx, int dy)
 		{
 			if(world().passable(x() + dx, y() + dy))
@@ -76,6 +78,7 @@ public class Demo
 			this.player = player;
 		}
 
+		@Override
 		public void tick()
 		{
 			player.act();
@@ -83,6 +86,7 @@ public class Demo
 			removeExpired();
 		}
 
+		@Override
 		public ColoredChar look(int x, int y)
 		{
 			DemoPlayer player = getActorAt(x, y, DemoPlayer.class);

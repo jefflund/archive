@@ -24,14 +24,14 @@ public class Traditional implements Gen
 	public void generate(World world, long seed)
 	{
 		dice.setSeed(seed);
-		floodWalls(world);
+		floodWithWall(world);
 		BSP head = new BSP(world);
 		head.divide();
 		head.makeRooms(world);
 		head.connect(world);
 	}
 
-	private void floodWalls(World world)
+	private void floodWithWall(World world)
 	{
 		for(int x = 0; x < world.width; x++)
 			for(int y = 0; y < world.height; y++)

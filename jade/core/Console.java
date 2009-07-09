@@ -32,7 +32,7 @@ public class Console extends JPanel implements Serializable
 	private TreeMap<Coord, ColoredChar> saved;
 
 	/**
-	 * Constructs a new default console with a default size of 80 x 24 tiles;
+	 * Constructs a new default console with a default 80 x 24 size 12 tiles;
 	 */
 	public Console()
 	{
@@ -82,7 +82,7 @@ public class Console extends JPanel implements Serializable
 	 * @return a new instance of Console
 	 */
 	public static Console getFramedConsole(String frameTitle, int tileSize,
-	    int width, int height)
+			int width, int height)
 	{
 		Console console = new Console(tileSize, width, height);
 		frameConsole(console, frameTitle);
@@ -141,7 +141,14 @@ public class Console extends JPanel implements Serializable
 	{
 		buffChar(coord, new ColoredChar(ch, color));
 	}
-	
+
+	/**
+	 * This method blocks for keyboard input, the buffers the character to the
+	 * given location and refreshes the screen.
+	 * @param coord the location to print the key pressed
+	 * @param color the color of the character to print
+	 * @return the key pressed as a char
+	 */
 	public char echoChar(Coord coord, Color color)
 	{
 		char key = getKey();
@@ -149,12 +156,20 @@ public class Console extends JPanel implements Serializable
 		refreshScreen();
 		return key;
 	}
-	
+
+	/**
+	 * This method blocks for keyboard input, the buffers the character to the
+	 * given location and refreshes the screen.
+	 * @param x the x-coordinate to print the key pressed
+	 * @param y the y-coordinate to print the key pressed
+	 * @param color the color of the character to print
+	 * @return the key pressed as a char
+	 */
 	public char echoChar(int x, int y, Color color)
 	{
 		return echoChar(new Coord(x, y), color);
 	}
-	
+
 	/**
 	 * Places a string in the buffer at the given location. This method does not
 	 * wrap the text.
@@ -180,7 +195,17 @@ public class Console extends JPanel implements Serializable
 	{
 		buffString(coord.x(), coord.y(), str, color);
 	}
-	
+
+	/**
+	 * This method is simular to echoChar, only that it repeats until the
+	 * terminator char is pressed. The location that each char is placed is one to
+	 * the right.
+	 * @param x the x-coordinate of the first char to be buffered.
+	 * @param y the y-coordinate of the first char to be buffered.
+	 * @param color the color of the string to be output
+	 * @param terminator the char of the key that ends the string
+	 * @return the string that was entered.
+	 */
 	public String echoString(int x, int y, Color color, char terminator)
 	{
 		String str = "";
@@ -194,7 +219,16 @@ public class Console extends JPanel implements Serializable
 		}
 		return str;
 	}
-	
+
+	/**
+	 * This method is simular to echoChar, only that it repeats until the
+	 * terminator char is pressed. The location that each char is placed is one to
+	 * the right.
+	 * @param coord the coordinate of the first char to be buffered.
+	 * @param color the color of the string to be output
+	 * @param terminator the char of the key that ends the string
+	 * @return the string that was entered.
+	 */
 	public String echoString(Coord coord, Color color, char terminator)
 	{
 		return echoString(coord.x(), coord.y(), color, terminator);
@@ -261,6 +295,7 @@ public class Console extends JPanel implements Serializable
 		return listener.input;
 	}
 
+	@Override
 	public void paintComponent(Graphics page)
 	{
 		try
@@ -270,9 +305,12 @@ public class Console extends JPanel implements Serializable
 			{
 				page.setColor(buffer.get(coord).color());
 				page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
-				    (coord.y() + 1) * tileHeight);
+						(coord.y() + 1) * tileHeight);
 			}
 		}
+		// Near as I can tell, these exceptions get thrown due to concurrency with
+		// the AWT-EventQueue threads. Basically, AWT is still painting when the
+		// buffer is already in use again.
 		catch(ConcurrentModificationException dontWorry)
 		{
 		}
@@ -309,6 +347,7 @@ public class Console extends JPanel implements Serializable
 			ready = false;
 		}
 
+		@Override
 		@SuppressWarnings("deprecation")
 		public void keyPressed(KeyEvent event)
 		{

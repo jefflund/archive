@@ -3,7 +3,9 @@ package jade.util;
 import java.io.Serializable;
 
 /**
- * Represents an integer cartesian coordinate.
+ * Represents an integer cartesian coordinate. The Coord is not immutable, so
+ * care should be taken when assigning Coord reference to another when the copy
+ * constructor should have been used.
  */
 public class Coord implements Comparable<Coord>, Serializable
 {
@@ -76,7 +78,7 @@ public class Coord implements Comparable<Coord>, Serializable
 	/**
 	 * Translates the coord by the specified amount.
 	 * @param coord the change in this coord
-	 * @return this Coord after being translated 
+	 * @return this Coord after being translated
 	 */
 	public Coord translate(Coord coord)
 	{
@@ -113,6 +115,7 @@ public class Coord implements Comparable<Coord>, Serializable
 		return x() == other.x() && y() == other.y();
 	}
 
+	@Override
 	public String toString()
 	{
 		return "(" + x + ", " + y + ")";

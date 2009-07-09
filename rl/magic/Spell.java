@@ -21,6 +21,7 @@ public class Spell implements Serializable
 		    caster.y());
 	}
 
+	@Override
 	public String toString()
 	{
 		return "trap:" + duration;

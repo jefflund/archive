@@ -3,6 +3,7 @@ package jade.fov;
 import jade.core.World;
 import jade.path.Bresenham;
 import jade.util.Coord;
+import jade.util.Tools;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -36,24 +37,7 @@ public class Raycast extends Bresenham implements FoV
 			result.addAll(castray(world, x, y, x - range, dy));
 		}
 		if(circular)
-			filterCircle(result, x, y, range);
+			Tools.filterCircle(result, x, y, range);
 		return result;
-	}
-
-	private void filterCircle(Collection<Coord> fov, int x, int y, int range)
-	{
-		Collection<Coord> out = new TreeSet<Coord>();
-		range++;
-		for(Coord coord : fov)
-			if(!inCircle(x, y, coord.x(), coord.y(), range))
-				out.add(coord);
-		fov.removeAll(out);
-	}
-
-	private boolean inCircle(int x1, int y1, int x2, int y2, int r)
-	{
-		int x = x2 - x1;
-		int y = y2 - y1;
-		return x * x + y * y < r * r;
 	}
 }

@@ -38,9 +38,14 @@ public interface FoV
 		 */
 		public static final int CircularRay = 1;
 		/**
-		 * Uses recursive shadowcasting
+		 * Uses recursive shadowcasting in a square. Useful for player centric
+		 * cameras.
 		 */
-		public static final int Shadowcast = 2;
+		public static final int SquareShadow = 2;
+		/**
+		 * Uses recursive shadowcasting in a circular area.
+		 */
+		public static final int CircularShadow = 3;
 		private static final Map<Integer, FoV> singletons = new HashMap<Integer, FoV>();
 
 		/**
@@ -67,8 +72,10 @@ public interface FoV
 				return new Raycast(false);
 			case CircularRay:
 				return new Raycast(true);
-			case Shadowcast:
-				return new Shadowcast();
+			case SquareShadow:
+				return new Shadowcast(false);
+			case CircularShadow:
+				return new Shadowcast(true);
 			default:
 				throw new IllegalArgumentException();
 			}

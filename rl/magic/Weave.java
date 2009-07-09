@@ -19,6 +19,7 @@ public class Weave extends Actor implements Serializable
 		activated = false;
 	}
 
+	@Override
 	public void act()
 	{
 		Creature target = world().getActorAt(x(), y(), Creature.class);

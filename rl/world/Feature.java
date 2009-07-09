@@ -12,6 +12,7 @@ public class Feature extends Actor implements Serializable
 		super(face, color);
 	}
 
+	@Override
 	public void act()
 	{
 		Creature target = world().getActorAt(x(), y(), Creature.class);

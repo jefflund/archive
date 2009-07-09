@@ -1,5 +1,8 @@
 package jade.util;
 
+import java.util.Collection;
+import java.util.TreeSet;
+
 /**
  * Tools contains lots of methods that are generally useful, but do not fit in
  * any one jade class.
@@ -157,6 +160,41 @@ public final class Tools
 	 */
 	public static int alphaToInt(char ch)
 	{
-		return (int)(ch - 'a');
+		return(ch - 'a');
+	}
+
+	/**
+	 * Removes all Coords in the field that fall out side the circle centered at
+	 * (x,y) with the given radius.
+	 * @param field the Collection<Coord> to be filtered
+	 * @param x the x-coordinate of the center of the circle
+	 * @param y the y-coordinate of the center of the circle
+	 * @param radius the radius of the circle
+	 */
+	public static void filterCircle(Collection<Coord> field, int x, int y,
+			int radius)
+	{
+		Collection<Coord> out = new TreeSet<Coord>();
+		radius++;
+		for(Coord coord : field)
+			if(!inCircle(x, y, coord.x(), coord.y(), radius))
+				out.add(coord);
+		field.removeAll(out);
+	}
+
+	/**
+	 * Returns true if (x,y) is in the circle centered at (cx, cy) with radius r
+	 * @param cx the x-coordinate of the center of the circle
+	 * @param cy the y-coordinate of the center of the circle
+	 * @param x the x-coordinate of the Coord in question
+	 * @param y the y-coordinate of the Coord in question
+	 * @param r the radius of the circle
+	 * @return true if (x,y) is in the cirlce centered at (cx, cy) with radius r
+	 */
+	public static boolean inCircle(int cx, int cy, int x, int y, int r)
+	{
+		int a = x - cx;
+		int b = y - cy;
+		return a * a + b * b < r * r;
 	}
 }

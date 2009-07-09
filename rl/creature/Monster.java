@@ -16,6 +16,7 @@ public class Monster extends Creature implements Serializable
 		dice = new Dice();
 	}
 
+	@Override
 	public void act()
 	{
 		if(player().getFoV().contains(new Coord(x(), y())))

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Random;
 
 /**
- * Dice basically extends Random and adds two methods. Eventually, I may
+ * Dice basically extends Random and adds a few methods. Eventually, I may
  * reimplement Random as a Mersenne Twister.
  */
 public class Dice extends Random implements Serializable

@@ -98,7 +98,7 @@ public abstract class World extends Messenger implements Serializable
 	 * @param <T> extends Actor. Is the return type.
 	 * @param x the x-coordinate to search at
 	 * @param y the y-coordinate to search at
-	 * @param cls determins T
+	 * @param cls determines T
 	 * @return one actor of the specified class from the given location, or null
 	 * if none is found.
 	 */
@@ -117,7 +117,7 @@ public abstract class World extends Messenger implements Serializable
 	 * @param <T> extends Actor. Collection<T> will be the return type.
 	 * @param x the x-coordinate to search at
 	 * @param y the y-coordinate to search at
-	 * @param cls determins T
+	 * @param cls determines T
 	 * @return a collection with all the actors of the specified class at the
 	 * given location
 	 */

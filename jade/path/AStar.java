@@ -108,6 +108,15 @@ public class AStar implements Path
 		return min;
 	}
 
+	/**
+	 * This method is the heuristic estimate used to optimize A*. In other words,
+	 * it is the likley hood that a square will be on the shortest path between
+	 * two nodes. By default, it just calculates the distance from the c1 to c2,
+	 * but could be overridden to factor in other cost in node traversal.
+	 * @param c1 the first node in question
+ 	 * @param c2 the second node in question
+	 * @return the heuristic estimate of the cost to travel between c1 and c2
+	 */
 	protected double hEstimate(Coord c1, Coord c2)
 	{
 		int a = c1.x() - c2.x();

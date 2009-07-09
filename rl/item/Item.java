@@ -23,6 +23,7 @@ public class Item extends Actor implements Serializable
 		this.enchant = enchant;
 	}
 
+	@Override
 	public void act()
 	{
 		if(enchant != null && held())

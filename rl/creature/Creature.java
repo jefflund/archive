@@ -11,6 +11,7 @@ public abstract class Creature extends Actor implements Serializable
 		super(face, color);
 	}
 
+	@Override
 	public void move(int dx, int dy)
 	{
 		int x = x() + dx;

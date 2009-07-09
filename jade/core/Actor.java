@@ -31,14 +31,26 @@ public abstract class Actor extends Messenger implements Serializable
 	 */
 	public Actor(char face, Color color)
 	{
-		this.face = new ColoredChar(face, color);
+		this(new ColoredChar(face, color));
+	}
+
+	/**
+	 * Constructs an actor with the given appearance.
+	 * 
+	 * @param face the actor's ascii representation
+	 */
+	public Actor(ColoredChar face)
+	{
+		this.face = face;
 		pos = new Coord();
 		holds = new HashSet<Actor>();
 		expired = false;
 	}
 
 	/**
-	 * Specifies the actors behavior.
+	 * Specifies the actors behavior. This method is intended to be called by the
+	 * world's tick method call the act method on all actors who should have a
+	 * turn.
 	 */
 	public abstract void act();
 
@@ -85,7 +97,7 @@ public abstract class Actor extends Messenger implements Serializable
 
 	/**
 	 * Returns the y-coordinate of the actor. The actor must belong to a world. If
-	 * it is attached to another actor, this will be the x-coordinate of the
+	 * it is attached to another actor, this will be the y-coordinate of the
 	 * actor's holder.
 	 * 
 	 * @return the y-coordinate of the actor
@@ -97,13 +109,15 @@ public abstract class Actor extends Messenger implements Serializable
 	}
 
 	/**
-	 * Returns a collection of the actors this actor holds.
+	 * Returns a collection of the actors this actor holds. The collection
+	 * returned is not the actual backing collection, so any changes made to this
+	 * collection will not be reflected in the actor.
 	 * 
 	 * @return a collection of the actors this actor holds.
 	 */
 	public Collection<Actor> holds()
 	{
-		return holds;
+		return new HashSet<Actor>(holds);
 	}
 
 	/**
@@ -235,6 +249,7 @@ public abstract class Actor extends Messenger implements Serializable
 	/**
 	 * Returns the character representation of this actor.
 	 */
+	@Override
 	public String toString()
 	{
 		return face.toString();

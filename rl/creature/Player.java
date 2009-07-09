@@ -32,6 +32,7 @@ public class Player extends Creature implements Serializable
 		spellbook.add(new Spell(this, 15));
 	}
 
+	@Override
 	public void act()
 	{
 		char key = '\0';
@@ -92,7 +93,7 @@ public class Player extends Creature implements Serializable
 
 	public void calcFoV()
 	{
-		fov = FoVFactory.get(FoVFactory.Shadowcast).calcFoV(world(), x(), y(), 5);
+		fov = FoVFactory.get(FoVFactory.SquareShadow).calcFoV(world(), x(), y(), 5);
 	}
 
 	public Collection<Coord> getFoV()
