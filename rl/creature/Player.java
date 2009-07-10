@@ -3,6 +3,7 @@ package rl.creature;
 import jade.core.Console;
 import jade.fov.FoV.FoVFactory;
 import jade.util.Coord;
+import jade.util.Dice;
 import jade.util.Tools;
 import java.awt.Color;
 import java.io.Serializable;
@@ -21,15 +22,18 @@ public class Player extends Creature implements Serializable
 	private Collection<Coord> fov;
 	private Inventory inventory;
 	private Dungeon dungeon;
+	private static final float REGEN = .05f;
+	private Dice dice;
 
 	public Player(Console console, Dungeon dungeon)
 	{
-		super('@', Color.white);
+		super('@', Color.white, 20);
 		this.console = console;
 		this.dungeon = dungeon;
 		inventory = new Inventory(this);
 		spellbook = new LinkedList<Spell>();
 		spellbook.add(new Spell(this, 15));
+		 dice = new Dice();
 	}
 
 	@Override
@@ -88,12 +92,14 @@ public class Player extends Creature implements Serializable
 				break;
 			}
 		}
+		if(dice.nextFloat() < REGEN)
+			heal(1);
 		calcFoV();
 	}
 
 	public void calcFoV()
 	{
-		fov = FoVFactory.get(FoVFactory.SquareShadow).calcFoV(world(), x(), y(), 5);
+		fov = FoVFactory.get(FoVFactory.CircularShadow).calcFoV(world(), x(), y(), 4);
 	}
 
 	public Collection<Coord> getFoV()
