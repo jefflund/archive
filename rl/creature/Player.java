@@ -27,12 +27,12 @@ public class Player extends Creature implements Serializable
 
 	public Player(Console console, Dungeon dungeon)
 	{
-		super('@', Color.white, 20);
+		super('@', Color.white, 20, 10);
 		this.console = console;
 		this.dungeon = dungeon;
 		inventory = new Inventory(this);
 		spellbook = new LinkedList<Spell>();
-		spellbook.add(new Spell(this, 15));
+		spellbook.add(new Spell(this, 15, 1));
 		 dice = new Dice();
 	}
 
@@ -94,6 +94,8 @@ public class Player extends Creature implements Serializable
 		}
 		if(dice.nextFloat() < REGEN)
 			heal(1);
+		if(dice.nextFloat() < REGEN)
+			mpRestore(1);		
 		calcFoV();
 	}
 
@@ -148,8 +150,6 @@ public class Player extends Creature implements Serializable
 		if(spell == null)
 			appendMessage("Invalid selection");
 		else
-		{
 			spell.cast();
-		}
 	}
 }

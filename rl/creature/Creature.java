@@ -7,11 +7,13 @@ import jade.core.Actor;
 public abstract class Creature extends Actor implements Serializable
 {
 	protected Stat hp;
+	protected Stat mp;
 	
-	public Creature(char face, Color color, int hp)
+	public Creature(char face, Color color, int hp, int mp)
 	{
 		super(face, color);
 		this.hp = new Stat(hp);
+		this.mp = new Stat(mp);
 	}
 
 	@Override
@@ -45,6 +47,27 @@ public abstract class Creature extends Actor implements Serializable
 	public void heal(int cure)
 	{
 		hp.value = Math.min(hp.value + 1, hp.base);
+	}
+	
+	public int hp()
+	{
+		return hp.value;
+	}
+	
+	public void mpFlow(int flow)
+	{
+		mp.value += flow;
+	}
+	
+	public void mpRestore(int restore)
+	{
+		if(mp.value < mp.base)
+			mp.value += restore;
+	}
+	
+	public int mp()
+	{
+		return mp.value;
 	}
 	
 	protected class Stat

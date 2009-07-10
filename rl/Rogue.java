@@ -26,7 +26,9 @@ public class Rogue
 					console.buffChar(x, y, level.look(x, y).ch(), Color.gray);
 			for(Coord coord : level.player().getFoV())
 				console.buffChar(coord, level.look(coord));
-			console.buffString(0, level.height, level.getMessages(), Color.white);
+			console.buffString(0, level.height, "hp:" + level.player().hp() +
+					"\tmp:" + level.player().mp(), Color.white);
+			console.buffString(0, level.height + 1, level.getMessages(), Color.white);
 			console.refreshScreen();
 			level.tick();
 		}
