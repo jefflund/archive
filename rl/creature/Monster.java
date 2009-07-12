@@ -12,7 +12,7 @@ public class Monster extends Creature implements Serializable
 
 	public Monster(char face, Color color)
 	{
-		super(face, color, 1, 0);
+		super(face, color, 1, 0, 10);
 		dice = new Dice();
 	}
 

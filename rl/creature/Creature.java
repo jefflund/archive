@@ -8,12 +8,14 @@ public abstract class Creature extends Actor implements Serializable
 {
 	protected Stat hp;
 	protected Stat mp;
+	protected Stat str;
 	
-	public Creature(char face, Color color, int hp, int mp)
+	public Creature(char face, Color color, int hp, int mp, int str)
 	{
 		super(face, color);
 		this.hp = new Stat(hp);
 		this.mp = new Stat(mp);
+		this.str = new Stat(str);
 	}
 
 	@Override
@@ -30,7 +32,7 @@ public abstract class Creature extends Actor implements Serializable
 
 	private void attack(Creature bump)
 	{
-		bump.hurt(1);
+		bump.hurt(str.value);
 		if(bump.isExpired())
 			appendMessage(this + " slays " + bump);
 		else

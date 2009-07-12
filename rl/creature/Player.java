@@ -27,7 +27,7 @@ public class Player extends Creature implements Serializable
 
 	public Player(Console console, Dungeon dungeon)
 	{
-		super('@', Color.white, 20, 10);
+		super('@', Color.white, 20, 10, 1);
 		this.console = console;
 		this.dungeon = dungeon;
 		inventory = new Inventory(this);
