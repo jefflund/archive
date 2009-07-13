@@ -10,14 +10,17 @@ public abstract class Creature extends Actor implements Serializable
 	protected Stat mp;
 	protected Stat atk;
 	protected Stat rfire;
+	protected Stat relec;
 
-	public Creature(char face, Color color, int hp, int mp, int str, int rfire)
+	public Creature(char face, Color color, int hp, int mp, int str, int rfire,
+			int relec)
 	{
 		super(face, color);
 		this.hp = new Stat(hp);
 		this.mp = new Stat(mp);
 		this.atk = new Stat(str);
 		this.rfire = new Stat(rfire);
+		this.relec = new Stat(relec);
 	}
 
 	@Override
@@ -73,15 +76,25 @@ public abstract class Creature extends Actor implements Serializable
 	{
 		return mp.value;
 	}
-	
+
 	public int rfire()
 	{
 		return rfire.value;
 	}
-	
+
 	public void rfireBuff(int buff)
 	{
 		rfire.value += buff;
+	}
+	
+	public int relec()
+	{
+		return relec.value;
+	}
+	
+	public void relecBuff(int buff)
+	{
+		relec.value += buff;
 	}
 
 	protected class Stat

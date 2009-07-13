@@ -1,5 +1,7 @@
 package rl.magic;
 
+import jade.core.World;
+import java.awt.Color;
 import java.io.Serializable;
 import rl.creature.Creature;
 
@@ -7,7 +9,19 @@ public class Instant implements Serializable
 {
 	public enum Effect
 	{
-		FIRE
+		FIRE(Color.red), ELEC(Color.yellow), STONEFALL(Color.gray);
+		
+		private Color color;
+		
+		private Effect(Color color)
+		{
+			this.color = color;
+		}
+		
+		public Color color()
+		{
+			return color;
+		}
 	};
 
 	private Effect effect;
@@ -19,18 +33,50 @@ public class Instant implements Serializable
 		this.magnitude = magnitude;
 	}
 
-	public void doIt(Creature target)
+	public void doIt(int x, int y, World world)
 	{
+		Creature target = world.getActorAt(x, y, Creature.class);
 		switch(effect)
 		{
 		case FIRE:
 			fire(target);
 			break;
+		case ELEC:
+			elec(target);
+			break;
+		case STONEFALL:
+			stonefall(x, y, world);
+			break;
 		}
+	}
+	
+	private void stonefall(int x, int y, World world)
+	{
+		if(!world.passable(x, y))
+			world.tile(x, y).setTile('.', Color.gray, true);
+	}
+
+	private void elec(Creature target)
+	{
+		if(target == null)
+			return;
+		int damage = magnitude - target.relec();
+		if(damage > 0)
+		{
+			target.hpHurt(damage);
+			if(target.hp() < 0)
+				target.appendMessage(target + " is fried");
+			else
+				target.appendMessage(target + " is shocked");
+		}
+		else
+				target.appendMessage(target + " resist shock");
 	}
 
 	private void fire(Creature target)
 	{
+		if(target == null)
+			return;
 		int damage = magnitude - target.rfire();
 		if(damage > 0)
 		{

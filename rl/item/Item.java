@@ -3,7 +3,6 @@ package rl.item;
 import jade.core.Actor;
 import java.awt.Color;
 import java.io.Serializable;
-import rl.creature.Creature;
 import rl.magic.Instant;
 
 public class Item extends Actor implements Serializable
@@ -27,7 +26,7 @@ public class Item extends Actor implements Serializable
 	public void act()
 	{
 		if(enchant != null && held())
-			enchant.doIt(world().getActorAt(x(), y(), Creature.class));
+			enchant.doIt(x(), y(), world());
 	}
 
 	public Slot slot()

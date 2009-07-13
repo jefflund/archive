@@ -28,12 +28,14 @@ public class Player extends Creature implements Serializable
 
 	public Player(Console console, Dungeon dungeon)
 	{
-		super('@', Color.white, 20, 10, 1, 0);
+		super('@', Color.white, 20, 10, 1, 0, 10);
 		this.console = console;
 		this.dungeon = dungeon;
 		inventory = new Inventory(this);
 		spellbook = new LinkedList<Spell>();
 		spellbook.add(new Spell(this, Effect.FIRE, 10, 5, 1, "fire trap"));
+		spellbook.add(new Spell(this, Effect.ELEC, 10, 5, 1, "elec trap"));
+		spellbook.add(new Spell(this, Effect.STONEFALL, 10, 0, 1, "collapse"));
 		dice = new Dice();
 	}
 
