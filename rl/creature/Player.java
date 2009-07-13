@@ -36,6 +36,7 @@ public class Player extends Creature implements Serializable
 		spellbook.add(new Spell(this, Effect.FIRE, 10, 5, 1, "fire trap"));
 		spellbook.add(new Spell(this, Effect.ELEC, 10, 5, 1, "elec trap"));
 		spellbook.add(new Spell(this, Effect.STONEFALL, 10, 0, 1, "collapse"));
+		spellbook.add(new Spell(this, Effect.CHANNEL, 10, 10, 1, "concentrate"));
 		dice = new Dice();
 	}
 

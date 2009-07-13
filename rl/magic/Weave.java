@@ -23,4 +23,10 @@ public class Weave extends Actor implements Serializable
 			expire();
 		duration--;
 	}
+	
+	public void expire()
+	{
+		instant.undoIt();
+		super.expire();
+	}
 }

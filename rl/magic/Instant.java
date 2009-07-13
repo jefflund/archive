@@ -3,34 +3,46 @@ package rl.magic;
 import jade.core.World;
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import rl.creature.Creature;
 
 public class Instant implements Serializable
 {
 	public enum Effect
 	{
-		FIRE(Color.red), ELEC(Color.yellow), STONEFALL(Color.gray);
-		
+		FIRE(Color.red, false), ELEC(Color.yellow, false),
+		STONEFALL(Color.gray, false), CHANNEL(Color.white, true);
+
 		private Color color;
-		
-		private Effect(Color color)
+		private boolean undo;
+
+		private Effect(Color color, boolean undo)
 		{
 			this.color = color;
+			this.undo = undo;
 		}
-		
+
 		public Color color()
 		{
 			return color;
+		}
+
+		public boolean undoNeeded()
+		{
+			return undo;
 		}
 	};
 
 	private Effect effect;
 	private int magnitude;
+	private Set<Creature> undoList;
 
 	public Instant(Effect effect, int magnitude)
 	{
 		this.effect = effect;
 		this.magnitude = magnitude;
+		undoList = new HashSet<Creature>();
 	}
 
 	public void doIt(int x, int y, World world)
@@ -47,9 +59,41 @@ public class Instant implements Serializable
 		case STONEFALL:
 			stonefall(x, y, world);
 			break;
+		case CHANNEL:
+			channel(target);
+			break;
 		}
 	}
 	
+	public void undoIt()
+	{
+		if(!effect.undoNeeded())
+			return;
+		switch(effect)
+		{
+		case CHANNEL:
+			undoChannel();
+			break;
+		default:
+			break;
+		}
+		undoList.clear();
+	}
+
+	private void undoChannel()
+	{
+		for(Creature target : undoList)
+			target.mpFlow(-magnitude);
+	}
+	
+	private void channel(Creature target)
+	{
+		if(target == null || undoList.contains(target))
+			return;
+		target.mpFlow(magnitude);
+		undoList.add(target);
+	}
+
 	private void stonefall(int x, int y, World world)
 	{
 		if(!world.passable(x, y))
@@ -70,7 +114,7 @@ public class Instant implements Serializable
 				target.appendMessage(target + " is shocked");
 		}
 		else
-				target.appendMessage(target + " resist shock");
+			target.appendMessage(target + " resist shock");
 	}
 
 	private void fire(Creature target)
