@@ -4,29 +4,27 @@ import jade.core.Actor;
 import java.awt.Color;
 import java.io.Serializable;
 import rl.creature.Creature;
+import rl.magic.Instant.Effect;
 
 public class Weave extends Actor implements Serializable
 {
 	private Instant instant;
 	private int duration;
-	private boolean activated;
-
-	public Weave(Instant instant, int duration)
+	
+	public Weave(Effect effect, int magnitude, int duration)
 	{
 		super('*', Color.red);
-		this.instant = instant;
+		instant = new Instant(effect, magnitude);
 		this.duration = duration;
-		activated = false;
 	}
 
-	@Override
 	public void act()
 	{
 		Creature target = world().getActorAt(x(), y(), Creature.class);
-		activated = activated ? true : instant.doIt(target);
-		if(activated)
-			duration--;
-		if(duration < 0)
+		if(target != null)
+			instant.doIt(target);
+		if(duration == 0)
 			expire();
+		duration--;
 	}
 }

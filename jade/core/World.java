@@ -110,6 +110,22 @@ public abstract class World extends Messenger implements Serializable
 				return (T)actor;
 		return null;
 	}
+	
+	/**
+	 * Returns one actor of the specified class from the given location, or null
+	 * if none is found. The return type of this method will be the class passed
+	 * into the method. If there are more than one actor of the specified class at
+	 * the location, there is no guarantee as to which one will be returned.
+	 * @param <T> extends Actor. Is the return type.
+	 * @param coord the coordinate to search at
+	 * @param cls determines T
+	 * @return one actor of the specified class from the given location, or null
+	 * if none is found.
+	 */
+	public <T extends Actor> T getActorAt(Coord coord, Class<T> cls)
+	{
+		return getActorAt(coord.x(), coord.y(), cls);
+	}
 
 	/**
 	 * Returns a collection with all the actors of the specified class at a
@@ -129,6 +145,20 @@ public abstract class World extends Messenger implements Serializable
 			if(cls.isInstance(actor))
 				result.add((T)actor);
 		return result;
+	}
+	
+	/**
+	 * Returns a collection with all the actors of the specified class at a
+	 * location. The collection will be parameterized based on the given class.
+	 * @param <T> extends Actor. Collection<T> will be the return type.
+	 * @param coord the coordinate to search at
+	 * @param cls determines T
+	 * @return a collection with all the actors of the specified class at the
+	 * given location
+	 */
+	public <T extends Actor> Collection<T> getActorsAt(Coord coord, Class<T> cls)
+	{
+		return getActorsAt(coord.x(), coord.y(), cls);
 	}
 
 	/**
