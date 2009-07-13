@@ -130,14 +130,13 @@ public abstract class Actor extends Messenger implements Serializable
 	public void attachTo(Actor holder)
 	{
 		assert (!held());
-		if(holder.bound() && !boundTo(holder.world()))
-		{
+		if(bound())
 			world().removeActor(this);
+		if(holder.bound())
+		{
 			setWorld(holder.world);
 			world.registerActor(this);
 		}
-		else if(!holder.bound() && bound())
-			world().removeActor(this);
 		this.holder = holder;
 		holder.holds.add(this);
 		pos = holder.pos;

@@ -23,6 +23,12 @@ public class Monster extends Creature implements Serializable
 			appendMessage(this + " sees " + player());
 		move(dice.nextInt(-1, 1), dice.nextInt(-1, 1));
 	}
+	
+	@Override
+	public Coord getTarget()
+	{
+		return new Coord(x(), y());
+	}
 
 	private Player player()
 	{

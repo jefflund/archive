@@ -14,6 +14,7 @@ import rl.item.Inventory;
 import rl.item.Item;
 import rl.magic.Spell;
 import rl.magic.Instant.Effect;
+import rl.magic.Spell.Target;
 import rl.world.Dungeon;
 
 public class Player extends Creature implements Serializable
@@ -33,10 +34,18 @@ public class Player extends Creature implements Serializable
 		this.dungeon = dungeon;
 		inventory = new Inventory(this);
 		spellbook = new LinkedList<Spell>();
-		spellbook.add(new Spell(this, Effect.FIRE, 10, 5, 1, "fire trap"));
-		spellbook.add(new Spell(this, Effect.ELEC, 10, 5, 1, "elec trap"));
-		spellbook.add(new Spell(this, Effect.STONEFALL, 10, 0, 1, "collapse"));
-		spellbook.add(new Spell(this, Effect.CHANNEL, 10, 10, 1, "concentrate"));
+		spellbook.add(new Spell(this, Effect.FIRE, Target.AREA, 10, 5, 1,
+				"fire trap"));
+		spellbook.add(new Spell(this, Effect.ELEC, Target.OTHER, 10, 5, 1,
+				"elec trap"));
+		spellbook.add(new Spell(this, Effect.STONEFALL, Target.AREA, 10, 0, 1,
+				"collapse"));
+		spellbook.add(new Spell(this, Effect.CHANNEL, Target.SELF, 10, 10, 1,
+				"concentrate"));
+		spellbook.add(new Spell(this, Effect.RFIRE, Target.SELF, 20, 5, 1,
+				"resist fire"));
+		spellbook.add(new Spell(this, Effect.RELEC, Target.SELF, 20, 5, 1,
+		"resist elec"));		
 		dice = new Dice();
 	}
 
@@ -99,13 +108,38 @@ public class Player extends Creature implements Serializable
 		if(dice.nextFloat() < REGEN)
 			hpHeal(1);
 		if(dice.nextFloat() < REGEN)
-			mpRestore(1);		
+			mpRestore(1);
 		calcFoV();
+	}
+
+	public Coord getTarget()
+	{
+		console.saveBuffer();
+		Coord target = new Coord(x(), y());
+		char key = '\0';
+		while(key != 't')
+		{
+			console.recallBuffer();
+			console.buffChar(target, '*', Color.white);
+			console.refreshScreen();
+			key = console.getKey();
+			Coord dir = Tools.keyToDir(key, true, false);
+			if(dir != null)
+			{
+				target.translate(dir);
+				if(!fov.contains(target))
+					target.translate(-dir.x(), -dir.y());
+			}
+		}
+		console.recallBuffer();
+		console.refreshScreen();
+		return target;
 	}
 
 	public void calcFoV()
 	{
-		fov = FoVFactory.get(FoVFactory.CircularShadow).calcFoV(world(), x(), y(), 4);
+		fov = FoVFactory.get(FoVFactory.CircularShadow).calcFoV(world(), x(), y(),
+				4);
 	}
 
 	public Collection<Coord> getFoV()
@@ -121,7 +155,7 @@ public class Player extends Creature implements Serializable
 		for(Object element : elements)
 		{
 			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + element,
-			    Color.gray);
+					Color.gray);
 			i++;
 		}
 		console.refreshScreen();

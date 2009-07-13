@@ -11,8 +11,9 @@ public class Instant implements Serializable
 {
 	public enum Effect
 	{
-		FIRE(Color.red, false), ELEC(Color.yellow, false),
-		STONEFALL(Color.gray, false), CHANNEL(Color.white, true);
+		FIRE(Color.red, false), RFIRE(Color.red, true), ELEC(Color.yellow, false),
+		RELEC(Color.yellow, true), STONEFALL(Color.gray, false),
+		CHANNEL(Color.white, true);
 
 		private Color color;
 		private boolean undo;
@@ -53,8 +54,14 @@ public class Instant implements Serializable
 		case FIRE:
 			fire(target);
 			break;
+		case RFIRE:
+			rfire(target);
+			break;
 		case ELEC:
 			elec(target);
+			break;
+		case RELEC:
+			relec(target);
 			break;
 		case STONEFALL:
 			stonefall(x, y, world);
@@ -64,13 +71,19 @@ public class Instant implements Serializable
 			break;
 		}
 	}
-	
+
 	public void undoIt()
 	{
 		if(!effect.undoNeeded())
 			return;
 		switch(effect)
 		{
+		case RFIRE:
+			undorRfire();
+			break;
+		case RELEC:
+			undoRelec();
+			break;
 		case CHANNEL:
 			undoChannel();
 			break;
@@ -85,7 +98,7 @@ public class Instant implements Serializable
 		for(Creature target : undoList)
 			target.mpFlow(-magnitude);
 	}
-	
+
 	private void channel(Creature target)
 	{
 		if(target == null || undoList.contains(target))
@@ -116,7 +129,22 @@ public class Instant implements Serializable
 		else
 			target.appendMessage(target + " resist shock");
 	}
+	
+	private void relec(Creature target)
+	{
+		if(target == null)
+			return;
+		target.relecBuff(magnitude);
+	}
 
+	private void undoRelec()
+	{
+		magnitude *= -1;
+		for(Creature target : undoList)
+			relec(target);
+		magnitude *= -1;
+	}
+	
 	private void fire(Creature target)
 	{
 		if(target == null)
@@ -133,21 +161,36 @@ public class Instant implements Serializable
 		else
 			target.appendMessage(target + " resists fire");
 	}
+	
+	private void rfire(Creature target)
+	{
+		if(target == null)
+			return;
+		target.rfireBuff(magnitude);
+	}
+	
+	private void undorRfire()
+	{
+		magnitude *= -1;
+		for(Creature target : undoList)
+			rfire(target);
+		magnitude *= -1;
+	}
 }
 
-// * Fire
+// * Fire *
 // * fire dmg => nova
 // * fire res => fire immune
 // * Lightning
 // * lightning dmg => animate lightning
 // * res => lightning immune
-// * Earth
+// * Earth *
 // * collapse => build
 // * sheild => physical immune
-// * Air
+// * Air *
 // * poison => heal
 // * deflect => reflect
-// * Mana
+// * Mana *
 // * channel => transfigure
 // * pure dmg => undo creation
 // * iterfere => nullify

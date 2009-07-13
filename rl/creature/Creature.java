@@ -1,8 +1,9 @@
 package rl.creature;
 
+import jade.core.Actor;
+import jade.util.Coord;
 import java.awt.Color;
 import java.io.Serializable;
-import jade.core.Actor;
 
 public abstract class Creature extends Actor implements Serializable
 {
@@ -34,6 +35,8 @@ public abstract class Creature extends Actor implements Serializable
 		else if(world().passable(x() + dx, y() + dy))
 			super.move(dx, dy);
 	}
+
+	public abstract Coord getTarget();
 
 	private void attack(Creature bump)
 	{
@@ -86,12 +89,12 @@ public abstract class Creature extends Actor implements Serializable
 	{
 		rfire.value += buff;
 	}
-	
+
 	public int relec()
 	{
 		return relec.value;
 	}
-	
+
 	public void relecBuff(int buff)
 	{
 		relec.value += buff;
