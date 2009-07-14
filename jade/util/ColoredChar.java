@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Represents a char with an associated color. ColoredChars are immutable once
  * created.
  */
-public class ColoredChar implements Serializable
+public class ColoredChar implements Serializable, Comparable<ColoredChar>
 {
 	private char ch;
 	private Color color;
@@ -45,5 +45,14 @@ public class ColoredChar implements Serializable
 	public String toString()
 	{
 		return Character.toString(ch);
+	}
+	
+	@Override
+	public int compareTo(ColoredChar other)
+	{
+		if(color.hashCode() == other.color.hashCode())
+			return ch - other.ch;
+		else
+			return color.hashCode() - other.color.hashCode();
 	}
 }

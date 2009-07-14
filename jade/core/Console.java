@@ -24,8 +24,8 @@ import javax.swing.JPanel;
  */
 public class Console extends JPanel implements Serializable
 {
-	private final int tileHeight;
-	private final int tileWidth;
+	public final int tileHeight;
+	public final int tileWidth;
 	private transient Thread mainThread;
 	private InputListener listener;
 	private TreeMap<Coord, ColoredChar> buffer;
@@ -47,8 +47,13 @@ public class Console extends JPanel implements Serializable
 	 */
 	public Console(int tileSize, int width, int height)
 	{
-		tileHeight = tileSize;
-		tileWidth = tileHeight * 2 / 3;
+		this(tileSize, tileSize * 2 / 3, width, height);
+	}
+	
+	protected Console(int tileHeight, int tileWidth, int width, int height)
+	{
+		this.tileHeight = tileHeight;
+		this.tileWidth = tileWidth;
 		onDeserialize();
 		listener = new InputListener();
 		addKeyListener(listener);
@@ -336,7 +341,7 @@ public class Console extends JPanel implements Serializable
 	{
 		mainThread = Thread.currentThread();
 	}
-
+	
 	private class InputListener extends KeyAdapter implements Serializable
 	{
 		private char input;

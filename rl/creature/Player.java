@@ -150,12 +150,12 @@ public class Player extends Creature implements Serializable
 	private <T> T choose(List<T> elements, String title)
 	{
 		console.saveBuffer();
-		console.buffString(0, 0, title, Color.gray);
+		console.buffString(0, 0, title, Color.white);
 		int i = 0;
 		for(Object element : elements)
 		{
 			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + element,
-					Color.gray);
+					Color.white);
 			i++;
 		}
 		console.refreshScreen();
