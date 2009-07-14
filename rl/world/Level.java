@@ -35,8 +35,6 @@ public class Level extends World implements Serializable
 		addActor(new Monster('D', Color.red), random);
 		addActor(new Item('|', Color.white, Slot.Weapon), random);
 		addActor(new Item(']', Color.white, Slot.Armor), random);
-		addActor(new Item('|', Color.gray, Slot.Weapon), random);
-		addActor(new Item(']', Color.gray, Slot.Armor), random);
 		addActor(new Feature('^', Color.blue), random);
 	}
 
