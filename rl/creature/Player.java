@@ -121,7 +121,7 @@ public class Player extends Creature implements Serializable, Camera
 		while(key != 't')
 		{
 			console.recallBuffer();
-			console.buffChar(target, '*', Color.white);
+			console.buffCamera(this, 4, 4, target, '*', Color.white);
 			console.refreshScreen();
 			key = console.getKey();
 			Coord dir = Tools.keyToDir(key, true, false);

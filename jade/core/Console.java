@@ -121,7 +121,7 @@ public class Console extends JPanel implements Serializable
 	 * @param y the y-coordinate of the character
 	 * @param ch the character to be buffered
 	 */
-	public void buffChar(int x, int y, ColoredChar ch)
+	public final void buffChar(int x, int y, ColoredChar ch)
 	{
 		buffChar(new Coord(x, y), ch);
 	}
@@ -133,7 +133,7 @@ public class Console extends JPanel implements Serializable
 	 * @param ch the character to be buffered
 	 * @param color the color of the character to be buffered
 	 */
-	public void buffChar(int x, int y, char ch, Color color)
+	public final void buffChar(int x, int y, char ch, Color color)
 	{
 		buffChar(new Coord(x, y), new ColoredChar(ch, color));
 	}
@@ -144,19 +144,25 @@ public class Console extends JPanel implements Serializable
 	 * @param ch the character to be buffered
 	 * @param color the color of the character to be buffered
 	 */
-	public void buffChar(Coord coord, char ch, Color color)
+	public final void buffChar(Coord coord, char ch, Color color)
 	{
 		buffChar(coord, new ColoredChar(ch, color));
 	}
 
-	public void buffFoV(Camera camera, int x, int y, World world)
+	public void buffCamera(Camera camera, int x, int y, Coord coord, char ch,
+			Color color)
+	{
+		buffChar(coord.getTranslated(x - camera.x(), y - camera.y()), ch, color);
+	}
+
+	public void buffCamera(Camera camera, int x, int y)
 	{
 		int offX = x - camera.x();
 		int offY = y - camera.y();
 		for(Coord coord : camera.getFoV())
-			buffChar(coord.getTranslated(offX, offY), world.look(coord));
+			buffChar(coord.getTranslated(offX, offY), camera.world().look(coord));
 	}
-	
+
 	/**
 	 * This method blocks for keyboard input, the buffers the character to the
 	 * given location and refreshes the screen.
@@ -180,7 +186,7 @@ public class Console extends JPanel implements Serializable
 	 * @param color the color of the character to print
 	 * @return the key pressed as a char
 	 */
-	public char echoChar(int x, int y, Color color)
+	public final char echoChar(int x, int y, Color color)
 	{
 		return echoChar(new Coord(x, y), color);
 	}
@@ -196,7 +202,7 @@ public class Console extends JPanel implements Serializable
 	public void buffString(int x, int y, String str, Color color)
 	{
 		for(char ch : str.toCharArray())
-			buffChar(x++, y, ch, color);
+			buffChar(x++ , y, ch, color);
 	}
 
 	/**
@@ -206,7 +212,7 @@ public class Console extends JPanel implements Serializable
 	 * @param str the string to be buffered
 	 * @param color the color of the string
 	 */
-	public void buffString(Coord coord, String str, Color color)
+	public final void buffString(Coord coord, String str, Color color)
 	{
 		buffString(coord.x(), coord.y(), str, color);
 	}
@@ -227,7 +233,7 @@ public class Console extends JPanel implements Serializable
 		char key = getKey();
 		while(key != terminator)
 		{
-			buffChar(x++, y, key, color);
+			buffChar(x++ , y, key, color);
 			refreshScreen();
 			str += key;
 			key = getKey();
@@ -255,7 +261,7 @@ public class Console extends JPanel implements Serializable
 	 * @param y the y-coordinate to be checked
 	 * @return the character at the specified location.
 	 */
-	public ColoredChar charAt(int x, int y)
+	public final ColoredChar charAt(int x, int y)
 	{
 		return charAt(new Coord(x, y));
 	}
@@ -304,7 +310,7 @@ public class Console extends JPanel implements Serializable
 	@SuppressWarnings("deprecation")
 	public char getKey()
 	{
-		if(!listener.ready)
+		if( !listener.ready)
 			mainThread.suspend();
 		listener.ready = false;
 		return listener.input;

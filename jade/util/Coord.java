@@ -57,7 +57,7 @@ public class Coord implements Comparable<Coord>, Serializable
 	 * @param coord the coordinate to move this coord to
 	 * @return this coord after being moved
 	 */
-	public Coord move(Coord coord)
+	public final Coord move(Coord coord)
 	{
 		return move(coord.x, coord.y);
 	}
@@ -80,12 +80,12 @@ public class Coord implements Comparable<Coord>, Serializable
 	 * @param coord the change in this coord
 	 * @return this Coord after being translated
 	 */
-	public Coord translate(Coord coord)
+	public final Coord translate(Coord coord)
 	{
 		return translate(coord.x, coord.y);
 	}
 	
-	public Coord getTranslated(Coord coord)
+	public final Coord getTranslated(Coord coord)
 	{
 		return getTranslated(coord.x(), coord.y());
 	}

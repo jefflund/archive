@@ -21,7 +21,7 @@ public class Rogue
 		{
 			Level level = dungeon.getLevel();
 			console.clearBuffer();
-			console.buffFoV(player, 4, 4, level);
+			console.buffCamera(player, 4, 4);
 			console.buffString(0, level.height, player.status(), Color.white);
 			console.buffString(0, level.height + 1, level.getMessages(), Color.white);
 			console.refreshScreen();

@@ -124,7 +124,7 @@ public abstract class World extends Messenger implements Serializable
 	 * @return one actor of the specified class from the given location, or null
 	 * if none is found.
 	 */
-	public <T extends Actor> T getActorAt(Coord coord, Class<T> cls)
+	public final <T extends Actor> T getActorAt(Coord coord, Class<T> cls)
 	{
 		return getActorAt(coord.x(), coord.y(), cls);
 	}
@@ -158,7 +158,7 @@ public abstract class World extends Messenger implements Serializable
 	 * @return a collection with all the actors of the specified class at the
 	 * given location
 	 */
-	public <T extends Actor> Collection<T> getActorsAt(Coord coord, Class<T> cls)
+	public final <T extends Actor> Collection<T> getActorsAt(Coord coord, Class<T> cls)
 	{
 		return getActorsAt(coord.x(), coord.y(), cls);
 	}
@@ -240,7 +240,7 @@ public abstract class World extends Messenger implements Serializable
 	 * open tile
 	 * @return a random open tile on the world
 	 */
-	public Coord getOpenTile(Dice random)
+	public final Coord getOpenTile(Dice random)
 	{
 		return getOpenTile(random, 0, 0, width - 1, height - 1);
 	}
@@ -256,7 +256,7 @@ public abstract class World extends Messenger implements Serializable
 	 * the random tile
 	 * @return a random open tile on the world
 	 */
-	public Coord getOpenTile(Dice random, Coord upperleft, Coord lowerright)
+	public final Coord getOpenTile(Dice random, Coord upperleft, Coord lowerright)
 	{
 		return getOpenTile(random, upperleft.x(), upperleft.y(), lowerright.x(),
 		    lowerright.y());
@@ -333,7 +333,7 @@ public abstract class World extends Messenger implements Serializable
 	 * @param coord the coordinate location of the tile
 	 * @return true if the specified tile is passable, false otherwise
 	 */
-	public boolean passable(Coord coord)
+	public final boolean passable(Coord coord)
 	{
 		return passable(coord.x(), coord.y());
 	}

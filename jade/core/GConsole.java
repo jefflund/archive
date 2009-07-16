@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.imageio.ImageIO;
 
+/**
+ * GConsole takes a regular Jade Console and adds the capability to use
+ * graphical tiles instead of ColoredChar.
+ */
 public class GConsole extends Console
 {
 	private Map<Coord, CharPair> imageBuffer;
@@ -27,7 +31,7 @@ public class GConsole extends Console
 		imageSaved = new TreeMap<Coord, CharPair>();
 		images = new TreeMap<ColoredChar, Image>();
 	}
-	
+
 	public static GConsole getFramedConsole(String frameTitle)
 	{
 		GConsole console = new GConsole();
@@ -35,10 +39,28 @@ public class GConsole extends Console
 		return console;
 	}
 
-	public void buffFoV(Camera camera, int x, int y, World world)
+	public void buffChar(Coord coord, ColoredChar ch)
+	{
+		super.buffChar(coord, ch);
+		imageBuffer.remove(coord);
+	}
+
+	@Override
+	public void buffCamera(Camera camera, int x, int y, Coord coord, char ch,
+			Color color)
 	{
 		int offX = x - camera.x();
 		int offY = y - camera.y();
+		CharPair pair = new CharPair(camera.world().tile(coord).look(),
+				new ColoredChar(ch, color));
+		imageBuffer.put(coord.getTranslated(offX, offY), pair);
+	}
+
+	public void buffCamera(Camera camera, int x, int y)
+	{
+		int offX = x - camera.x();
+		int offY = y - camera.y();
+		World world = camera.world();
 		for(Coord coord : camera.getFoV())
 		{
 			Coord off = coord.getTranslated(offX, offY);
@@ -46,7 +68,7 @@ public class GConsole extends Console
 			imageBuffer.put(off, pair);
 		}
 	}
-	
+
 	@Override
 	public void saveBuffer()
 	{
@@ -54,7 +76,7 @@ public class GConsole extends Console
 		imageSaved.clear();
 		imageSaved.putAll(imageBuffer);
 	}
-	
+
 	@Override
 	public void recallBuffer()
 	{
@@ -62,14 +84,14 @@ public class GConsole extends Console
 		imageBuffer.clear();
 		imageBuffer.putAll(imageSaved);
 	}
-	
+
 	@Override
 	public void clearBuffer()
 	{
 		super.clearBuffer();
 		imageBuffer.clear();
 	}
-	
+
 	public boolean registerImage(String tileSet, int x, int y, char ch,
 			Color color)
 	{
@@ -97,16 +119,19 @@ public class GConsole extends Console
 			{
 				CharPair pair = imageBuffer.get(coord);
 				if(images.containsKey(pair.bgChar))
-					page.drawImage(images.get(pair.bgChar), coord.x() * tileWidth,
-							coord.y() * tileHeight, tileWidth, tileHeight, null);				
+					page.drawImage(images.get(pair.bgChar), coord.x() * tileWidth, coord
+							.y()
+							* tileHeight, tileWidth, tileHeight, null);
 				if(images.containsKey(pair.fgChar))
-					page.drawImage(images.get(pair.fgChar), coord.x() * tileWidth,
-							coord.y() * tileHeight, tileWidth, tileHeight, null);
+					page.drawImage(images.get(pair.fgChar), coord.x() * tileWidth, coord
+							.y()
+							* tileHeight, tileWidth, tileHeight, null);
 				else
 				{
 					page.setColor(pair.fgChar.color());
-					page.drawString(pair.fgChar.toString(), coord.x() * tileWidth,
-							(coord.y() + 1) * tileHeight);
+					page.drawString(pair.fgChar.toString(), coord.x() * tileWidth, (coord
+							.y() + 1)
+							* tileHeight);
 				}
 			}
 		}
@@ -117,12 +142,12 @@ public class GConsole extends Console
 		{
 		}
 	}
-	
+
 	private class CharPair
 	{
 		private ColoredChar bgChar;
 		private ColoredChar fgChar;
-		
+
 		public CharPair(ColoredChar bgChar, ColoredChar fgChar)
 		{
 			this.bgChar = bgChar;
