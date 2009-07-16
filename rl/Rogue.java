@@ -1,6 +1,7 @@
 package rl;
 
 import jade.core.Console;
+import jade.core.GConsole;
 import jade.util.Dice;
 import java.awt.Color;
 import rl.creature.Player;
@@ -19,7 +20,6 @@ public class Rogue
 		do
 		{
 			Level level = dungeon.getLevel();
-			Player player = level.player();
 			console.clearBuffer();
 			console.buffFoV(player, 4, 4, level);
 			console.buffString(0, level.height, player.status(), Color.white);
@@ -33,7 +33,21 @@ public class Rogue
 
 	private static void init()
 	{
-		console = Console.getFramedConsole("Jade");
+		console = GConsole.getFramedConsole("Jade");
+    ((GConsole)console).registerImage("tiles", 0, 3, '@', Color.white);
+    ((GConsole)console).registerImage("tiles", 21, 12, 'D', Color.red);
+    ((GConsole)console).registerImage("tiles", 0, 22, '#', Color.white);
+    ((GConsole)console).registerImage("tiles", 16, 22, '>', Color.white);
+    ((GConsole)console).registerImage("tiles", 15, 22, '<', Color.white);
+    ((GConsole)console).registerImage("tiles", 0, 23, '.', Color.white);
+    ((GConsole)console).registerImage("tiles", 5, 23, '.', Color.green);
+    ((GConsole)console).registerImage("tiles", 57, 22, '.', Color.gray);
+    ((GConsole)console).registerImage("tiles", 55, 23, '%', Color.green);
+    ((GConsole)console).registerImage("tiles", 55, 23, '%', Color.yellow);
+    ((GConsole)console).registerImage("tiles", 3, 10, '|', Color.white);
+    ((GConsole)console).registerImage("tiles", 48, 1, '*', Color.red);
+    ((GConsole)console).registerImage("tiles", 45, 0, ']', Color.white);
+    ((GConsole)console).registerImage("tiles", 25, 1, '^', Color.blue);
 		dungeon = new Dungeon();
 		player = new Player(console, dungeon);
 		dungeon.getLevel().addActor(player, new Dice(0));

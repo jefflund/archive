@@ -11,6 +11,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.Serializable;
 import java.util.ConcurrentModificationException;
+import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,8 +30,8 @@ public class Console extends JPanel implements Serializable
 	public final int tileWidth;
 	private transient Thread mainThread;
 	private InputListener listener;
-	private TreeMap<Coord, ColoredChar> buffer;
-	private TreeMap<Coord, ColoredChar> saved;
+	private Map<Coord, ColoredChar> buffer;
+	private Map<Coord, ColoredChar> saved;
 
 	/**
 	 * Constructs a new default console with a default 80 x 24 size 12 tiles;
@@ -95,7 +96,7 @@ public class Console extends JPanel implements Serializable
 		return console;
 	}
 
-	private static void frameConsole(Console console, String frameTitle)
+	protected static void frameConsole(Console console, String frameTitle)
 	{
 		JFrame frame = new JFrame(frameTitle);
 		frame.add(console);
@@ -150,10 +151,10 @@ public class Console extends JPanel implements Serializable
 
 	public void buffFoV(Camera camera, int x, int y, World world)
 	{
-		int offX = camera.x() - x;
-		int offY = camera.y() - y;
+		int offX = x - camera.x();
+		int offY = y - camera.y();
 		for(Coord coord : camera.getFoV())
-			buffChar(coord.x() - offX, coord.y() - offY, world.look(coord));
+			buffChar(coord.getTranslated(offX, offY), world.look(coord));
 	}
 	
 	/**

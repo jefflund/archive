@@ -84,6 +84,16 @@ public class Coord implements Comparable<Coord>, Serializable
 	{
 		return translate(coord.x, coord.y);
 	}
+	
+	public Coord getTranslated(Coord coord)
+	{
+		return getTranslated(coord.x(), coord.y());
+	}
+	
+	public Coord getTranslated(int x, int y)
+	{
+		return new Coord(this).translate(x, y);
+	}
 
 	/**
 	 * Returns the x-coordinate of the coord
