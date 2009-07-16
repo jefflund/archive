@@ -41,8 +41,7 @@ public class GConsole extends Console
 		int offY = y - camera.y();
 		for(Coord coord : camera.getFoV())
 		{
-			Coord off = coord.getTranslated(offX, offY); 
-			buffChar(off, world.look(coord));
+			Coord off = coord.getTranslated(offX, offY);
 			CharPair pair = new CharPair(world.tile(coord).look(), world.look(coord));
 			imageBuffer.put(off, pair);
 		}
@@ -103,6 +102,12 @@ public class GConsole extends Console
 				if(images.containsKey(pair.fgChar))
 					page.drawImage(images.get(pair.fgChar), coord.x() * tileWidth,
 							coord.y() * tileHeight, tileWidth, tileHeight, null);
+				else
+				{
+					page.setColor(pair.fgChar.color());
+					page.drawString(pair.fgChar.toString(), coord.x() * tileWidth,
+							(coord.y() + 1) * tileHeight);
+				}
 			}
 		}
 		catch(ConcurrentModificationException dontWorry)
