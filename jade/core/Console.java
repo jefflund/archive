@@ -1,5 +1,6 @@
 package jade.core;
 
+import jade.fov.Camera;
 import jade.util.ColoredChar;
 import jade.util.Coord;
 import java.awt.Color;
@@ -49,7 +50,7 @@ public class Console extends JPanel implements Serializable
 	{
 		this(tileSize, tileSize * 2 / 3, width, height);
 	}
-	
+
 	protected Console(int tileHeight, int tileWidth, int width, int height)
 	{
 		this.tileHeight = tileHeight;
@@ -147,6 +148,14 @@ public class Console extends JPanel implements Serializable
 		buffChar(coord, new ColoredChar(ch, color));
 	}
 
+	public void buffFoV(Camera camera, int x, int y, World world)
+	{
+		int offX = camera.x() - x;
+		int offY = camera.y() - y;
+		for(Coord coord : camera.getFoV())
+			buffChar(coord.x() - offX, coord.y() - offY, world.look(coord));
+	}
+	
 	/**
 	 * This method blocks for keyboard input, the buffers the character to the
 	 * given location and refreshes the screen.
@@ -341,7 +350,7 @@ public class Console extends JPanel implements Serializable
 	{
 		mainThread = Thread.currentThread();
 	}
-	
+
 	private class InputListener extends KeyAdapter implements Serializable
 	{
 		private char input;

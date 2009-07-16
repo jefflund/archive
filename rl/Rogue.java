@@ -1,7 +1,6 @@
 package rl;
 
 import jade.core.Console;
-import jade.util.Coord;
 import jade.util.Dice;
 import java.awt.Color;
 import rl.creature.Player;
@@ -20,27 +19,31 @@ public class Rogue
 		do
 		{
 			Level level = dungeon.getLevel();
-			console.clearBuffer();
-			for(Coord coord : level.player().getFoV())
-				console.buffChar(coord, level.look(coord));
 			Player player = level.player();
-			String status = "hp:" + player.hp() + "\tmp:"	+ player.mp();
-			console.buffString(0, level.height, status, Color.white);
+			console.clearBuffer();
+			console.buffFoV(player, 4, 4, level);
+			console.buffString(0, level.height, player.status(), Color.white);
 			console.buffString(0, level.height + 1, level.getMessages(), Color.white);
 			console.refreshScreen();
 			level.tick();
 		}
 		while(!player.isExpired());
-		console.buffString(0, dungeon.getLevel().height + 1, "You're dead!", Color.white);
-		console.refreshScreen();
-		console.getKey();
-		System.exit(0);
+		end();
 	}
+
 	private static void init()
 	{
 		console = Console.getFramedConsole("Jade");
 		dungeon = new Dungeon();
 		player = new Player(console, dungeon);
 		dungeon.getLevel().addActor(player, new Dice(0));
+	}
+	
+	private static void end()
+	{
+		console.buffString(0, dungeon.getLevel().height + 1, "You're dead!", Color.white);
+		console.refreshScreen();
+		console.getKey();
+		System.exit(0);
 	}
 }

@@ -1,6 +1,7 @@
 package rl.creature;
 
 import jade.core.Console;
+import jade.fov.Camera;
 import jade.fov.FoV.FoVFactory;
 import jade.util.Coord;
 import jade.util.Dice;
@@ -17,7 +18,7 @@ import rl.magic.Instant.Effect;
 import rl.magic.Spell.Target;
 import rl.world.Dungeon;
 
-public class Player extends Creature implements Serializable
+public class Player extends Creature implements Serializable, Camera
 {
 	private Console console;
 	private List<Spell> spellbook;
@@ -145,6 +146,11 @@ public class Player extends Creature implements Serializable
 	public Collection<Coord> getFoV()
 	{
 		return fov;
+	}
+	
+	public String status()
+	{
+		return "hp:" + hp() + "\tmp:"	+ mp();
 	}
 
 	private <T> T choose(List<T> elements, String title)
