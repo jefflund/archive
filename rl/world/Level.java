@@ -14,6 +14,7 @@ import rl.creature.Player;
 import rl.item.Item;
 import rl.item.Item.Slot;
 import rl.magic.Weave;
+import rl.magic.Instant.Effect;
 
 public class Level extends World implements Serializable
 {
@@ -35,7 +36,7 @@ public class Level extends World implements Serializable
 		addActor(new Monster('D', Color.red), random);
 		addActor(new Item('|', Color.white, Slot.Weapon), random);
 		addActor(new Item(']', Color.white, Slot.Armor), random);
-		addActor(new Feature('^', Color.blue), random);
+		addActor(new Feature('^', Color.blue, Effect.FIRE, 15), random);
 	}
 
 	@Override

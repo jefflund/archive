@@ -202,7 +202,7 @@ public class Console extends JPanel implements Serializable
 	public void buffString(int x, int y, String str, Color color)
 	{
 		for(char ch : str.toCharArray())
-			buffChar(x++ , y, ch, color);
+			buffChar(x++, y, ch, color);
 	}
 
 	/**
@@ -233,7 +233,7 @@ public class Console extends JPanel implements Serializable
 		char key = getKey();
 		while(key != terminator)
 		{
-			buffChar(x++ , y, key, color);
+			buffChar(x++, y, key, color);
 			refreshScreen();
 			str += key;
 			key = getKey();
@@ -310,7 +310,7 @@ public class Console extends JPanel implements Serializable
 	@SuppressWarnings("deprecation")
 	public char getKey()
 	{
-		if( !listener.ready)
+		if(!listener.ready)
 			mainThread.suspend();
 		listener.ready = false;
 		return listener.input;

@@ -45,7 +45,7 @@ public class Shadowcast implements FoV
 			if(world.passable(curr) && !world.passable(prev))
 				startslope = newStartslope(depth, endslope, y);
 			if(!world.passable(curr) && world.passable(prev))
-				scan(depth + 1, startslope, newEndslope(depth, startslope, y), orig,
+				scan(depth + 1, startslope, newEndslope(depth, y), orig,
 						fov, world, range, octant);
 			fov.add(curr);
 			y--;
@@ -55,7 +55,7 @@ public class Shadowcast implements FoV
 			scan(depth + 1, startslope, endslope, orig, fov, world, range, octant);
 	}
 
-	private float newEndslope(int depth, float startslope, int y)
+	private float newEndslope(int depth, int y)
 	{
 		return slope(depth - .5f, y + .5f);
 	}

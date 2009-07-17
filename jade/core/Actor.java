@@ -125,21 +125,21 @@ public abstract class Actor extends Messenger implements Serializable
 	 * the actor belongs to a world, it will be removed and placed on the new
 	 * holder's world. This actors position will then be the holder's position.
 	 * 
-	 * @param holder
+	 * @param actor
 	 */
-	public void attachTo(Actor holder)
+	public void attachTo(Actor actor)
 	{
 		assert (!held());
 		if(bound())
 			world().removeActor(this);
-		if(holder.bound())
+		if(actor.bound())
 		{
-			setWorld(holder.world);
+			setWorld(actor.world);
 			world.registerActor(this);
 		}
-		this.holder = holder;
-		holder.holds.add(this);
-		pos = holder.pos;
+		this.holder = actor;
+		actor.holds.add(this);
+		pos = actor.pos;
 	}
 
 	/**
@@ -151,10 +151,10 @@ public abstract class Actor extends Messenger implements Serializable
 	{
 		assert (held());
 		holder.holds.remove(this);
-		Coord pos = new Coord(holder.pos);
+		Coord holderPos = new Coord(holder.pos);
 		holder = null;
 		if(bound())
-			setPos(pos.x(), pos.y());
+			setPos(holderPos.x(), holderPos.y());
 	}
 
 	/**

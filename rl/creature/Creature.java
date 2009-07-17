@@ -56,7 +56,7 @@ public abstract class Creature extends Actor implements Serializable
 
 	public void hpHeal(int cure)
 	{
-		hp.value = Math.min(hp.value + 1, hp.base);
+		hp.value = Math.min(hp.value + cure, hp.base);
 	}
 
 	public int hp()
