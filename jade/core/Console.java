@@ -149,12 +149,32 @@ public class Console extends JPanel implements Serializable
 		buffChar(coord, new ColoredChar(ch, color));
 	}
 
+	/**
+	 * Buffers a single char relative to the camera position on the screen. The
+	 * camera will be centered at (x, y) on the screen. The ColoredChar will be
+	 * the forground tile to use, while the background tile will be the tile that
+	 * the camera sees at the coordinate. This is useful for drawing special effects
+	 * as it will replace what is actually in the foreground with the specified
+	 * ColoredChar.
+	 * @param camera the camera to be used.
+	 * @param x the x-coordinate of the camera on screen
+	 * @param y the y-coordinate of the camera on screen
+	 * @param coord the map coordinate to be drawn.
+	 * @param ch the char to be drawn at coord
+	 * @param color the color of the char to be drawn at coord
+	 */
 	public void buffCamera(Camera camera, int x, int y, Coord coord, char ch,
 			Color color)
 	{
 		buffChar(coord.getTranslated(x - camera.x(), y - camera.y()), ch, color);
 	}
 
+	/**
+	 * Draws everything the camera can see with the camera centered at (x, y)
+	 * @param camera the camera
+	 * @param x the x-coordinate of the camera on screen
+	 * @param y the y-coordinate of the camera on screen
+	 */
 	public void buffCamera(Camera camera, int x, int y)
 	{
 		int offX = x - camera.x();
