@@ -4,6 +4,10 @@ import jade.core.Console;
 import jade.core.GConsole;
 import jade.util.Dice;
 import java.awt.Color;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import rl.creature.Player;
 import rl.world.Dungeon;
 import rl.world.Level;
@@ -17,6 +21,12 @@ public class Rogue
 	public static void main(String[] args)
 	{
 		init();
+		gameLoop();
+		end();
+	}
+
+	private static void gameLoop()
+	{
 		do
 		{
 			Level level = dungeon.getLevel();
@@ -27,11 +37,19 @@ public class Rogue
 			console.refreshScreen();
 			level.tick();
 		}
-		while(!player.isExpired());
-		end();
+		while(player.playing());
 	}
 
 	private static void init()
+	{
+		initGConsole();
+		console.buffString(0, 0, "Enter your name:", Color.white);
+		console.refreshScreen();
+		String name = console.echoString(0, 1, Color.white, '\n');
+		load(name);
+	}
+
+	private static void initGConsole()
 	{
 		console = GConsole.getFramedConsole("Jade");
 		((GConsole)console).registerImage("tiles", 0, 3, '@', Color.white);
@@ -48,17 +66,54 @@ public class Rogue
 		((GConsole)console).registerImage("tiles", 48, 1, '*', Color.red);
 		((GConsole)console).registerImage("tiles", 45, 0, ']', Color.white);
 		((GConsole)console).registerImage("tiles", 25, 1, '^', Color.blue);
-		dungeon = new Dungeon();
-		player = new Player(console, dungeon);
-		dungeon.getLevel().addActor(player, new Dice(0));
 	}
 
 	private static void end()
 	{
-		console.buffString(0, dungeon.getLevel().height + 1, "You're dead!",
-				Color.white);
-		console.refreshScreen();
-		console.getKey();
+		if(player.isExpired())
+		{
+			console.buffString(0, dungeon.getLevel().height + 1, "You're dead!",
+					Color.white);
+			console.refreshScreen();
+			console.getKey();
+		}
+		else
+			save();
 		System.exit(0);
 	}
+
+	private static void save()
+	{
+		try
+		{
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
+					player.toString()));
+			out.writeObject(dungeon);
+			out.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private static void load(String name)
+	{
+		try
+		{
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(name));
+			dungeon = (Dungeon)in.readObject();
+			in.close();
+			player = dungeon.getLevel().player();
+			player.onDeserialize(console);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			dungeon = new Dungeon();
+			player = new Player(console, dungeon, name);
+			dungeon.getLevel().addActor(player, new Dice(0));
+		}
+	}
+
 }

@@ -24,11 +24,11 @@ import javax.swing.JPanel;
  * provided to allow for saving and restoring of screen. A getKey method is also
  * provided, which blocks until the next key press like getch in curses.
  */
-public class Console extends JPanel implements Serializable
+public class Console extends JPanel
 {
 	public final int tileHeight;
 	public final int tileWidth;
-	private transient Thread mainThread;
+	private Thread mainThread;
 	private InputListener listener;
 	private Map<Coord, ColoredChar> buffer;
 	private Map<Coord, ColoredChar> saved;
@@ -56,7 +56,7 @@ public class Console extends JPanel implements Serializable
 	{
 		this.tileHeight = tileHeight;
 		this.tileWidth = tileWidth;
-		onDeserialize();
+		mainThread = Thread.currentThread();
 		listener = new InputListener();
 		addKeyListener(listener);
 		buffer = new TreeMap<Coord, ColoredChar>();
@@ -366,16 +366,6 @@ public class Console extends JPanel implements Serializable
 	public void refreshScreen()
 	{
 		repaint();
-	}
-
-	/**
-	 * In order for getKey to work, console must know about the main thread.
-	 * However, since Threads are transient, this method must be called upon
-	 * deserialization to avoid NullPointerExceptions when using getKey.
-	 */
-	public void onDeserialize()
-	{
-		mainThread = Thread.currentThread();
 	}
 
 	private class InputListener extends KeyAdapter implements Serializable

@@ -20,19 +20,22 @@ import rl.world.Dungeon;
 
 public class Player extends Creature implements Serializable, Camera
 {
-	private Console console;
+	private transient Console console;
 	private List<Spell> spellbook;
 	private Collection<Coord> fov;
 	private Inventory inventory;
 	private Dungeon dungeon;
 	private static final float REGEN = .05f;
 	private Dice dice;
-
-	public Player(Console console, Dungeon dungeon)
+	private String name;
+	private boolean playing;
+	
+	public Player(Console console, Dungeon dungeon, String name)
 	{
 		super('@', Color.white, 20, 10, 1, 0, 10);
-		this.console = console;
+		onDeserialize(console);
 		this.dungeon = dungeon;
+		this.name = name;
 		inventory = new Inventory(this);
 		spellbook = new LinkedList<Spell>();
 		spellbook.add(new Spell(this, Effect.FIRE, Target.AREA, 10, 5, 1,
@@ -62,7 +65,7 @@ public class Player extends Creature implements Serializable, Camera
 			switch(key)
 			{
 			case 'q':
-				expire();
+				playing = false;
 				break;
 			case 'p':
 				spellbook();
@@ -195,5 +198,26 @@ public class Player extends Creature implements Serializable, Camera
 			appendMessage("Invalid selection");
 		else
 			spell.cast();
+	}
+	
+	/**
+	 * Upon deserialization this must be done as the console cannot actually be saved.
+	 * @param console the new console
+	 */
+	public void onDeserialize(Console console)
+	{
+		this.console = console;
+		playing = true;
+	}
+	
+	public boolean playing()
+	{
+		return playing && !isExpired();
+	}
+	
+	@Override
+	public String toString()
+	{
+		return name;
 	}
 }

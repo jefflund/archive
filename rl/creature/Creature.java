@@ -100,7 +100,7 @@ public abstract class Creature extends Actor implements Serializable
 		relec.value += buff;
 	}
 
-	protected class Stat
+	protected class Stat implements Serializable
 	{
 		public int value;
 		public int base;

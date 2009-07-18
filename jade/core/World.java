@@ -368,7 +368,7 @@ public abstract class World extends Messenger implements Serializable
 	 * This class represents a single tile on a jade World. They can be accessed
 	 * using the tile method of the jade world.
 	 */
-	public final class Tile
+	public final class Tile implements Serializable
 	{
 		private ColoredChar tile;
 		private boolean passable;
