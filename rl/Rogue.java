@@ -4,6 +4,7 @@ import jade.core.Console;
 import jade.core.GConsole;
 import jade.util.Dice;
 import java.awt.Color;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -20,7 +21,7 @@ public class Rogue
 
 	public static void main(String[] args)
 	{
-		init();
+		init(args.length > 0 && args[0] == "g");
 		gameLoop();
 		end();
 	}
@@ -40,16 +41,19 @@ public class Rogue
 		while(player.playing());
 	}
 
-	private static void init()
+	private static void init(boolean graphics)
 	{
-		initGConsole();
+		if(graphics)
+			getGConsole();
+		else
+			console = Console.getFramedConsole("Jade");
 		console.buffString(0, 0, "Enter your name:", Color.white);
 		console.refreshScreen();
 		String name = console.echoString(0, 1, Color.white, '\n');
 		load(name);
 	}
 
-	private static void initGConsole()
+	private static void getGConsole()
 	{
 		console = GConsole.getFramedConsole("Jade");
 		((GConsole)console).registerImage("tiles", 0, 3, '@', Color.white);
@@ -76,6 +80,7 @@ public class Rogue
 					Color.white);
 			console.refreshScreen();
 			console.getKey();
+			new File(player.toString()).deleteOnExit();
 		}
 		else
 			save();
@@ -93,7 +98,6 @@ public class Rogue
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 		}
 	}
 
@@ -109,7 +113,6 @@ public class Rogue
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 			dungeon = new Dungeon();
 			player = new Player(console, dungeon, name);
 			dungeon.getLevel().addActor(player, new Dice(0));

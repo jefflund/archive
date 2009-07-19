@@ -4,7 +4,6 @@ import jade.core.Console;
 import jade.fov.Camera;
 import jade.fov.FoV.FoVFactory;
 import jade.util.Coord;
-import jade.util.Dice;
 import jade.util.Tools;
 import java.awt.Color;
 import java.io.Serializable;
@@ -26,13 +25,12 @@ public class Player extends Creature implements Serializable, Camera
 	private Inventory inventory;
 	private Dungeon dungeon;
 	private static final float REGEN = .05f;
-	private Dice dice;
 	private String name;
 	private boolean playing;
 	
 	public Player(Console console, Dungeon dungeon, String name)
 	{
-		super('@', Color.white, 20, 10, 1, 0, 10);
+		super('@', Color.white, 20, 10, 10, 10, 1, 0, 10);
 		onDeserialize(console);
 		this.dungeon = dungeon;
 		this.name = name;
@@ -50,7 +48,6 @@ public class Player extends Creature implements Serializable, Camera
 				"resist fire"));
 		spellbook.add(new Spell(this, Effect.RELEC, Target.SELF, 20, 5, 1,
 		"resist elec"));		
-		dice = new Dice();
 	}
 
 	@Override
@@ -66,6 +63,9 @@ public class Player extends Creature implements Serializable, Camera
 			{
 			case 'q':
 				playing = false;
+				break;
+			case 'C':
+				expire();
 				break;
 			case 'p':
 				spellbook();

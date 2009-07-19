@@ -2,6 +2,7 @@ package rl.creature;
 
 import jade.core.Actor;
 import jade.util.Coord;
+import jade.util.Dice;
 import java.awt.Color;
 import java.io.Serializable;
 
@@ -10,18 +11,24 @@ public abstract class Creature extends Actor implements Serializable
 	protected Stat hp;
 	protected Stat mp;
 	protected Stat atk;
+	protected Stat def;
+	protected Stat dmg;
 	protected Stat rfire;
 	protected Stat relec;
+	protected Dice dice;
 
-	public Creature(char face, Color color, int hp, int mp, int str, int rfire,
-			int relec)
+	public Creature(char face, Color color, int hp, int mp, int atk, int def,
+			int dmg, int rfire, int relec)
 	{
 		super(face, color);
 		this.hp = new Stat(hp);
 		this.mp = new Stat(mp);
-		this.atk = new Stat(str);
+		this.atk = new Stat(atk);
+		this.def = new Stat(def);
+		this.dmg = new Stat(dmg);
 		this.rfire = new Stat(rfire);
 		this.relec = new Stat(relec);
+		dice = new Dice();
 	}
 
 	@Override
@@ -40,7 +47,10 @@ public abstract class Creature extends Actor implements Serializable
 
 	private void attack(Creature bump)
 	{
-		bump.hpHurt(atk.value);
+		int hp = bump.hp();
+		while(dice.nextFloat() < (float)atk.value / (atk.value + bump.def.value))
+			bump.hpHurt(dmg.value);
+		System.out.println(hp - bump.hp());
 		if(bump.isExpired())
 			appendMessage(this + " slays " + bump);
 		else
@@ -98,6 +108,16 @@ public abstract class Creature extends Actor implements Serializable
 	public void relecBuff(int buff)
 	{
 		relec.value += buff;
+	}
+	
+	public void defBuff(int modifier)
+	{
+		def.value += modifier;
+	}
+	
+	public void dmgBuff(int modifier)
+	{
+		dmg.value += modifier;
 	}
 
 	protected class Stat implements Serializable

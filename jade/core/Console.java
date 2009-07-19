@@ -153,9 +153,9 @@ public class Console extends JPanel
 	 * Buffers a single char relative to the camera position on the screen. The
 	 * camera will be centered at (x, y) on the screen. The ColoredChar will be
 	 * the forground tile to use, while the background tile will be the tile that
-	 * the camera sees at the coordinate. This is useful for drawing special effects
-	 * as it will replace what is actually in the foreground with the specified
-	 * ColoredChar.
+	 * the camera sees at the coordinate. This is useful for drawing special
+	 * effects as it will replace what is actually in the foreground with the
+	 * specified ColoredChar.
 	 * @param camera the camera to be used.
 	 * @param x the x-coordinate of the camera on screen
 	 * @param y the y-coordinate of the camera on screen
@@ -253,9 +253,18 @@ public class Console extends JPanel
 		char key = getKey();
 		while(key != terminator)
 		{
-			buffChar(x++, y, key, color);
-			refreshScreen();
-			str += key;
+			if((key >= 33 && key <= 126) || key == ' ')
+			{
+				buffChar(x++, y, key, color);
+				refreshScreen();
+				str += key;
+			}
+			else if(key == 8)
+			{
+				buffChar(--x, y, ' ', Color.black);
+				refreshScreen();
+				str = str.substring(0, str.length() - 2);
+			}
 			key = getKey();
 		}
 		return str;

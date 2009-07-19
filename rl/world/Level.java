@@ -34,8 +34,8 @@ public class Level extends World implements Serializable
 		downStairs = getOpenTile(random);
 		tile(downStairs).setTile('>', Color.white, true);
 		addActor(new Monster('D', Color.red), random);
-		addActor(new Item('|', Color.white, Slot.Weapon), random);
-		addActor(new Item(']', Color.white, Slot.Armor), random);
+		addActor(new Item('|', Color.white, Slot.WEAPON, 1000), random);
+		addActor(new Item(']', Color.white, Slot.ARMOR, 10), random);
 		addActor(new Feature('^', Color.blue, Effect.FIRE, 15), random);
 	}
 

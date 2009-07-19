@@ -1,19 +1,15 @@
 package rl.creature;
 
 import jade.util.Coord;
-import jade.util.Dice;
 import java.awt.Color;
 import java.io.Serializable;
 import rl.world.Level;
 
 public class Monster extends Creature implements Serializable
 {
-	private Dice dice;
-
 	public Monster(char face, Color color)
 	{
-		super(face, color, 1, 0, 10, 0, 0);
-		dice = new Dice();
+		super(face, color, 10, 0, 10, 10, 1, 0, 0);
 	}
 
 	@Override

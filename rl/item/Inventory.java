@@ -43,6 +43,7 @@ public class Inventory implements Serializable
 			{
 				inventory.remove(item);
 				equipment.put(item.slot(), item);
+				item.onEquip(owner);
 				owner.appendMessage(item + " equiped");
 			}
 		}
@@ -56,6 +57,7 @@ public class Inventory implements Serializable
 		{
 			equipment.remove(item.slot());
 			inventory.add(item);
+			item.onUnequip(owner);
 			owner.appendMessage(owner + " unequips " + item);
 		}
 	}
