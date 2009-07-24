@@ -229,6 +229,14 @@ public abstract class Actor extends Messenger implements Serializable
 	{
 		return face;
 	}
+	
+	/**
+	 * Sets the face of this actor
+	 */
+	public void setFace(ColoredChar face)
+	{
+		this.face = face;
+	}
 
 	/**
 	 * Returns the world the actor currently belongs too, or null if it does not
