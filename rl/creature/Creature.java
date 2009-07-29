@@ -50,11 +50,13 @@ public abstract class Creature extends Actor implements Serializable
 		int hp = bump.hp();
 		while(dice.nextFloat() < (float)atk.value / (atk.value + bump.def.value))
 			bump.hpHurt(dmg.value);
-		System.out.println(hp - bump.hp());
-		if(bump.isExpired())
+		if(hp == bump.hp())
+			appendMessage(this + " misses " + bump);
+		else if(bump.isExpired())
 			appendMessage(this + " slays " + bump);
 		else
 			appendMessage(this + " hits " + bump);
+		System.out.println(hp - bump.hp());
 	}
 
 	public void hpHurt(int damage)
@@ -109,12 +111,12 @@ public abstract class Creature extends Actor implements Serializable
 	{
 		relec.value += buff;
 	}
-	
+
 	public void defBuff(int modifier)
 	{
 		def.value += modifier;
 	}
-	
+
 	public void dmgBuff(int modifier)
 	{
 		dmg.value += modifier;
@@ -124,17 +126,29 @@ public abstract class Creature extends Actor implements Serializable
 	{
 		public int value;
 		public int base;
+		private float train;
 
 		public Stat(int base)
 		{
-			this.base = base;
-			value = base;
+			this(base, base);
 		}
 
 		public Stat(int base, int value)
 		{
 			this.base = base;
 			this.value = value;
+			train = 0;
+		}
+
+		public void train(float advance)
+		{
+			train += advance;
+			if(train > 1)
+			{
+				base++ ;
+				value++ ;
+				train = 0;
+			}
 		}
 	}
 }
