@@ -21,7 +21,7 @@ public class Rogue
 
 	public static void main(String[] args)
 	{
-		init(args.length > 0 && args[0] == "g");
+		init(args.length > 0 && args[0].equals("g"));
 		gameLoop();
 		end();
 	}
@@ -43,33 +43,31 @@ public class Rogue
 
 	private static void init(boolean graphics)
 	{
-		if(graphics)
-			getGConsole();
-		else
-			console = Console.getFramedConsole("Jade");
+		console = graphics ? getGConsole() : Console.getFramedConsole("Jade");
 		console.buffString(0, 0, "Enter your name:", Color.white);
 		console.refreshScreen();
 		String name = console.echoString(0, 1, Color.white, '\n');
 		load(name);
 	}
 
-	private static void getGConsole()
+	private static Console getGConsole()
 	{
-		console = GConsole.getFramedConsole("Jade");
-		((GConsole)console).registerImage("tiles", 0, 3, '@', Color.white);
-		((GConsole)console).registerImage("tiles", 21, 12, 'D', Color.red);
-		((GConsole)console).registerImage("tiles", 0, 22, '#', Color.white);
-		((GConsole)console).registerImage("tiles", 16, 22, '>', Color.white);
-		((GConsole)console).registerImage("tiles", 15, 22, '<', Color.white);
-		((GConsole)console).registerImage("tiles", 0, 23, '.', Color.white);
-		((GConsole)console).registerImage("tiles", 5, 23, '.', Color.green);
-		((GConsole)console).registerImage("tiles", 57, 22, '.', Color.gray);
-		((GConsole)console).registerImage("tiles", 55, 23, '%', Color.green);
-		((GConsole)console).registerImage("tiles", 55, 23, '%', Color.yellow);
-		((GConsole)console).registerImage("tiles", 3, 10, '|', Color.white);
-		((GConsole)console).registerImage("tiles", 48, 1, '*', Color.red);
-		((GConsole)console).registerImage("tiles", 45, 0, ']', Color.white);
-		((GConsole)console).registerImage("tiles", 25, 1, '^', Color.blue);
+		GConsole gConsole = GConsole.getFramedConsole("Jade");
+		gConsole.registerImage("tiles", 0, 3, '@', Color.white);
+		gConsole.registerImage("tiles", 21, 12, 'D', Color.red);
+		gConsole.registerImage("tiles", 0, 22, '#', Color.white);
+		gConsole.registerImage("tiles", 16, 22, '>', Color.white);
+		gConsole.registerImage("tiles", 15, 22, '<', Color.white);
+		gConsole.registerImage("tiles", 0, 23, '.', Color.white);
+		gConsole.registerImage("tiles", 5, 23, '.', Color.green);
+		gConsole.registerImage("tiles", 57, 22, '.', Color.gray);
+		gConsole.registerImage("tiles", 55, 23, '%', Color.green);
+		gConsole.registerImage("tiles", 55, 23, '%', Color.yellow);
+		gConsole.registerImage("tiles", 3, 10, '|', Color.white);
+		gConsole.registerImage("tiles", 48, 1, '*', Color.red);
+		gConsole.registerImage("tiles", 45, 0, ']', Color.white);
+		gConsole.registerImage("tiles", 25, 1, '^', Color.blue);
+		return gConsole;
 	}
 
 	private static void end()

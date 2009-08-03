@@ -8,13 +8,14 @@ import java.io.Serializable;
 
 public abstract class Creature extends Actor implements Serializable
 {
-	protected Stat hp;
-	protected Stat mp;
-	protected Stat atk;
-	protected Stat def;
-	protected Stat dmg;
-	protected Stat rfire;
-	protected Stat relec;
+	private static final float XP_ON_SUCCEED = .01f;
+	private Stat hp;
+	private Stat mp;
+	private Stat atk;
+	private Stat def;
+	private Stat dmg;
+	private Stat rfire;
+	private Stat relec;
 	protected Dice dice;
 
 	public Creature(char face, Color color, int hp, int mp, int atk, int def,
@@ -51,12 +52,15 @@ public abstract class Creature extends Actor implements Serializable
 		while(dice.nextFloat() < (float)atk.value / (atk.value + bump.def.value))
 			bump.hpHurt(dmg.value);
 		if(hp == bump.hp())
+		{
 			appendMessage(this + " misses " + bump);
-		else if(bump.isExpired())
-			appendMessage(this + " slays " + bump);
-		else
-			appendMessage(this + " hits " + bump);
-		System.out.println(hp - bump.hp());
+			bump.def.train(XP_ON_SUCCEED);
+		}
+		else 
+		{
+			appendMessage(this + (bump.isExpired() ? " slays" : " hits ") + bump);
+			atk.train(XP_ON_SUCCEED);
+		}
 	}
 
 	public void hpHurt(int damage)
@@ -143,11 +147,11 @@ public abstract class Creature extends Actor implements Serializable
 		public void train(float advance)
 		{
 			train += advance;
-			if(train > 1)
+			while(train > 1)
 			{
 				base++ ;
 				value++ ;
-				train = 0;
+				train--;
 			}
 		}
 	}
