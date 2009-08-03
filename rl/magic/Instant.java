@@ -11,9 +11,9 @@ public class Instant implements Serializable
 {
 	public enum Effect
 	{
-		FIRE(Color.red, false), RFIRE(Color.red, true), ELEC(Color.yellow, false),
-		RELEC(Color.yellow, true), STONEFALL(Color.gray, false),
-		CHANNEL(Color.white, true);
+		FIRE(Color.red, false), RFIRE(Color.red, true), ELEC(Color.yellow, false), RELEC(
+				Color.yellow, true), STONEFALL(Color.gray, false), CHANNEL(Color.white,
+				true);
 
 		private Color color;
 		private boolean undo;
@@ -49,7 +49,7 @@ public class Instant implements Serializable
 	public void doIt(int x, int y, World world)
 	{
 		Creature target = world.getActorAt(x, y, Creature.class);
-		switch(effect)
+		switch (effect)
 		{
 		case FIRE:
 			fire(target);
@@ -74,9 +74,9 @@ public class Instant implements Serializable
 
 	public void undoIt()
 	{
-		if(!effect.undoNeeded())
+		if (!effect.undoNeeded())
 			return;
-		switch(effect)
+		switch (effect)
 		{
 		case RFIRE:
 			undorRfire();
@@ -95,33 +95,33 @@ public class Instant implements Serializable
 
 	private void undoChannel()
 	{
-		for(Creature target : undoList)
-			target.mpFlow(-magnitude);
+		for (Creature target : undoList)
+			target.mp().buff(-magnitude);
 	}
 
 	private void channel(Creature target)
 	{
-		if(target == null || undoList.contains(target))
+		if (target == null || undoList.contains(target))
 			return;
-		target.mpFlow(magnitude);
+		target.mp().buff(magnitude);
 		undoList.add(target);
 	}
 
 	private void stonefall(int x, int y, World world)
 	{
-		if(!world.passable(x, y))
+		if (!world.passable(x, y))
 			world.tile(x, y).setTile('.', Color.gray, true);
 	}
 
 	private void elec(Creature target)
 	{
-		if(target == null)
+		if (target == null)
 			return;
-		int damage = magnitude - target.relec();
-		if(damage > 0)
+		int damage = magnitude - target.relec().value();
+		if (damage > 0)
 		{
-			target.hpHurt(damage);
-			if(target.hp() < 0)
+			target.hp().buff(damage);
+			if (target.hp().value() < 0)
 				target.appendMessage(target + " is fried");
 			else
 				target.appendMessage(target + " is shocked");
@@ -129,50 +129,48 @@ public class Instant implements Serializable
 		else
 			target.appendMessage(target + " resist shock");
 	}
-	
+
 	private void relec(Creature target)
 	{
-		if(target == null)
+		if (target == null)
 			return;
-		target.relecBuff(magnitude);
+		target.relec().buff(magnitude);
 	}
 
 	private void undoRelec()
 	{
 		magnitude *= -1;
-		for(Creature target : undoList)
+		for (Creature target : undoList)
 			relec(target);
 		magnitude *= -1;
 	}
-	
+
 	private void fire(Creature target)
 	{
-		if(target == null)
+		if (target == null)
 			return;
-		int damage = magnitude - target.rfire();
-		if(damage > 0)
+		int damage = magnitude - target.rfire().value();
+		if (damage > 0)
 		{
-			target.hpHurt(damage);
-			if(target.hp() < 0)
-				target.appendMessage(target + " is consumed");
-			else
-				target.appendMessage(target + " burns");
+			target.hp().buff(-damage);
+			target.appendMessage(target
+					+ (target.isExpired() ? " is consumed" : " burns"));
 		}
 		else
 			target.appendMessage(target + " resists fire");
 	}
-	
+
 	private void rfire(Creature target)
 	{
-		if(target == null)
+		if (target == null)
 			return;
-		target.rfireBuff(magnitude);
+		target.rfire().buff(magnitude);
 	}
-	
+
 	private void undorRfire()
 	{
 		magnitude *= -1;
-		for(Creature target : undoList)
+		for (Creature target : undoList)
 			rfire(target);
 		magnitude *= -1;
 	}

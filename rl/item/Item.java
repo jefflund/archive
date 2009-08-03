@@ -32,10 +32,10 @@ public class Item extends Actor implements Serializable
 		switch(slot)
 		{
 		case ARMOR:
-			owner.defBuff(modifier);
+			owner.def().buff(modifier);
 			break;
 		case WEAPON:
-			owner.dmgBuff(modifier);
+			owner.dmg().buff(modifier);
 			break;
 		}
 	}

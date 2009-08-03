@@ -34,7 +34,7 @@ public class Spell implements Serializable
 
 	public void cast()
 	{
-		if(caster.mp() < cost)
+		if(caster.mp().value() < cost)
 			caster.appendMessage("Insufficient mana");
 		else
 		{
@@ -55,7 +55,7 @@ public class Spell implements Serializable
 					weave.attachTo(other);
 				break;
 			}
-			caster.mpFlow(-cost);
+			caster.mp().buff(-cost);
 		}
 	}
 

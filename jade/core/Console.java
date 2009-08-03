@@ -179,7 +179,7 @@ public class Console extends JPanel
 	{
 		int offX = x - camera.x();
 		int offY = y - camera.y();
-		for(Coord coord : camera.getFoV())
+		for (Coord coord : camera.getFoV())
 			buffChar(coord.getTranslated(offX, offY), camera.world().look(coord));
 	}
 
@@ -213,7 +213,8 @@ public class Console extends JPanel
 
 	/**
 	 * Places a string in the buffer at the given location. This method does not
-	 * wrap the text.
+	 * wrap the text. However, newline characters will move the text to the
+	 * original x position one line below, and tab will insert 2 spaces.
 	 * @param x the x-coordinate of the string
 	 * @param y the y-coordinate of the string
 	 * @param str the string to be buffered
@@ -221,13 +222,28 @@ public class Console extends JPanel
 	 */
 	public void buffString(int x, int y, String str, Color color)
 	{
-		for(char ch : str.toCharArray())
-			buffChar(x++, y, ch, color);
+		int startX = x;
+		for (char ch : str.toCharArray())
+		{
+			switch (ch)
+			{
+			case '\n':
+				x = startX;
+				y++;
+				break;
+			case '\t':
+				x += 2;
+				break;
+			default:
+				buffChar(x++, y, ch, color);
+			}
+		}
 	}
 
 	/**
 	 * Places a string in the buffer at the given location. This method does not
-	 * wrap the text.
+	 * wrap the text. However, newline characters will move the text to the
+	 * original x position one line below, and tab will insert 2 spaces.
 	 * @param coord the location of the string
 	 * @param str the string to be buffered
 	 * @param color the color of the string
@@ -238,7 +254,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * This method is simular to echoChar, only that it repeats until the
+	 * This method is similar to echoChar, only that it repeats until the
 	 * terminator char is pressed. The location that each char is placed is one to
 	 * the right.
 	 * @param x the x-coordinate of the first char to be buffered.
@@ -251,15 +267,15 @@ public class Console extends JPanel
 	{
 		String str = "";
 		char key = getKey();
-		while(key != terminator)
+		while (key != terminator)
 		{
-			if((key >= 33 && key <= 126) || key == ' ')
+			if ((key >= 33 && key <= 126) || key == ' ')
 			{
 				buffChar(x++, y, key, color);
 				refreshScreen();
 				str += key;
 			}
-			else if(key == 8)
+			else if (key == 8)// backspace
 			{
 				buffChar(--x, y, ' ', Color.black);
 				refreshScreen();
@@ -271,7 +287,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * This method is simular to echoChar, only that it repeats until the
+	 * This method is similar to echoChar, only that it repeats until the
 	 * terminator char is pressed. The location that each char is placed is one to
 	 * the right.
 	 * @param coord the coordinate of the first char to be buffered.
@@ -339,7 +355,7 @@ public class Console extends JPanel
 	@SuppressWarnings("deprecation")
 	public char getKey()
 	{
-		if(!listener.ready)
+		if (!listener.ready)
 			mainThread.suspend();
 		listener.ready = false;
 		return listener.input;
@@ -351,7 +367,7 @@ public class Console extends JPanel
 		try
 		{
 			super.paintComponent(page);
-			for(Coord coord : buffer.keySet())
+			for (Coord coord : buffer.keySet())
 			{
 				page.setColor(buffer.get(coord).color());
 				page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
@@ -361,10 +377,10 @@ public class Console extends JPanel
 		// Near as I can tell, these exceptions get thrown due to concurrency with
 		// the AWT-EventQueue threads. Basically, AWT is still painting when the
 		// buffer is already in use again.
-		catch(ConcurrentModificationException dontWorry)
+		catch (ConcurrentModificationException dontWorry)
 		{
 		}
-		catch(NullPointerException dontWorry)
+		catch (NullPointerException dontWorry)
 		{
 		}
 	}

@@ -110,9 +110,9 @@ public class Player extends Creature implements Serializable, Camera
 			}
 		}
 		if(dice.nextFloat() < REGEN)
-			hpHeal(1);
+			hp().cappedBuff(1);
 		if(dice.nextFloat() < REGEN)
-			mpRestore(1);
+			mp().cappedBuff(1);
 		calcFoV();
 	}
 

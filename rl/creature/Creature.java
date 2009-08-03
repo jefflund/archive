@@ -22,7 +22,15 @@ public abstract class Creature extends Actor implements Serializable
 			int dmg, int rfire, int relec)
 	{
 		super(face, color);
-		this.hp = new Stat(hp);
+		this.hp = new Stat(hp)
+		{
+			public void buff(int buff)
+			{
+				super.buff(buff);
+				if(value() < 0)
+					expire();
+			}
+		};
 		this.mp = new Stat(mp);
 		this.atk = new Stat(atk);
 		this.def = new Stat(def);
@@ -48,10 +56,10 @@ public abstract class Creature extends Actor implements Serializable
 
 	private void attack(Creature bump)
 	{
-		int hp = bump.hp();
+		int hp = bump.hp().value();
 		while(dice.nextFloat() < (float)atk.value / (atk.value + bump.def.value))
-			bump.hpHurt(dmg.value);
-		if(hp == bump.hp())
+			bump.hp().buff(-dmg.value());
+		if(hp == bump.hp().value())
 		{
 			appendMessage(this + " misses " + bump);
 			bump.def.train(XP_ON_SUCCEED);
@@ -63,73 +71,45 @@ public abstract class Creature extends Actor implements Serializable
 		}
 	}
 
-	public void hpHurt(int damage)
+	public Stat hp()
 	{
-		hp.value -= damage;
-		if(hp.value < 0)
-			expire();
+		return hp;
 	}
 
-	public void hpHeal(int cure)
+	public Stat mp()
 	{
-		hp.value = Math.min(hp.value + cure, hp.base);
+		return mp;
 	}
 
-	public int hp()
+	public Stat def()
 	{
-		return hp.value;
+		return def;
+	}
+	
+	public Stat atk()
+	{
+		return atk;
+	}
+	
+	public Stat dmg()
+	{
+		return dmg;
+	}
+	
+	public Stat rfire()
+	{
+		return rfire;
+	}
+	
+	public Stat relec()
+	{
+		return relec;
 	}
 
-	public void mpFlow(int flow)
+	public class Stat implements Serializable
 	{
-		mp.value += flow;
-	}
-
-	public void mpRestore(int restore)
-	{
-		if(mp.value < mp.base)
-			mp.value += restore;
-	}
-
-	public int mp()
-	{
-		return mp.value;
-	}
-
-	public int rfire()
-	{
-		return rfire.value;
-	}
-
-	public void rfireBuff(int buff)
-	{
-		rfire.value += buff;
-	}
-
-	public int relec()
-	{
-		return relec.value;
-	}
-
-	public void relecBuff(int buff)
-	{
-		relec.value += buff;
-	}
-
-	public void defBuff(int modifier)
-	{
-		def.value += modifier;
-	}
-
-	public void dmgBuff(int modifier)
-	{
-		dmg.value += modifier;
-	}
-
-	protected class Stat implements Serializable
-	{
-		public int value;
-		public int base;
+		private int value;
+		private int base;
 		private float train;
 
 		public Stat(int base)
@@ -143,6 +123,11 @@ public abstract class Creature extends Actor implements Serializable
 			this.value = value;
 			train = 0;
 		}
+		
+		public int value()
+		{
+			return value;
+		}
 
 		public void train(float advance)
 		{
@@ -153,6 +138,21 @@ public abstract class Creature extends Actor implements Serializable
 				value++ ;
 				train--;
 			}
+		}
+		
+		public void buff(int buff)
+		{
+			value += buff;
+		}
+		
+		public void cappedBuff(int buff)
+		{
+			value = Math.min(value + buff, base);
+		}
+		
+		public String toString()
+		{
+			return Integer.valueOf(value).toString();
 		}
 	}
 }
