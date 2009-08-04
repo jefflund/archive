@@ -8,7 +8,6 @@ import java.io.Serializable;
 
 public abstract class Creature extends Actor implements Serializable
 {
-	private static final float XP_ON_SUCCEED = .01f;
 	private Stat hp;
 	private Stat mp;
 	private Stat atk;
@@ -62,12 +61,12 @@ public abstract class Creature extends Actor implements Serializable
 		if(hp == bump.hp().value())
 		{
 			appendMessage(this + " misses " + bump);
-			bump.def.train(XP_ON_SUCCEED);
+			bump.def.train();
 		}
 		else 
 		{
 			appendMessage(this + (bump.isExpired() ? " slays" : " hits ") + bump);
-			atk.train(XP_ON_SUCCEED);
+			atk.train();
 		}
 	}
 
@@ -111,6 +110,7 @@ public abstract class Creature extends Actor implements Serializable
 		private int value;
 		private int base;
 		private float train;
+		private static final float XP = .01f;
 
 		public Stat(int base)
 		{
@@ -129,9 +129,9 @@ public abstract class Creature extends Actor implements Serializable
 			return value;
 		}
 
-		public void train(float advance)
+		public void train()
 		{
-			train += advance;
+			train += XP;
 			while(train > 1)
 			{
 				base++ ;

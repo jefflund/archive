@@ -19,6 +19,7 @@ import rl.world.Dungeon;
 
 public class Player extends Creature implements Serializable, Camera
 {
+	public static final int VISION = 4;
 	private transient Console console;
 	private List<Spell> spellbook;
 	private Collection<Coord> fov;
@@ -143,7 +144,7 @@ public class Player extends Creature implements Serializable, Camera
 	public void calcFoV()
 	{
 		fov = FoVFactory.get(FoVFactory.CircularShadow).calcFoV(world(), x(), y(),
-				4);
+				VISION);
 	}
 
 	public Collection<Coord> getFoV()
@@ -153,7 +154,13 @@ public class Player extends Creature implements Serializable, Camera
 	
 	public String status()
 	{
-		return "hp:" + hp() + "\tmp:"	+ mp();
+		String result = "";
+		result += "hp:" + hp() + '\n';
+		result += "mp:" + mp() + '\n';
+		result += "atk:" + atk() + '\n';
+		result += "def:" + def() + '\n';
+		result += "dmg:" + dmg() + '\n';
+		return result;
 	}
 
 	private <T> T choose(List<T> elements, String title)

@@ -56,6 +56,7 @@ public class Spell implements Serializable
 				break;
 			}
 			caster.mp().buff(-cost);
+			caster.mp().train();
 		}
 	}
 

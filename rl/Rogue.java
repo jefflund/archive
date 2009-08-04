@@ -32,9 +32,9 @@ public class Rogue
 		{
 			Level level = dungeon.getLevel();
 			console.clearBuffer();
-			console.buffCamera(player, 4, 4);
-			console.buffString(0, level.height, player.status(), Color.white);
-			console.buffString(0, level.height + 1, level.getMessages(), Color.white);
+			console.buffCamera(player, Player.VISION, Player.VISION);
+			console.buffString(2 * Player.VISION + 2, 0, player.status(), Color.white);
+			console.buffString(0, 2 * Player.VISION + 1, level.getMessages(), Color.white);
 			console.refreshScreen();
 			level.tick();
 		}
@@ -116,5 +116,4 @@ public class Rogue
 			dungeon.getLevel().addActor(player, new Dice(0));
 		}
 	}
-
 }
