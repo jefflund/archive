@@ -12,7 +12,7 @@ import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
 import rl.item.Item;
-import rl.item.Item.Slot;
+import rl.item.Item.Type;
 import rl.magic.Weave;
 import rl.magic.Instant.Effect;
 
@@ -34,9 +34,16 @@ public class Level extends World implements Serializable
 		downStairs = getOpenTile(random);
 		tile(downStairs).setTile('>', Color.white, true);
 		addActor(new Monster('D', Color.red), random);
-		addActor(new Item('|', Color.white, Slot.WEAPON, 1000), random);
-		addActor(new Item(']', Color.white, Slot.ARMOR, 10), random);
-		addActor(new Feature('^', Color.blue, Effect.FIRE, 15), random);
+		addActor(new Item('|', Color.white, Type.WEAPON, 1000), random);
+		addActor(new Item(']', Color.white, Type.ARMOR, 10), random);
+		addActor(new Item('|', Color.red, Type.WEAPON, 1000), random);
+		addActor(new Item(']', Color.red, Type.ARMOR, 10), random);		
+		addActor(new Item('?', Color.white, Type.SCROLL, 0), random);
+		addActor(new Item('?', Color.red, Type.SCROLL, 0), random);
+		addActor(new Item('!', Color.red, Type.POTION, 0), random);
+		addActor(new Item('!', Color.white, Type.POTION, 0), random);
+		addActor(new Feature('^', Color.red, Effect.FIRE, 15), random);
+		addActor(new Feature('^', Color.blue, Effect.CHANNEL, 90), random);
 	}
 
 	@Override

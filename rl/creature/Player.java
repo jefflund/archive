@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import rl.item.Inventory;
 import rl.item.Item;
+import rl.item.Item.Type;
 import rl.magic.Spell;
 import rl.magic.Instant.Effect;
 import rl.magic.Spell.Target;
@@ -28,7 +29,7 @@ public class Player extends Creature implements Serializable, Camera
 	private static final float REGEN = .05f;
 	private String name;
 	private boolean playing;
-	
+
 	public Player(Console console, Dungeon dungeon, String name)
 	{
 		super('@', Color.white, 20, 10, 10, 10, 1, 0, 10);
@@ -48,7 +49,7 @@ public class Player extends Creature implements Serializable, Camera
 		spellbook.add(new Spell(this, Effect.RFIRE, Target.SELF, 20, 5, 1,
 				"resist fire"));
 		spellbook.add(new Spell(this, Effect.RELEC, Target.SELF, 20, 5, 1,
-		"resist elec"));		
+				"resist elec"));
 	}
 
 	@Override
@@ -56,17 +57,14 @@ public class Player extends Creature implements Serializable, Camera
 	{
 		char key = '\0';
 		boolean moved = false;
-		while(!moved)
+		while( !moved)
 		{
 			key = console.getKey();
 			moved = true;
 			switch(key)
 			{
-			case 'q':
+			case 'X':
 				playing = false;
-				break;
-			case 'C':
-				expire();
 				break;
 			case 'p':
 				spellbook();
@@ -83,7 +81,7 @@ public class Player extends Creature implements Serializable, Camera
 				inventory.get();
 				break;
 			case 'd':
-				inventory.drop(inventory());
+				inventory.drop(inventory(), false);
 				break;
 			case 'e':
 				equipment();
@@ -101,6 +99,26 @@ public class Player extends Creature implements Serializable, Camera
 			case '<':
 				dungeon.ascend();
 				break;
+			case 'r':
+				Item scroll = choose(inventory.getTypedItems(Type.SCROLL), "Scrolls");
+				if(scroll != null)
+				{
+					appendMessage(this + " reads " + scroll);
+					expend(scroll);
+				}
+				else
+					appendMessage("Invalid Selection");				
+				break;
+			case 'q':
+				Item potion = choose(inventory.getTypedItems(Type.SCROLL), "Potions");
+				if(potion != null)
+				{
+					appendMessage(this + " quaffs " + potion);
+					expend(potion);
+				}
+				else
+					appendMessage("Invalid Selection");
+				break;				
 			default:
 				Coord dir = Tools.keyToDir(key, true, false);
 				if(dir != null)
@@ -132,8 +150,8 @@ public class Player extends Creature implements Serializable, Camera
 			if(dir != null)
 			{
 				target.translate(dir);
-				if(!fov.contains(target))
-					target.translate(-dir.x(), -dir.y());
+				if( !fov.contains(target))
+					target.translate( -dir.x(), -dir.y());
 			}
 		}
 		console.recallBuffer();
@@ -151,7 +169,7 @@ public class Player extends Creature implements Serializable, Camera
 	{
 		return fov;
 	}
-	
+
 	public String status()
 	{
 		String result = "";
@@ -172,7 +190,7 @@ public class Player extends Creature implements Serializable, Camera
 		{
 			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + element,
 					Color.white);
-			i++;
+			i++ ;
 		}
 		console.refreshScreen();
 		int index = Tools.alphaToInt(console.getKey());
@@ -207,8 +225,16 @@ public class Player extends Creature implements Serializable, Camera
 			spell.cast();
 	}
 	
+	private void expend(Item item)
+	{
+		assert(!item.equipable());
+		inventory.drop(item, true);
+		item.expire();
+	}
+
 	/**
-	 * Upon deserialization this must be done as the console cannot actually be saved.
+	 * Upon deserialization this must be done as the console cannot actually be
+	 * saved.
 	 * @param console the new console
 	 */
 	public void onDeserialize(Console console)
@@ -216,12 +242,12 @@ public class Player extends Creature implements Serializable, Camera
 		this.console = console;
 		playing = true;
 	}
-	
+
 	public boolean playing()
 	{
 		return playing && !isExpired();
 	}
-	
+
 	@Override
 	public String toString()
 	{

@@ -7,18 +7,25 @@ import rl.creature.Creature;
 
 public class Item extends Actor implements Serializable
 {
-	public enum Slot
+	public enum Type
 	{
-		WEAPON, ARMOR
+		WEAPON(true), ARMOR(true), SCROLL(false), POTION(false);
+		
+		private boolean equipable;
+		
+		private Type(boolean equipable)
+		{
+			this.equipable = equipable;
+		}
 	};
 
-	private Slot slot;
+	private Type type;
 	private int modifier;
 
-	public Item(char face, Color color, Slot slot, int modifier)
+	public Item(char face, Color color, Type slot, int modifier)
 	{
 		super(face, color);
-		this.slot = slot;
+		this.type = slot;
 		this.modifier = modifier;
 	}
 
@@ -29,7 +36,7 @@ public class Item extends Actor implements Serializable
 	
 	public void onEquip(Creature owner)
 	{
-		switch(slot)
+		switch(type)
 		{
 		case ARMOR:
 			owner.def().buff(modifier);
@@ -47,8 +54,13 @@ public class Item extends Actor implements Serializable
 		modifier *= -1;
 	}
 
-	public Slot slot()
+	public Type type()
 	{
-		return slot;
+		return type;
+	}
+	
+	public boolean equipable()
+	{
+		return type.equipable;
 	}
 }
