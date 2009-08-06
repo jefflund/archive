@@ -4,15 +4,17 @@ import jade.core.Actor;
 import java.awt.Color;
 import java.io.Serializable;
 import rl.creature.Creature;
+import rl.magic.Instant;
+import rl.magic.Instant.Effect;
 
 public class Item extends Actor implements Serializable
 {
 	public enum Type
 	{
 		WEAPON(true), ARMOR(true), SCROLL(false), POTION(false);
-		
+
 		private boolean equipable;
-		
+
 		private Type(boolean equipable)
 		{
 			this.equipable = equipable;
@@ -21,20 +23,44 @@ public class Item extends Actor implements Serializable
 
 	private Type type;
 	private int modifier;
+	private Instant enchant;
 
-	public Item(char face, Color color, Type slot, int modifier)
+	public Item(char face, Color color, Type type, int modifier, Effect effect,
+			int magnitude)
 	{
 		super(face, color);
-		this.type = slot;
+		this.type = type;
 		this.modifier = modifier;
+		if(effect != null)
+			enchant = new Instant(effect, magnitude);
 	}
 
 	@Override
 	public void act()
 	{
+		//only expendable items should act
+		//note that this means that undoable effects will be permanent
+		assert ( !type.equipable);
+		if(enchant != null)
+			enchant.doIt(x(), y(), world());
+		expire();
 	}
-	
+
 	public void onEquip(Creature owner)
+	{
+		buffStats(owner);
+		if(enchant != null)
+			enchant.doIt(x(), y(), world());
+	}
+
+	public void onUnequip(Creature owner)
+	{
+		debuffStats(owner);
+		if(enchant != null)
+			enchant.undoIt();
+	}
+
+	private void buffStats(Creature owner)
 	{
 		switch(type)
 		{
@@ -47,10 +73,10 @@ public class Item extends Actor implements Serializable
 		}
 	}
 	
-	public void onUnequip(Creature owner)
+	private void debuffStats(Creature owner)
 	{
 		modifier *= -1;
-		onEquip(owner);
+		buffStats(owner);
 		modifier *= -1;
 	}
 
@@ -58,7 +84,7 @@ public class Item extends Actor implements Serializable
 	{
 		return type;
 	}
-	
+
 	public boolean equipable()
 	{
 		return type.equipable;

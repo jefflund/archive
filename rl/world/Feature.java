@@ -14,8 +14,8 @@ public class Feature extends Actor implements Serializable
 	public Feature(char face, Color color, Effect effect, int magnitude)
 	{
 		super(face, color);
-		if(!effect.undoNeeded())
-			instant = new Instant(effect, magnitude);
+		assert(!effect.undoNeeded());
+		instant = new Instant(effect, magnitude);
 	}
 
 	@Override

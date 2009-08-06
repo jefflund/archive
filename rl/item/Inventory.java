@@ -1,7 +1,9 @@
 package rl.item;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -75,22 +77,23 @@ public class Inventory implements Serializable
 		}
 	}
 
-	public void drop(Item item, boolean suppressMsg)
+	public void drop(Item item)
+	{
+		drop(item, false);
+	}
+
+	private void drop(Item item, boolean suppressMsg)
 	{
 		if(item == null)
-		{
-			if(!suppressMsg)
-				owner.appendMessage("Invalid selection");
-		}
+			owner.appendMessage(suppressMsg ? "" : "Invalid selection");
 		else
 		{
 			item.detachFrom();
 			inventory.remove(item);
-			if(!suppressMsg)
-				owner.appendMessage(owner + " drops " + item);
+			owner.appendMessage(suppressMsg ? "" : owner + " drops " + item);
 		}
 	}
-	
+
 	public List<Item> getTypedItems(Type type)
 	{
 		List<Item> items = new LinkedList<Item>();
@@ -98,5 +101,15 @@ public class Inventory implements Serializable
 			if(item.type() == type)
 				items.add(item);
 		return items;
+	}
+
+	public void removeExpired()
+	{
+		Collection<Item> expired = new HashSet<Item>();
+		for(Item item : inventory)
+			if(item.isExpired())
+				expired.add(item);
+		for(Item item : expired)
+				drop(item, true);
 	}
 }

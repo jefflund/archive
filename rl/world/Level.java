@@ -34,14 +34,14 @@ public class Level extends World implements Serializable
 		downStairs = getOpenTile(random);
 		tile(downStairs).setTile('>', Color.white, true);
 		addActor(new Monster('D', Color.red), random);
-		addActor(new Item('|', Color.white, Type.WEAPON, 1000), random);
-		addActor(new Item(']', Color.white, Type.ARMOR, 10), random);
-		addActor(new Item('|', Color.red, Type.WEAPON, 1000), random);
-		addActor(new Item(']', Color.red, Type.ARMOR, 10), random);		
-		addActor(new Item('?', Color.white, Type.SCROLL, 0), random);
-		addActor(new Item('?', Color.red, Type.SCROLL, 0), random);
-		addActor(new Item('!', Color.red, Type.POTION, 0), random);
-		addActor(new Item('!', Color.white, Type.POTION, 0), random);
+		addActor(new Item('|', Color.white, Type.WEAPON, 1000, null, 0), random);
+		addActor(new Item(']', Color.white, Type.ARMOR, 10, null, 0), random);
+		addActor(new Item('|', Color.red, Type.WEAPON, 1000, Effect.CHANNEL, 50), random);
+		addActor(new Item(']', Color.red, Type.ARMOR, 10, Effect.CHANNEL, 150), random);		
+		addActor(new Item('?', Color.white, Type.SCROLL, 0, null, 0), random);
+		addActor(new Item('?', Color.red, Type.SCROLL, 7, Effect.FIRE, 6), random);
+		addActor(new Item('!', Color.red, Type.POTION, 5, Effect.FIRE, 7), random);
+		addActor(new Item('!', Color.white, Type.POTION, 0, null, 0), random);
 		addActor(new Feature('^', Color.red, Effect.FIRE, 15), random);
 		addActor(new Feature('^', Color.blue, Effect.CHANNEL, 90), random);
 	}

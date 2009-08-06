@@ -81,7 +81,7 @@ public class Player extends Creature implements Serializable, Camera
 				inventory.get();
 				break;
 			case 'd':
-				inventory.drop(inventory(), false);
+				inventory.drop(inventory());
 				break;
 			case 'e':
 				equipment();
@@ -104,17 +104,17 @@ public class Player extends Creature implements Serializable, Camera
 				if(scroll != null)
 				{
 					appendMessage(this + " reads " + scroll);
-					expend(scroll);
+					scroll.act();
 				}
 				else
 					appendMessage("Invalid Selection");				
 				break;
 			case 'q':
-				Item potion = choose(inventory.getTypedItems(Type.SCROLL), "Potions");
+				Item potion = choose(inventory.getTypedItems(Type.POTION), "Potions");
 				if(potion != null)
 				{
 					appendMessage(this + " quaffs " + potion);
-					expend(potion);
+					potion.act();
 				}
 				else
 					appendMessage("Invalid Selection");
@@ -128,6 +128,7 @@ public class Player extends Creature implements Serializable, Camera
 				break;
 			}
 		}
+		inventory.removeExpired();
 		if(dice.nextFloat() < REGEN)
 			hp().cappedBuff(1);
 		if(dice.nextFloat() < REGEN)
@@ -225,13 +226,6 @@ public class Player extends Creature implements Serializable, Camera
 			spell.cast();
 	}
 	
-	private void expend(Item item)
-	{
-		assert(!item.equipable());
-		inventory.drop(item, true);
-		item.expire();
-	}
-
 	/**
 	 * Upon deserialization this must be done as the console cannot actually be
 	 * saved.

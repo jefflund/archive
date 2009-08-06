@@ -30,7 +30,14 @@ public abstract class Creature extends Actor implements Serializable
 					expire();
 			}
 		};
-		this.mp = new Stat(mp);
+		this.mp = new Stat(mp)
+		{
+			public void buff(int buff)
+			{
+				super.buff(buff);
+				buffBase(buff);
+			}
+		};
 		this.atk = new Stat(atk);
 		this.def = new Stat(def);
 		this.dmg = new Stat(dmg);
@@ -143,6 +150,11 @@ public abstract class Creature extends Actor implements Serializable
 		public void buff(int buff)
 		{
 			value += buff;
+		}
+		
+		void buffBase(int buff)
+		{
+			base += buff;
 		}
 		
 		public void cappedBuff(int buff)
