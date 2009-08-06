@@ -9,6 +9,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.LinkedList;
+import java.util.List;
 import rl.creature.Player;
 import rl.world.Dungeon;
 import rl.world.Level;
@@ -18,12 +20,21 @@ public class Rogue
 	private static Console console;
 	private static Dungeon dungeon;
 	private static Player player;
+	private static List<String> params;
 
 	public static void main(String[] args)
 	{
-		init(args.length > 0 && args[0].equals("g"));
+		getParams(args);
+		init();
 		gameLoop();
 		end();
+	}
+
+	private static void getParams(String[] args)
+	{
+		params = new LinkedList<String>();
+		for(String arg : args)
+			params.add(arg);
 	}
 
 	private static void gameLoop()
@@ -41,9 +52,9 @@ public class Rogue
 		while(player.playing());
 	}
 
-	private static void init(boolean graphics)
+	private static void init()
 	{
-		console = graphics ? getGConsole() : Console.getFramedConsole("Jade");
+		console = params.contains("g") ? getGConsole() : Console.getFramedConsole("Jade");
 		console.buffString(0, 0, "Enter your name:", Color.white);
 		console.refreshScreen();
 		String name = console.echoString(0, 1, Color.white, '\n');
@@ -80,7 +91,7 @@ public class Rogue
 			console.getKey();
 			new File(player.toString()).deleteOnExit();
 		}
-		else
+		else if(params.contains("s"))
 			save();
 		System.exit(0);
 	}
