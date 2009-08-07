@@ -35,9 +35,9 @@ public class Instant implements Serializable
 		}
 	};
 
-	private Effect effect;
+	private final Effect effect;
 	private int magnitude;
-	private Set<Creature> undoList;
+	private final Set<Creature> undoList;
 
 	public Instant(Effect effect, int magnitude)
 	{
@@ -48,7 +48,7 @@ public class Instant implements Serializable
 
 	public void doIt(int x, int y, World world)
 	{
-		Creature target = world.getActorAt(x, y, Creature.class);
+		final Creature target = world.getActorAt(x, y, Creature.class);
 		switch (effect)
 		{
 		case FIRE:
@@ -93,9 +93,14 @@ public class Instant implements Serializable
 		undoList.clear();
 	}
 
+	public Effect effect()
+	{
+		return effect;
+	}
+
 	private void undoChannel()
 	{
-		for (Creature target : undoList)
+		for (final Creature target : undoList)
 			target.mp().buff(-magnitude);
 	}
 
@@ -117,7 +122,7 @@ public class Instant implements Serializable
 	{
 		if (target == null)
 			return;
-		int damage = magnitude - target.relec().value();
+		final int damage = magnitude - target.relec().value();
 		if (damage > 0)
 		{
 			target.hp().buff(damage);
@@ -140,7 +145,7 @@ public class Instant implements Serializable
 	private void undoRelec()
 	{
 		magnitude *= -1;
-		for (Creature target : undoList)
+		for (final Creature target : undoList)
 			relec(target);
 		magnitude *= -1;
 	}
@@ -149,7 +154,7 @@ public class Instant implements Serializable
 	{
 		if (target == null)
 			return;
-		int damage = magnitude - target.rfire().value();
+		final int damage = magnitude - target.rfire().value();
 		if (damage > 0)
 		{
 			target.hp().buff(-damage);
@@ -170,7 +175,7 @@ public class Instant implements Serializable
 	private void undorRfire()
 	{
 		magnitude *= -1;
-		for (Creature target : undoList)
+		for (final Creature target : undoList)
 			rfire(target);
 		magnitude *= -1;
 	}

@@ -16,8 +16,8 @@ import java.util.Set;
  */
 public class BidirectionalMap<K, V> implements Serializable
 {
-	private Map<K, Pair> keys;
-	private Map<V, Pair> values;
+	private final Map<K, Pair> keys;
+	private final Map<V, Pair> values;
 
 	/**
 	 * Creates a new bidirectionalmap
@@ -39,7 +39,7 @@ public class BidirectionalMap<K, V> implements Serializable
 	{
 		removeKey(key);
 		removeValue(value);
-		Pair pair = new Pair(key, value);
+		final Pair pair = new Pair(key, value);
 		keys.put(key, pair);
 		values.put(value, pair);
 	}
@@ -64,7 +64,7 @@ public class BidirectionalMap<K, V> implements Serializable
 
 	private void freePair(Pair pair)
 	{
-		if(pair != null)
+		if (pair != null)
 		{
 			keys.values().remove(pair);
 			values.values().remove(pair);
@@ -78,8 +78,8 @@ public class BidirectionalMap<K, V> implements Serializable
 	 */
 	public V getValue(K key)
 	{
-		Pair pair = keys.get(key);
-		if(pair != null)
+		final Pair pair = keys.get(key);
+		if (pair != null)
 			return pair.value;
 		return null;
 	}
@@ -91,8 +91,8 @@ public class BidirectionalMap<K, V> implements Serializable
 	 */
 	public K getKey(V value)
 	{
-		Pair pair = values.get(value);
-		if(pair != null)
+		final Pair pair = values.get(value);
+		if (pair != null)
 			return pair.key;
 		return null;
 	}
@@ -164,8 +164,8 @@ public class BidirectionalMap<K, V> implements Serializable
 
 	private class Pair
 	{
-		private K key;
-		private V value;
+		private final K key;
+		private final V value;
 
 		public Pair(K key, V value)
 		{

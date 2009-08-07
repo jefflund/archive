@@ -8,8 +8,10 @@ import jade.util.Tools;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import rl.item.Inventory;
 import rl.item.Item;
 import rl.item.Item.Type;
@@ -22,12 +24,13 @@ public class Player extends Creature implements Serializable, Camera
 {
 	public static final int VISION = 4;
 	private transient Console console;
-	private List<Spell> spellbook;
+	private final List<Spell> spellbook;
+	private final Set<Effect> effects;
 	private Collection<Coord> fov;
-	private Inventory inventory;
-	private Dungeon dungeon;
+	private final Inventory inventory;
+	private final Dungeon dungeon;
 	private static final float REGEN = .05f;
-	private String name;
+	private final String name;
 	private boolean playing;
 
 	public Player(Console console, Dungeon dungeon, String name)
@@ -38,6 +41,7 @@ public class Player extends Creature implements Serializable, Camera
 		this.name = name;
 		inventory = new Inventory(this);
 		spellbook = new LinkedList<Spell>();
+		effects = new HashSet<Effect>();
 		spellbook.add(new Spell(this, Effect.FIRE, Target.AREA, 10, 5, 1,
 				"fire trap"));
 		spellbook.add(new Spell(this, Effect.ELEC, Target.OTHER, 10, 5, 1,
@@ -57,12 +61,15 @@ public class Player extends Creature implements Serializable, Camera
 	{
 		char key = '\0';
 		boolean moved = false;
-		while( !moved)
+		while (!moved)
 		{
 			key = console.getKey();
 			moved = true;
-			switch(key)
+			switch (key)
 			{
+			case 'G':
+				// make a new spell based on known effects
+				break;
 			case 'X':
 				playing = false;
 				break;
@@ -100,28 +107,30 @@ public class Player extends Creature implements Serializable, Camera
 				dungeon.ascend();
 				break;
 			case 'r':
-				Item scroll = choose(inventory.getTypedItems(Type.SCROLL), "Scrolls");
-				if(scroll != null)
+				final Item scroll = choose(inventory.getTypedItems(Type.SCROLL),
+						"Scrolls");
+				if (scroll != null)
 				{
 					appendMessage(this + " reads " + scroll);
 					scroll.act();
 				}
 				else
-					appendMessage("Invalid Selection");				
+					appendMessage("Invalid Selection");
 				break;
 			case 'q':
-				Item potion = choose(inventory.getTypedItems(Type.POTION), "Potions");
-				if(potion != null)
+				final Item potion = choose(inventory.getTypedItems(Type.POTION),
+						"Potions");
+				if (potion != null)
 				{
 					appendMessage(this + " quaffs " + potion);
 					potion.act();
 				}
 				else
 					appendMessage("Invalid Selection");
-				break;				
+				break;
 			default:
-				Coord dir = Tools.keyToDir(key, true, false);
-				if(dir != null)
+				final Coord dir = Tools.keyToDir(key, true, false);
+				if (dir != null)
 					move(dir.x(), dir.y());
 				else
 					moved = false;
@@ -129,30 +138,31 @@ public class Player extends Creature implements Serializable, Camera
 			}
 		}
 		inventory.removeExpired();
-		if(dice.nextFloat() < REGEN)
+		if (dice.nextFloat() < REGEN)
 			hp().cappedBuff(1);
-		if(dice.nextFloat() < REGEN)
+		if (dice.nextFloat() < REGEN)
 			mp().cappedBuff(1);
 		calcFoV();
 	}
 
+	@Override
 	public Coord getTarget()
 	{
 		console.saveBuffer();
-		Coord target = new Coord(x(), y());
+		final Coord target = new Coord(x(), y());
 		char key = '\0';
-		while(key != 't')
+		while (key != 't')
 		{
 			console.recallBuffer();
 			console.buffCamera(this, 4, 4, target, '*', Color.white);
 			console.refreshScreen();
 			key = console.getKey();
-			Coord dir = Tools.keyToDir(key, true, false);
-			if(dir != null)
+			final Coord dir = Tools.keyToDir(key, true, false);
+			if (dir != null)
 			{
 				target.translate(dir);
-				if( !fov.contains(target))
-					target.translate( -dir.x(), -dir.y());
+				if (!fov.contains(target))
+					target.translate(-dir.x(), -dir.y());
 			}
 		}
 		console.recallBuffer();
@@ -171,6 +181,11 @@ public class Player extends Creature implements Serializable, Camera
 		return fov;
 	}
 
+	public void addEffect(Effect effect)
+	{
+		effects.add(effect);
+	}
+
 	public String status()
 	{
 		String result = "";
@@ -187,17 +202,17 @@ public class Player extends Creature implements Serializable, Camera
 		console.saveBuffer();
 		console.buffString(0, 0, title, Color.white);
 		int i = 0;
-		for(Object element : elements)
+		for (final Object element : elements)
 		{
 			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + element,
 					Color.white);
-			i++ ;
+			i++;
 		}
 		console.refreshScreen();
-		int index = Tools.alphaToInt(console.getKey());
+		final int index = Tools.alphaToInt(console.getKey());
 		console.recallBuffer();
 		console.refreshScreen();
-		if(index < 0 || index >= elements.size())
+		if (index < 0 || index >= elements.size())
 			return null;
 		return elements.get(index);
 	}
@@ -219,13 +234,13 @@ public class Player extends Creature implements Serializable, Camera
 
 	private void cast()
 	{
-		Spell spell = spellbook();
-		if(spell == null)
+		final Spell spell = spellbook();
+		if (spell == null)
 			appendMessage("Invalid selection");
 		else
 			spell.cast();
 	}
-	
+
 	/**
 	 * Upon deserialization this must be done as the console cannot actually be
 	 * saved.

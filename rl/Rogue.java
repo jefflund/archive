@@ -33,7 +33,7 @@ public class Rogue
 	private static void getParams(String[] args)
 	{
 		params = new LinkedList<String>();
-		for(String arg : args)
+		for (final String arg : args)
 			params.add(arg);
 	}
 
@@ -41,29 +41,32 @@ public class Rogue
 	{
 		do
 		{
-			Level level = dungeon.getLevel();
+			final Level level = dungeon.getLevel();
 			console.clearBuffer();
 			console.buffCamera(player, Player.VISION, Player.VISION);
-			console.buffString(2 * Player.VISION + 2, 0, player.status(), Color.white);
-			console.buffString(0, 2 * Player.VISION + 1, level.getMessages(), Color.white);
+			console
+					.buffString(2 * Player.VISION + 2, 0, player.status(), Color.white);
+			console.buffString(0, 2 * Player.VISION + 1, level.getMessages(),
+					Color.white);
 			console.refreshScreen();
 			level.tick();
 		}
-		while(player.playing());
+		while (player.playing());
 	}
 
 	private static void init()
 	{
-		console = params.contains("g") ? getGConsole() : Console.getFramedConsole("Jade");
+		console = params.contains("g") ? getGConsole() : Console
+				.getFramedConsole("Jade");
 		console.buffString(0, 0, "Enter your name:", Color.white);
 		console.refreshScreen();
-		String name = console.echoString(0, 1, Color.white, '\n');
+		final String name = console.echoString(0, 1, Color.white, '\n');
 		load(name);
 	}
 
 	private static Console getGConsole()
 	{
-		GConsole gConsole = GConsole.getFramedConsole("Jade");
+		final GConsole gConsole = GConsole.getFramedConsole("Jade");
 		gConsole.registerImage("tiles", 0, 3, '@', Color.white);
 		gConsole.registerImage("tiles", 21, 12, 'D', Color.red);
 		gConsole.registerImage("tiles", 0, 22, '#', Color.white);
@@ -83,7 +86,7 @@ public class Rogue
 
 	private static void end()
 	{
-		if(player.isExpired())
+		if (player.isExpired())
 		{
 			console.buffString(0, dungeon.getLevel().height + 1, "You're dead!",
 					Color.white);
@@ -91,7 +94,7 @@ public class Rogue
 			console.getKey();
 			new File(player.toString()).deleteOnExit();
 		}
-		else if(params.contains("s"))
+		else if (params.contains("s"))
 			save();
 		System.exit(0);
 	}
@@ -100,12 +103,12 @@ public class Rogue
 	{
 		try
 		{
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
-					player.toString()));
+			final ObjectOutputStream out = new ObjectOutputStream(
+					new FileOutputStream(player.toString()));
 			out.writeObject(dungeon);
 			out.close();
 		}
-		catch(Exception e)
+		catch (final Exception e)
 		{
 		}
 	}
@@ -114,13 +117,14 @@ public class Rogue
 	{
 		try
 		{
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(name));
-			dungeon = (Dungeon)in.readObject();
+			final ObjectInputStream in = new ObjectInputStream(new FileInputStream(
+					name));
+			dungeon = (Dungeon) in.readObject();
 			in.close();
 			player = dungeon.getLevel().player();
 			player.onDeserialize(console);
 		}
-		catch(Exception e)
+		catch (final Exception e)
 		{
 			dungeon = new Dungeon();
 			player = new Player(console, dungeon, name);

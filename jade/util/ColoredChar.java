@@ -9,8 +9,8 @@ import java.io.Serializable;
  */
 public class ColoredChar implements Serializable, Comparable<ColoredChar>
 {
-	private char ch;
-	private Color color;
+	private final char ch;
+	private final Color color;
 
 	/**
 	 * Creates a new coloredchar with the specified char and color.
@@ -46,11 +46,11 @@ public class ColoredChar implements Serializable, Comparable<ColoredChar>
 	{
 		return Character.toString(ch);
 	}
-	
+
 	@Override
 	public int compareTo(ColoredChar other)
 	{
-		if(color.hashCode() == other.color.hashCode())
+		if (color.hashCode() == other.color.hashCode())
 			return ch - other.ch;
 		else
 			return color.hashCode() - other.color.hashCode();

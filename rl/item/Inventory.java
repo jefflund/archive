@@ -12,9 +12,9 @@ import rl.item.Item.Type;
 
 public class Inventory implements Serializable
 {
-	private Creature owner;
-	private List<Item> inventory;
-	private Map<Type, Item> equipment;
+	private final Creature owner;
+	private final List<Item> inventory;
+	private final Map<Type, Item> equipment;
 
 	public Inventory(Creature owner)
 	{
@@ -35,11 +35,11 @@ public class Inventory implements Serializable
 
 	public void equip(Item item)
 	{
-		if(item == null || !item.equipable())
+		if (item == null || !item.equipable())
 			owner.appendMessage("Invalid selection");
 		else
 		{
-			if(equipment.get(item.type()) != null)
+			if (equipment.get(item.type()) != null)
 				owner.appendMessage(equipment.get(item.type()) + " already equiped");
 			else
 			{
@@ -53,7 +53,7 @@ public class Inventory implements Serializable
 
 	public void unequip(Item item)
 	{
-		if(item == null)
+		if (item == null)
 			owner.appendMessage("Invalid selection");
 		else
 		{
@@ -66,8 +66,9 @@ public class Inventory implements Serializable
 
 	public void get()
 	{
-		Item item = owner.world().getActorAt(owner.x(), owner.y(), Item.class);
-		if(item == null)
+		final Item item = owner.world()
+				.getActorAt(owner.x(), owner.y(), Item.class);
+		if (item == null)
 			owner.appendMessage("Nothing to pick up");
 		else
 		{
@@ -84,7 +85,7 @@ public class Inventory implements Serializable
 
 	private void drop(Item item, boolean suppressMsg)
 	{
-		if(item == null)
+		if (item == null)
 			owner.appendMessage(suppressMsg ? "" : "Invalid selection");
 		else
 		{
@@ -96,20 +97,20 @@ public class Inventory implements Serializable
 
 	public List<Item> getTypedItems(Type type)
 	{
-		List<Item> items = new LinkedList<Item>();
-		for(Item item : inventory)
-			if(item.type() == type)
+		final List<Item> items = new LinkedList<Item>();
+		for (final Item item : inventory)
+			if (item.type() == type)
 				items.add(item);
 		return items;
 	}
 
 	public void removeExpired()
 	{
-		Collection<Item> expired = new HashSet<Item>();
-		for(Item item : inventory)
-			if(item.isExpired())
+		final Collection<Item> expired = new HashSet<Item>();
+		for (final Item item : inventory)
+			if (item.isExpired())
 				expired.add(item);
-		for(Item item : expired)
-				drop(item, true);
+		for (final Item item : expired)
+			drop(item, true);
 	}
 }

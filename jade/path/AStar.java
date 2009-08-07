@@ -16,7 +16,7 @@ import java.util.TreeSet;
  */
 public class AStar implements Path
 {
-	private Map<Coord, Node> nodes;
+	private final Map<Coord, Node> nodes;
 
 	protected AStar()
 	{
@@ -26,34 +26,34 @@ public class AStar implements Path
 	public List<Coord> getPath(World world, Coord start, Coord goal)
 	{
 		nodes.clear();
-		Set<Node> closed = new TreeSet<Node>();
-		Set<Node> open = new TreeSet<Node>();
+		final Set<Node> closed = new TreeSet<Node>();
+		final Set<Node> open = new TreeSet<Node>();
 		open.add(getNode(start));
 		getNode(start).gScore = 0;
 		getNode(start).hScore = hEstimate(start, goal);
 		getNode(start).fScore = getNode(start).hScore;
-		while(!open.isEmpty())
+		while (!open.isEmpty())
 		{
-			Node x = minFScore(open);
-			if(x.coord.equals(goal))
+			final Node x = minFScore(open);
+			if (x.coord.equals(goal))
 				return reconstructPath(x);
 			open.remove(x);
 			closed.add(x);
-			for(Node y : getAdjacentNodes(x, world))
+			for (final Node y : getAdjacentNodes(x, world))
 			{
-				if(closed.contains(y))
+				if (closed.contains(y))
 					continue;
-				double tentativeGScore = x.gScore + hEstimate(x.coord, y.coord);
+				final double tentativeGScore = x.gScore + hEstimate(x.coord, y.coord);
 				boolean tentativeIsBetter = false;
-				if(!open.contains(y))
+				if (!open.contains(y))
 				{
 					open.add(y);
 					y.hScore = hEstimate(y.coord, goal);
 					tentativeIsBetter = true;
 				}
-				else if(tentativeGScore < y.gScore)
+				else if (tentativeGScore < y.gScore)
 					tentativeIsBetter = true;
-				if(tentativeIsBetter)
+				if (tentativeIsBetter)
 				{
 					y.cameFrom = x;
 					y.gScore = tentativeGScore;
@@ -71,7 +71,7 @@ public class AStar implements Path
 
 	private Set<Node> getAdjacentNodes(Node node, World world)
 	{
-		Set<Node> adjacent = new TreeSet<Node>();
+		final Set<Node> adjacent = new TreeSet<Node>();
 		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y())));
 		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y() - 1)));
 		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y() + 1)));
@@ -80,9 +80,9 @@ public class AStar implements Path
 		adjacent.add(getNode(new Coord(node.coord.x() - 1, node.coord.y() + 1)));
 		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() - 1)));
 		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() + 1)));
-		Set<Node> nonpassable = new TreeSet<Node>();
-		for(Node n : adjacent)
-			if(!world.passable(n.coord.x(), n.coord.y()))
+		final Set<Node> nonpassable = new TreeSet<Node>();
+		for (final Node n : adjacent)
+			if (!world.passable(n.coord.x(), n.coord.y()))
 				nonpassable.add(n);
 		adjacent.removeAll(nonpassable);
 		return adjacent;
@@ -90,9 +90,9 @@ public class AStar implements Path
 
 	private List<Coord> reconstructPath(Node current)
 	{
-		if(current.cameFrom != null)
+		if (current.cameFrom != null)
 		{
-			List<Coord> path = reconstructPath(current.cameFrom);
+			final List<Coord> path = reconstructPath(current.cameFrom);
 			path.add(current.coord);
 			return path;
 		}
@@ -102,8 +102,8 @@ public class AStar implements Path
 	private Node minFScore(Set<Node> set)
 	{
 		Node min = null;
-		for(Node node : set)
-			if(min == null || node.fScore < min.fScore)
+		for (final Node node : set)
+			if (min == null || node.fScore < min.fScore)
 				min = node;
 		return min;
 	}
@@ -114,20 +114,20 @@ public class AStar implements Path
 	 * two nodes. By default, it just calculates the distance from the c1 to c2,
 	 * but could be overridden to factor in other cost in node traversal.
 	 * @param c1 the first node in question
- 	 * @param c2 the second node in question
+	 * @param c2 the second node in question
 	 * @return the heuristic estimate of the cost to travel between c1 and c2
 	 */
 	protected double hEstimate(Coord c1, Coord c2)
 	{
-		int a = c1.x() - c2.x();
-		int b = c1.y() - c2.y();
+		final int a = c1.x() - c2.x();
+		final int b = c1.y() - c2.y();
 		return Math.sqrt(a * a + b * b);
 	}
 
 	private Node getNode(Coord coord)
 	{
 		Node result = nodes.get(coord);
-		if(result == null)
+		if (result == null)
 		{
 			result = new Node(coord);
 			nodes.put(coord, result);
@@ -137,7 +137,7 @@ public class AStar implements Path
 
 	private class Node implements Comparable<Node>
 	{
-		private Coord coord;
+		private final Coord coord;
 		private double gScore;
 		private double hScore;
 		private double fScore;

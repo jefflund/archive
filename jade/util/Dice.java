@@ -39,7 +39,7 @@ public class Dice extends Random implements Serializable
 	public int nextInt(int min, int max)
 	{
 		assert (min <= max);
-		int range = max - min;
+		final int range = max - min;
 		return nextInt(range + 1) + min;
 	}
 
@@ -57,7 +57,7 @@ public class Dice extends Random implements Serializable
 	public int diceXdY(int x, int y)
 	{
 		int sum = 0;
-		for(int i = 0; i < x; i++)
+		for (int i = 0; i < x; i++)
 			sum += nextInt(1, y);
 		return sum;
 	}
@@ -68,9 +68,9 @@ public class Dice extends Random implements Serializable
 	 */
 	public Color nextColor()
 	{
-		int r = nextInt(256);
-		int g = nextInt(256);
-		int b = nextInt(256);
+		final int r = nextInt(256);
+		final int g = nextInt(256);
+		final int b = nextInt(256);
 		return new Color(r, g, b);
 	}
 
@@ -83,6 +83,6 @@ public class Dice extends Random implements Serializable
 	 */
 	public char nextChar(char min, char max)
 	{
-		return (char)nextInt(min, max);
+		return (char) nextInt(min, max);
 	}
 }

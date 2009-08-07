@@ -19,19 +19,19 @@ public interface Camera
 	 * currently see
 	 */
 	public Collection<Coord> getFoV();
-	
+
 	/**
 	 * Returns the world the camera is currently viewing.
 	 * @return the world the camera is currently viewing
 	 */
 	public World world();
-	
+
 	/**
 	 * Returns the x position of the camera on the world.
 	 * @return the x position of the camera on the world
 	 */
 	public int x();
-	
+
 	/**
 	 * Returns the y position of the camera on the world.
 	 * @return the y position of the camera on the world

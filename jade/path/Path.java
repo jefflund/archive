@@ -64,14 +64,14 @@ public interface Path
 		public static Path get(int algorithm)
 		{
 			Path result = singletons.get(algorithm);
-			if(result == null)
+			if (result == null)
 				result = getNew(algorithm);
 			return result;
 		}
 
 		private static Path getNew(int algorithm)
 		{
-			switch(algorithm)
+			switch (algorithm)
 			{
 			case AStar:
 				return new AStar();

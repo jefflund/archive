@@ -84,12 +84,12 @@ public class Coord implements Comparable<Coord>, Serializable
 	{
 		return translate(coord.x, coord.y);
 	}
-	
+
 	public final Coord getTranslated(Coord coord)
 	{
 		return getTranslated(coord.x(), coord.y());
 	}
-	
+
 	public Coord getTranslated(int x, int y)
 	{
 		return new Coord(this).translate(x, y);
@@ -115,7 +115,7 @@ public class Coord implements Comparable<Coord>, Serializable
 
 	public int compareTo(Coord other)
 	{
-		if(x == other.x)
+		if (x == other.x)
 			return y - other.y;
 		return x - other.x;
 	}

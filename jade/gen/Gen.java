@@ -51,14 +51,14 @@ public interface Gen
 		public static Gen get(int algorithm)
 		{
 			Gen result = singletons.get(algorithm);
-			if(result == null)
+			if (result == null)
 				result = getNew(algorithm);
 			return result;
 		}
 
 		private static Gen getNew(int algorithm)
 		{
-			switch(algorithm)
+			switch (algorithm)
 			{
 			case Wilderness:
 				return new Wilderness(false);

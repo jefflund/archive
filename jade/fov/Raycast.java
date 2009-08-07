@@ -15,7 +15,7 @@ import java.util.TreeSet;
  */
 public class Raycast extends Bresenham implements FoV
 {
-	private boolean circular;
+	private final boolean circular;
 
 	protected Raycast(boolean circular)
 	{
@@ -24,19 +24,19 @@ public class Raycast extends Bresenham implements FoV
 
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{
-		Collection<Coord> result = new TreeSet<Coord>();
+		final Collection<Coord> result = new TreeSet<Coord>();
 		result.add(new Coord(x, y));
-		for(int dx = x - range; dx <= x + range; dx++)
+		for (int dx = x - range; dx <= x + range; dx++)
 		{
 			result.addAll(castray(world, x, y, dx, y - range));
 			result.addAll(castray(world, x, y, dx, y + range));
 		}
-		for(int dy = y - range; dy <= y + range; dy++)
+		for (int dy = y - range; dy <= y + range; dy++)
 		{
 			result.addAll(castray(world, x, y, x + range, dy));
 			result.addAll(castray(world, x, y, x - range, dy));
 		}
-		if(circular)
+		if (circular)
 			Tools.filterCircle(result, x, y, range);
 		return result;
 	}

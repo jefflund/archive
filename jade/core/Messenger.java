@@ -1,7 +1,7 @@
 package jade.core;
 
-import java.io.Serializable;
 import jade.util.Tools;
+import java.io.Serializable;
 
 /**
  * This class respresents an object that can remember String messages, and
@@ -37,7 +37,7 @@ public class Messenger implements Serializable
 	 */
 	public void appendMessage(String message)
 	{
-		if(!message.equals(""))
+		if (!message.equals(""))
 			messages += Tools.strEnsureSuffix(message, ". ");
 	}
 
@@ -58,7 +58,7 @@ public class Messenger implements Serializable
 	 */
 	public String getMessages()
 	{
-		String result = messages;
+		final String result = messages;
 		clearMessages();
 		return result;
 	}

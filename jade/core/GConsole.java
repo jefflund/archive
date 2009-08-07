@@ -22,9 +22,9 @@ import javax.imageio.ImageIO;
  */
 public class GConsole extends Console
 {
-	private Map<Coord, CharPair> imageBuffer;
-	private Map<Coord, CharPair> imageSaved;
-	private Map<ColoredChar, Image> images;
+	private final Map<Coord, CharPair> imageBuffer;
+	private final Map<Coord, CharPair> imageSaved;
+	private final Map<ColoredChar, Image> images;
 
 	/**
 	 * Constructs a default GConsole. As opposed to the normal Jade Console, the
@@ -58,7 +58,7 @@ public class GConsole extends Console
 	 */
 	public static GConsole getFramedConsole(String frameTitle)
 	{
-		GConsole console = new GConsole();
+		final GConsole console = new GConsole();
 		frameConsole(console, frameTitle);
 		return console;
 	}
@@ -75,7 +75,7 @@ public class GConsole extends Console
 	public static GConsole getFramedConsole(String frameTitle, int tileSize,
 			int width, int height)
 	{
-		GConsole console = new GConsole(tileSize, width, height);
+		final GConsole console = new GConsole(tileSize, width, height);
 		frameConsole(console, frameTitle);
 		return console;
 	}
@@ -95,9 +95,9 @@ public class GConsole extends Console
 	public void buffCamera(Camera camera, int x, int y, Coord coord, char ch,
 			Color color)
 	{
-		int offX = x - camera.x();
-		int offY = y - camera.y();
-		CharPair pair = new CharPair(camera.world().tile(coord).look(),
+		final int offX = x - camera.x();
+		final int offY = y - camera.y();
+		final CharPair pair = new CharPair(camera.world().tile(coord).look(),
 				new ColoredChar(ch, color));
 		imageBuffer.put(coord.getTranslated(offX, offY), pair);
 	}
@@ -106,15 +106,17 @@ public class GConsole extends Console
 	 * Performs the same as in a normal JadeConsole, only that any registered
 	 * images will be used in place of the ascii representation of each tile.
 	 */
+	@Override
 	public void buffCamera(Camera camera, int x, int y)
 	{
-		int offX = x - camera.x();
-		int offY = y - camera.y();
-		World world = camera.world();
-		for(Coord coord : camera.getFoV())
+		final int offX = x - camera.x();
+		final int offY = y - camera.y();
+		final World world = camera.world();
+		for (final Coord coord : camera.getFoV())
 		{
-			Coord off = coord.getTranslated(offX, offY);
-			CharPair pair = new CharPair(world.tile(coord).look(), world.look(coord));
+			final Coord off = coord.getTranslated(offX, offY);
+			final CharPair pair = new CharPair(world.tile(coord).look(), world
+					.look(coord));
 			imageBuffer.put(off, pair);
 		}
 	}
@@ -158,32 +160,32 @@ public class GConsole extends Console
 	{
 		try
 		{
-			BufferedImage tiles = ImageIO.read(new File(tileSet));
-			BufferedImage tile = tiles.getSubimage(x * tileHeight, y * tileHeight,
-					tileHeight, tileHeight);
+			final BufferedImage tiles = ImageIO.read(new File(tileSet));
+			final BufferedImage tile = tiles.getSubimage(x * tileHeight, y
+					* tileHeight, tileHeight, tileHeight);
 			images.put(new ColoredChar(ch, color), tile);
 			return true;
 		}
-		catch(IOException e)
+		catch (final IOException e)
 		{
 			return false;
 		}
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics page)
 	{
 		super.paintComponent(page);
 		try
 		{
-			for(Coord coord : imageBuffer.keySet())
+			for (final Coord coord : imageBuffer.keySet())
 			{
-				CharPair pair = imageBuffer.get(coord);
-				if(images.containsKey(pair.bgChar))
+				final CharPair pair = imageBuffer.get(coord);
+				if (images.containsKey(pair.bgChar))
 					page.drawImage(images.get(pair.bgChar), coord.x() * tileWidth, coord
 							.y()
 							* tileHeight, tileWidth, tileHeight, null);
-				if(images.containsKey(pair.fgChar))
+				if (images.containsKey(pair.fgChar))
 					page.drawImage(images.get(pair.fgChar), coord.x() * tileWidth, coord
 							.y()
 							* tileHeight, tileWidth, tileHeight, null);
@@ -196,18 +198,18 @@ public class GConsole extends Console
 				}
 			}
 		}
-		catch(ConcurrentModificationException dontWorry)
+		catch (final ConcurrentModificationException dontWorry)
 		{
 		}
-		catch(NullPointerException dontWorry)
+		catch (final NullPointerException dontWorry)
 		{
 		}
 	}
 
 	private class CharPair
 	{
-		private ColoredChar bgChar;
-		private ColoredChar fgChar;
+		private final ColoredChar bgChar;
+		private final ColoredChar fgChar;
 
 		public CharPair(ColoredChar bgChar, ColoredChar fgChar)
 		{

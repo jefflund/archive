@@ -62,8 +62,8 @@ public class Multimap<K, V> implements Serializable
 	 */
 	public boolean containsValue(Object value)
 	{
-		for(Collection<V> mapping : map.values())
-			if(mapping.contains(value))
+		for (final Collection<V> mapping : map.values())
+			if (mapping.contains(value))
 				return true;
 		return false;
 	}
@@ -92,7 +92,7 @@ public class Multimap<K, V> implements Serializable
 	public void put(K key, V value)
 	{
 		Collection<V> set = map.get(key);
-		if(set == null)
+		if (set == null)
 			set = new HashSet<V>();
 		set.add(value);
 		map.put(key, set);
@@ -131,8 +131,8 @@ public class Multimap<K, V> implements Serializable
 	 */
 	public Collection<V> values()
 	{
-		Collection<V> values = new TreeSet<V>();
-		for(Collection<V> mapping : map.values())
+		final Collection<V> values = new TreeSet<V>();
+		for (final Collection<V> mapping : map.values())
 			values.addAll(mapping);
 		return values;
 	}
@@ -146,7 +146,7 @@ public class Multimap<K, V> implements Serializable
 	public int size()
 	{
 		int size = 0;
-		for(Collection<V> mapping : map.values())
+		for (final Collection<V> mapping : map.values())
 			size += mapping.size();
 		return size;
 	}
@@ -160,7 +160,7 @@ public class Multimap<K, V> implements Serializable
 	 */
 	public Multimap<K, V> headMap(K toKey, boolean inclusive)
 	{
-		Multimap<K, V> head = new Multimap<K, V>();
+		final Multimap<K, V> head = new Multimap<K, V>();
 		head.map = new TreeMap<K, Collection<V>>(map.headMap(toKey, inclusive));
 		return head;
 	}
@@ -174,7 +174,7 @@ public class Multimap<K, V> implements Serializable
 	 */
 	public Multimap<K, V> tailMap(K fromKey, boolean inclusive)
 	{
-		Multimap<K, V> tail = new Multimap<K, V>();
+		final Multimap<K, V> tail = new Multimap<K, V>();
 		tail.map = new TreeMap<K, Collection<V>>(map.tailMap(fromKey, inclusive));
 		return tail;
 	}

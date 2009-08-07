@@ -25,8 +25,8 @@ public abstract class World extends Messenger implements Serializable
 	 * The height of the world
 	 */
 	public final int height;
-	private Tile[][] grid;
-	private HashSet<Actor> actorRegister;
+	private final Tile[][] grid;
+	private final HashSet<Actor> actorRegister;
 
 	/**
 	 * Constructs a new world with the specified size. This size is immutable once
@@ -39,8 +39,8 @@ public abstract class World extends Messenger implements Serializable
 		this.width = width;
 		this.height = height;
 		grid = new Tile[width][height];
-		for(int x = 0; x < width; x++)
-			for(int y = 0; y < height; y++)
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++)
 				grid[x][y] = new Tile();
 		actorRegister = new HashSet<Actor>();
 	}
@@ -88,7 +88,7 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public void addActor(Actor actor, Dice random)
 	{
-		Coord pos = getOpenTile(random);
+		final Coord pos = getOpenTile(random);
 		addActor(actor, pos.x(), pos.y());
 	}
 
@@ -107,12 +107,12 @@ public abstract class World extends Messenger implements Serializable
 	@SuppressWarnings("unchecked")
 	public <T extends Actor> T getActorAt(int x, int y, Class<T> cls)
 	{
-		for(Actor actor : grid[x][y].actors())
-			if(cls.isInstance(actor))
-				return (T)actor;
+		for (final Actor actor : grid[x][y].actors())
+			if (cls.isInstance(actor))
+				return (T) actor;
 		return null;
 	}
-	
+
 	/**
 	 * Returns one actor of the specified class from the given location, or null
 	 * if none is found. The return type of this method will be the class passed
@@ -142,13 +142,13 @@ public abstract class World extends Messenger implements Serializable
 	@SuppressWarnings("unchecked")
 	public <T extends Actor> Collection<T> getActorsAt(int x, int y, Class<T> cls)
 	{
-		Collection<T> result = new HashSet<T>();
-		for(Actor actor : grid[x][y].actors())
-			if(cls.isInstance(actor))
-				result.add((T)actor);
+		final Collection<T> result = new HashSet<T>();
+		for (final Actor actor : grid[x][y].actors())
+			if (cls.isInstance(actor))
+				result.add((T) actor);
 		return result;
 	}
-	
+
 	/**
 	 * Returns a collection with all the actors of the specified class at a
 	 * location. The collection will be parameterized based on the given class.
@@ -158,7 +158,8 @@ public abstract class World extends Messenger implements Serializable
 	 * @return a collection with all the actors of the specified class at the
 	 * given location
 	 */
-	public final <T extends Actor> Collection<T> getActorsAt(Coord coord, Class<T> cls)
+	public final <T extends Actor> Collection<T> getActorsAt(Coord coord,
+			Class<T> cls)
 	{
 		return getActorsAt(coord.x(), coord.y(), cls);
 	}
@@ -174,10 +175,10 @@ public abstract class World extends Messenger implements Serializable
 	@SuppressWarnings("unchecked")
 	public <T extends Actor> Collection<T> getActors(Class<T> cls)
 	{
-		Collection<T> result = new HashSet<T>();
-		for(Actor actor : actorRegister)
-			if(cls.isInstance(actor))
-				result.add((T)actor);
+		final Collection<T> result = new HashSet<T>();
+		for (final Actor actor : actorRegister)
+			if (cls.isInstance(actor))
+				result.add((T) actor);
 		return result;
 	}
 
@@ -189,7 +190,7 @@ public abstract class World extends Messenger implements Serializable
 	public void removeActor(Actor actor)
 	{
 		assert (actor.boundTo(this));
-		if(actor.held())
+		if (actor.held())
 			actor.detachFrom();
 		removeFromGrid(actor);
 		unregisterActor(actor);
@@ -203,12 +204,12 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public void removeExpired()
 	{
-		Collection<Actor> expired = new HashSet<Actor>();
-		for(Actor actor : actorRegister)
-			if(actor.isExpired())
+		final Collection<Actor> expired = new HashSet<Actor>();
+		for (final Actor actor : actorRegister)
+			if (actor.isExpired())
 				expired.add(actor);
-		for(Actor actor : expired)
-			if(actor.boundTo(this))
+		for (final Actor actor : expired)
+			if (actor.boundTo(this))
 				removeActor(actor);
 	}
 
@@ -259,7 +260,7 @@ public abstract class World extends Messenger implements Serializable
 	public final Coord getOpenTile(Dice random, Coord upperleft, Coord lowerright)
 	{
 		return getOpenTile(random, upperleft.x(), upperleft.y(), lowerright.x(),
-		    lowerright.y());
+				lowerright.y());
 	}
 
 	/**
@@ -284,7 +285,7 @@ public abstract class World extends Messenger implements Serializable
 			x = random.nextInt(x1, x2);
 			y = random.nextInt(y1, y2);
 		}
-		while(!passable(x, y) || getActorsAt(x, y, Actor.class).size() > 0);
+		while (!passable(x, y) || getActorsAt(x, y, Actor.class).size() > 0);
 		return new Coord(x, y);
 	}
 
@@ -353,17 +354,17 @@ public abstract class World extends Messenger implements Serializable
 	void registerActor(Actor actor)
 	{
 		actorRegister.add(actor);
-		for(Actor held : actor.holds())
+		for (final Actor held : actor.holds())
 			registerActor(held);
 	}
 
 	void unregisterActor(Actor actor)
 	{
 		actorRegister.remove(actor);
-		for(Actor held : actor.holds())
+		for (final Actor held : actor.holds())
 			unregisterActor(held);
 	}
-	
+
 	/**
 	 * This class represents a single tile on a jade World. They can be accessed
 	 * using the tile method of the jade world.
@@ -394,8 +395,8 @@ public abstract class World extends Messenger implements Serializable
 
 		/**
 		 * Returns the tile's character representation. Note that for most cases,
-		 * calling look on the jade World is preferable since it could be overriden to
-		 * consider actor occupants.
+		 * calling look on the jade World is preferable since it could be overriden
+		 * to consider actor occupants.
 		 * @return the tile's character representation
 		 */
 		public ColoredChar look()

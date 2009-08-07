@@ -28,10 +28,10 @@ public class Console extends JPanel
 {
 	public final int tileHeight;
 	public final int tileWidth;
-	private Thread mainThread;
-	private InputListener listener;
-	private Map<Coord, ColoredChar> buffer;
-	private Map<Coord, ColoredChar> saved;
+	private final Thread mainThread;
+	private final InputListener listener;
+	private final Map<Coord, ColoredChar> buffer;
+	private final Map<Coord, ColoredChar> saved;
 
 	/**
 	 * Constructs a new default console with a default 80 x 24 size 12 tiles;
@@ -74,7 +74,7 @@ public class Console extends JPanel
 	 */
 	public static Console getFramedConsole(String frameTitle)
 	{
-		Console console = new Console();
+		final Console console = new Console();
 		frameConsole(console, frameTitle);
 		return console;
 	}
@@ -91,14 +91,14 @@ public class Console extends JPanel
 	public static Console getFramedConsole(String frameTitle, int tileSize,
 			int width, int height)
 	{
-		Console console = new Console(tileSize, width, height);
+		final Console console = new Console(tileSize, width, height);
 		frameConsole(console, frameTitle);
 		return console;
 	}
 
 	protected static void frameConsole(Console console, String frameTitle)
 	{
-		JFrame frame = new JFrame(frameTitle);
+		final JFrame frame = new JFrame(frameTitle);
 		frame.add(console);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -177,9 +177,9 @@ public class Console extends JPanel
 	 */
 	public void buffCamera(Camera camera, int x, int y)
 	{
-		int offX = x - camera.x();
-		int offY = y - camera.y();
-		for (Coord coord : camera.getFoV())
+		final int offX = x - camera.x();
+		final int offY = y - camera.y();
+		for (final Coord coord : camera.getFoV())
 			buffChar(coord.getTranslated(offX, offY), camera.world().look(coord));
 	}
 
@@ -192,7 +192,7 @@ public class Console extends JPanel
 	 */
 	public char echoChar(Coord coord, Color color)
 	{
-		char key = getKey();
+		final char key = getKey();
 		buffChar(coord, key, color);
 		refreshScreen();
 		return key;
@@ -222,8 +222,8 @@ public class Console extends JPanel
 	 */
 	public void buffString(int x, int y, String str, Color color)
 	{
-		int startX = x;
-		for (char ch : str.toCharArray())
+		final int startX = x;
+		for (final char ch : str.toCharArray())
 		{
 			switch (ch)
 			{
@@ -367,7 +367,7 @@ public class Console extends JPanel
 		try
 		{
 			super.paintComponent(page);
-			for (Coord coord : buffer.keySet())
+			for (final Coord coord : buffer.keySet())
 			{
 				page.setColor(buffer.get(coord).color());
 				page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
@@ -377,10 +377,10 @@ public class Console extends JPanel
 		// Near as I can tell, these exceptions get thrown due to concurrency with
 		// the AWT-EventQueue threads. Basically, AWT is still painting when the
 		// buffer is already in use again.
-		catch (ConcurrentModificationException dontWorry)
+		catch (final ConcurrentModificationException dontWorry)
 		{
 		}
-		catch (NullPointerException dontWorry)
+		catch (final NullPointerException dontWorry)
 		{
 		}
 	}

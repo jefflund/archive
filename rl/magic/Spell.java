@@ -12,13 +12,13 @@ public class Spell implements Serializable
 		SELF, AREA, OTHER
 	};
 
-	private Creature caster;
-	private Effect effect;
-	private Target target;
-	private int magnitude;
-	private int duration;
-	private int cost;
-	private String name;
+	private final Creature caster;
+	private final Effect effect;
+	private final Target target;
+	private final int magnitude;
+	private final int duration;
+	private final int cost;
+	private final String name;
 
 	public Spell(Creature caster, Effect effect, Target target, int magnitude,
 			int duration, int cost, String name)
@@ -34,24 +34,24 @@ public class Spell implements Serializable
 
 	public void cast()
 	{
-		if(caster.mp().value() < cost)
+		if (caster.mp().value() < cost)
 			caster.appendMessage("Insufficient mana");
 		else
 		{
-			Weave weave = new Weave(effect, magnitude, duration);
-			switch(target)
+			final Weave weave = new Weave(effect, magnitude, duration);
+			switch (target)
 			{
 			case AREA:
-				Coord area = caster.getTarget();
+				final Coord area = caster.getTarget();
 				caster.world().addActor(weave, area);
 				break;
 			case SELF:
 				weave.attachTo(caster);
 				break;
 			case OTHER:
-				Creature other = caster.world().getActorAt(caster.getTarget(),
+				final Creature other = caster.world().getActorAt(caster.getTarget(),
 						Creature.class);
-				if(other != null)
+				if (other != null)
 					weave.attachTo(other);
 				break;
 			}
@@ -60,6 +60,7 @@ public class Spell implements Serializable
 		}
 	}
 
+	@Override
 	public String toString()
 	{
 		return name;
