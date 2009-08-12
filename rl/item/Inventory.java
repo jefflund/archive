@@ -8,38 +8,35 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import rl.creature.Creature;
-import rl.item.Equipment.Slot;
 import rl.item.Item.Type;
 
 public class Inventory implements Serializable
 {
 	private final Creature owner;
 	private final List<Item> inventory;
-	private final Map<Slot, Equipment> equipment;
+	private final Map<Type, Item> equipment;
 
 	public Inventory(Creature owner)
 	{
 		this.owner = owner;
 		inventory = new LinkedList<Item>();
-		equipment = new HashMap<Slot, Equipment>();
+		equipment = new HashMap<Type, Item>();
 	}
 
 	public void equip(Item item)
 	{
-
-		if(item == null || item.type() != Type.EQUIPMENT)
+		if(item == null || !item.isEquipment())
 			owner.appendMessage("Invalid selection");
 		else
 		{
-			Equipment equip = (Equipment)item;
-			if(equipment.get(equip.slot()) != null)
-				owner.appendMessage(equipment.get(equip.slot()) + " already equiped");
+			if(equipment.get(item.type()) != null)
+				owner.appendMessage(equipment.get(item.type()) + " already equiped");
 			else
 			{
 				inventory.remove(item);
-				equipment.put(equip.slot(), equip);
+				equipment.put(item.type(), item);
 				item.act();
-				owner.appendMessage(equip + " equiped");
+				owner.appendMessage(item + " equiped");
 			}
 		}
 	}
@@ -50,10 +47,9 @@ public class Inventory implements Serializable
 			owner.appendMessage("Invalid selection");
 		else
 		{
-			Equipment equip = (Equipment)item;
-			equipment.remove(equip.slot());
+			equipment.remove(item.type());
 			inventory.add(item);
-			equip.act();
+			item.act();
 			owner.appendMessage(owner + " unequips " + item);
 		}
 	}

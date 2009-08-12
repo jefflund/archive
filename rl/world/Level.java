@@ -11,11 +11,8 @@ import java.io.Serializable;
 import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
-import rl.item.Consumable;
-import rl.item.Equipment;
 import rl.item.Item;
-import rl.item.Readable;
-import rl.item.Equipment.Slot;
+import rl.item.Item.Type;
 import rl.magic.Weave;
 import rl.magic.Instant.Effect;
 
@@ -32,21 +29,27 @@ public class Level extends World implements Serializable
 		final int algorithm = depth == 0 ? GenFactory.Town : GenFactory.Traditional;
 		GenFactory.get(algorithm).generate(this, depth);
 		upStairs = depth > 0 ? getOpenTile(random) : null;
-		if (upStairs != null)
+		if(upStairs != null)
 			tile(upStairs).setTile('<', Color.white, true);
 		downStairs = getOpenTile(random);
 		tile(downStairs).setTile('>', Color.white, true);
-		
-		addActor(new Equipment('|', Color.white, Slot.WEAPON, 10, null, 0), random);
-		addActor(new Equipment('|', Color.red, Slot.WEAPON, 10, Effect.CHANNEL, 10), random);
-		addActor(new Equipment('[', Color.white, Slot.ARMOR, 10, null, 0), random);
-		addActor(new Equipment('[', Color.red, Slot.ARMOR, 10, Effect.CHANNEL, 10), random);
-		addActor(new Readable('?', Color.red, Effect.FIRE), random);
-		addActor(new Consumable('!', Color.red, Effect.FIRE, 10), random);
-		addActor(new Readable('?', Color.red, Effect.FIRE), random);
-		addActor(new Consumable('!', Color.red, Effect.FIRE, 10), random);
-		addActor(new Readable('?', Color.red, Effect.FIRE), random);
-		addActor(new Consumable('!', Color.red, Effect.FIRE, 10), random);		
+
+		addActor(new Item(']', Color.red, Type.ARMOR, 100, Effect.CHANNEL, 20),
+				random);
+		addActor(new Item('|', Color.red, Type.WEAPON, 100, Effect.CHANNEL, 20),
+				random);
+		addActor(new Item('?', Color.red, Type.SCROLL, 100, Effect.FIRE, 10),
+				random);
+		addActor(new Item('!', Color.red, Type.POTION, 100, Effect.FIRE, 10),
+				random);
+		addActor(new Item(']', Color.red, Type.ARMOR, 100, Effect.CHANNEL, 20),
+				random);
+		addActor(new Item('|', Color.red, Type.WEAPON, 100, Effect.CHANNEL, 20),
+				random);
+		addActor(new Item('?', Color.red, Type.SCROLL, 100, Effect.FIRE, 10),
+				random);
+		addActor(new Item('!', Color.red, Type.POTION, 100, Effect.FIRE, 10),
+				random);
 		
 		addActor(new Monster('D', Color.red), random);
 		addActor(new Feature('^', Color.red, Effect.FIRE, 15), random);
@@ -57,7 +60,7 @@ public class Level extends World implements Serializable
 	public void addActor(Actor actor, int x, int y)
 	{
 		super.addActor(actor, x, y);
-		if (actor instanceof Player)
+		if(actor instanceof Player)
 		{
 			player = (Player) actor;
 			player.calcFoV();
@@ -83,13 +86,13 @@ public class Level extends World implements Serializable
 	public void tick()
 	{
 		player.act();
-		for (final Monster monster : getActors(Monster.class))
+		for(final Monster monster : getActors(Monster.class))
 			monster.act();
-		for (final Weave weave : getActors(Weave.class))
+		for(final Weave weave : getActors(Weave.class))
 			weave.act();
-		for (final Feature feature : getActors(Feature.class))
+		for(final Feature feature : getActors(Feature.class))
 			feature.act();
-		for (final Actor actor : getActors(Actor.class))
+		for(final Actor actor : getActors(Actor.class))
 			retrieveMessages(actor);
 		removeExpired();
 	}
@@ -98,16 +101,16 @@ public class Level extends World implements Serializable
 	public ColoredChar look(int x, int y)
 	{
 		final Creature creature = getActorAt(x, y, Creature.class);
-		if (creature != null)
+		if(creature != null)
 			return creature.look();
 		final Weave weave = getActorAt(x, y, Weave.class);
-		if (weave != null)
+		if(weave != null)
 			return weave.look();
 		final Item item = getActorAt(x, y, Item.class);
-		if (item != null)
+		if(item != null)
 			return item.look();
 		final Feature feature = getActorAt(x, y, Feature.class);
-		if (feature != null)
+		if(feature != null)
 			return feature.look();
 		return super.look(x, y);
 	}
