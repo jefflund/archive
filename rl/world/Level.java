@@ -11,8 +11,11 @@ import java.io.Serializable;
 import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
+import rl.item.Consumable;
+import rl.item.Equipment;
 import rl.item.Item;
-import rl.item.Item.Type;
+import rl.item.Readable;
+import rl.item.Equipment.Slot;
 import rl.magic.Weave;
 import rl.magic.Instant.Effect;
 
@@ -33,17 +36,19 @@ public class Level extends World implements Serializable
 			tile(upStairs).setTile('<', Color.white, true);
 		downStairs = getOpenTile(random);
 		tile(downStairs).setTile('>', Color.white, true);
+		
+		addActor(new Equipment('|', Color.white, Slot.WEAPON, 10, null, 0), random);
+		addActor(new Equipment('|', Color.red, Slot.WEAPON, 10, Effect.CHANNEL, 10), random);
+		addActor(new Equipment('[', Color.white, Slot.ARMOR, 10, null, 0), random);
+		addActor(new Equipment('[', Color.red, Slot.ARMOR, 10, Effect.CHANNEL, 10), random);
+		addActor(new Readable('?', Color.red, Effect.FIRE), random);
+		addActor(new Consumable('!', Color.red, Effect.FIRE, 10), random);
+		addActor(new Readable('?', Color.red, Effect.FIRE), random);
+		addActor(new Consumable('!', Color.red, Effect.FIRE, 10), random);
+		addActor(new Readable('?', Color.red, Effect.FIRE), random);
+		addActor(new Consumable('!', Color.red, Effect.FIRE, 10), random);		
+		
 		addActor(new Monster('D', Color.red), random);
-		addActor(new Item('|', Color.white, Type.WEAPON, 1000, null, 0), random);
-		addActor(new Item(']', Color.white, Type.ARMOR, 10, null, 0), random);
-		addActor(new Item('|', Color.red, Type.WEAPON, 1000, Effect.CHANNEL, 50),
-				random);
-		addActor(new Item(']', Color.red, Type.ARMOR, 10, Effect.CHANNEL, 150),
-				random);
-		addActor(new Item('?', Color.white, Type.SCROLL, 0, null, 0), random);
-		addActor(new Item('?', Color.red, Type.SCROLL, 7, Effect.FIRE, 6), random);
-		addActor(new Item('!', Color.red, Type.POTION, 5, Effect.FIRE, 7), random);
-		addActor(new Item('!', Color.white, Type.POTION, 0, null, 0), random);
 		addActor(new Feature('^', Color.red, Effect.FIRE, 15), random);
 		addActor(new Feature('^', Color.blue, Effect.CHANNEL, 90), random);
 	}

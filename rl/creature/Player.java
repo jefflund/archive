@@ -9,13 +9,13 @@ import java.awt.Color;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import rl.item.Inventory;
 import rl.item.Item;
 import rl.item.Item.Type;
 import rl.magic.Spell;
+import rl.magic.Spellbook;
 import rl.magic.Instant.Effect;
 import rl.magic.Spell.Target;
 import rl.world.Dungeon;
@@ -24,7 +24,7 @@ public class Player extends Creature implements Serializable, Camera
 {
 	public static final int VISION = 4;
 	private transient Console console;
-	private final List<Spell> spellbook;
+	private final Spellbook spellbook;
 	private final Set<Effect> effects;
 	private Collection<Coord> fov;
 	private final Inventory inventory;
@@ -40,7 +40,7 @@ public class Player extends Creature implements Serializable, Camera
 		this.dungeon = dungeon;
 		this.name = name;
 		inventory = new Inventory(this);
-		spellbook = new LinkedList<Spell>();
+		spellbook = new Spellbook();
 		effects = new HashSet<Effect>();
 		spellbook.add(new Spell(this, Effect.FIRE, Target.AREA, 10, 5, 1,
 				"fire trap"));
@@ -219,7 +219,7 @@ public class Player extends Creature implements Serializable, Camera
 
 	private Item inventory()
 	{
-		return choose(inventory.getItems(), "Inventory");
+		return choose(inventory.getAllItems(), "Inventory");
 	}
 
 	private Item equipment()
@@ -229,7 +229,7 @@ public class Player extends Creature implements Serializable, Camera
 
 	private Spell spellbook()
 	{
-		return choose(spellbook, "Spellbook");
+		return choose(spellbook.spells(), "Spellbook");
 	}
 
 	private void cast()
@@ -241,11 +241,11 @@ public class Player extends Creature implements Serializable, Camera
 			spell.cast();
 	}
 
-	/**
-	 * Upon deserialization this must be done as the console cannot actually be
-	 * saved.
-	 * @param console the new console
-	 */
+	public void learn(Effect effect)
+	{
+		appendMessage(this + " learns " + effect);
+	}
+	
 	public void onDeserialize(Console console)
 	{
 		this.console = console;
@@ -257,7 +257,6 @@ public class Player extends Creature implements Serializable, Camera
 		return playing && !isExpired();
 	}
 
-	@Override
 	public String toString()
 	{
 		return name;
