@@ -49,7 +49,7 @@ public class Instant implements Serializable
 	public void doIt(int x, int y, World world)
 	{
 		final Creature target = world.getActorAt(x, y, Creature.class);
-		switch (effect)
+		switch(effect)
 		{
 		case FIRE:
 			fire(target);
@@ -74,9 +74,9 @@ public class Instant implements Serializable
 
 	public void undoIt()
 	{
-		if (!effect.undoNeeded())
+		if(!effect.undoNeeded())
 			return;
-		switch (effect)
+		switch(effect)
 		{
 		case RFIRE:
 			undorRfire();
@@ -100,13 +100,13 @@ public class Instant implements Serializable
 
 	private void undoChannel()
 	{
-		for (final Creature target : undoList)
+		for(final Creature target : undoList)
 			target.mp().buff(-magnitude);
 	}
 
 	private void channel(Creature target)
 	{
-		if (target == null || undoList.contains(target))
+		if(target == null || undoList.contains(target))
 			return;
 		target.mp().buff(magnitude);
 		undoList.add(target);
@@ -114,19 +114,19 @@ public class Instant implements Serializable
 
 	private void stonefall(int x, int y, World world)
 	{
-		if (!world.passable(x, y))
+		if(!world.passable(x, y))
 			world.tile(x, y).setTile('.', Color.gray, true);
 	}
 
 	private void elec(Creature target)
 	{
-		if (target == null)
+		if(target == null)
 			return;
 		final int damage = magnitude - target.relec().value();
-		if (damage > 0)
+		if(damage > 0)
 		{
 			target.hp().buff(damage);
-			if (target.hp().value() < 0)
+			if(target.hp().value() < 0)
 				target.appendMessage(target + " is fried");
 			else
 				target.appendMessage(target + " is shocked");
@@ -137,7 +137,7 @@ public class Instant implements Serializable
 
 	private void relec(Creature target)
 	{
-		if (target == null)
+		if(target == null)
 			return;
 		target.relec().buff(magnitude);
 	}
@@ -145,17 +145,17 @@ public class Instant implements Serializable
 	private void undoRelec()
 	{
 		magnitude *= -1;
-		for (final Creature target : undoList)
+		for(final Creature target : undoList)
 			relec(target);
 		magnitude *= -1;
 	}
 
 	private void fire(Creature target)
 	{
-		if (target == null)
+		if(target == null)
 			return;
 		final int damage = magnitude - target.rfire().value();
-		if (damage > 0)
+		if(damage > 0)
 		{
 			target.hp().buff(-damage);
 			target.appendMessage(target
@@ -167,7 +167,7 @@ public class Instant implements Serializable
 
 	private void rfire(Creature target)
 	{
-		if (target == null)
+		if(target == null)
 			return;
 		target.rfire().buff(magnitude);
 	}
@@ -175,7 +175,7 @@ public class Instant implements Serializable
 	private void undorRfire()
 	{
 		magnitude *= -1;
-		for (final Creature target : undoList)
+		for(final Creature target : undoList)
 			rfire(target);
 		magnitude *= -1;
 	}

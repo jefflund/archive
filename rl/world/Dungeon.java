@@ -20,7 +20,7 @@ public class Dungeon implements Serializable
 	public Level getLevel()
 	{
 		Level level = levels.get(depth);
-		if (level == null)
+		if(level == null)
 		{
 			level = new Level(depth);
 			levels.put(depth, level);
@@ -31,7 +31,7 @@ public class Dungeon implements Serializable
 	public void descend()
 	{
 		final Player player = getLevel().player();
-		if (getLevel().tile(player.x(), player.y()).look().ch() != '>')
+		if(getLevel().tile(player.x(), player.y()).look().ch() != '>')
 			player.appendMessage("No stairs here");
 		else
 			changeLevel(depth + 1);
@@ -40,7 +40,7 @@ public class Dungeon implements Serializable
 	public void ascend()
 	{
 		final Player player = getLevel().player();
-		if (getLevel().tile(player.x(), player.y()).look().ch() != '<')
+		if(getLevel().tile(player.x(), player.y()).look().ch() != '<')
 			player.appendMessage("No stairs here");
 		else
 			changeLevel(depth - 1);

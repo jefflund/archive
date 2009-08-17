@@ -30,9 +30,9 @@ public final class Tools
 	public static Coord keyToDir(char key, boolean vi, boolean numeric)
 	{
 		assert (vi || numeric);
-		if (vi && (Character.isLetter(key) || key == '.'))
+		if(vi && (Character.isLetter(key) || key == '.'))
 			return viToDir(key);
-		else if (numeric && Character.isDigit(key))
+		else if(numeric && Character.isDigit(key))
 			return numToDir(key);
 		else
 			return null;
@@ -40,7 +40,7 @@ public final class Tools
 
 	private static Coord numToDir(char key)
 	{
-		switch (key)
+		switch(key)
 		{
 		case '6':
 			return new Coord(1, 0);
@@ -67,7 +67,7 @@ public final class Tools
 
 	private static Coord viToDir(char key)
 	{
-		switch (key)
+		switch(key)
 		{
 		case 'l':
 			return new Coord(1, 0);
@@ -117,7 +117,7 @@ public final class Tools
 	 */
 	public static String strEnsureSuffix(String str, String suffix)
 	{
-		if (strHasSuffix(str, suffix))
+		if(strHasSuffix(str, suffix))
 			return str;
 		return str + suffix;
 	}
@@ -134,7 +134,7 @@ public final class Tools
 	 */
 	public static String strEnsureLength(String str, int length)
 	{
-		while (str.length() < length)
+		while(str.length() < length)
 			str += " ";
 		return str;
 	}
@@ -160,7 +160,7 @@ public final class Tools
 	 */
 	public static int alphaToInt(char ch)
 	{
-		return (ch - 'a');
+		return(ch - 'a');
 	}
 
 	/**
@@ -176,8 +176,8 @@ public final class Tools
 	{
 		final Collection<Coord> out = new TreeSet<Coord>();
 		radius++;
-		for (final Coord coord : field)
-			if (!inCircle(x, y, coord.x(), coord.y(), radius))
+		for(final Coord coord : field)
+			if(!inCircle(x, y, coord.x(), coord.y(), radius))
 				out.add(coord);
 		field.removeAll(out);
 	}

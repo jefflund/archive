@@ -37,7 +37,7 @@ public class Messenger implements Serializable
 	 */
 	public void appendMessage(String message)
 	{
-		if (!message.equals(""))
+		if(!message.equals(""))
 			messages += Tools.strEnsureSuffix(message, ". ");
 	}
 

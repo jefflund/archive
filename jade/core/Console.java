@@ -179,7 +179,7 @@ public class Console extends JPanel
 	{
 		final int offX = x - camera.x();
 		final int offY = y - camera.y();
-		for (final Coord coord : camera.getFoV())
+		for(final Coord coord : camera.getFoV())
 			buffChar(coord.getTranslated(offX, offY), camera.world().look(coord));
 	}
 
@@ -223,9 +223,9 @@ public class Console extends JPanel
 	public void buffString(int x, int y, String str, Color color)
 	{
 		final int startX = x;
-		for (final char ch : str.toCharArray())
+		for(final char ch : str.toCharArray())
 		{
-			switch (ch)
+			switch(ch)
 			{
 			case '\n':
 				x = startX;
@@ -267,15 +267,15 @@ public class Console extends JPanel
 	{
 		String str = "";
 		char key = getKey();
-		while (key != terminator)
+		while(key != terminator)
 		{
-			if ((key >= 33 && key <= 126) || key == ' ')
+			if((key >= 33 && key <= 126) || key == ' ')
 			{
 				buffChar(x++, y, key, color);
 				refreshScreen();
 				str += key;
 			}
-			else if (key == 8)// backspace
+			else if(key == 8)// backspace
 			{
 				buffChar(--x, y, ' ', Color.black);
 				refreshScreen();
@@ -355,7 +355,7 @@ public class Console extends JPanel
 	@SuppressWarnings("deprecation")
 	public char getKey()
 	{
-		if (!listener.ready)
+		if(!listener.ready)
 			mainThread.suspend();
 		listener.ready = false;
 		return listener.input;
@@ -367,7 +367,7 @@ public class Console extends JPanel
 		try
 		{
 			super.paintComponent(page);
-			for (final Coord coord : buffer.keySet())
+			for(final Coord coord : buffer.keySet())
 			{
 				page.setColor(buffer.get(coord).color());
 				page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
@@ -377,10 +377,10 @@ public class Console extends JPanel
 		// Near as I can tell, these exceptions get thrown due to concurrency with
 		// the AWT-EventQueue threads. Basically, AWT is still painting when the
 		// buffer is already in use again.
-		catch (final ConcurrentModificationException dontWorry)
+		catch(final ConcurrentModificationException dontWorry)
 		{
 		}
-		catch (final NullPointerException dontWorry)
+		catch(final NullPointerException dontWorry)
 		{
 		}
 	}

@@ -12,7 +12,7 @@ public class Item extends Actor implements Serializable
 {
 	public enum Type
 	{
-		WEAPON(true), ARMOR(true), SCROLL(false), POTION(false);
+		WEAPON(true), ARMOR(true), SHIELD(true), SCROLL(false), POTION(false);
 
 		private boolean isEquipment;
 
@@ -24,7 +24,7 @@ public class Item extends Actor implements Serializable
 
 	private final Type type;
 	private int modifier;
-	private Effect effect;
+	private final Effect effect;
 	private Instant enchant;
 	private boolean equiped;
 
@@ -40,6 +40,7 @@ public class Item extends Actor implements Serializable
 		equiped = false;
 	}
 
+	@Override
 	public void act()
 	{
 		if(isEquipment())
@@ -63,7 +64,7 @@ public class Item extends Actor implements Serializable
 
 	private void consume()
 	{
-		assert(!effect.undoNeeded());
+		assert (!effect.undoNeeded());
 		enchant.doIt(x(), y(), world());
 		expire();
 	}
@@ -84,12 +85,15 @@ public class Item extends Actor implements Serializable
 		}
 		equiped = !equiped;
 	}
-	
+
 	private void buffStats()
 	{
-		switch (type)
+		switch(type)
 		{
 		case ARMOR:
+			owner().def().buff(modifier);
+			break;
+		case SHIELD:
 			owner().def().buff(modifier);
 			break;
 		case WEAPON:
@@ -109,7 +113,7 @@ public class Item extends Actor implements Serializable
 	{
 		return world().getActorAt(x(), y(), Creature.class);
 	}
-	
+
 	public Type type()
 	{
 		return type;

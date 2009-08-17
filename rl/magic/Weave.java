@@ -20,7 +20,7 @@ public class Weave extends Actor implements Serializable
 	public void act()
 	{
 		instant.doIt(x(), y(), world());
-		if (duration == 0)
+		if(duration == 0)
 			expire();
 		duration--;
 	}

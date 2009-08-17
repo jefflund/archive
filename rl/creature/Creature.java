@@ -27,7 +27,7 @@ public abstract class Creature extends Actor implements Serializable
 			public void buff(int buff)
 			{
 				super.buff(buff);
-				if (value() < 0)
+				if(value() < 0)
 					expire();
 			}
 		};
@@ -54,9 +54,9 @@ public abstract class Creature extends Actor implements Serializable
 		final int x = x() + dx;
 		final int y = y() + dy;
 		final Creature bumped = world().getActorAt(x, y, Creature.class);
-		if (bumped != null && bumped != this)
+		if(bumped != null && bumped != this)
 			attack(bumped);
-		else if (world().passable(x() + dx, y() + dy))
+		else if(world().passable(x() + dx, y() + dy))
 			super.move(dx, dy);
 	}
 
@@ -65,9 +65,9 @@ public abstract class Creature extends Actor implements Serializable
 	private void attack(Creature bump)
 	{
 		final int hp = bump.hp().value();
-		while (dice.nextFloat() < (float) atk.value / (atk.value + bump.def.value))
+		while(dice.nextFloat() < (float) atk.value / (atk.value + bump.def.value))
 			bump.hp().buff(-dmg.value());
-		if (hp == bump.hp().value())
+		if(hp == bump.hp().value())
 		{
 			appendMessage(this + " misses " + bump);
 			bump.def.train();
@@ -141,7 +141,7 @@ public abstract class Creature extends Actor implements Serializable
 		public void train()
 		{
 			train += XP;
-			while (train > 1)
+			while(train > 1)
 			{
 				base++;
 				value++;

@@ -57,7 +57,7 @@ public class Dice extends Random implements Serializable
 	public int diceXdY(int x, int y)
 	{
 		int sum = 0;
-		for (int i = 0; i < x; i++)
+		for(int i = 0; i < x; i++)
 			sum += nextInt(1, y);
 		return sum;
 	}

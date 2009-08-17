@@ -33,7 +33,7 @@ public class Rogue
 	private static void getParams(String[] args)
 	{
 		params = new LinkedList<String>();
-		for (final String arg : args)
+		for(final String arg : args)
 			params.add(arg);
 	}
 
@@ -51,7 +51,7 @@ public class Rogue
 			console.refreshScreen();
 			level.tick();
 		}
-		while (player.playing());
+		while(player.playing());
 	}
 
 	private static void init()
@@ -86,7 +86,7 @@ public class Rogue
 
 	private static void end()
 	{
-		if (player.isExpired())
+		if(player.isExpired())
 		{
 			console.buffString(0, dungeon.getLevel().height + 1, "You're dead!",
 					Color.white);
@@ -94,7 +94,7 @@ public class Rogue
 			console.getKey();
 			new File(player.toString()).deleteOnExit();
 		}
-		else if (params.contains("s"))
+		else if(params.contains("s"))
 			save();
 		System.exit(0);
 	}
@@ -108,7 +108,7 @@ public class Rogue
 			out.writeObject(dungeon);
 			out.close();
 		}
-		catch (final Exception e)
+		catch(final Exception e)
 		{
 		}
 	}
@@ -124,7 +124,7 @@ public class Rogue
 			player = dungeon.getLevel().player();
 			player.onDeserialize(console);
 		}
-		catch (final Exception e)
+		catch(final Exception e)
 		{
 			dungeon = new Dungeon();
 			player = new Player(console, dungeon, name);

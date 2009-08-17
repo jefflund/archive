@@ -42,12 +42,12 @@ public class Bresenham implements Path
 		final int dy = Math.abs(y2 - y1) << 1;
 		final int ix = x2 > x1 ? 1 : -1;
 		final int iy = y2 > y1 ? 1 : -1;
-		if (dx >= dy)
+		if(dx >= dy)
 		{
 			int error = dy - (dx >> 1);
-			while (x1 != x2)
+			while(x1 != x2)
 			{
-				if (error >= 0 && (error != 0 || ix > 0))
+				if(error >= 0 && (error != 0 || ix > 0))
 				{
 					y1 += iy;
 					error -= dx;
@@ -55,7 +55,7 @@ public class Bresenham implements Path
 				x1 += ix;
 				error += dy;
 				path.add(new Coord(x1, y1));
-				if (!world.passable(x1, y1))
+				if(!world.passable(x1, y1))
 					break;
 			}
 		}
@@ -63,9 +63,9 @@ public class Bresenham implements Path
 		// dx < dy
 		{
 			int error = dx - (dy >> 1);
-			while (y1 != y2)
+			while(y1 != y2)
 			{
-				if (error >= 0 && (error != 0 || iy > 0))
+				if(error >= 0 && (error != 0 || iy > 0))
 				{
 					x1 += ix;
 					error -= dy;
@@ -73,7 +73,7 @@ public class Bresenham implements Path
 				y1 += iy;
 				error += dx;
 				path.add(new Coord(x1, y1));
-				if (!world.passable(x1, y1))
+				if(!world.passable(x1, y1))
 					break;
 			}
 		}

@@ -59,14 +59,14 @@ public interface FoV
 		public static FoV get(int algorithm)
 		{
 			FoV result = singletons.get(algorithm);
-			if (result == null)
+			if(result == null)
 				result = getNew(algorithm);
 			return result;
 		}
 
 		private static FoV getNew(int algorithm)
 		{
-			switch (algorithm)
+			switch(algorithm)
 			{
 			case SquareRay:
 				return new Raycast(false);

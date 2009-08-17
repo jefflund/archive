@@ -50,7 +50,7 @@ public class ColoredChar implements Serializable, Comparable<ColoredChar>
 	@Override
 	public int compareTo(ColoredChar other)
 	{
-		if (color.hashCode() == other.color.hashCode())
+		if(color.hashCode() == other.color.hashCode())
 			return ch - other.ch;
 		else
 			return color.hashCode() - other.color.hashCode();

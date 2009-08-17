@@ -112,7 +112,7 @@ public class GConsole extends Console
 		final int offX = x - camera.x();
 		final int offY = y - camera.y();
 		final World world = camera.world();
-		for (final Coord coord : camera.getFoV())
+		for(final Coord coord : camera.getFoV())
 		{
 			final Coord off = coord.getTranslated(offX, offY);
 			final CharPair pair = new CharPair(world.tile(coord).look(), world
@@ -166,7 +166,7 @@ public class GConsole extends Console
 			images.put(new ColoredChar(ch, color), tile);
 			return true;
 		}
-		catch (final IOException e)
+		catch(final IOException e)
 		{
 			return false;
 		}
@@ -178,14 +178,14 @@ public class GConsole extends Console
 		super.paintComponent(page);
 		try
 		{
-			for (final Coord coord : imageBuffer.keySet())
+			for(final Coord coord : imageBuffer.keySet())
 			{
 				final CharPair pair = imageBuffer.get(coord);
-				if (images.containsKey(pair.bgChar))
+				if(images.containsKey(pair.bgChar))
 					page.drawImage(images.get(pair.bgChar), coord.x() * tileWidth, coord
 							.y()
 							* tileHeight, tileWidth, tileHeight, null);
-				if (images.containsKey(pair.fgChar))
+				if(images.containsKey(pair.fgChar))
 					page.drawImage(images.get(pair.fgChar), coord.x() * tileWidth, coord
 							.y()
 							* tileHeight, tileWidth, tileHeight, null);
@@ -198,10 +198,10 @@ public class GConsole extends Console
 				}
 			}
 		}
-		catch (final ConcurrentModificationException dontWorry)
+		catch(final ConcurrentModificationException dontWorry)
 		{
 		}
-		catch (final NullPointerException dontWorry)
+		catch(final NullPointerException dontWorry)
 		{
 		}
 	}

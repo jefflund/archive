@@ -32,28 +32,28 @@ public class AStar implements Path
 		getNode(start).gScore = 0;
 		getNode(start).hScore = hEstimate(start, goal);
 		getNode(start).fScore = getNode(start).hScore;
-		while (!open.isEmpty())
+		while(!open.isEmpty())
 		{
 			final Node x = minFScore(open);
-			if (x.coord.equals(goal))
+			if(x.coord.equals(goal))
 				return reconstructPath(x);
 			open.remove(x);
 			closed.add(x);
-			for (final Node y : getAdjacentNodes(x, world))
+			for(final Node y : getAdjacentNodes(x, world))
 			{
-				if (closed.contains(y))
+				if(closed.contains(y))
 					continue;
 				final double tentativeGScore = x.gScore + hEstimate(x.coord, y.coord);
 				boolean tentativeIsBetter = false;
-				if (!open.contains(y))
+				if(!open.contains(y))
 				{
 					open.add(y);
 					y.hScore = hEstimate(y.coord, goal);
 					tentativeIsBetter = true;
 				}
-				else if (tentativeGScore < y.gScore)
+				else if(tentativeGScore < y.gScore)
 					tentativeIsBetter = true;
-				if (tentativeIsBetter)
+				if(tentativeIsBetter)
 				{
 					y.cameFrom = x;
 					y.gScore = tentativeGScore;
@@ -81,8 +81,8 @@ public class AStar implements Path
 		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() - 1)));
 		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() + 1)));
 		final Set<Node> nonpassable = new TreeSet<Node>();
-		for (final Node n : adjacent)
-			if (!world.passable(n.coord.x(), n.coord.y()))
+		for(final Node n : adjacent)
+			if(!world.passable(n.coord.x(), n.coord.y()))
 				nonpassable.add(n);
 		adjacent.removeAll(nonpassable);
 		return adjacent;
@@ -90,7 +90,7 @@ public class AStar implements Path
 
 	private List<Coord> reconstructPath(Node current)
 	{
-		if (current.cameFrom != null)
+		if(current.cameFrom != null)
 		{
 			final List<Coord> path = reconstructPath(current.cameFrom);
 			path.add(current.coord);
@@ -102,8 +102,8 @@ public class AStar implements Path
 	private Node minFScore(Set<Node> set)
 	{
 		Node min = null;
-		for (final Node node : set)
-			if (min == null || node.fScore < min.fScore)
+		for(final Node node : set)
+			if(min == null || node.fScore < min.fScore)
 				min = node;
 		return min;
 	}
@@ -127,7 +127,7 @@ public class AStar implements Path
 	private Node getNode(Coord coord)
 	{
 		Node result = nodes.get(coord);
-		if (result == null)
+		if(result == null)
 		{
 			result = new Node(coord);
 			nodes.put(coord, result);

@@ -50,7 +50,7 @@ public class Level extends World implements Serializable
 				random);
 		addActor(new Item('!', Color.red, Type.POTION, 100, Effect.FIRE, 10),
 				random);
-		
+
 		addActor(new Monster('D', Color.red), random);
 		addActor(new Feature('^', Color.red, Effect.FIRE, 15), random);
 		addActor(new Feature('^', Color.blue, Effect.CHANNEL, 90), random);

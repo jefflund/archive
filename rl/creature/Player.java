@@ -61,11 +61,11 @@ public class Player extends Creature implements Serializable, Camera
 	{
 		char key = '\0';
 		boolean moved = false;
-		while (!moved)
+		while(!moved)
 		{
 			key = console.getKey();
 			moved = true;
-			switch (key)
+			switch(key)
 			{
 			case 'G':
 				// make a new spell based on known effects
@@ -109,7 +109,7 @@ public class Player extends Creature implements Serializable, Camera
 			case 'r':
 				final Item scroll = choose(inventory.getTypedItems(Type.SCROLL),
 						"Scrolls");
-				if (scroll != null)
+				if(scroll != null)
 				{
 					appendMessage(this + " reads " + scroll);
 					scroll.act();
@@ -120,7 +120,7 @@ public class Player extends Creature implements Serializable, Camera
 			case 'q':
 				final Item potion = choose(inventory.getTypedItems(Type.POTION),
 						"Potions");
-				if (potion != null)
+				if(potion != null)
 				{
 					appendMessage(this + " quaffs " + potion);
 					potion.act();
@@ -130,7 +130,7 @@ public class Player extends Creature implements Serializable, Camera
 				break;
 			default:
 				final Coord dir = Tools.keyToDir(key, true, false);
-				if (dir != null)
+				if(dir != null)
 					move(dir.x(), dir.y());
 				else
 					moved = false;
@@ -138,9 +138,9 @@ public class Player extends Creature implements Serializable, Camera
 			}
 		}
 		inventory.removeExpired();
-		if (dice.nextFloat() < REGEN)
+		if(dice.nextFloat() < REGEN)
 			hp().cappedBuff(1);
-		if (dice.nextFloat() < REGEN)
+		if(dice.nextFloat() < REGEN)
 			mp().cappedBuff(1);
 		calcFoV();
 	}
@@ -151,17 +151,17 @@ public class Player extends Creature implements Serializable, Camera
 		console.saveBuffer();
 		final Coord target = new Coord(x(), y());
 		char key = '\0';
-		while (key != 't')
+		while(key != 't')
 		{
 			console.recallBuffer();
 			console.buffCamera(this, 4, 4, target, '*', Color.white);
 			console.refreshScreen();
 			key = console.getKey();
 			final Coord dir = Tools.keyToDir(key, true, false);
-			if (dir != null)
+			if(dir != null)
 			{
 				target.translate(dir);
-				if (!fov.contains(target))
+				if(!fov.contains(target))
 					target.translate(-dir.x(), -dir.y());
 			}
 		}
@@ -202,7 +202,7 @@ public class Player extends Creature implements Serializable, Camera
 		console.saveBuffer();
 		console.buffString(0, 0, title, Color.white);
 		int i = 0;
-		for (final Object element : elements)
+		for(final Object element : elements)
 		{
 			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + element,
 					Color.white);
@@ -212,7 +212,7 @@ public class Player extends Creature implements Serializable, Camera
 		final int index = Tools.alphaToInt(console.getKey());
 		console.recallBuffer();
 		console.refreshScreen();
-		if (index < 0 || index >= elements.size())
+		if(index < 0 || index >= elements.size())
 			return null;
 		return elements.get(index);
 	}
@@ -235,7 +235,7 @@ public class Player extends Creature implements Serializable, Camera
 	private void cast()
 	{
 		final Spell spell = spellbook();
-		if (spell == null)
+		if(spell == null)
 			appendMessage("Invalid selection");
 		else
 			spell.cast();
@@ -245,7 +245,7 @@ public class Player extends Creature implements Serializable, Camera
 	{
 		appendMessage(this + " learns " + effect);
 	}
-	
+
 	public void onDeserialize(Console console)
 	{
 		this.console = console;
@@ -257,6 +257,7 @@ public class Player extends Creature implements Serializable, Camera
 		return playing && !isExpired();
 	}
 
+	@Override
 	public String toString()
 	{
 		return name;

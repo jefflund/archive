@@ -64,7 +64,7 @@ public class BidirectionalMap<K, V> implements Serializable
 
 	private void freePair(Pair pair)
 	{
-		if (pair != null)
+		if(pair != null)
 		{
 			keys.values().remove(pair);
 			values.values().remove(pair);
@@ -79,7 +79,7 @@ public class BidirectionalMap<K, V> implements Serializable
 	public V getValue(K key)
 	{
 		final Pair pair = keys.get(key);
-		if (pair != null)
+		if(pair != null)
 			return pair.value;
 		return null;
 	}
@@ -92,7 +92,7 @@ public class BidirectionalMap<K, V> implements Serializable
 	public K getKey(V value)
 	{
 		final Pair pair = values.get(value);
-		if (pair != null)
+		if(pair != null)
 			return pair.key;
 		return null;
 	}

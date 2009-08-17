@@ -130,9 +130,9 @@ public abstract class Actor extends Messenger implements Serializable
 	public void attachTo(Actor actor)
 	{
 		assert (!held());
-		if (bound())
+		if(bound())
 			world().removeActor(this);
-		if (actor.bound())
+		if(actor.bound())
 		{
 			setWorld(actor.world);
 			world.registerActor(this);
@@ -153,7 +153,7 @@ public abstract class Actor extends Messenger implements Serializable
 		holder.holds.remove(this);
 		final Coord holderPos = new Coord(holder.pos);
 		holder = null;
-		if (bound())
+		if(bound())
 			setPos(holderPos.x(), holderPos.y());
 	}
 
@@ -216,7 +216,7 @@ public abstract class Actor extends Messenger implements Serializable
 	public void expire()
 	{
 		expired = true;
-		for (final Actor held : holds)
+		for(final Actor held : holds)
 			held.expire();
 	}
 
@@ -254,7 +254,7 @@ public abstract class Actor extends Messenger implements Serializable
 	{
 		assert (!held() || holder.world == world);
 		this.world = world;
-		for (final Actor held : holds)
+		for(final Actor held : holds)
 			held.setWorld(world);
 	}
 

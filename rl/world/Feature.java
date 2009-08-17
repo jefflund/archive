@@ -21,9 +21,9 @@ public class Feature extends Actor implements Serializable
 	@Override
 	public void act()
 	{
-		if (world().getActorAt(x(), y(), Creature.class) != null)
+		if(world().getActorAt(x(), y(), Creature.class) != null)
 		{
-			if (instant != null)
+			if(instant != null)
 				instant.doIt(x(), y(), world());
 			expire();
 		}

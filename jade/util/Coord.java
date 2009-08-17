@@ -115,7 +115,7 @@ public class Coord implements Comparable<Coord>, Serializable
 
 	public int compareTo(Coord other)
 	{
-		if (x == other.x)
+		if(x == other.x)
 			return y - other.y;
 		return x - other.x;
 	}

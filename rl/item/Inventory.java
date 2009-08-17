@@ -93,7 +93,7 @@ public class Inventory implements Serializable
 				items.add(item);
 		return items;
 	}
-	
+
 	public List<Item> getAllItems()
 	{
 		return inventory;

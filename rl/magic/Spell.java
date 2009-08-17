@@ -34,12 +34,12 @@ public class Spell implements Serializable
 
 	public void cast()
 	{
-		if (caster.mp().value() < cost)
+		if(caster.mp().value() < cost)
 			caster.appendMessage("Insufficient mana");
 		else
 		{
 			final Weave weave = new Weave(effect, magnitude, duration);
-			switch (target)
+			switch(target)
 			{
 			case AREA:
 				final Coord area = caster.getTarget();
@@ -51,7 +51,7 @@ public class Spell implements Serializable
 			case OTHER:
 				final Creature other = caster.world().getActorAt(caster.getTarget(),
 						Creature.class);
-				if (other != null)
+				if(other != null)
 					weave.attachTo(other);
 				break;
 			}
