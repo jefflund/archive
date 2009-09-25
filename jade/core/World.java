@@ -3,6 +3,7 @@ package jade.core;
 import jade.util.ColoredChar;
 import jade.util.Coord;
 import jade.util.Dice;
+import jade.util.Rect;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.Collection;
@@ -262,6 +263,11 @@ public abstract class World extends Messenger implements Serializable
 		return getOpenTile(random, upperleft.x(), upperleft.y(), lowerright.x(),
 				lowerright.y());
 	}
+	
+	public final Coord getOpenTile(Dice random, Rect rect)
+	{
+		return getOpenTile(random, rect.xMin(), rect.yMin(), rect.xMax(), rect.yMax());
+	}
 
 	/**
 	 * Returns a random open tile on the world from within the specified bounds. A
@@ -280,10 +286,19 @@ public abstract class World extends Messenger implements Serializable
 	public Coord getOpenTile(Dice random, int x1, int y1, int x2, int y2)
 	{
 		int x, y;
+		int count = 0;
 		do
 		{
 			x = random.nextInt(x1, x2);
 			y = random.nextInt(y1, y2);
+			count++;
+			if(count == 1000)
+				for(int b = 0; b < height; b++)
+				{
+					for(int a = 0; a < width; a++)
+						System.out.print(look(a, b).ch());
+					System.out.println();
+				}
 		}
 		while(!passable(x, y) || getActorsAt(x, y, Actor.class).size() > 0);
 		return new Coord(x, y);

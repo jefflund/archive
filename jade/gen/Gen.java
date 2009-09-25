@@ -1,6 +1,7 @@
 package jade.gen;
 
 import jade.core.World;
+import jade.util.Rect;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,8 @@ public interface Gen
 	 * @param seed the seed to base the random map on
 	 */
 	public void generate(World world, long seed);
+	
+	public void generate(World world, long seed, Rect rect);
 
 	/**
 	 * Used for retrieving varius singleton instances of Gen implementing classes.

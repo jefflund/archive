@@ -66,7 +66,7 @@ public class Rogue
 
 	private static Console getGConsole()
 	{
-		final GConsole gConsole = GConsole.getFramedConsole("Jade");
+		final GConsole gConsole = GConsole.getFramedConsole("Jade Graphics");
 		gConsole.registerImage("tiles", 0, 3, '@', Color.white);
 		gConsole.registerImage("tiles", 21, 12, 'D', Color.red);
 		gConsole.registerImage("tiles", 0, 22, '#', Color.white);

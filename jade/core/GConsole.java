@@ -25,6 +25,7 @@ public class GConsole extends Console
 	private final Map<Coord, CharPair> imageBuffer;
 	private final Map<Coord, CharPair> imageSaved;
 	private final Map<ColoredChar, Image> images;
+	private final int tileSetSize;
 
 	/**
 	 * Constructs a default GConsole. As opposed to the normal Jade Console, the
@@ -33,7 +34,7 @@ public class GConsole extends Console
 	 */
 	public GConsole()
 	{
-		this(32, 24, 24);
+		this(16, 24, 24, 32);
 	}
 
 	/**
@@ -43,12 +44,13 @@ public class GConsole extends Console
 	 * @param width the number of tiles wide the GConsole starts with
 	 * @param height the number of tiles high the GConsole starts with
 	 */
-	public GConsole(int tileSize, int width, int height)
+	public GConsole(int tileSize, int width, int height, int tileSetSize)
 	{
 		super(tileSize, tileSize, width, height);
 		imageBuffer = new TreeMap<Coord, CharPair>();
 		imageSaved = new TreeMap<Coord, CharPair>();
 		images = new TreeMap<ColoredChar, Image>();
+		this.tileSetSize = tileSetSize;
 	}
 
 	/**
@@ -73,9 +75,9 @@ public class GConsole extends Console
 	 * @return a new GConsole placed inside a JFrame
 	 */
 	public static GConsole getFramedConsole(String frameTitle, int tileSize,
-			int width, int height)
+			int width, int height, int tileSetSize)
 	{
-		final GConsole console = new GConsole(tileSize, width, height);
+		final GConsole console = new GConsole(tileSize, width, height, tileSetSize);
 		frameConsole(console, frameTitle);
 		return console;
 	}
@@ -161,8 +163,8 @@ public class GConsole extends Console
 		try
 		{
 			final BufferedImage tiles = ImageIO.read(new File(tileSet));
-			final BufferedImage tile = tiles.getSubimage(x * tileHeight, y
-					* tileHeight, tileHeight, tileHeight);
+			final BufferedImage tile = tiles.getSubimage(x * tileSetSize, y
+					* tileSetSize, tileSetSize, tileSetSize);
 			images.put(new ColoredChar(ch, color), tile);
 			return true;
 		}

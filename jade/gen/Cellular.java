@@ -3,14 +3,17 @@ package jade.gen;
 import jade.core.World;
 import jade.util.Coord;
 import jade.util.Dice;
+import jade.util.Rect;
 import java.awt.Color;
 import java.util.Stack;
 
 /**
  * This implementation of Gen uses cellular automata to generate interesting
- * cave level. The maps will always be connected either by throwing away
+ * cave levels. The maps will always be connected either by throwing away
  * disconnected maps for small worlds, or filling in small disconnected parts on
- * large maps.
+ * large maps. Note that this algorithm doesn't work tend to work on anything
+ * smaller than 7x7 maps. Instead, to avoid infinite loops, it will just result
+ * in a solid block.
  */
 public class Cellular implements Gen
 {
@@ -20,6 +23,7 @@ public class Cellular implements Gen
 	private static final int MIN_COUNT1 = 5;
 	private static final int MAX_COUNT2 = 3;
 	private static final float TILE_PERCENT = .4f;
+	private static final int TINY_MAX = 20;
 	private final Dice dice;
 
 	protected Cellular()
@@ -29,38 +33,63 @@ public class Cellular implements Gen
 
 	public void generate(World world, long seed)
 	{
+		generate(world, seed, new Rect(world.width, world.height));
+	}
+
+	public void generate(World world, long seed, Rect rect)
+	{
+		boolean tooSmall = rect.width() < 7 || rect.height() < 7;
+		int count = 0;
 		dice.setSeed(seed);
 		do
 		{
-			initialize(world);
-			final char[][] buffer = new char[world.width][world.height];
+			initialize(world, rect);
+			final char[][] buffer = new char[rect.width()][rect.height()];
 			for(int i = 0; i < 5; i++)
-				apply45(buffer, world);
+				apply45(buffer, world, rect);
+			count++;
 		}
-		while(!connected(world));
+		while(!connected(world, rect) && (!tooSmall || count < TINY_MAX));
 	}
 
-	private boolean connected(World world)
+	private boolean connected(World world, Rect rect)
 	{
-		final float filled = floodAreaOpen(world, world.getOpenTile(dice))
-				/ (world.width * world.height);
+		if(!openExist(world, rect))
+			return false;
+
+		final float filled = floodAreaOpen(world, world.getOpenTile(dice, rect
+				.xMin(), rect.yMin(), rect.xMax() - 1, rect.yMax() - 1), rect)
+				/ (rect.width() * rect.height());
 		if(filled > TILE_PERCENT)
 		{
-			deleteUnconnected(world);
+			deleteUnconnected(world, rect);
 			return true;
 		}
 		return false;
 	}
 
-	private void deleteUnconnected(World world)
+	private boolean openExist(World world, Rect rect)
 	{
-		for(int x = 0; x < world.width; x++)
-			for(int y = 0; y < world.height; y++)
+		boolean result = false;
+		for(int x = rect.xMin(); x < rect.xMax(); x++)
+			for(int y = rect.yMin(); y < rect.yMax(); y++)
+				if(world.passable(x, y))
+				{
+					result = true;
+					break;
+				}
+		return result;
+	}
+
+	private void deleteUnconnected(World world, Rect rect)
+	{
+		for(int x = rect.xMin(); x < rect.xMax(); x++)
+			for(int y = rect.yMin(); y < rect.yMax(); y++)
 				if(world.look(x, y).ch() == UNCONNECTED_TILE)
 					world.tile(x, y).setTile(CLOSED_TILE, Color.white, false);
 	}
 
-	private float floodAreaOpen(World world, Coord coord)
+	private float floodAreaOpen(World world, Coord coord, Rect rect)
 	{
 		final Stack<Coord> stack = new Stack<Coord>();
 		stack.push(coord);
@@ -68,7 +97,8 @@ public class Cellular implements Gen
 		while(!stack.isEmpty())
 		{
 			final Coord curr = stack.pop();
-			if(world.look(curr.x(), curr.y()).ch() == UNCONNECTED_TILE)
+			if(!outOfBounds(rect, curr.x(), curr.y())
+					&& world.look(curr.x(), curr.y()).ch() == UNCONNECTED_TILE)
 			{
 				count++;
 				world.tile(curr.x(), curr.y()).setTile(OPEN_TILE, Color.white, true);
@@ -81,12 +111,13 @@ public class Cellular implements Gen
 		return count;
 	}
 
-	private void initialize(World world)
+	private void initialize(World world, Rect rect)
 	{
-		for(int x = 0; x < world.width; x++)
-			for(int y = 0; y < world.height; y++)
+		for(int x = rect.xMin(); x < rect.xMax(); x++)
+			for(int y = rect.yMin(); y < rect.yMax(); y++)
 			{
-				if(x == 0 || x == world.width - 1 || y == 0 || y == world.height - 1)
+				if(x == rect.xMin() || x == rect.xMax() - 1 || y == rect.yMin()
+						|| y == rect.yMax() - 1)
 					setWallTile(world, x, y);
 				else if(dice.nextDouble() < TILE_PERCENT)
 					setWallTile(world, x, y);
@@ -95,32 +126,32 @@ public class Cellular implements Gen
 			}
 	}
 
-	private void apply45(char[][] buffer, World world)
+	private void apply45(char[][] buffer, World world, Rect rect)
 	{
-		for(int x = 1; x < world.width - 1; x++)
-			for(int y = 1; y < world.height - 1; y++)
+		for(int x = rect.xMin() + 1; x < rect.xMax() - 1; x++)
+			for(int y = rect.yMin() + 1; y < rect.yMax() - 1; y++)
 			{
-				if(wallcount(world, x, y, 1) >= MIN_COUNT1
-						|| wallcount(world, x, y, 2) <= MAX_COUNT2)
-					buffer[x][y] = CLOSED_TILE;
+				if(wallcount(world, x, y, 1, rect) >= MIN_COUNT1
+						|| wallcount(world, x, y, 2, rect) <= MAX_COUNT2)
+					buffer[x - rect.xMin()][y - rect.yMin()] = CLOSED_TILE;
 				else
-					buffer[x][y] = OPEN_TILE;
+					buffer[x - rect.xMin()][y - rect.yMin()] = OPEN_TILE;
 			}
-		for(int x = 1; x < world.width - 1; x++)
-			for(int y = 1; y < world.height - 1; y++)
-				if(buffer[x][y] == OPEN_TILE)
+		for(int x = rect.xMin() + 1; x < rect.xMax() - 1; x++)
+			for(int y = rect.yMin() + 1; y < rect.yMax() - 1; y++)
+				if(buffer[x - rect.xMin()][y - rect.yMin()] == OPEN_TILE)
 					setOpenTile(world, x, y);
 				else
 					setWallTile(world, x, y);
 	}
 
-	private int wallcount(World world, int x, int y, int range)
+	private int wallcount(World world, int x, int y, int range, Rect rect)
 	{
 		int count = 0;
 		for(int dx = x - range; dx <= x + range; dx++)
 			for(int dy = y - range; dy <= y + range; dy++)
 			{
-				if(outOfBounds(world, dx, dy))
+				if(outOfBounds(rect, dx, dy))
 					continue;
 				if(!world.passable(dx, dy))
 					count++;
@@ -128,9 +159,10 @@ public class Cellular implements Gen
 		return count;
 	}
 
-	private boolean outOfBounds(World world, int x, int y)
+	private boolean outOfBounds(Rect rect, int x, int y)
 	{
-		return x < 0 || x >= world.width || y < 0 || y >= world.height;
+		return x < rect.xMin() || x >= rect.xMax() || y < rect.yMin()
+				|| y >= rect.yMax();
 	}
 
 	private void setOpenTile(World world, int x, int y)

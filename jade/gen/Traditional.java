@@ -3,9 +3,13 @@ package jade.gen;
 import jade.core.World;
 import jade.util.Coord;
 import jade.util.Dice;
+import jade.util.Rect;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This implementation of Gen uses a binary space partition tree to generate a
@@ -23,18 +27,24 @@ public class Traditional implements Gen
 
 	public void generate(World world, long seed)
 	{
+		generate(world, seed, new Rect(world.width, world.height));
+	}
+	
+	public void generate(World world, long seed, Rect rect)
+	{
 		dice.setSeed(seed);
-		floodWithWall(world);
-		final BSP head = new BSP(world);
+		floodWithWall(world, rect);
+		final BSP head = new BSP(rect);
 		head.divide();
 		head.makeRooms(world);
 		head.connect(world);
+		head.addCycles(world);
 	}
 
-	private void floodWithWall(World world)
+	private void floodWithWall(World world, Rect rect)
 	{
-		for(int x = 0; x < world.width; x++)
-			for(int y = 0; y < world.height; y++)
+		for(int x = rect.xMin(); x < rect.xMax(); x++)
+			for(int y = rect.yMin(); y < rect.yMax(); y++)
 				world.tile(x, y).setTile('#', Color.white, false);
 	}
 
@@ -54,14 +64,14 @@ public class Traditional implements Gen
 		private boolean connected;
 		private boolean readyConnect;
 
-		public BSP(World world)
+		public BSP(Rect rect)
 		{
 			connected = true;
 			readyConnect = true;
-			x1 = 0;
-			y1 = 0;
-			x2 = world.width - 1;
-			y2 = world.height - 1;
+			x1 = rect.xMin();
+			y1 = rect.yMin();
+			x2 = rect.xMax() - 1;
+			y2 = rect.yMax() - 1;
 		}
 
 		private BSP(BSP parent, int div, boolean vert, boolean left)
@@ -111,6 +121,19 @@ public class Traditional implements Gen
 			connectToSibling(world);
 		}
 
+		public void addCycles(World world)
+		{
+			List<BSP> leaves = new ArrayList<BSP>(getLeaves());
+			if(leaves.size() < 5)
+				return;
+			for(int i = 0; i < dice.nextInt(leaves.size() / 2, leaves.size()); i++)
+			{
+				BSP leaf1 = leaves.remove(leaves.size() - 1);
+				BSP leaf2 = leaves.get(dice.nextInt(leaves.size()));
+				leaf1.connectTo(world, leaf2);
+			}
+		}
+
 		private boolean divideAux()
 		{
 			if(!leaf())
@@ -136,6 +159,26 @@ public class Traditional implements Gen
 		{
 			min *= 2;
 			return vert ? (x2 - x1) < min : (y2 - y1) < min;
+		}
+
+		public Set<BSP> getLeaves()
+		{
+			Set<BSP> leaves = new HashSet<BSP>();
+			getLeavesAux(leaves);
+			return leaves;
+		}
+
+		private void getLeavesAux(Set<BSP> leaves)
+		{
+			if(leaf())
+				leaves.add(this);
+			else
+			{
+				if(left != null)
+					left.getLeavesAux(leaves);
+				if(right != null)
+					right.getLeavesAux(leaves);
+			}
 		}
 
 		private boolean leaf()
@@ -174,6 +217,32 @@ public class Traditional implements Gen
 				world.tile(coord).setTile('.', Color.white, true);
 			connected = true;
 			sibling.connected = true;
+		}
+
+		public void connectTo(World world, BSP leaf)
+		{
+			final Coord start = world.getOpenTile(dice, x1, y1, x2, y2);
+			final Coord end = world.getOpenTile(dice, leaf.x1, leaf.y1, leaf.x2,
+					leaf.y2);
+			final List<Coord> corridor = new LinkedList<Coord>();
+			final Coord curr = new Coord(start);
+			while(!curr.equals(end))
+			{
+				corridor.add(new Coord(curr));
+				final boolean digging = !world.passable(curr);
+				if(curr.x() == end.x())
+					curr.translate(0, curr.y() < end.y() ? 1 : -1);
+				else
+					curr.translate(curr.x() < end.x() ? 1 : -1, 0);
+				if(digging && world.passable(curr))
+				{
+					if(leaf.inside(curr))
+						break;
+					corridor.clear();
+				}
+			}
+			for(final Coord coord : corridor)
+				world.tile(coord).setTile('.', Color.white, true);
 		}
 
 		private boolean inside(Coord coord)

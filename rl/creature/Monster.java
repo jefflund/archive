@@ -5,7 +5,8 @@ import java.awt.Color;
 import java.io.Serializable;
 import rl.world.Level;
 
-public class Monster extends Creature implements Serializable
+public class Monster
+		extends Creature implements Serializable
 {
 	public Monster(char face, Color color)
 	{
@@ -15,11 +16,16 @@ public class Monster extends Creature implements Serializable
 	@Override
 	public void act()
 	{
-		if(player().getFoV().contains(new Coord(x(), y())))
-			appendMessage(this + " sees " + player());
-		move(dice.nextInt(-1, 1), dice.nextInt(-1, 1));
+		boolean sees = player().getFoV().contains(new Coord(x(), y()));
+		if(sees)
+		{
+			int dx = player().x() < x() ? -1 : player().x() > x() ? 1 : 0;
+			int dy = player().y() < y() ? -1 : player().y() > y() ? 1 : 0;
+			move(dx, dy);
+		}
+		else
+			move(dice.nextInt(-1, 1), dice.nextInt(-1, 1));
 	}
-
 	@Override
 	public Coord getTarget()
 	{
@@ -28,6 +34,6 @@ public class Monster extends Creature implements Serializable
 
 	private Player player()
 	{
-		return ((Level) world()).player();
+		return ((Level)world()).player();
 	}
 }

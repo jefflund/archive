@@ -2,6 +2,7 @@ package jade.gen;
 
 import jade.core.World;
 import jade.util.Dice;
+import jade.util.Rect;
 import java.awt.Color;
 
 /**
@@ -31,9 +32,14 @@ public class Wilderness implements Gen
 
 	public void generate(World world, long seed)
 	{
+		generate(world, seed, new Rect(world.width, world.height));
+	}
+
+	public void generate(World world, long seed, Rect rect)
+	{
 		dice.setSeed(seed);
-		for(int x = 0; x < world.width; x++)
-			for(int y = 0; y < world.height; y++)
+		for(int x = rect.xMin(); x < rect.xMax(); x++)
+			for(int y = rect.yMin(); y < rect.yMax(); y++)
 				if(dice.nextFloat() < TREE_CHANCE)
 				{
 					final Color color = dice.nextBoolean() ? TREE_COLOR1 : TREE_COLOR2;
@@ -44,24 +50,24 @@ public class Wilderness implements Gen
 					final Color color = dice.nextBoolean() ? OPEN_COLOR1 : OPEN_COLOR2;
 					world.tile(x, y).setTile(OPEN, color, true);
 				}
-		for(int x = 0; x < world.width; x++)
+		for(int x = rect.xMin(); x < rect.xMax(); x++)
 		{
-			world.tile(x, 0).setTile('#', OPEN_COLOR1, false);
-			world.tile(x, world.height - 1).setTile('#', OPEN_COLOR1, false);
+			world.tile(x, rect.yMin()).setTile('#', OPEN_COLOR1, false);
+			world.tile(x, rect.yMax() - 1).setTile('#', OPEN_COLOR1, false);
 		}
-		for(int y = 0; y < world.height; y++)
+		for(int y = rect.yMin(); y < rect.yMax(); y++)
 		{
-			world.tile(0, y).setTile('#', OPEN_COLOR1, false);
-			world.tile(world.width - 1, y).setTile('#', OPEN_COLOR1, false);
+			world.tile(rect.xMin(), y).setTile('#', OPEN_COLOR1, false);
+			world.tile(rect.xMax() - 1, y).setTile('#', OPEN_COLOR1, false);
 		}
 		if(rooms)
-			addRooms(world);
+			addRooms(world, rect);
 	}
 
-	private void addRooms(World world)
+	private void addRooms(World world, Rect rect)
 	{
-		for(int x = 0; x + MAX_ROOM_SIZE < world.width - 2; x += MAX_ROOM_SIZE)
-			for(int y = 0; y + MAX_ROOM_SIZE < world.height - 2; y += MAX_ROOM_SIZE)
+		for(int x = rect.xMin(); x + MAX_ROOM_SIZE < rect.xMax() - 2; x += MAX_ROOM_SIZE)
+			for(int y = rect.yMin(); y + MAX_ROOM_SIZE < rect.yMax() - 2; y += MAX_ROOM_SIZE)
 			{
 				final int x1 = dice.nextInt(x + 1, x + MAX_ROOM_SIZE - MIN_ROOM_SIZE
 						- 1);
