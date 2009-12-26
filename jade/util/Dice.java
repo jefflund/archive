@@ -5,36 +5,28 @@ import java.io.Serializable;
 import java.util.Random;
 
 /**
- * Dice basically extends Random and adds a few methods. Eventually, I may
- * reimplement Random as a Mersenne Twister.
+ * For now Dice mearly extends Random and adds a few methods, but will
+ * eventually be reimplementated as a Mersenne twister.
  */
 public class Dice extends Random implements Serializable
 {
 	/**
-	 * Constructs a new Dice with a seed based on the current time.
+	 * A default instance of Dice when you don't need a unique instance.
 	 */
+	public static final Dice dice = new Dice();
+
 	public Dice()
 	{
 		super();
 	}
 
-	/**
-	 * Constructs a new Dice with a user provided seed.
-	 * 
-	 * @param seed the pseudorandom generator seed
-	 */
 	public Dice(long seed)
 	{
 		super(seed);
 	}
 
 	/**
-	 * Returns a random integer between the min and max inclusive. In order for
-	 * this method to work, min must be less than max.
-	 * 
-	 * @param min the minimum result
-	 * @param max the maximum result
-	 * @return a random integer between the min and max inclusive.
+	 * Returns an integer between min (inclusive) and max (inclusive)
 	 */
 	public int nextInt(int min, int max)
 	{
@@ -44,15 +36,8 @@ public class Dice extends Random implements Serializable
 	}
 
 	/**
-	 * Performs an xdy dice roll where x number of y sided dice are rolled. Thus
-	 * the minimum value returned from this function is x (ie all the dice were
-	 * 1s). The maximum value this function could take is x * y (ie all dice
-	 * rolled their highest value). However, as x increases, the probability curve
-	 * becomes more normally distributed.
-	 * 
-	 * @param x the number of dice to roll
-	 * @param y the number of sides the dice have
-	 * @return the total value of all the dice rolled.
+	 * Performs a dice roll xdy, or an y sided dice x times. For example, a
+	 * monopoly roll would be 2d6.
 	 */
 	public int diceXdY(int x, int y)
 	{
@@ -63,8 +48,7 @@ public class Dice extends Random implements Serializable
 	}
 
 	/**
-	 * Returns a psuedorandom color with r,g,b values from 0 to 255.
-	 * @return a psuedorandom color with r,g,b values from 0 to 255.
+	 * Returns a random color
 	 */
 	public Color nextColor()
 	{
@@ -75,14 +59,20 @@ public class Dice extends Random implements Serializable
 	}
 
 	/**
-	 * Returns a random char between the min and max char on the ascii table
-	 * (inclusive).
-	 * @param min the minium ascii value that could be returned
-	 * @param max the maximuc ascii value that could be returned
-	 * @return a random char between the min and max char on the ascii table
+	 * Returns a random char between min (inclusive) and max (inclusive) on the
+	 * ascii table.
 	 */
 	public char nextChar(char min, char max)
 	{
-		return (char) nextInt(min, max);
+		return (char)nextInt(min, max);
+	}
+
+	/**
+	 * Returns a random Direction
+	 */
+	public Direction nextDir()
+	{
+		Direction[] values = Direction.values();
+		return values[nextInt(values.length)];
 	}
 }

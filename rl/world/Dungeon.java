@@ -1,59 +1,50 @@
 package rl.world;
 
-import jade.util.Coord;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import jade.util.Dice;
 import rl.creature.Player;
 
-public class Dungeon implements Serializable
+public class Dungeon
 {
+	private Player player;
+	private Level[] levels;
 	private int depth;
-	private final Map<Integer, Level> levels;
 
-	public Dungeon()
+	public Dungeon(int depth, int seed, Player player)
 	{
-		depth = 0;
-		levels = new HashMap<Integer, Level>();
+		levels = new Level[depth];
+		Dice dice = new Dice(seed);
+		for(int i = 0; i < depth; i++)
+			levels[i] = new Level(dice.nextLong(), this);
+		this.player = player;
+		levels[0].addActor(player, dice);
+		this.depth = 0;
 	}
 
 	public Level getLevel()
 	{
-		Level level = levels.get(depth);
-		if(level == null)
-		{
-			level = new Level(depth);
-			levels.put(depth, level);
-		}
-		return level;
+		return levels[depth];
 	}
 
-	public void descend()
+	public Player player()
 	{
-		final Player player = getLevel().player();
-		if(getLevel().tile(player.x(), player.y()).look().ch() != '>')
-			player.appendMessage("No stairs here");
-		else
-			changeLevel(depth + 1);
+		return player;
 	}
 
-	public void ascend()
+	public boolean descend()
 	{
-		final Player player = getLevel().player();
-		if(getLevel().tile(player.x(), player.y()).look().ch() != '<')
-			player.appendMessage("No stairs here");
-		else
-			changeLevel(depth - 1);
-	}
-
-	private void changeLevel(int newDepth)
-	{
-		final boolean goingDown = newDepth > depth;
-		final Player player = getLevel().player();
 		getLevel().removeActor(player);
-		depth = newDepth;
-		final Coord pos = goingDown ? getLevel().upStairs() : getLevel()
-				.downStairs();
-		getLevel().addActor(player, pos);
+		depth++;
+		getLevel().addActor(player, Dice.dice);
+		getLevel().appendMessage(player + " descends");
+		return true;
+	}
+
+	public boolean ascend()
+	{
+		getLevel().removeActor(player);
+		depth--;
+		getLevel().addActor(player, Dice.dice);
+		getLevel().appendMessage(player + " ascends");
+		return true;
 	}
 }

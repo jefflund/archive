@@ -4,17 +4,15 @@ import jade.util.Tools;
 import java.io.Serializable;
 
 /**
- * This class respresents an object that can remember String messages, and
- * retrieve messages from other messengers. Both jade World and Actor extend
- * this class with the motivation that the world could then retrieve all the
- * messages of its actors and store them in one place for easy access.
+ * Base class for both Actor and World. Allows all the messages to be propagated
+ * to one central spot and given to the user.
  */
 public class Messenger implements Serializable
 {
 	private String messages;
 
 	/**
-	 * Constructs a new messenger
+	 * Creates a new Messenger
 	 */
 	public Messenger()
 	{
@@ -22,41 +20,37 @@ public class Messenger implements Serializable
 	}
 
 	/**
-	 * Clears the messenger's messages
+	 * Clears any messages the Messenger has.
 	 */
-	public void clearMessages()
+	public final void clearMessages()
 	{
 		messages = "";
 	}
 
 	/**
-	 * Adds a message for the messenger to remember. If the message does not end
-	 * with ". " it will be appended as well.
-	 * 
-	 * @param message the message to be stored
+	 * Appends a new message to the previous messages. The message is ensured to
+	 * end with ". "
 	 */
-	public void appendMessage(String message)
+	public final void appendMessage(String message)
 	{
 		if(!message.equals(""))
 			messages += Tools.strEnsureSuffix(message, ". ");
 	}
 
 	/**
-	 * Retrieves and clears all messeges of the specified messenger and adds them
-	 * to this messenger's messages.
-	 * 
-	 * @param messenger the messenger whos messages are to be retrieved
+	 * Removes the messages from the given Messenger and appends them to this
+	 * Messenger's messages.
 	 */
-	public void retrieveMessages(Messenger messenger)
+	public final void retrieveMessages(Messenger messenger)
 	{
 		messages += messenger.getMessages();
 	}
 
 	/**
-	 * Returns and clears this messengers messages.
-	 * @return The messengers messegages.
+	 * Retrieves the messages from this Messenger, leaving the Messenger's
+	 * messages blank.
 	 */
-	public String getMessages()
+	public final String getMessages()
 	{
 		final String result = messages;
 		clearMessages();

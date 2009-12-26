@@ -4,8 +4,7 @@ import java.awt.Color;
 import java.io.Serializable;
 
 /**
- * Represents a char with an associated color. ColoredChars are immutable once
- * created.
+ * A character with an associated color. They are immutable once instantiated.
  */
 public class ColoredChar implements Serializable, Comparable<ColoredChar>
 {
@@ -13,9 +12,7 @@ public class ColoredChar implements Serializable, Comparable<ColoredChar>
 	private final Color color;
 
 	/**
-	 * Creates a new coloredchar with the specified char and color.
-	 * @param ch
-	 * @param color
+	 * Creates a new ColoredChar
 	 */
 	public ColoredChar(char ch, Color color)
 	{
@@ -24,8 +21,7 @@ public class ColoredChar implements Serializable, Comparable<ColoredChar>
 	}
 
 	/**
-	 * Returns the character represented by this ColoredChar.
-	 * @return the character represented by this ColoredChar.
+	 * Gets the char portion of the ColoredChar
 	 */
 	public char ch()
 	{
@@ -33,12 +29,27 @@ public class ColoredChar implements Serializable, Comparable<ColoredChar>
 	}
 
 	/**
-	 * Returns the color represented by this ColoredChar.
-	 * @return the color represented by this ColoredChar.
+	 * Gets the color portion of the ColoredChar
 	 */
 	public Color color()
 	{
 		return color;
+	}
+
+	/**
+	 * Returns the same ColoredChar only darker
+	 */
+	public ColoredChar darker()
+	{
+		return new ColoredChar(ch, color.darker());
+	}
+
+	/**
+	 * Returns the same ColoredChar only brighter
+	 */
+	public ColoredChar brighter()
+	{
+		return new ColoredChar(ch, color.brighter());
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package jade.fov;
 
+import jade.core.Actor;
 import jade.core.World;
 import jade.path.Bresenham;
 import jade.util.Coord;
@@ -8,10 +9,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 /**
- * This implementation of FoV uses raycasting with a square range limit. It is
- * fast and simple. It works well when the screen is always centered on the
- * source of the field of vision. Optionally, the fov can be trimmed to a
- * circular radius.
+ * An implementation of FoV that utilizes a simple raycasting algorithm.
  */
 public class Raycast extends Bresenham implements FoV
 {
@@ -39,5 +37,10 @@ public class Raycast extends Bresenham implements FoV
 		if(circular)
 			Tools.filterCircle(result, x, y, range);
 		return result;
+	}
+
+	public Collection<Coord> calcFoV(Actor actor, int range)
+	{
+		return calcFoV(actor.world(), actor.x(), actor.y(), range);
 	}
 }

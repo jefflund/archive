@@ -4,80 +4,69 @@ import jade.core.Actor;
 import jade.util.Coord;
 import jade.util.Dice;
 import java.awt.Color;
-import java.io.Serializable;
+import rl.creature.Monster.Prototype;
+import rl.world.Level;
 
-public abstract class Creature extends Actor implements Serializable
+public abstract class Creature extends Actor
 {
-	private final Stat hp;
-	private final Stat mp;
-	private final Stat atk;
-	private final Stat def;
-	private final Stat dmg;
-	private final Stat rfire;
-	private final Stat relec;
-	protected Dice dice;
+	private Stat hp;
+	private Stat mp;
+	private Stat atk;
+	private Stat def;
+	private Stat dmg;
+	private Stat fireRes;
 
-	public Creature(char face, Color color, int hp, int mp, int atk, int def,
-			int dmg, int rfire, int relec)
+	public Creature(Prototype type)
+	{
+		this(type.face, type.color, type.hp, type.mp, type.atk, type.def, type.dmg,
+				type.fireRes);
+	}
+
+	protected Creature(char face, Color color, int hp, int mp, int atk, int def,
+			int dmg, int fireRes)
 	{
 		super(face, color);
-		this.hp = new Stat(hp)
-		{
-			@Override
-			public void buff(int buff)
-			{
-				super.buff(buff);
-				if(value() < 0)
-					expire();
-			}
-		};
-		this.mp = new Stat(mp)
-		{
-			@Override
-			public void buff(int buff)
-			{
-				super.buff(buff);
-				buffBase(buff);
-			}
-		};
+		this.hp = getNewHP(hp);
+		this.mp = new Stat(mp);
 		this.atk = new Stat(atk);
 		this.def = new Stat(def);
 		this.dmg = new Stat(dmg);
-		this.rfire = new Stat(rfire);
-		this.relec = new Stat(relec);
-		dice = new Dice();
+		this.fireRes = new Stat(fireRes);
 	}
 
 	@Override
 	public void move(int dx, int dy)
 	{
-		final int x = x() + dx;
-		final int y = y() + dy;
-		final Creature bumped = world().getActorAt(x, y, Creature.class);
+		int x = x() + dx;
+		int y = y() + dy;
+		Creature bumped = world().getActorAt(x, y, Creature.class);
 		if(bumped != null && bumped != this)
-			attack(bumped);
-		else if(world().passable(x() + dx, y() + dy))
+			melee(bumped);
+		else if(world().passable(x, y))
 			super.move(dx, dy);
 	}
 
-	public abstract Coord getTarget();
-
-	private void attack(Creature bump)
+	public Level world()
 	{
-		final int hp = bump.hp().value();
-		while(dice.nextFloat() < (float) atk.value / (atk.value + bump.def.value))
-			bump.hp().buff(-dmg.value());
-		if(hp == bump.hp().value())
-		{
-			appendMessage(this + " misses " + bump);
-			bump.def.train();
-		}
+		return (Level)super.world();
+	}
+
+	private void melee(Creature bumped)
+	{
+		int oldHp = bumped.hp.value();
+		float chance = (float)atk.value() / (atk.value() + bumped.def.value());
+		while(Dice.dice.nextFloat() < chance)
+			bumped.hp.modifyValue(-dmg.value());
+		if(oldHp == bumped.hp.value())
+			appendMessage(this + " misses " + bumped);
 		else
 		{
-			appendMessage(this + (bump.isExpired() ? " slays" : " hits ") + bump);
-			atk.train();
+			String verb = !bumped.isExpired() ? " hits " : " slays ";
+			appendMessage(this + verb + bumped);
 		}
 	}
+
+	public abstract Coord getTarget();
 
 	public Stat hp()
 	{
@@ -89,14 +78,14 @@ public abstract class Creature extends Actor implements Serializable
 		return mp;
 	}
 
-	public Stat def()
-	{
-		return def;
-	}
-
 	public Stat atk()
 	{
 		return atk;
+	}
+
+	public Stat def()
+	{
+		return def;
 	}
 
 	public Stat dmg()
@@ -104,70 +93,22 @@ public abstract class Creature extends Actor implements Serializable
 		return dmg;
 	}
 
-	public Stat rfire()
+	public Stat fireRes()
 	{
-		return rfire;
+		return fireRes;
 	}
 
-	public Stat relec()
+	private Stat getNewHP(int hp)
 	{
-		return relec;
-	}
-
-	public class Stat implements Serializable
-	{
-		private int value;
-		private int base;
-		private float train;
-		private static final float XP = .01f;
-
-		public Stat(int base)
+		return new Stat(hp)
 		{
-			this(base, base);
-		}
-
-		public Stat(int base, int value)
-		{
-			this.base = base;
-			this.value = value;
-			train = 0;
-		}
-
-		public int value()
-		{
-			return value;
-		}
-
-		public void train()
-		{
-			train += XP;
-			while(train > 1)
+			@Override
+			public void modifyValue(int change)
 			{
-				base++;
-				value++;
-				train--;
+				super.modifyValue(change);
+				if(value() < 0)
+					expire();
 			}
-		}
-
-		public void buff(int buff)
-		{
-			value += buff;
-		}
-
-		void buffBase(int buff)
-		{
-			base += buff;
-		}
-
-		public void cappedBuff(int buff)
-		{
-			value = Math.min(value + buff, base);
-		}
-
-		@Override
-		public String toString()
-		{
-			return Integer.valueOf(value).toString();
-		}
+		};
 	}
 }

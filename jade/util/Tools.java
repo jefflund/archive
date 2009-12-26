@@ -4,8 +4,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 /**
- * Tools contains lots of methods that are generally useful, but do not fit in
- * any one jade class.
+ * A collecection of utility methods
  */
 public final class Tools
 {
@@ -15,19 +14,10 @@ public final class Tools
 	}
 
 	/**
-	 * This method takes a keypress and turns it into a direction. The x and y
-	 * coordinates of the returned direction will be between -1 and 1. This coord
-	 * can then be used to translate other coord in the direction of the keypress.
-	 * 
-	 * @param key the character of the keypress
-	 * @param vi if true, then keyboard controls for moving the cursor in vim will
-	 * be allowed.
-	 * @param numeric if true, then keyboard controls for moving the cursor on a
-	 * numpad will be allowed
-	 * @return the direction of the key press, or null if the key was
-	 * non-direction based on the choosen keyset(s)
+	 * Takes a keypress char and turns it into a Direction, or null if the char
+	 * doesn't represent a Direction
 	 */
-	public static Coord keyToDir(char key, boolean vi, boolean numeric)
+	public static Direction keyToDir(char key, boolean vi, boolean numeric)
 	{
 		assert (vi || numeric);
 		if(vi && (Character.isLetter(key) || key == '.'))
@@ -38,67 +28,62 @@ public final class Tools
 			return null;
 	}
 
-	private static Coord numToDir(char key)
+	private static Direction numToDir(char key)
 	{
 		switch(key)
 		{
 		case '6':
-			return new Coord(1, 0);
+			return Direction.E;
 		case '4':
-			return new Coord(-1, 0);
+			return Direction.W;
 		case '8':
-			return new Coord(0, -1);
+			return Direction.N;
 		case '2':
-			return new Coord(0, 1);
+			return Direction.S;
 		case '1':
-			return new Coord(-1, 1);
+			return Direction.SW;
 		case '3':
-			return new Coord(1, 1);
+			return Direction.SE;
 		case '9':
-			return new Coord(1, -1);
+			return Direction.NE;
 		case '7':
-			return new Coord(-1, -1);
+			return Direction.NW;
 		case '5':
-			return new Coord(0, 0);
+			return Direction.O;
 		default:
 			return null;
 		}
 	}
 
-	private static Coord viToDir(char key)
+	private static Direction viToDir(char key)
 	{
 		switch(key)
 		{
 		case 'l':
-			return new Coord(1, 0);
+			return Direction.E;
 		case 'h':
-			return new Coord(-1, 0);
+			return Direction.W;
 		case 'k':
-			return new Coord(0, -1);
+			return Direction.N;
 		case 'j':
-			return new Coord(0, 1);
+			return Direction.S;
 		case 'b':
-			return new Coord(-1, 1);
+			return Direction.SW;
 		case 'n':
-			return new Coord(1, 1);
+			return Direction.SE;
 		case 'u':
-			return new Coord(1, -1);
+			return Direction.NE;
 		case 'y':
-			return new Coord(-1, -1);
+			return Direction.NW;
 		case '.':
-			return new Coord(0, 0);
+			return Direction.O;
 		default:
 			return null;
 		}
 	}
 
 	/**
-	 * Returns true if the string has the specified suffix. The check is case
-	 * sensitive.
-	 * 
-	 * @param str the string to be tested
-	 * @param suffix the suffix to be tested
-	 * @return true if the string has the specified suffix
+	 * Returns true if str ends with suffix. (case sensitive)
 	 */
 	public static boolean strHasSuffix(String str, String suffix)
 	{
@@ -107,13 +92,8 @@ public final class Tools
 	}
 
 	/**
-	 * Returns a string that has the specified suffix. If the input string already
-	 * has the suffix, then it will be returned unchanged, otherwise, return value
-	 * will be the string concatonated with the suffix.
-	 * 
-	 * @param str the string in question
-	 * @param suffix the suffix to tested
-	 * @return a string that has the specified suffix
+	 * Returns the string if it has the suffix, or returns the suffix concatenated
+	 * with the string if it does not.
 	 */
 	public static String strEnsureSuffix(String str, String suffix)
 	{
@@ -123,14 +103,7 @@ public final class Tools
 	}
 
 	/**
-	 * Returns a string that has at least the specified length. If the input
-	 * string has a length greater or equal to the given length, then it will be
-	 * returned unchanged. Otherwise, the string will be returned after
-	 * concationation with enough spaces to meet the length requirement.
-	 * 
-	 * @param str the string in question
-	 * @param length the minimum length of the return value
-	 * @return a string that is at least the specified length
+	 * Returns the string concatinated with enough spaces to ensure the length.
 	 */
 	public static String strEnsureLength(String str, int length)
 	{
@@ -140,23 +113,17 @@ public final class Tools
 	}
 
 	/**
-	 * Translates an integer to a character where 0 maps to 'a', 1 to 'b', 2 to
-	 * 'c' and so on.
-	 * 
-	 * @param i the integer to be converted
-	 * @return the character value of i
+	 * Maps an integer to a char, with 1 mapping to 'a', 2 to 'b', 3 to 'c' and so
+	 * on.
 	 */
 	public static char intToAlpha(int i)
 	{
-		return (char) (i + 'a');
+		return (char)(i + 'a');
 	}
 
 	/**
-	 * Translates a character to an integer where 'a' maps to 0, 'b' to 1, 'c' to
-	 * 2 and so on.
-	 * 
-	 * @param ch the character to be converted
-	 * @return the integer value of ch
+	 * Maps a char to an integer, with 'a' mapping to 1, 'b' to 2, 'c' to 3 and so
+	 * on.
 	 */
 	public static int alphaToInt(char ch)
 	{
@@ -164,12 +131,8 @@ public final class Tools
 	}
 
 	/**
-	 * Removes all Coords in the field that fall out side the circle centered at
-	 * (x,y) with the given radius.
-	 * @param field the Collection<Coord> to be filtered
-	 * @param x the x-coordinate of the center of the circle
-	 * @param y the y-coordinate of the center of the circle
-	 * @param radius the radius of the circle
+	 * Removes an Coord from the field that are not with in the circle with the
+	 * given radius and center.
 	 */
 	public static void filterCircle(Collection<Coord> field, int x, int y,
 			int radius)
@@ -183,18 +146,62 @@ public final class Tools
 	}
 
 	/**
-	 * Returns true if (x,y) is in the circle centered at (cx, cy) with radius r
-	 * @param cx the x-coordinate of the center of the circle
-	 * @param cy the y-coordinate of the center of the circle
-	 * @param x the x-coordinate of the Coord in question
-	 * @param y the y-coordinate of the Coord in question
-	 * @param r the radius of the circle
-	 * @return true if (x,y) is in the cirlce centered at (cx, cy) with radius r
+	 * Returns true if the point (x, y) is in the circle centered at (cx, cy) with
+	 * radius r.
 	 */
 	public static boolean inCircle(int cx, int cy, int x, int y, int r)
 	{
 		final int a = x - cx;
 		final int b = y - cy;
 		return a * a + b * b < r * r;
+	}
+
+	/**
+	 * Returns the value if it within the given range, or the nearest extreama if
+	 * the value is outside the range.
+	 */
+	public static int clampToRange(int value, int min, int max)
+	{
+		if(value < min)
+			value = min;
+		if(value > max)
+			value = max;
+		return value;
+	}
+
+	/**
+	 * Returns the direction needed to get from start to goal.
+	 */
+	public static Direction directionTo(Coord start, Coord goal)
+	{
+		int dx = goal.x() - start.x();
+		int dy = goal.y() - start.y();
+		if(dx < 0)
+		{
+			if(dy < 0)
+				return Direction.NW;
+			else if(dy > 0)
+				return Direction.SW;
+			else
+				return Direction.W;
+		}
+		else if(dx > 0)
+		{
+			if(dy < 0)
+				return Direction.NE;
+			else if(dy > 0)
+				return Direction.SE;
+			else
+				return Direction.E;
+		}
+		else
+		{
+			if(dy < 0)
+				return Direction.N;
+			else if(dy > 0)
+				return Direction.S;
+			else
+				return Direction.O;
+		}
 	}
 }

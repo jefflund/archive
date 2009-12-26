@@ -1,39 +1,74 @@
 package rl.creature;
 
+import jade.path.Path.PathFactory;
 import jade.util.Coord;
+import jade.util.Dice;
+import jade.util.Tools;
 import java.awt.Color;
-import java.io.Serializable;
-import rl.world.Level;
+import java.util.List;
 
-public class Monster
-		extends Creature implements Serializable
+public class Monster extends Creature
 {
-	public Monster(char face, Color color)
+	public enum Prototype
 	{
-		super(face, color, 10, 0, 10, 10, 1, 0, 0);
+		Orc('o', Color.yellow, 5, 5, 5, 5, 1, 0),
+		Ogre('O', Color.pink, 5, 5, 5, 5, 3, 10),
+		Dragon('D', Color.red, 10, 10, 10, 10, 3, 90);
+
+		public char face;
+		public Color color;
+		public int hp;
+		public int mp;
+		public int atk;
+		public int def;
+		public int dmg;
+		public int fireRes;
+
+		private Prototype(char face, Color color, int hp, int mp, int atk, int def,
+				int dmg, int resFire)
+		{
+			this.face = face;
+			this.color = color;
+			this.hp = hp;
+			this.mp = mp;
+			this.atk = atk;
+			this.def = def;
+			this.dmg = dmg;
+		}
+	};
+
+	private Coord target;
+
+	public Monster(Prototype prototype)
+	{
+		super(prototype);
+		target = new Coord();
 	}
 
 	@Override
 	public void act()
 	{
-		boolean sees = player().getFoV().contains(new Coord(x(), y()));
-		if(sees)
+		if(world().player().getFoV().contains(pos()))
+			target.move(world().player().pos());
+		if(target.equals(pos()))
 		{
-			int dx = player().x() < x() ? -1 : player().x() > x() ? 1 : 0;
-			int dy = player().y() < y() ? -1 : player().y() > y() ? 1 : 0;
-			move(dx, dy);
+			move(Dice.dice.nextDir());
+			target.move(pos());
 		}
 		else
-			move(dice.nextInt(-1, 1), dice.nextInt(-1, 1));
+		{
+			List<Coord> path = PathFactory.aStar().getPath(world(), pos(),
+					getTarget());
+			if(path == null)
+				move(Dice.dice.nextDir());
+			else
+				move(Tools.directionTo(pos(), path.get(0)));
+		}
 	}
+
 	@Override
 	public Coord getTarget()
 	{
-		return new Coord(x(), y());
-	}
-
-	private Player player()
-	{
-		return ((Level)world()).player();
+		return target;
 	}
 }

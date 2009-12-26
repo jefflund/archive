@@ -2,78 +2,68 @@ package jade.gen;
 
 import jade.core.World;
 import jade.util.Rect;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * An inteface used for generating random maps on a jade world.
+ * This interface represents something that can generate a map for a Jade World.
  */
 public interface Gen
 {
 	/**
-	 * Generates a random map on the given world based on a seed. Implementations
-	 * of this method should generate the same map for any particular seed.
-	 * @param world the world on which to generate the map
-	 * @param seed the seed to base the random map on
+	 * Generates a map on the World with the specified seed.
 	 */
 	public void generate(World world, long seed);
-	
-	public void generate(World world, long seed, Rect rect);
 
 	/**
-	 * Used for retrieving varius singleton instances of Gen implementing classes.
+	 * Generates a map on the World in the given bounds with the specified seed.
 	 */
+	public void generate(World world, long seed, Rect rect);
+
 	public class GenFactory
 	{
-		/**
-		 * A simple wilderness.
-		 */
-		public static final int Wilderness = 0;
-		/**
-		 * Uses cellular autamaton to generate interesting caves.
-		 */
-		public static final int Cellular = 1;
-		/**
-		 * Takes a simple wilderness and adds a few buildings.
-		 */
-		public static final int Town = 2;
-		/**
-		 * Creates a set of rectangular rooms connected by corridors.
-		 */
-		public static final int Traditional = 3;
-		private static Map<Integer, Gen> singletons = new HashMap<Integer, Gen>();
+		private static Gen cellular;
+		private static Gen traditional;
+		private static Gen wilderness;
+		private static Gen town;
 
 		/**
-		 * Returns a instance implementing Gen based on the specified algorithm.
-		 * 
-		 * @param algorithm the algorithm to be implemented. Static integer
-		 * constants are provided in Gen
-		 * @return a singleton instance of an object implementing Gen with specified
-		 * algorithm
+		 * Uses cellular automaton to generate cave like maps.
 		 */
-		public static Gen get(int algorithm)
+		public static Gen cellular()
 		{
-			Gen result = singletons.get(algorithm);
-			if(result == null)
-				result = getNew(algorithm);
-			return result;
+			if(cellular == null)
+				cellular = new Cellular();
+			return cellular;
 		}
 
-		private static Gen getNew(int algorithm)
+		/**
+		 * Uses binary space partitioning to generate traditional maps with rooms
+		 * and corridors.
+		 */
+		public static Gen traditional()
 		{
-			switch(algorithm)
-			{
-			case Wilderness:
-				return new Wilderness(false);
-			case Cellular:
-				return new Cellular();
-			case Town:
-				return new Wilderness(true);
-			case Traditional:
-				return new Traditional();
-			default:
-				throw new IllegalArgumentException();
-			}
+			if(traditional == null)
+				traditional = new Traditional();
+			return traditional;
+		}
+
+		/**
+		 * Generates a fenced space with trees.
+		 */
+		public static Gen wilderness()
+		{
+			if(wilderness == null)
+				wilderness = new Wilderness(false);
+			return wilderness;
+		}
+
+		/**
+		 * Generates a wilderness with rectangular buildings.
+		 */
+		public static Gen town()
+		{
+			if(town == null)
+				town = new Wilderness(true);
+			return town;
 		}
 	}
 }

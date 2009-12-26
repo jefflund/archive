@@ -6,11 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * This implentation of Path uses Bresenhams Line Drawing algorithm to find
- * straight line paths between start and goal. The failure of this algorithm to
- * find a path does not mean that there is not path, only that there is no
- * straight line path. Thus, this implementation of Path is suitible for line of
- * sight.
+ * An implementation of Bresenham's Line Drawing Algorithm to find straight
+ * paths. This algorithm is also useful in ray casting field of vision.
  */
 public class Bresenham implements Path
 {

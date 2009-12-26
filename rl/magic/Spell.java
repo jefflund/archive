@@ -1,68 +1,61 @@
 package rl.magic;
 
 import jade.util.Coord;
-import java.io.Serializable;
 import rl.creature.Creature;
-import rl.magic.Instant.Effect;
+import rl.magic.Weave.Effect;
 
-public class Spell implements Serializable
+public class Spell
 {
 	public enum Target
 	{
-		SELF, AREA, OTHER
-	};
+		Self, Other, Area
+	}
 
-	private final Creature caster;
-	private final Effect effect;
-	private final Target target;
-	private final int magnitude;
-	private final int duration;
-	private final int cost;
-	private final String name;
+	private Effect effect;
+	private int magnitude;
+	private int duration;
+	private Target target;
+	private int cost;
 
-	public Spell(Creature caster, Effect effect, Target target, int magnitude,
-			int duration, int cost, String name)
+	public Spell(Effect effect, int magnitude, int duration, Target target)
 	{
-		this.caster = caster;
 		this.effect = effect;
-		this.target = target;
 		this.magnitude = magnitude;
 		this.duration = duration;
-		this.cost = cost;
-		this.name = name;
+		this.target = target;
+		cost = 1;
 	}
 
-	public void cast()
+	public boolean cast(Creature caster)
 	{
 		if(caster.mp().value() < cost)
-			caster.appendMessage("Insufficient mana");
-		else
 		{
-			final Weave weave = new Weave(effect, magnitude, duration);
-			switch(target)
-			{
-			case AREA:
-				final Coord area = caster.getTarget();
-				caster.world().addActor(weave, area);
-				break;
-			case SELF:
-				weave.attachTo(caster);
-				break;
-			case OTHER:
-				final Creature other = caster.world().getActorAt(caster.getTarget(),
-						Creature.class);
-				if(other != null)
-					weave.attachTo(other);
-				break;
-			}
-			caster.mp().buff(-cost);
-			caster.mp().train();
+			caster.appendMessage("Insufficient mana");
+			return false;
 		}
+		Weave weave = new Weave(effect, magnitude, duration);
+		switch(target)
+		{
+		case Self:
+			weave.attachTo(caster);
+			break;
+		case Other:
+			Coord target = caster.getTarget();
+			Creature other = caster.world().getActorAt(target, Creature.class);
+			if(other != null)
+				weave.attachTo(other);
+			break;
+		case Area:
+			Coord area = caster.getTarget();
+			caster.world().addActor(weave, area);
+			break;
+		}
+		caster.mp().modifyValue(-cost);
+		return true;
 	}
 
-	@Override
 	public String toString()
 	{
-		return name;
+		return effect + " for " + duration + " on " + target;
 	}
 }

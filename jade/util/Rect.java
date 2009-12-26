@@ -1,12 +1,7 @@
 package jade.util;
 
 /**
- * This class represents a rectangle. Rect is different java.awt.Rectangle in
- * that it stores the upper left coordinates of the rectangle, as well as the
- * lower right coordinates, as opposed to java.awt.Rectangle which stores the
- * upper left corner and a height and width. Rect also implements comparable,
- * though this might not make sense in the real world, this allows rectangles to
- * be inserted in to search tree's.
+ * Represents a rectangle boundry.
  */
 public class Rect
 {
@@ -16,9 +11,8 @@ public class Rect
 	private int height;
 
 	/**
-	 * Constructs a Rect with one point at the origin and the other at (x,y)
-	 * @param x an x coordinate
-	 * @param y a y coordinate
+	 * Creates a new Rectangle with one corner at the origin and the other at the
+	 * given location
 	 */
 	public Rect(int x, int y)
 	{
@@ -26,9 +20,8 @@ public class Rect
 	}
 
 	/**
-	 * Constructs a Rect with one point at the origin and the other at the
-	 * specified coordinate.
-	 * @param coord x coordinate
+	 * Creates a new Rectangle with one corner at the origin and the other at the
+	 * given location
 	 */
 	public Rect(Coord coord)
 	{
@@ -36,11 +29,7 @@ public class Rect
 	}
 
 	/**
-	 * Constructs a Rect with both points as vertices.
-	 * @param x1 the x-coordinate of the first vertex
-	 * @param y1 the y-coordinate of the first vertex
-	 * @param x2 the x-coordinate of the second vertex
-	 * @param y2 the y-coordinate of the second vertex
+	 * Creates a new Rectangle with corners at the two given locations
 	 */
 	public Rect(int x1, int y1, int x2, int y2)
 	{
@@ -49,70 +38,92 @@ public class Rect
 		calcWidth();
 		calcHeight();
 	}
-	
+
 	/**
-	 * Constructs a Rect with both points as vertices.
-	 * @param coord1 the coordinate of the first vertex
-	 * @param coord2 the -coordinate of the second vertex
+	 * Creates a new Rectangle with corners at the two given locations
 	 */
 	public Rect(Coord coord1, Coord coord2)
 	{
 		this(coord1.x(), coord1.y(), coord2.x(), coord2.y());
 	}
-	
+
+	/**
+	 * Returns the minimum x value in the Rectangle
+	 */
 	public int xMin()
 	{
 		return upleft.x();
 	}
-	
+
+	/**
+	 * Returns the maximum x value in the Rectangle
+	 */
 	public int xMax()
 	{
 		return lowright.x();
 	}
-	
+
+	/**
+	 * Returns the minimum y value in the Rectangle
+	 */
 	public int yMax()
 	{
 		return upleft.y();
 	}
-	
+
+	/**
+	 * Returns the maximum y value in the Rectangle
+	 */
 	public int yMin()
 	{
 		return lowright.y();
 	}
-	
+
 	private void calcWidth()
 	{
 		width = xMax() - xMin();
 	}
-	
+
+	/**
+	 * Returns the width of the Rectangle
+	 */
 	public int width()
 	{
 		return width;
 	}
-	
+
 	private void calcHeight()
 	{
 		height = yMax() - yMin();
 	}
-	
+
+	/**
+	 * Returns the height of the Rectangle
+	 */
 	public int height()
 	{
 		return height;
 	}
-	
+
+	/**
+	 * Translates the entire Rectangle by the given amount
+	 */
 	public void translate(int dx, int dy)
 	{
 		upleft.translate(dx, dy);
 		lowright.translate(dx, dy);
 	}
-	
+
+	/**
+	 * Returns a copy of this Rectangle, translated by the given amount
+	 */
 	public Rect getTranslated(int dx, int dy)
 	{
 		Rect result = new Rect(upleft, lowright);
 		result.translate(dx, dy);
 		return result;
 	}
-	
+
 	public String toString()
 	{
 		return upleft.toString() + " " + lowright.toString();

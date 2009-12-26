@@ -8,12 +8,11 @@ import java.awt.Color;
 import java.util.Stack;
 
 /**
- * This implementation of Gen uses cellular automata to generate interesting
- * cave levels. The maps will always be connected either by throwing away
- * disconnected maps for small worlds, or filling in small disconnected parts on
- * large maps. Note that this algorithm doesn't work tend to work on anything
- * smaller than 7x7 maps. Instead, to avoid infinite loops, it will just result
- * in a solid block.
+ * An implementation of Gen that uses cellular automaton to make cave maps. To
+ * guarantee connectivity, large maps will have the smaller unconnected areas
+ * removed, and small maps will simply be regenerated. For especially small maps
+ * (width or height less that 8), the map will most likely just end up being
+ * solid.
  */
 public class Cellular implements Gen
 {

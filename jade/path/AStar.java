@@ -10,9 +10,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * This implementation of Path uses the A* pathfinding algorithm. It is very
- * fast and efficient due to its use of a heuristic estimate. It will find the
- * shortest path from start to goal if one exist.
+ * An implementation of Path that uses the A* pathfinding algorithm to find the
+ * shortest path. Subclasses could adjust the heuristic estimates to produce
+ * more interesting result.
  */
 public class AStar implements Path
 {
@@ -113,8 +113,11 @@ public class AStar implements Path
 	 * it is the likley hood that a square will be on the shortest path between
 	 * two nodes. By default, it just calculates the distance from the c1 to c2,
 	 * but could be overridden to factor in other cost in node traversal.
-	 * @param c1 the first node in question
-	 * @param c2 the second node in question
+	 * 
+	 * @param c1
+	 *          the first node in question
+	 * @param c2
+	 *          the second node in question
 	 * @return the heuristic estimate of the cost to travel between c1 and c2
 	 */
 	protected double hEstimate(Coord c1, Coord c2)

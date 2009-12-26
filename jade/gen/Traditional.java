@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This implementation of Gen uses a binary space partition tree to generate a
- * traditional looking dungeon with a set of interconnected rectangular rooms.
+ * Uses binary space partitioning to make a map with rooms and corridors. By
+ * virtue of the partitioning tree, the maps are guaranteed to be connected. As
+ * a final step, some cycles are added to the tree to make the maps more
+ * interesting and playable.
  */
 public class Traditional implements Gen
 {
@@ -29,7 +31,7 @@ public class Traditional implements Gen
 	{
 		generate(world, seed, new Rect(world.width, world.height));
 	}
-	
+
 	public void generate(World world, long seed, Rect rect)
 	{
 		dice.setSeed(seed);

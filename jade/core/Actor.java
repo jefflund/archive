@@ -2,17 +2,14 @@ package jade.core;
 
 import jade.util.ColoredChar;
 import jade.util.Coord;
+import jade.util.Direction;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * This class represents any that could be placed on a jade world. Using the act
- * method, the actor can perform its specified action. Actors can also be
- * attached to other actors, so they move as one. Actors can also be expired,
- * meaning that they should be ignored by all actors and discarded as soon as
- * possible.
+ * Represents a basic Actor in a Jade World.
  */
 public abstract class Actor extends Messenger implements Serializable
 {
@@ -20,14 +17,11 @@ public abstract class Actor extends Messenger implements Serializable
 	private Coord pos;
 	private World world;
 	private Actor holder;
-	private final HashSet<Actor> holds;
+	private HashSet<Actor> holds;
 	private boolean expired;
 
 	/**
-	 * Constructs an actor with the given appearance.
-	 * 
-	 * @param face the actor's ascii representation
-	 * @param color the actor's color
+	 * Creates an Actor
 	 */
 	public Actor(char face, Color color)
 	{
@@ -35,9 +29,7 @@ public abstract class Actor extends Messenger implements Serializable
 	}
 
 	/**
-	 * Constructs an actor with the given appearance.
-	 * 
-	 * @param face the actor's ascii representation
+	 * Creates an Actor
 	 */
 	public Actor(ColoredChar face)
 	{
@@ -48,20 +40,14 @@ public abstract class Actor extends Messenger implements Serializable
 	}
 
 	/**
-	 * Specifies the actors behavior. This method is intended to be called by the
-	 * world's tick method call the act method on all actors who should have a
-	 * turn.
+	 * Default behavior for the actor. Called by World.tick()
 	 */
 	public abstract void act();
 
 	/**
-	 * Moves the actor to the specified location on the actor's world. The actor
-	 * must belong to a world, and should not be attached to another actor.
-	 * 
-	 * @param x the new x location
-	 * @param y the new y location
+	 * Sets the position of the Actor
 	 */
-	public void setPos(int x, int y)
+	public final void setPos(int x, int y)
 	{
 		assert (bound());
 		assert (!held());
@@ -71,11 +57,15 @@ public abstract class Actor extends Messenger implements Serializable
 	}
 
 	/**
-	 * Moves uses setPos to move the actor by the specified amount. The actor must
-	 * belong to a world, and should not be attached to another actor.
-	 * 
-	 * @param dx the amount to move horizontally
-	 * @param dy the amount to move vertically
+	 * Sets the position of the Actor
+	 */
+	public final void setPos(Coord pos)
+	{
+		setPos(pos.x(), pos.y());
+	}
+
+	/**
+	 * Moves the Actor by a specified amount
 	 */
 	public void move(int dx, int dy)
 	{
@@ -83,51 +73,53 @@ public abstract class Actor extends Messenger implements Serializable
 	}
 
 	/**
-	 * Returns the x-coordinate of the actor. The actor must belong to a world. If
-	 * it is attached to another actor, this will be the x-coordinate of the
-	 * actor's holder.
-	 * 
-	 * @return the x-coordinate of the actor
+	 * Moves the Actor one tile in a specified direction
 	 */
-	public int x()
+	public final void move(Direction dir)
+	{
+		move(dir.dx, dir.dy);
+	}
+
+	/**
+	 * Gets the x location of the Actor
+	 */
+	public final int x()
 	{
 		assert (bound());
 		return pos.x();
 	}
 
 	/**
-	 * Returns the y-coordinate of the actor. The actor must belong to a world. If
-	 * it is attached to another actor, this will be the y-coordinate of the
-	 * actor's holder.
-	 * 
-	 * @return the y-coordinate of the actor
+	 * Gets the x location of the Actor
 	 */
-	public int y()
+	public final int y()
 	{
 		assert (bound());
 		return pos.y();
 	}
 
 	/**
-	 * Returns a collection of the actors this actor holds. The collection
-	 * returned is not the actual backing collection, so any changes made to this
-	 * collection will not be reflected in the actor.
-	 * 
-	 * @return a collection of the actors this actor holds.
+	 * Returns the position of the Actor. Changes to this Coord don't affect the
+	 * Actor.
 	 */
-	public Collection<Actor> holds()
+	public final Coord pos()
+	{
+		return new Coord(pos);
+	}
+
+	/**
+	 * Returns the Actors held by this Actor. Changes to this collection don't
+	 * affect the Actor.
+	 */
+	public final Collection<Actor> holds()
 	{
 		return new HashSet<Actor>(holds);
 	}
 
 	/**
-	 * Attaches this actor to another. The actor should not be held by another. If
-	 * the actor belongs to a world, it will be removed and placed on the new
-	 * holder's world. This actors position will then be the holder's position.
-	 * 
-	 * @param actor
+	 * Attaches this Actor to another.
 	 */
-	public void attachTo(Actor actor)
+	public final void attachTo(Actor actor)
 	{
 		assert (!held());
 		if(bound())
@@ -140,117 +132,107 @@ public abstract class Actor extends Messenger implements Serializable
 		this.holder = actor;
 		actor.holds.add(this);
 		pos = actor.pos;
+		getHolderPos();
+	}
+
+	private void getHolderPos()
+	{
+		for(Actor held : holds)
+		{
+			held.pos = pos;
+			held.getHolderPos();
+		}
 	}
 
 	/**
-	 * Detaches this actor from its holder. The actor must be held. The actor will
-	 * be placed on the holder's world at the holder's position (assuming the
-	 * holder belongs to a world).
+	 * Detaches this Actor from its holder
 	 */
-	public void detachFrom()
+	public final void detachFrom()
 	{
 		assert (held());
 		holder.holds.remove(this);
-		final Coord holderPos = new Coord(holder.pos);
+		Coord holderPos = new Coord(holder.pos);
 		holder = null;
 		if(bound())
 			setPos(holderPos.x(), holderPos.y());
 	}
 
 	/**
-	 * Returns true if the actor is held.
-	 * 
-	 * @return true if the actor is held.
+	 * Returns true if this Actor is held.
 	 */
-	public boolean held()
+	public final boolean held()
 	{
 		return holder != null;
 	}
 
 	/**
-	 * Returns the actor if the actor is held, or null if it is not.
-	 * 
-	 * @return the actor if the actor is held, or null if it is not.
+	 * Returns the Actor that holds this Actor.
 	 */
-	public Actor holder()
+	public final Actor holder()
 	{
 		return holder;
 	}
 
 	/**
-	 * Returns true if the actor belongs to a world.
-	 * 
-	 * @return true if the actor belongs to a world.
+	 * True if the Actor is bound to a World
 	 */
-	public boolean bound()
+	public final boolean bound()
 	{
 		return world != null;
 	}
 
 	/**
-	 * Checks whether the actor belongs to the given world.
-	 * 
-	 * @param world the world to be checked
-	 * @return true if the actor belongs to the world, false otherwise
+	 * Returns the World this Actor is bound to.
 	 */
-	public boolean boundTo(World world)
+	public final boolean boundTo(World world)
 	{
 		assert (world != null);
 		return this.world == world;
 	}
 
 	/**
-	 * Returns true if the actor is expired.
-	 * 
-	 * @return true if the actor is expired.
+	 * Returns true if this Actor is bound
 	 */
-	public boolean isExpired()
+	public final boolean isExpired()
 	{
 		return expired;
 	}
 
 	/**
-	 * Expires this actor. This will also expire all actors attached to this
-	 * actor.
+	 * Expires this Actor and all those it holds
 	 */
 	public void expire()
 	{
 		expired = true;
-		for(final Actor held : holds)
+		for(Actor held : holds)
 			held.expire();
 	}
 
 	/**
-	 * Returns the appearance of this actor.
-	 * 
-	 * @return the appearance of this actor.
+	 * Returns the face of this Actor
 	 */
-	public ColoredChar look()
+	public final ColoredChar look()
 	{
 		return face;
 	}
 
 	/**
-	 * Sets the face of this actor
+	 * Changes the face of this Actor
 	 */
-	public void setFace(ColoredChar face)
+	public final void setFace(ColoredChar face)
 	{
 		this.face = face;
 	}
 
 	/**
-	 * Returns the world the actor currently belongs too, or null if it does not
-	 * belong to a world.
-	 * 
-	 * @return the world the actor currently belongs too, or null if it does not
-	 * belong to a world.
+	 * Returns the World this Actor is bound to.
 	 */
 	public World world()
 	{
 		return world;
 	}
 
-	void setWorld(World world)
+	final void setWorld(World world)
 	{
 		assert (!held() || holder.world == world);
 		this.world = world;
@@ -258,9 +240,6 @@ public abstract class Actor extends Messenger implements Serializable
 			held.setWorld(world);
 	}
 
-	/**
-	 * Returns the character representation of this actor.
-	 */
 	@Override
 	public String toString()
 	{

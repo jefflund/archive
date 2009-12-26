@@ -3,9 +3,7 @@ package jade.util;
 import java.io.Serializable;
 
 /**
- * Represents an integer cartesian coordinate. The Coord is not immutable, so
- * care should be taken when assigning Coord reference to another when the copy
- * constructor should have been used.
+ * Represents a Cartesian integer coordinate.
  */
 public class Coord implements Comparable<Coord>, Serializable
 {
@@ -13,7 +11,7 @@ public class Coord implements Comparable<Coord>, Serializable
 	private int y;
 
 	/**
-	 * Creates a default coord at (0,0)
+	 * Creates a new Coord at the origin.
 	 */
 	public Coord()
 	{
@@ -21,9 +19,7 @@ public class Coord implements Comparable<Coord>, Serializable
 	}
 
 	/**
-	 * Creates a coord with the specifed coordinates
-	 * @param x the x-coordinate
-	 * @param y the y-coordinate
+	 * Creates a new Coord at the specified location.
 	 */
 	public Coord(int x, int y)
 	{
@@ -31,8 +27,7 @@ public class Coord implements Comparable<Coord>, Serializable
 	}
 
 	/**
-	 * A deep copy constructor
-	 * @param coord to be copied
+	 * Creates a new Coord at the specified location.
 	 */
 	public Coord(Coord coord)
 	{
@@ -40,10 +35,7 @@ public class Coord implements Comparable<Coord>, Serializable
 	}
 
 	/**
-	 * Moves this coord to the specified coordinate.
-	 * @param x the new x-coordinate
-	 * @param y the new y-coordinate
-	 * @return this coord after being moved
+	 * Changes the Coord to the new location
 	 */
 	public Coord move(int x, int y)
 	{
@@ -53,9 +45,7 @@ public class Coord implements Comparable<Coord>, Serializable
 	}
 
 	/**
-	 * Moves the coordinate to the location of the given coordinate
-	 * @param coord the coordinate to move this coord to
-	 * @return this coord after being moved
+	 * Changes the Coord to the new location
 	 */
 	public final Coord move(Coord coord)
 	{
@@ -63,10 +53,7 @@ public class Coord implements Comparable<Coord>, Serializable
 	}
 
 	/**
-	 * Translates the coord by the specified amount.
-	 * @param dx the change in x
-	 * @param dy the change in y
-	 * @return this Coord after being translated
+	 * Changes the Coord by the specified amount
 	 */
 	public Coord translate(int dx, int dy)
 	{
@@ -76,28 +63,49 @@ public class Coord implements Comparable<Coord>, Serializable
 	}
 
 	/**
-	 * Translates the coord by the specified amount.
-	 * @param coord the change in this coord
-	 * @return this Coord after being translated
+	 * Translates the Coord in the specified direction
+	 */
+	public Coord translate(Direction dir)
+	{
+		x += dir.dx;
+		y += dir.dy;
+		return this;
+	}
+
+	/**
+	 * Changes the Coord by the specified amount
 	 */
 	public final Coord translate(Coord coord)
 	{
 		return translate(coord.x, coord.y);
 	}
 
+	/**
+	 * Gets a copy of this Coord translated by the specified amount
+	 */
 	public final Coord getTranslated(Coord coord)
 	{
 		return getTranslated(coord.x(), coord.y());
 	}
 
+	/**
+	 * Gets a copy of this Coord translated by the specified amount
+	 */
 	public Coord getTranslated(int x, int y)
 	{
 		return new Coord(this).translate(x, y);
 	}
 
 	/**
-	 * Returns the x-coordinate of the coord
-	 * @return the x-coordinate of the coord
+	 * Gets a copy of this Coord translated in the specified direction
+	 */
+	public Coord getTranslated(Direction dir)
+	{
+		return new Coord(this).translate(dir);
+	}
+
+	/**
+	 * Gets the x portion of the Coord
 	 */
 	public int x()
 	{
@@ -105,8 +113,9 @@ public class Coord implements Comparable<Coord>, Serializable
 	}
 
 	/**
-	 * Returns the y-coordinate of the coord
-	 * @return the y-coordinate of the coord
+	 * Gets the y portion of the Coord
+	 * 
+	 * @return
 	 */
 	public int y()
 	{

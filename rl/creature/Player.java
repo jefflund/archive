@@ -1,148 +1,241 @@
 package rl.creature;
 
 import jade.core.Console;
-import jade.fov.Camera;
+import jade.core.Console.Camera;
 import jade.fov.FoV.FoVFactory;
+import jade.path.Path.PathFactory;
 import jade.util.Coord;
+import jade.util.Dice;
+import jade.util.Direction;
 import jade.util.Tools;
 import java.awt.Color;
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import rl.item.Inventory;
 import rl.item.Item;
-import rl.item.Item.Type;
+import rl.item.Item.Slot;
 import rl.magic.Spell;
 import rl.magic.Spellbook;
-import rl.magic.Instant.Effect;
-import rl.magic.Spell.Target;
-import rl.world.Dungeon;
 
-public class Player extends Creature implements Serializable, Camera
+public class Player extends Creature implements Camera
 {
-	public static final int VISION = 4;
-	private transient Console console;
-	private final Spellbook spellbook;
-	private final Set<Effect> effects;
-	private Collection<Coord> fov;
-	private final Inventory inventory;
-	private final Dungeon dungeon;
+	public static final int VISION = 5;
 	private static final float REGEN = .05f;
-	private final String name;
-	private boolean playing;
+	private Console console;
+	private Collection<Coord> fov;
+	private Spellbook spellbook;
+	private Inventory inventory;
 
-	public Player(Console console, Dungeon dungeon, String name)
+	public Player(Console console)
 	{
-		super('@', Color.white, 20, 10, 10, 10, 1, 0, 10);
-		onDeserialize(console);
-		this.dungeon = dungeon;
-		this.name = name;
-		inventory = new Inventory(this);
+		super('@', Color.white, 20, 10, 10, 10, 1, 0);
+		this.console = console;
 		spellbook = new Spellbook();
-		effects = new HashSet<Effect>();
-		spellbook.add(new Spell(this, Effect.FIRE, Target.AREA, 10, 5, 1,
-				"fire trap"));
-		spellbook.add(new Spell(this, Effect.ELEC, Target.OTHER, 10, 5, 1,
-				"elec trap"));
-		spellbook.add(new Spell(this, Effect.STONEFALL, Target.AREA, 10, 0, 1,
-				"collapse"));
-		spellbook.add(new Spell(this, Effect.CHANNEL, Target.SELF, 10, 10, 1,
-				"concentrate"));
-		spellbook.add(new Spell(this, Effect.RFIRE, Target.SELF, 20, 5, 1,
-				"resist fire"));
-		spellbook.add(new Spell(this, Effect.RELEC, Target.SELF, 20, 5, 1,
-				"resist elec"));
+		inventory = new Inventory(this);
 	}
 
 	@Override
 	public void act()
 	{
-		char key = '\0';
-		boolean moved = false;
-		while(!moved)
+		char key;
+		boolean moved;
+		Item item;
+		do
 		{
 			key = console.getKey();
-			moved = true;
 			switch(key)
 			{
+			case 'Q':
+				expire();
+				moved = true;
+				break;
+			case 'P':
+				choose(spellbook.getSpells(), "Known spells:");
+				moved = false;
+				break;
 			case 'G':
-				// make a new spell based on known effects
+				spellbook.makeSpell(console);
+				moved = false;
 				break;
-			case 'X':
-				playing = false;
-				break;
-			case 'p':
-				spellbook();
+			case 'D':
+				Spell spell = choose(spellbook.getSpells(), "Delete which spell?");
+				spellbook.removeSpell(spell);
 				moved = false;
 				break;
 			case 'm':
-				cast();
+				moved = magic();
 				break;
 			case 'i':
-				inventory();
+				choose(inventory.getInventory(), "Inventory:");
 				moved = false;
 				break;
 			case 'g':
-				inventory.get();
+				moved = inventory.pickup();
 				break;
 			case 'd':
-				inventory.drop(inventory());
+				item = choose(inventory.getInventory(), "Drop which item?");
+				moved = inventory.drop(item);
 				break;
 			case 'e':
-				equipment();
+				choose(inventory.getEquipment(), "Equipment:");
 				moved = false;
 				break;
 			case 'w':
-				inventory.equip(inventory());
+				item = choose(inventory.getInventory(), "Equip what?");
+				moved = inventory.equip(item);
 				break;
 			case 't':
-				inventory.unequip(equipment());
+				item = choose(inventory.getEquipment(), "Unequip what?");
+				moved = inventory.unequip(item);
 				break;
-			case '>':
-				dungeon.descend();
-				break;
-			case '<':
-				dungeon.ascend();
+			case 'f':
+				moved = ranged();
 				break;
 			case 'r':
-				final Item scroll = choose(inventory.getTypedItems(Type.SCROLL),
-						"Scrolls");
-				if(scroll != null)
-				{
-					appendMessage(this + " reads " + scroll);
-					scroll.act();
-				}
-				else
-					appendMessage("Invalid Selection");
+				moved = read();
 				break;
-			case 'q':
-				final Item potion = choose(inventory.getTypedItems(Type.POTION),
-						"Potions");
-				if(potion != null)
-				{
-					appendMessage(this + " quaffs " + potion);
-					potion.act();
-				}
-				else
-					appendMessage("Invalid Selection");
+			case '>':
+				moved = world().descend();
+				break;
+			case '<':
+				moved = world().ascend();
+				break;
+			case '%':
+				handleMacros();
+				moved = false;
 				break;
 			default:
-				final Coord dir = Tools.keyToDir(key, true, false);
+				Direction dir = Tools.keyToDir(key, true, false);
 				if(dir != null)
-					move(dir.x(), dir.y());
+				{
+					move(dir);
+					moved = true;
+				}
 				else
 					moved = false;
 				break;
 			}
+			displayIfFailed(moved);
 		}
-		inventory.removeExpired();
-		if(dice.nextFloat() < REGEN)
-			hp().cappedBuff(1);
-		if(dice.nextFloat() < REGEN)
-			mp().cappedBuff(1);
+		while(!moved);
+		if(Dice.dice.nextFloat() < REGEN)
+			hp().modifyValueCapped(1);
+		if(Dice.dice.nextFloat() < REGEN)
+			mp().modifyValueCapped(1);
 		calcFoV();
+	}
+
+	private void displayIfFailed(boolean succeeded)
+	{
+		if(!succeeded)
+		{
+			console.clearLine(world().height);
+			console.buffMessages(0, world().height, this);
+			console.refreshScreen();
+		}
+	}
+
+	private boolean ranged()
+	{
+		Item bow = inventory.getEquiped(Slot.Bow);
+		if(bow == null)
+		{
+			appendMessage("No bow equiped");
+			return false;
+		}
+		else
+		{
+			Coord aim = getTarget();
+			List<Coord> path = PathFactory.bresenham().getPath(world(), pos(), aim);
+			for(Coord trajectory : path)
+			{
+				Monster target = world().getActorAt(trajectory, Monster.class);
+				if(target != null)
+					move(target.x() - x(), target.y() - y());
+			}
+			return true;
+		}
+	}
+
+	private boolean magic()
+	{
+		Spell spell = choose(spellbook.getSpells(), "Choose a spell:");
+		if(spell != null)
+			return spell.cast(this);
+		else
+		{
+			appendMessage("Invalid selection");
+			return false;
+		}
+	}
+
+	private boolean read()
+	{
+		List<Item> scrolls = inventory.getInventory(Slot.Scroll);
+		Item scroll = choose(scrolls, "Choose a scroll:");
+		if(scroll == null)
+		{
+			appendMessage("Invalid selection");
+			return false;
+		}
+		else
+		{
+			appendMessage(this + " reads " + scroll);
+			return true;
+		}
+	}
+
+	private void handleMacros()
+	{
+		console.saveBuffer();
+		console.clearBuffer();
+		char key;
+		do
+		{
+			console.buffLine(0, "Macro Editor", Color.white);
+			console.buffLine(1, "a. add macro", Color.white);
+			console.buffLine(2, "b. remove macro", Color.white);
+			console.refreshScreen();
+			key = console.getKey();
+			if(key == 'a')
+				addMacro();
+			if(key == 'b')
+				removeMacro();
+		}
+		while(key != 27);
+		console.recallBuffer();
+		console.refreshScreen();
+	}
+
+	private void addMacro()
+	{
+		String prompt = "Which key? ";
+		console.buffLine(3, prompt, Color.white);
+		console.refreshScreen();
+		char key = console.echoChar(prompt.length(), 3, Color.white);
+		prompt = "Enter macro: ";
+		console.buffLine(4, prompt, Color.white);
+		console.refreshScreen();
+		String macro = console.echoString(prompt.length(), 4, Color.white, '\n');
+		console.addMacro(key, macro);
+		console.buffLine(5, "Macro added", Color.white);
+		console.refreshScreen();
+		console.getKey();
+		for(int i = 3; i <= 5; i++)
+			console.clearLine(i);
+	}
+
+	private void removeMacro()
+	{
+		String prompt = "Which key? ";
+		console.buffLine(3, prompt, Color.white);
+		console.refreshScreen();
+		char key = console.echoChar(prompt.length(), 3, Color.white);
+		console.removeMacro(key);
+		console.buffLine(4, "Macro removed", Color.white);
+		console.getKey();
+		console.clearLine(3);
+		console.clearLine(4);
 	}
 
 	@Override
@@ -154,15 +247,15 @@ public class Player extends Creature implements Serializable, Camera
 		while(key != 't')
 		{
 			console.recallBuffer();
-			console.buffCamera(this, 4, 4, target, '*', Color.white);
+			console.buffRelCamera(this, target, '*', Color.white);
 			console.refreshScreen();
 			key = console.getKey();
-			final Coord dir = Tools.keyToDir(key, true, false);
+			Direction dir = Tools.keyToDir(key, true, false);
 			if(dir != null)
 			{
 				target.translate(dir);
 				if(!fov.contains(target))
-					target.translate(-dir.x(), -dir.y());
+					target.translate(dir.opposite());
 			}
 		}
 		console.recallBuffer();
@@ -172,8 +265,7 @@ public class Player extends Creature implements Serializable, Camera
 
 	public void calcFoV()
 	{
-		fov = FoVFactory.get(FoVFactory.CircularShadow).calcFoV(world(), x(), y(),
-				VISION);
+		fov = FoVFactory.raySquare().calcFoV(this, VISION);
 	}
 
 	public Collection<Coord> getFoV()
@@ -181,35 +273,18 @@ public class Player extends Creature implements Serializable, Camera
 		return fov;
 	}
 
-	public void addEffect(Effect effect)
-	{
-		effects.add(effect);
-	}
-
-	public String status()
-	{
-		String result = "";
-		result += "hp:" + hp() + '\n';
-		result += "mp:" + mp() + '\n';
-		result += "atk:" + atk() + '\n';
-		result += "def:" + def() + '\n';
-		result += "dmg:" + dmg() + '\n';
-		return result;
-	}
-
 	private <T> T choose(List<T> elements, String title)
 	{
 		console.saveBuffer();
-		console.buffString(0, 0, title, Color.white);
+		console.buffLine(0, title, Color.white);
 		int i = 0;
-		for(final Object element : elements)
+		for(Object element : elements)
 		{
-			console.buffString(0, i + 1, Tools.intToAlpha(i) + " " + element,
-					Color.white);
+			console.buffLine(i + 1, Tools.intToAlpha(i) + " " + element, Color.white);
 			i++;
 		}
 		console.refreshScreen();
-		final int index = Tools.alphaToInt(console.getKey());
+		int index = Tools.alphaToInt(console.getKey());
 		console.recallBuffer();
 		console.refreshScreen();
 		if(index < 0 || index >= elements.size())
@@ -217,49 +292,9 @@ public class Player extends Creature implements Serializable, Camera
 		return elements.get(index);
 	}
 
-	private Item inventory()
+	public String getStatus()
 	{
-		return choose(inventory.getAllItems(), "Inventory");
-	}
-
-	private Item equipment()
-	{
-		return choose(inventory.getEquiped(), "Equipment");
-	}
-
-	private Spell spellbook()
-	{
-		return choose(spellbook.spells(), "Spellbook");
-	}
-
-	private void cast()
-	{
-		final Spell spell = spellbook();
-		if(spell == null)
-			appendMessage("Invalid selection");
-		else
-			spell.cast();
-	}
-
-	public void learn(Effect effect)
-	{
-		appendMessage(this + " learns " + effect);
-	}
-
-	public void onDeserialize(Console console)
-	{
-		this.console = console;
-		playing = true;
-	}
-
-	public boolean playing()
-	{
-		return playing && !isExpired();
-	}
-
-	@Override
-	public String toString()
-	{
-		return name;
+		return "hp:" + hp() + "\n" + "mp:" + mp() + "\n" + "atk:" + atk() + "\n"
+				+ "def:" + def() + "\n" + "dmg:" + dmg() + "\n";
 	}
 }

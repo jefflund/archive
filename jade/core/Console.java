@@ -1,8 +1,8 @@
 package jade.core;
 
-import jade.fov.Camera;
 import jade.util.ColoredChar;
 import jade.util.Coord;
+import jade.util.Rect;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,31 +10,33 @@ import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.Serializable;
-import java.util.ConcurrentModificationException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.Semaphore;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- * This class allows the JPanel to have console functionality simular to what
- * curses does in c. The api differs from curses but is fairly simple to use.
- * Any changes to the screen are written to a buffer which then must be painted
- * on the screen by use of the refreshScreen method. A second buffer is also
- * provided to allow for saving and restoring of screen. A getKey method is also
- * provided, which blocks until the next key press like getch in curses.
+ * Extends a JPanel to emulated a Console
  */
-public class Console extends JPanel
+public class Console extends JPanel implements Serializable
 {
-	public final int tileHeight;
-	public final int tileWidth;
-	private final Thread mainThread;
-	private final InputListener listener;
-	private final Map<Coord, ColoredChar> buffer;
-	private final Map<Coord, ColoredChar> saved;
+	private int tileHeight;
+	private int tileWidth;
+	private InputListener listener;
+	private Map<Coord, ColoredChar> buffer;
+	private Map<Coord, ColoredChar> saved;
+	private Map<Camera, Coord> cameras;
+	private Map<Character, char[]> macros;
 
 	/**
-	 * Constructs a new default console with a default 80 x 24 size 12 tiles;
+	 * Creates a new default Console
 	 */
 	public Console()
 	{
@@ -42,10 +44,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Constructs a new console with a specific starting size.
-	 * @param tileSize the size of the tiles. The default is 12.
-	 * @param width the number of columns. The default is 80.
-	 * @param height the number of rows. The default is 24.
+	 * Creates a custom Console
 	 */
 	public Console(int tileSize, int width, int height)
 	{
@@ -56,7 +55,6 @@ public class Console extends JPanel
 	{
 		this.tileHeight = tileHeight;
 		this.tileWidth = tileWidth;
-		mainThread = Thread.currentThread();
 		listener = new InputListener();
 		addKeyListener(listener);
 		buffer = new TreeMap<Coord, ColoredChar>();
@@ -65,12 +63,12 @@ public class Console extends JPanel
 		setFont(new Font(Font.MONOSPACED, Font.PLAIN, tileHeight));
 		setBackground(Color.black);
 		setFocusable(true);
+		cameras = new HashMap<Camera, Coord>();
+		macros = new HashMap<Character, char[]>();
 	}
 
 	/**
-	 * Returns a new default console which has been placed within a JFrame.
-	 * @param frameTitle the title of the JFrame
-	 * @return a new instance of Console
+	 * Returns a default Console in a JFrame
 	 */
 	public static Console getFramedConsole(String frameTitle)
 	{
@@ -80,13 +78,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Returns a new console of the specifed size which has been placed within a
-	 * JFrame.
-	 * @param frameTitle the title of the JFrame
-	 * @param tileSize the size of the console tiles. The default is 12.
-	 * @param width the number of console columns. The default is 80.
-	 * @param height the console number of rows. The default is 24.
-	 * @return a new instance of Console
+	 * Returns a custom Console in a JFrame
 	 */
 	public static Console getFramedConsole(String frameTitle, int tileSize,
 			int width, int height)
@@ -106,9 +98,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Places a specified character in the buffer at the given location.
-	 * @param coord the location of the character
-	 * @param ch the character to be buffered
+	 * Buffers a ColoredChar at the given location
 	 */
 	public void buffChar(Coord coord, ColoredChar ch)
 	{
@@ -116,10 +106,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Places a specified character in the buffer at the given location.
-	 * @param x the x-coordinate of the character
-	 * @param y the y-coordinate of the character
-	 * @param ch the character to be buffered
+	 * Buffers a ColoredChar at the given location
 	 */
 	public final void buffChar(int x, int y, ColoredChar ch)
 	{
@@ -127,11 +114,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Places a specified character in the buffer at the given location.
-	 * @param x the x-coordinate of the character
-	 * @param y the y-coordinate of the character
-	 * @param ch the character to be buffered
-	 * @param color the color of the character to be buffered
+	 * Buffers a ColoredChar at the given location
 	 */
 	public final void buffChar(int x, int y, char ch, Color color)
 	{
@@ -139,10 +122,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Places a specified character in the buffer at the given location.
-	 * @param coord the location of the character
-	 * @param ch the character to be buffered
-	 * @param color the color of the character to be buffered
+	 * Buffers a ColoredChar at the given location
 	 */
 	public final void buffChar(Coord coord, char ch, Color color)
 	{
@@ -150,45 +130,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Buffers a single char relative to the camera position on the screen. The
-	 * camera will be centered at (x, y) on the screen. The ColoredChar will be
-	 * the forground tile to use, while the background tile will be the tile that
-	 * the camera sees at the coordinate. This is useful for drawing special
-	 * effects as it will replace what is actually in the foreground with the
-	 * specified ColoredChar.
-	 * @param camera the camera to be used.
-	 * @param x the x-coordinate of the camera on screen
-	 * @param y the y-coordinate of the camera on screen
-	 * @param coord the map coordinate to be drawn.
-	 * @param ch the char to be drawn at coord
-	 * @param color the color of the char to be drawn at coord
-	 */
-	public void buffCamera(Camera camera, int x, int y, Coord coord, char ch,
-			Color color)
-	{
-		buffChar(coord.getTranslated(x - camera.x(), y - camera.y()), ch, color);
-	}
-
-	/**
-	 * Draws everything the camera can see with the camera centered at (x, y)
-	 * @param camera the camera
-	 * @param x the x-coordinate of the camera on screen
-	 * @param y the y-coordinate of the camera on screen
-	 */
-	public void buffCamera(Camera camera, int x, int y)
-	{
-		final int offX = x - camera.x();
-		final int offY = y - camera.y();
-		for(final Coord coord : camera.getFoV())
-			buffChar(coord.getTranslated(offX, offY), camera.world().look(coord));
-	}
-
-	/**
-	 * This method blocks for keyboard input, the buffers the character to the
-	 * given location and refreshes the screen.
-	 * @param coord the location to print the key pressed
-	 * @param color the color of the character to print
-	 * @return the key pressed as a char
+	 * Places the next key at the given location on the screen.
 	 */
 	public char echoChar(Coord coord, Color color)
 	{
@@ -199,12 +141,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * This method blocks for keyboard input, the buffers the character to the
-	 * given location and refreshes the screen.
-	 * @param x the x-coordinate to print the key pressed
-	 * @param y the y-coordinate to print the key pressed
-	 * @param color the color of the character to print
-	 * @return the key pressed as a char
+	 * Places the next key at the given location on the screen.
 	 */
 	public final char echoChar(int x, int y, Color color)
 	{
@@ -212,13 +149,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Places a string in the buffer at the given location. This method does not
-	 * wrap the text. However, newline characters will move the text to the
-	 * original x position one line below, and tab will insert 2 spaces.
-	 * @param x the x-coordinate of the string
-	 * @param y the y-coordinate of the string
-	 * @param str the string to be buffered
-	 * @param color the color of the string
+	 * Buffers a string at the given location on screen
 	 */
 	public void buffString(int x, int y, String str, Color color)
 	{
@@ -241,12 +172,16 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Places a string in the buffer at the given location. This method does not
-	 * wrap the text. However, newline characters will move the text to the
-	 * original x position one line below, and tab will insert 2 spaces.
-	 * @param coord the location of the string
-	 * @param str the string to be buffered
-	 * @param color the color of the string
+	 * Clears the y'th line and buffers the string on that line
+	 */
+	public void buffLine(int line, String str, Color color)
+	{
+		clearLine(line);
+		buffString(0, line, str, color);
+	}
+
+	/**
+	 * Buffers a string at the given location on screen
 	 */
 	public final void buffString(Coord coord, String str, Color color)
 	{
@@ -254,14 +189,8 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * This method is similar to echoChar, only that it repeats until the
-	 * terminator char is pressed. The location that each char is placed is one to
-	 * the right.
-	 * @param x the x-coordinate of the first char to be buffered.
-	 * @param y the y-coordinate of the first char to be buffered.
-	 * @param color the color of the string to be output
-	 * @param terminator the char of the key that ends the string
-	 * @return the string that was entered.
+	 * Places a string on screen as it is typed. Terminates when the terminator is
+	 * pressed.
 	 */
 	public String echoString(int x, int y, Color color, char terminator)
 	{
@@ -275,11 +204,11 @@ public class Console extends JPanel
 				refreshScreen();
 				str += key;
 			}
-			else if(key == 8)// backspace
+			else if(key == '\b')
 			{
 				buffChar(--x, y, ' ', Color.black);
 				refreshScreen();
-				str = str.substring(0, str.length() - 2);
+				str = str.substring(0, str.length() - 1);
 			}
 			key = getKey();
 		}
@@ -287,24 +216,16 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * This method is similar to echoChar, only that it repeats until the
-	 * terminator char is pressed. The location that each char is placed is one to
-	 * the right.
-	 * @param coord the coordinate of the first char to be buffered.
-	 * @param color the color of the string to be output
-	 * @param terminator the char of the key that ends the string
-	 * @return the string that was entered.
+	 * Places a string on screen as it is typed. Terminates when the terminator is
+	 * pressed.
 	 */
-	public String echoString(Coord coord, Color color, char terminator)
+	public final String echoString(Coord coord, Color color, char terminator)
 	{
 		return echoString(coord.x(), coord.y(), color, terminator);
 	}
 
 	/**
-	 * Returns the character at the specified location.
-	 * @param x the x-coordinate to be checked
-	 * @param y the y-coordinate to be checked
-	 * @return the character at the specified location.
+	 * Returns the ColoredChar in the buffer at the specified location
 	 */
 	public final ColoredChar charAt(int x, int y)
 	{
@@ -312,9 +233,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Returns the character at the specified location.
-	 * @param coord the location to be checked
-	 * @return the character at the specified location.
+	 * Returns the ColoredChar in the buffer at the specified location
 	 */
 	public ColoredChar charAt(Coord coord)
 	{
@@ -322,7 +241,75 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Saves the current buffer to the secondary buffer.
+	 * Adds a camera to the console centered at the given location on screen
+	 */
+	public void addCamera(Camera camera, Coord screenCenter)
+	{
+		cameras.put(camera, screenCenter);
+	}
+
+	/**
+	 * Adds a camera to the console centered at the given location on screen
+	 */
+	public final void addCamera(Camera camera, int centerX, int centerY)
+	{
+		cameras.put(camera, new Coord(centerX, centerY));
+	}
+
+	/**
+	 * Gets the Messenger's messages and buffers them at the given location
+	 */
+	public void buffMessages(int x, int y, Messenger messenger)
+	{
+		buffString(x, y, messenger.getMessages(), Color.white);
+	}
+
+	/**
+	 * Removes a camera from the console
+	 */
+	public void removeCamera(Camera camera)
+	{
+		cameras.remove(camera);
+	}
+
+	/**
+	 * Buffers a ColoredChar relative to the camera at the center previously
+	 * specified in addCamera. If addCamera has not been called, this method will
+	 * fail.
+	 */
+	public final void buffRelCamera(Camera camera, Coord pos, char ch, Color color)
+	{
+		buffRelCamera(camera, pos, new ColoredChar(ch, color));
+	}
+
+	/**
+	 * Buffers a ColoredChar relative to the camera at the center previously
+	 * specified in addCamera. If addCamera has not been called, this method will
+	 * fail.
+	 */
+	public void buffRelCamera(Camera camera, Coord pos, ColoredChar ch)
+	{
+		Coord center = cameras.get(camera);
+		int offX = center.x() - camera.x();
+		int offY = center.y() - camera.y();
+		buffChar(pos.getTranslated(offX, offY), ch);
+	}
+
+	/**
+	 * Buffers everything the camera sees centered at the location specified in
+	 * addCamera. If addCamera has not been called first, this will fail.
+	 */
+	public void buffCamera(Camera camera)
+	{
+		Coord center = cameras.get(camera);
+		int offX = center.x() - camera.x();
+		int offY = center.y() - camera.y();
+		for(Coord coord : camera.getFoV())
+			buffChar(coord.getTranslated(offX, offY), camera.world().look(coord));
+	}
+
+	/**
+	 * Saves the current buffer
 	 */
 	public void saveBuffer()
 	{
@@ -331,7 +318,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Overwrites the current buffer with the secondary buffer.
+	 * Reverts buffer to the previously saved one
 	 */
 	public void recallBuffer()
 	{
@@ -340,7 +327,7 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Clears the current buffer.
+	 * Clears every thing in the buffer
 	 */
 	public void clearBuffer()
 	{
@@ -348,68 +335,162 @@ public class Console extends JPanel
 	}
 
 	/**
-	 * Returns the character of the next key press. This function will block until
-	 * a key is pressed, simular to getch in c curses.
-	 * @return the character of the next key press.
+	 * Clears the buffer in the given bounds
 	 */
-	@SuppressWarnings("deprecation")
-	public char getKey()
+	public void clearBuffer(Rect bounds)
 	{
-		if(!listener.ready)
-			mainThread.suspend();
-		listener.ready = false;
-		return listener.input;
+		for(int x = bounds.xMin(); x <= bounds.xMax(); x++)
+			for(int y = bounds.yMin(); y <= bounds.yMax(); y++)
+				buffer.remove(new Coord(x, y));
 	}
 
-	@Override
-	public void paintComponent(Graphics page)
+	/**
+	 * Clears a line from the buffer
+	 */
+	public void clearLine(int y)
+	{
+		Set<Coord> inline = new HashSet<Coord>();
+		for(Coord coord : buffer.keySet())
+			if(coord.y() == y)
+				inline.add(coord);
+		for(Coord coord : inline)
+			buffer.remove(coord);
+	}
+
+	/**
+	 * Returns the next key press. GetKey is blocks for input.
+	 */
+	public char getKey()
 	{
 		try
 		{
-			super.paintComponent(page);
-			for(final Coord coord : buffer.keySet())
-			{
-				page.setColor(buffer.get(coord).color());
-				page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
-						(coord.y() + 1) * tileHeight);
-			}
+			listener.inputReady.acquire();
 		}
-		// Near as I can tell, these exceptions get thrown due to concurrency with
-		// the AWT-EventQueue threads. Basically, AWT is still painting when the
-		// buffer is already in use again.
-		catch(final ConcurrentModificationException dontWorry)
+		catch(InterruptedException e)
 		{
+			e.printStackTrace();
 		}
-		catch(final NullPointerException dontWorry)
+		return listener.input.remove();
+	}
+
+	/**
+	 * Simulates a key press.
+	 */
+	public void pressKey(char key)
+	{
+		long time = System.currentTimeMillis();
+		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_PRESSED, time, 0, key, key);
+		listener.keyPressed(event);
+	}
+
+	/**
+	 * Maps a key to a macro. When ever the key is pressed, the macro will be put
+	 * into the input buffer rather than the pressed keys. Note that macros are
+	 * not recursive.
+	 */
+	public void addMacro(char key, String macro)
+	{
+		macros.put(key, macro.toCharArray());
+	}
+
+	/**
+	 * Removes any macros associated with the key.
+	 */
+	public void removeMacro(char key)
+	{
+		macros.remove(key);
+	}
+
+	@Override
+	protected void paintComponent(Graphics page)
+	{
+		super.paintComponent(page);
+		for(final Coord coord : buffer.keySet())
 		{
+			page.setColor(buffer.get(coord).color());
+			page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
+					(coord.y() + 1) * tileHeight);
 		}
 	}
 
 	/**
-	 * Paints the current buffer to the screen.
+	 * Refreshes the screen to reflect the buffer
 	 */
 	public void refreshScreen()
 	{
 		repaint();
 	}
 
+	/**
+	 * Calls System.exit(0);
+	 */
+	public void exit()
+	{
+		System.exit(0);
+	}
+
+	/**
+	 * Copies the state of the console. This is useful if you need to open a
+	 * serialized console.
+	 */
+	public void copyState(Console console)
+	{
+		tileHeight = console.tileHeight;
+		tileWidth = console.tileWidth;
+		listener.input.clear();
+		listener.input.addAll(console.listener.input);
+		listener.inputReady.drainPermits();
+		listener.inputReady.release(console.listener.inputReady.availablePermits());
+		buffer.clear();
+		buffer.putAll(console.buffer);
+		saved.clear();
+		saved.putAll(console.saved);
+		setPreferredSize(new Dimension(console.getWidth(), console.getHeight()));
+		cameras.clear();
+		cameras.putAll(console.cameras);
+		macros.clear();
+		macros.putAll(console.macros);
+	}
+
 	private class InputListener extends KeyAdapter implements Serializable
 	{
-		private char input;
-		private boolean ready;
+		private Queue<Character> input;
+		private Semaphore inputReady;
 
 		public InputListener()
 		{
-			ready = false;
+			input = new LinkedList<Character>();
+			inputReady = new Semaphore(0);
 		}
 
 		@Override
-		@SuppressWarnings("deprecation")
 		public void keyPressed(KeyEvent event)
 		{
-			ready = true;
-			input = event.getKeyChar();
-			mainThread.resume();
+			char key = event.getKeyChar();
+			if(macros.containsKey(key))
+			{
+				for(char macro : macros.get(key))
+				{
+					input.add(macro);
+					inputReady.release();
+				}
+			}
+			else
+			{
+				input.add(event.getKeyChar());
+				inputReady.release();
+			}
 		}
+	}
+
+	public interface Camera
+	{
+		public Collection<Coord> getFoV();
+
+		public World world();
+
+		public int x();
+
+		public int y();
 	}
 }

@@ -6,9 +6,7 @@ import jade.util.Rect;
 import java.awt.Color;
 
 /**
- * This implemenatation of Gen generates a simple wilderness. It will be
- * surrounded in walls, with trees in about 1 in 20 tiles. Optionally, rooms can
- * be added to the the wilderness.
+ * An implementation of Gen that makes a simple wilderness.
  */
 public class Wilderness implements Gen
 {

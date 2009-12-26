@@ -1,5 +1,6 @@
 package jade.fov;
 
+import jade.core.Actor;
 import jade.core.World;
 import jade.util.Coord;
 import jade.util.Tools;
@@ -7,9 +8,7 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 /**
- * This implementation of FoV uses a recursive shadowcasting algorithm. This
- * algorithm has the advantage of raycasting in that it does need to visit near
- * tiles multiple times.
+ * An implementation of FoV that implements a shadowcasting algorithm.
  */
 public class Shadowcast implements FoV
 {
@@ -30,6 +29,11 @@ public class Shadowcast implements FoV
 		if(circular)
 			Tools.filterCircle(fov, x, y, range);
 		return fov;
+	}
+
+	public Collection<Coord> calcFoV(Actor actor, int range)
+	{
+		return calcFoV(actor.world(), actor.x(), actor.y(), range);
 	}
 
 	private void scan(int depth, float startslope, float endslope, Coord orig,

@@ -4,56 +4,32 @@ import jade.core.Actor;
 import jade.core.World;
 import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
-import jade.util.Coord;
 import jade.util.Dice;
-import java.awt.Color;
-import java.io.Serializable;
 import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
+import rl.creature.Monster.Prototype;
 import rl.item.Item;
-import rl.item.Item.Type;
+import rl.item.Item.Slot;
 import rl.magic.Weave;
-import rl.magic.Instant.Effect;
 
-public class Level extends World implements Serializable
+public class Level extends World
 {
-	private Player player;
-	private final Coord upStairs;
-	private final Coord downStairs;
+	private Dungeon dungeon;
 
-	public Level(int depth)
+	public Level(long seed, Dungeon dungeon)
 	{
-		super(20, 20);
-		final Dice random = new Dice(depth);
-		final int algorithm = depth == 0 ? GenFactory.Town : GenFactory.Traditional;
-		GenFactory.get(algorithm).generate(this, depth);
-		upStairs = depth > 0 ? getOpenTile(random) : null;
-		if(upStairs != null)
-			tile(upStairs).setTile('<', Color.white, true);
-		downStairs = getOpenTile(random);
-		tile(downStairs).setTile('>', Color.white, true);
+		super(80, 23);
+		GenFactory.cellular().generate(this, seed);
+		this.dungeon = dungeon;
+		addActor(new Monster(Prototype.Dragon), Dice.dice);
+		addActor(new Monster(Prototype.Ogre), Dice.dice);
+		addActor(new Monster(Prototype.Orc), Dice.dice);
 
-		addActor(new Item(']', Color.red, Type.ARMOR, 100, Effect.CHANNEL, 20),
-				random);
-		addActor(new Item('|', Color.red, Type.WEAPON, 100, Effect.CHANNEL, 20),
-				random);
-		addActor(new Item('?', Color.red, Type.SCROLL, 100, Effect.FIRE, 10),
-				random);
-		addActor(new Item('!', Color.red, Type.POTION, 100, Effect.FIRE, 10),
-				random);
-		addActor(new Item(']', Color.red, Type.ARMOR, 100, Effect.CHANNEL, 20),
-				random);
-		addActor(new Item('|', Color.red, Type.WEAPON, 100, Effect.CHANNEL, 20),
-				random);
-		addActor(new Item('?', Color.red, Type.SCROLL, 100, Effect.FIRE, 10),
-				random);
-		addActor(new Item('!', Color.red, Type.POTION, 100, Effect.FIRE, 10),
-				random);
-
-		addActor(new Monster('D', Color.red), random);
-		addActor(new Feature('^', Color.red, Effect.FIRE, 15), random);
-		addActor(new Feature('^', Color.blue, Effect.CHANNEL, 90), random);
+		addActor(new Item(Slot.Weapon, '|', null), Dice.dice);
+		addActor(new Item(Slot.Armor, ']', null), Dice.dice);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
+		addActor(new Item(Slot.Bow, '}', null), Dice.dice);
 	}
 
 	@Override
@@ -61,38 +37,18 @@ public class Level extends World implements Serializable
 	{
 		super.addActor(actor, x, y);
 		if(actor instanceof Player)
-		{
-			player = (Player) actor;
-			player.calcFoV();
-		}
-	}
-
-	public Player player()
-	{
-		return player;
-	}
-
-	public Coord upStairs()
-	{
-		return upStairs;
-	}
-
-	public Coord downStairs()
-	{
-		return downStairs;
+			((Player)actor).calcFoV();
 	}
 
 	@Override
 	public void tick()
 	{
-		player.act();
-		for(final Monster monster : getActors(Monster.class))
+		player().act();
+		for(Monster monster : getActors(Monster.class))
 			monster.act();
-		for(final Weave weave : getActors(Weave.class))
+		for(Weave weave : getActors(Weave.class))
 			weave.act();
-		for(final Feature feature : getActors(Feature.class))
-			feature.act();
-		for(final Actor actor : getActors(Actor.class))
+		for(Actor actor : getActors(Actor.class))
 			retrieveMessages(actor);
 		removeExpired();
 	}
@@ -100,18 +56,30 @@ public class Level extends World implements Serializable
 	@Override
 	public ColoredChar look(int x, int y)
 	{
-		final Creature creature = getActorAt(x, y, Creature.class);
-		if(creature != null)
-			return creature.look();
-		final Weave weave = getActorAt(x, y, Weave.class);
-		if(weave != null)
-			return weave.look();
-		final Item item = getActorAt(x, y, Item.class);
-		if(item != null)
-			return item.look();
-		final Feature feature = getActorAt(x, y, Feature.class);
-		if(feature != null)
-			return feature.look();
+		Actor actor = getActorAt(x, y, Creature.class);
+		if(actor != null)
+			return actor.look();
+		actor = getActorAt(x, y, Item.class);
+		if(actor != null)
+			return actor.look();
+		actor = getActorAt(x, y, Weave.class);
+		if(actor != null)
+			return actor.look();
 		return super.look(x, y);
+	}
+
+	public Player player()
+	{
+		return dungeon.player();
+	}
+
+	public boolean descend()
+	{
+		return dungeon.descend();
+	}
+
+	public boolean ascend()
+	{
+		return dungeon.ascend();
 	}
 }
