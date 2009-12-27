@@ -6,6 +6,7 @@ public class Stat
 {
 	private int value;
 	private int base;
+	private float progress;
 
 	public Stat(int base)
 	{
@@ -34,8 +35,35 @@ public class Stat
 		return base;
 	}
 
+	public void modifyBase(int change)
+	{
+		base += change;
+	}
+
+	public final void modifyBaseCapped(int change)
+	{
+		modifyBase(change);
+		base = Tools.clampToRange(base, 0, base);
+	}
+
 	public String toString()
 	{
 		return Integer.valueOf(value).toString();
+	}
+
+	public float progress()
+	{
+		return progress;
+	}
+
+	public void train(float training)
+	{
+		progress += training;
+		while(progress > 1)
+		{
+			progress--;
+			base++;
+			value++;
+		}
 	}
 }

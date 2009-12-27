@@ -1,7 +1,9 @@
 package rl.item;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import rl.creature.Creature;
@@ -120,7 +122,7 @@ public class Inventory
 		else if(slot == Slot.Bow)
 			return equipment.containsKey(Slot.Weapon);
 		else
-			return true;
+			return false;
 	}
 
 	public boolean unequip(Item item)
@@ -138,5 +140,14 @@ public class Inventory
 			owner.appendMessage(item + " is removed");
 			return true;
 		}
+	}
+
+	public void removeExpired()
+	{
+		Collection<Item> expired = new HashSet<Item>();
+		for(Item item : inventory)
+			if(item.isExpired())
+				expired.add(item);
+		inventory.removeAll(expired);
 	}
 }

@@ -46,6 +46,11 @@ public class Weave extends Actor
 			expire();
 	}
 
+	public Effect effect()
+	{
+		return effect;
+	}
+
 	@Override
 	public void expire()
 	{

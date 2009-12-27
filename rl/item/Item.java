@@ -2,6 +2,7 @@ package rl.item;
 
 import jade.core.Actor;
 import java.awt.Color;
+import rl.creature.Player;
 
 public class Item extends Actor
 {
@@ -42,6 +43,19 @@ public class Item extends Actor
 	@Override
 	public void act()
 	{
+		if(slot == Slot.Scroll)
+		{
+			if(enchantment != null)
+			{
+				Player player = world().getActorAt(pos(), Player.class);
+				player.learnSpell(enchantment.effect());
+				player.appendMessage(player + " learns " + enchantment.effect());
+				appendMessage(this + " vanishes in a puff of smoke");
+				expire();
+			}
+			else
+				appendMessage("Scroll is blank");
+		}
 	}
 
 	public boolean isEquipment()

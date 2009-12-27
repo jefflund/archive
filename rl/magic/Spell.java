@@ -51,6 +51,7 @@ public class Spell
 			break;
 		}
 		caster.mp().modifyValue(-cost);
+		caster.mp().train(.05f);
 		return true;
 	}
 

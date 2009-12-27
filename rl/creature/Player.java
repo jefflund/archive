@@ -16,6 +16,7 @@ import rl.item.Item;
 import rl.item.Item.Slot;
 import rl.magic.Spell;
 import rl.magic.Spellbook;
+import rl.magic.Weave.Effect;
 
 public class Player extends Creature implements Camera
 {
@@ -25,6 +26,7 @@ public class Player extends Creature implements Camera
 	private Collection<Coord> fov;
 	private Spellbook spellbook;
 	private Inventory inventory;
+	private Stat ranged;
 
 	public Player(Console console)
 	{
@@ -32,6 +34,7 @@ public class Player extends Creature implements Camera
 		this.console = console;
 		spellbook = new Spellbook();
 		inventory = new Inventory(this);
+		ranged = new Stat(10);
 	}
 
 	@Override
@@ -81,7 +84,7 @@ public class Player extends Creature implements Camera
 				moved = false;
 				break;
 			case 'w':
-				item = choose(inventory.getInventory(), "Equip what?");
+				item = choose(inventory.getEquipable(), "Equip what?");
 				moved = inventory.equip(item);
 				break;
 			case 't':
@@ -118,6 +121,7 @@ public class Player extends Creature implements Camera
 			displayIfFailed(moved);
 		}
 		while(!moved);
+		inventory.removeExpired();
 		if(Dice.dice.nextFloat() < REGEN)
 			hp().modifyValueCapped(1);
 		if(Dice.dice.nextFloat() < REGEN)
@@ -151,7 +155,7 @@ public class Player extends Creature implements Camera
 			{
 				Monster target = world().getActorAt(trajectory, Monster.class);
 				if(target != null)
-					move(target.x() - x(), target.y() - y());
+					melee(target, ranged);
 			}
 			return true;
 		}
@@ -180,7 +184,7 @@ public class Player extends Creature implements Camera
 		}
 		else
 		{
-			appendMessage(this + " reads " + scroll);
+			scroll.act();
 			return true;
 		}
 	}
@@ -296,5 +300,10 @@ public class Player extends Creature implements Camera
 	{
 		return "hp:" + hp() + "\n" + "mp:" + mp() + "\n" + "atk:" + atk() + "\n"
 				+ "def:" + def() + "\n" + "dmg:" + dmg() + "\n";
+	}
+
+	public void learnSpell(Effect effect)
+	{
+		spellbook.learnEffect(effect);
 	}
 }

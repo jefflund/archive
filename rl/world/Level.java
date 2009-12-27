@@ -29,6 +29,10 @@ public class Level extends World
 		addActor(new Item(Slot.Weapon, '|', null), Dice.dice);
 		addActor(new Item(Slot.Armor, ']', null), Dice.dice);
 		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
 		addActor(new Item(Slot.Bow, '}', null), Dice.dice);
 	}
 

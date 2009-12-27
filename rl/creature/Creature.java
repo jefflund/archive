@@ -41,7 +41,7 @@ public abstract class Creature extends Actor
 		int y = y() + dy;
 		Creature bumped = world().getActorAt(x, y, Creature.class);
 		if(bumped != null && bumped != this)
-			melee(bumped);
+			melee(bumped, atk);
 		else if(world().passable(x, y))
 			super.move(dx, dy);
 	}
@@ -51,17 +51,22 @@ public abstract class Creature extends Actor
 		return (Level)super.world();
 	}
 
-	private void melee(Creature bumped)
+	protected void melee(Creature bumped, Stat atkStat)
 	{
 		int oldHp = bumped.hp.value();
-		float chance = (float)atk.value() / (atk.value() + bumped.def.value());
+		float chance = (float)atkStat.value()
+				/ (atkStat.value() + bumped.def.value());
 		while(Dice.dice.nextFloat() < chance)
 			bumped.hp.modifyValue(-dmg.value());
 		if(oldHp == bumped.hp.value())
+		{
 			appendMessage(this + " misses " + bumped);
+			bumped.def.train(.05f);
+		}
 		else
 		{
 			String verb = !bumped.isExpired() ? " hits " : " slays ";
+			atk.train(.05f);
 			appendMessage(this + verb + bumped);
 		}
 	}
@@ -83,14 +88,35 @@ public abstract class Creature extends Actor
 		return atk;
 	}
 
+	protected Stat replaceAtk(Stat newAtk)
+	{
+		Stat oldAtk = atk;
+		atk = newAtk;
+		return oldAtk;
+	}
+
 	public Stat def()
 	{
 		return def;
 	}
 
+	protected Stat replaceDef(Stat newDef)
+	{
+		Stat oldDef = def;
+		def = newDef;
+		return oldDef;
+	}
+
 	public Stat dmg()
 	{
 		return dmg;
+	}
+
+	public Stat replaceDmg(Stat newDmg)
+	{
+		Stat oldDmg = dmg;
+		dmg = newDmg;
+		return oldDmg;
 	}
 
 	public Stat fireRes()
