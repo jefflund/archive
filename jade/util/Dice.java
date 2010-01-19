@@ -13,7 +13,7 @@ public class Dice extends Random implements Serializable
 	/**
 	 * A default instance of Dice when you don't need a unique instance.
 	 */
-	public static final Dice dice = new Dice();
+	public static final Dice global = new Dice();
 
 	public Dice()
 	{
@@ -31,10 +31,10 @@ public class Dice extends Random implements Serializable
 	public int nextInt(int min, int max)
 	{
 		assert (min <= max);
-		final int range = max - min;
+		int range = max - min;
 		return nextInt(range + 1) + min;
 	}
-
+	
 	/**
 	 * Performs a dice roll xdy, or an y sided dice x times. For example, a
 	 * monopoly roll would be 2d6.

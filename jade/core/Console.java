@@ -7,8 +7,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,12 +25,18 @@ import javax.swing.JPanel;
 /**
  * Extends a JPanel to emulated a Console
  */
-public class Console extends JPanel implements Serializable
+public class Console extends JPanel implements KeyListener, Serializable
 {
+	public static final int DEFAULT_TILE = 12;
+	public static final int DEFAULT_WIDTH = 80;
+	public static final int DEFAULT_HEIGHT = 24;
+
 	private int tileHeight;
 	private int tileWidth;
-	private InputListener listener;
+	private Queue<Character> inputBuffer;
+	private Semaphore inputReady;
 	private Map<Coord, ColoredChar> buffer;
+	private Semaphore bufferReady;
 	private Map<Coord, ColoredChar> saved;
 	private Map<Camera, Coord> cameras;
 	private Map<Character, char[]> macros;
@@ -40,7 +46,7 @@ public class Console extends JPanel implements Serializable
 	 */
 	public Console()
 	{
-		this(12, 80, 24);
+		this(DEFAULT_TILE, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
 	/**
@@ -55,9 +61,11 @@ public class Console extends JPanel implements Serializable
 	{
 		this.tileHeight = tileHeight;
 		this.tileWidth = tileWidth;
-		listener = new InputListener();
-		addKeyListener(listener);
+		inputBuffer = new LinkedList<Character>();
+		inputReady = new Semaphore(0);
+		addKeyListener(this);
 		buffer = new TreeMap<Coord, ColoredChar>();
+		bufferReady = new Semaphore(1);
 		saved = new TreeMap<Coord, ColoredChar>();
 		setPreferredSize(new Dimension(width * tileWidth, height * tileHeight));
 		setFont(new Font(Font.MONOSPACED, Font.PLAIN, tileHeight));
@@ -65,6 +73,23 @@ public class Console extends JPanel implements Serializable
 		setFocusable(true);
 		cameras = new HashMap<Camera, Coord>();
 		macros = new HashMap<Character, char[]>();
+	}
+	
+	private void aquireBuffer()
+	{
+		try
+		{
+			bufferReady.acquire();
+		}
+		catch(InterruptedException exception)
+		{
+			exception.printStackTrace();
+		}
+	}
+	
+	private void releaseBuffer()
+	{
+		bufferReady.release();
 	}
 
 	/**
@@ -102,7 +127,9 @@ public class Console extends JPanel implements Serializable
 	 */
 	public void buffChar(Coord coord, ColoredChar ch)
 	{
+		aquireBuffer();
 		buffer.put(coord, ch);
+		releaseBuffer();
 	}
 
 	/**
@@ -237,7 +264,10 @@ public class Console extends JPanel implements Serializable
 	 */
 	public ColoredChar charAt(Coord coord)
 	{
-		return buffer.get(coord);
+		aquireBuffer();
+		ColoredChar result = buffer.get(coord);
+		releaseBuffer();
+		return result;
 	}
 
 	/**
@@ -254,6 +284,14 @@ public class Console extends JPanel implements Serializable
 	public final void addCamera(Camera camera, int centerX, int centerY)
 	{
 		cameras.put(camera, new Coord(centerX, centerY));
+	}
+
+	/**
+	 * Gets the Messenger's messages and buffers them on the given line
+	 */
+	public void buffMessages(int y, Messenger messenger)
+	{
+		buffString(0, y, messenger.getMessages(), Color.white);
 	}
 
 	/**
@@ -313,8 +351,10 @@ public class Console extends JPanel implements Serializable
 	 */
 	public void saveBuffer()
 	{
+		aquireBuffer();
 		saved.clear();
 		saved.putAll(buffer);
+		releaseBuffer();
 	}
 
 	/**
@@ -322,8 +362,10 @@ public class Console extends JPanel implements Serializable
 	 */
 	public void recallBuffer()
 	{
+		aquireBuffer();
 		buffer.clear();
 		buffer.putAll(saved);
+		releaseBuffer();
 	}
 
 	/**
@@ -331,7 +373,9 @@ public class Console extends JPanel implements Serializable
 	 */
 	public void clearBuffer()
 	{
+		aquireBuffer();
 		buffer.clear();
+		releaseBuffer();
 	}
 
 	/**
@@ -339,9 +383,11 @@ public class Console extends JPanel implements Serializable
 	 */
 	public void clearBuffer(Rect bounds)
 	{
+		aquireBuffer();
 		for(int x = bounds.xMin(); x <= bounds.xMax(); x++)
 			for(int y = bounds.yMin(); y <= bounds.yMax(); y++)
 				buffer.remove(new Coord(x, y));
+		releaseBuffer();
 	}
 
 	/**
@@ -349,28 +395,80 @@ public class Console extends JPanel implements Serializable
 	 */
 	public void clearLine(int y)
 	{
+		aquireBuffer();
 		Set<Coord> inline = new HashSet<Coord>();
 		for(Coord coord : buffer.keySet())
 			if(coord.y() == y)
 				inline.add(coord);
 		for(Coord coord : inline)
 			buffer.remove(coord);
+		releaseBuffer();
+	}
+
+	public void keyPressed(KeyEvent event)
+	{
+		char key = event.getKeyChar();
+		if(macros.containsKey(key))
+		{
+			for(char macro : macros.get(key))
+			{
+				inputBuffer.add(macro);
+				inputReady.release();
+			}
+		}
+		else
+		{
+			inputBuffer.add(event.getKeyChar());
+			inputReady.release();
+		}
+	}
+
+	public void keyReleased(KeyEvent e)
+	{
+		// do nothing
+	}
+
+	public void keyTyped(KeyEvent e)
+	{
+		// do nothing
 	}
 
 	/**
-	 * Returns the next key press. GetKey is blocks for input.
+	 * Returns the next key press. GetKey blocks for input.
 	 */
 	public char getKey()
 	{
 		try
 		{
-			listener.inputReady.acquire();
+			inputReady.acquire();
 		}
 		catch(InterruptedException e)
 		{
 			e.printStackTrace();
 		}
-		return listener.input.remove();
+		return inputBuffer.remove();
+	}
+
+	/**
+	 * Returns the next key press if there is one, otherwise returns '\0' without
+	 * blocking.
+	 */
+	public char tryGetKey()
+	{
+		if(inputReady.tryAcquire())
+			return inputBuffer.remove();
+		else
+			return '\0';
+	}
+
+	/**
+	 * Clears all the key events wainting to be used. Often useful after
+	 * tryGetKey() so that new inputs can overide old key presses.
+	 */
+	public void clearKeyBuffer()
+	{
+		inputReady.drainPermits();
+		inputBuffer.clear();
 	}
 
 	/**
@@ -380,7 +478,7 @@ public class Console extends JPanel implements Serializable
 	{
 		long time = System.currentTimeMillis();
 		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_PRESSED, time, 0, key, key);
-		listener.keyPressed(event);
+		keyPressed(event);
 	}
 
 	/**
@@ -404,6 +502,7 @@ public class Console extends JPanel implements Serializable
 	@Override
 	protected void paintComponent(Graphics page)
 	{
+		aquireBuffer();
 		super.paintComponent(page);
 		for(final Coord coord : buffer.keySet())
 		{
@@ -411,6 +510,7 @@ public class Console extends JPanel implements Serializable
 			page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
 					(coord.y() + 1) * tileHeight);
 		}
+		releaseBuffer();
 	}
 
 	/**
@@ -437,12 +537,14 @@ public class Console extends JPanel implements Serializable
 	{
 		tileHeight = console.tileHeight;
 		tileWidth = console.tileWidth;
-		listener.input.clear();
-		listener.input.addAll(console.listener.input);
-		listener.inputReady.drainPermits();
-		listener.inputReady.release(console.listener.inputReady.availablePermits());
+		inputBuffer.clear();
+		inputBuffer.addAll(console.inputBuffer);
+		inputReady.drainPermits();
+		inputReady.release(console.inputReady.availablePermits());
+		aquireBuffer();
 		buffer.clear();
 		buffer.putAll(console.buffer);
+		releaseBuffer();
 		saved.clear();
 		saved.putAll(console.saved);
 		setPreferredSize(new Dimension(console.getWidth(), console.getHeight()));
@@ -452,36 +554,36 @@ public class Console extends JPanel implements Serializable
 		macros.putAll(console.macros);
 	}
 
-	private class InputListener extends KeyAdapter implements Serializable
-	{
-		private Queue<Character> input;
-		private Semaphore inputReady;
-
-		public InputListener()
-		{
-			input = new LinkedList<Character>();
-			inputReady = new Semaphore(0);
-		}
-
-		@Override
-		public void keyPressed(KeyEvent event)
-		{
-			char key = event.getKeyChar();
-			if(macros.containsKey(key))
-			{
-				for(char macro : macros.get(key))
-				{
-					input.add(macro);
-					inputReady.release();
-				}
-			}
-			else
-			{
-				input.add(event.getKeyChar());
-				inputReady.release();
-			}
-		}
-	}
+	// private class InputListener extends KeyAdapter implements Serializable
+	// {
+	// private Queue<Character> input;
+	// private Semaphore inputReady;
+	//
+	// public InputListener()
+	// {
+	// input = new LinkedList<Character>();
+	// inputReady = new Semaphore(0);
+	// }
+	//
+	// @Override
+	// public void keyPressed(KeyEvent event)
+	// {
+	// char key = event.getKeyChar();
+	// if(macros.containsKey(key))
+	// {
+	// for(char macro : macros.get(key))
+	// {
+	// input.add(macro);
+	// inputReady.release();
+	// }
+	// }
+	// else
+	// {
+	// input.add(event.getKeyChar());
+	// inputReady.release();
+	// }
+	// }
+	// }
 
 	public interface Camera
 	{

@@ -199,7 +199,8 @@ public abstract class Actor extends Messenger implements Serializable
 	}
 
 	/**
-	 * Expires this Actor and all those it holds
+	 * Expires this Actor and all those it holds. This is a mechanism for marking
+	 * actors for removal.
 	 */
 	public void expire()
 	{
