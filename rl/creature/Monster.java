@@ -52,7 +52,7 @@ public class Monster extends Creature
 			target.move(world().player().pos());
 		if(target.equals(pos()))
 		{
-			move(Dice.dice.nextDir());
+			move(Dice.global.nextDir());
 			target.move(pos());
 		}
 		else
@@ -60,7 +60,7 @@ public class Monster extends Creature
 			List<Coord> path = PathFactory.aStar().getPath(world(), pos(),
 					getTarget());
 			if(path == null)
-				move(Dice.dice.nextDir());
+				move(Dice.global.nextDir());
 			else
 				move(Tools.directionTo(pos(), path.get(0)));
 		}

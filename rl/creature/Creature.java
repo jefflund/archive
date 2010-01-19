@@ -56,7 +56,7 @@ public abstract class Creature extends Actor
 		int oldHp = bumped.hp.value();
 		float chance = (float)atkStat.value()
 				/ (atkStat.value() + bumped.def.value());
-		while(Dice.dice.nextFloat() < chance)
+		while(Dice.global.nextFloat() < chance)
 			bumped.hp.modifyValue(-dmg.value());
 		if(oldHp == bumped.hp.value())
 		{

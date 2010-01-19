@@ -34,7 +34,7 @@ public class Dungeon
 	{
 		getLevel().removeActor(player);
 		depth++;
-		getLevel().addActor(player, Dice.dice);
+		getLevel().addActor(player, Dice.global);
 		getLevel().appendMessage(player + " descends");
 		return true;
 	}
@@ -43,7 +43,7 @@ public class Dungeon
 	{
 		getLevel().removeActor(player);
 		depth--;
-		getLevel().addActor(player, Dice.dice);
+		getLevel().addActor(player, Dice.global);
 		getLevel().appendMessage(player + " ascends");
 		return true;
 	}

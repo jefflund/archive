@@ -22,18 +22,18 @@ public class Level extends World
 		super(80, 23);
 		GenFactory.cellular().generate(this, seed);
 		this.dungeon = dungeon;
-		addActor(new Monster(Prototype.Dragon), Dice.dice);
-		addActor(new Monster(Prototype.Ogre), Dice.dice);
-		addActor(new Monster(Prototype.Orc), Dice.dice);
+		addActor(new Monster(Prototype.Dragon), Dice.global);
+		addActor(new Monster(Prototype.Ogre), Dice.global);
+		addActor(new Monster(Prototype.Orc), Dice.global);
 
-		addActor(new Item(Slot.Weapon, '|', null), Dice.dice);
-		addActor(new Item(Slot.Armor, ']', null), Dice.dice);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.dice);
-		addActor(new Item(Slot.Bow, '}', null), Dice.dice);
+		addActor(new Item(Slot.Weapon, '|', null), Dice.global);
+		addActor(new Item(Slot.Armor, ']', null), Dice.global);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
+		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
+		addActor(new Item(Slot.Bow, '}', null), Dice.global);
 	}
 
 	@Override
@@ -47,6 +47,7 @@ public class Level extends World
 	@Override
 	public void tick()
 	{
+		sleep(500);
 		player().act();
 		for(Monster monster : getActors(Monster.class))
 			monster.act();
@@ -55,6 +56,18 @@ public class Level extends World
 		for(Actor actor : getActors(Actor.class))
 			retrieveMessages(actor);
 		removeExpired();
+	}
+
+	private void sleep(long millis)
+	{
+		try
+		{
+			Thread.sleep(millis);
+		}
+		catch(InterruptedException exception)
+		{
+			exception.printStackTrace();
+		}
 	}
 
 	@Override

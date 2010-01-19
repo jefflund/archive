@@ -36,7 +36,7 @@ public class Player extends Creature implements Camera
 		inventory = new Inventory(this);
 		ranged = new Stat(10);
 	}
-
+	
 	@Override
 	public void act()
 	{
@@ -45,10 +45,10 @@ public class Player extends Creature implements Camera
 		Item item;
 		do
 		{
-			key = console.getKey();
+			key = console.tryGetKey();
 			switch(key)
 			{
-			case 'Q':
+			case 17://^q
 				expire();
 				moved = true;
 				break;
@@ -110,21 +110,18 @@ public class Player extends Creature implements Camera
 			default:
 				Direction dir = Tools.keyToDir(key, true, false);
 				if(dir != null)
-				{
 					move(dir);
-					moved = true;
-				}
-				else
-					moved = false;
+				moved = true;
 				break;
 			}
 			displayIfFailed(moved);
 		}
 		while(!moved);
+		console.clearKeyBuffer();
 		inventory.removeExpired();
-		if(Dice.dice.nextFloat() < REGEN)
+		if(Dice.global.nextFloat() < REGEN)
 			hp().modifyValueCapped(1);
-		if(Dice.dice.nextFloat() < REGEN)
+		if(Dice.global.nextFloat() < REGEN)
 			mp().modifyValueCapped(1);
 		calcFoV();
 	}
@@ -241,7 +238,7 @@ public class Player extends Creature implements Camera
 		console.clearLine(3);
 		console.clearLine(4);
 	}
-
+	
 	@Override
 	public Coord getTarget()
 	{
