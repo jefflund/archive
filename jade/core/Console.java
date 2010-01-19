@@ -408,6 +408,8 @@ public class Console extends JPanel implements KeyListener, Serializable
 	public void keyPressed(KeyEvent event)
 	{
 		char key = event.getKeyChar();
+		if(!Character.isDefined(key))
+			return;
 		if(macros.containsKey(key))
 		{
 			for(char macro : macros.get(key))
@@ -469,16 +471,6 @@ public class Console extends JPanel implements KeyListener, Serializable
 	{
 		inputReady.drainPermits();
 		inputBuffer.clear();
-	}
-
-	/**
-	 * Simulates a key press.
-	 */
-	public void pressKey(char key)
-	{
-		long time = System.currentTimeMillis();
-		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_PRESSED, time, 0, key, key);
-		keyPressed(event);
 	}
 
 	/**
