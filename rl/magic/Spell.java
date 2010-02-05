@@ -41,6 +41,8 @@ public class Spell
 			break;
 		case Other:
 			Coord target = caster.getTarget();
+			if(target == null)
+				return false;
 			Creature other = caster.world().getActorAt(target, Creature.class);
 			if(other != null)
 				weave.attachTo(other);

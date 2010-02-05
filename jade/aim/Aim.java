@@ -1,5 +1,6 @@
 package jade.aim;
 
+import jade.core.Actor;
 import jade.core.Console;
 import jade.core.Console.Camera;
 import jade.util.Coord;
@@ -17,6 +18,7 @@ public interface Aim
 	public class AimFactory
 	{
 		private static Aim free;
+		private static Letter letter;
 		
 		/**
 		 * User can select any tile within the camera's FoV.
@@ -26,6 +28,14 @@ public interface Aim
 			if(free == null)
 				free = new Free();
 			return free;
+		}
+		
+		public static Aim letter(Class<? extends Actor> cls)
+		{
+			if(letter == null)
+				letter = new Letter();
+			letter.setTargetType(cls);
+			return letter;
 		}
 	}
 }

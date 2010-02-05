@@ -113,7 +113,7 @@ public final class Tools
 	}
 
 	/**
-	 * Maps an integer to a char, with 1 mapping to 'a', 2 to 'b', 3 to 'c' and so
+	 * Maps an integer to a char, with 0 mapping to 'a', 1 to 'b', 2 to 'c' and so
 	 * on.
 	 */
 	public static char intToAlpha(int i)
@@ -122,7 +122,7 @@ public final class Tools
 	}
 
 	/**
-	 * Maps a char to an integer, with 'a' mapping to 1, 'b' to 2, 'c' to 3 and so
+	 * Maps a char to an integer, with 'a' mapping to 0, 'b' to 1, 'c' to 2 and so
 	 * on.
 	 */
 	public static int alphaToInt(char ch)

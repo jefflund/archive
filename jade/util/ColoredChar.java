@@ -66,4 +66,9 @@ public class ColoredChar implements Serializable, Comparable<ColoredChar>
 		else
 			return color.hashCode() - other.color.hashCode();
 	}
+
+	public boolean equals(ColoredChar obj)
+	{
+		return ch == obj.ch && color == obj.color; 
+	}
 }

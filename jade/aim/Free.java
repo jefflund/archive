@@ -25,6 +25,12 @@ public class Free implements Aim
 			console.buffRelCamera(camera, target, '*', Color.white);
 			console.refreshScreen();
 			key = console.getKey();
+			if(key == 27)
+			{
+				console.recallBuffer();
+				console.refreshScreen();
+				return null;
+			}
 			Direction dir = Tools.keyToDir(key, true, false);
 			if(dir != null)
 			{
