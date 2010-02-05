@@ -74,7 +74,7 @@ public class Console extends JPanel implements KeyListener, Serializable
 		cameras = new HashMap<Camera, Coord>();
 		macros = new HashMap<Character, char[]>();
 	}
-	
+
 	private void aquireBuffer()
 	{
 		try
@@ -86,7 +86,7 @@ public class Console extends JPanel implements KeyListener, Serializable
 			exception.printStackTrace();
 		}
 	}
-	
+
 	private void releaseBuffer()
 	{
 		bufferReady.release();
@@ -510,7 +510,7 @@ public class Console extends JPanel implements KeyListener, Serializable
 	 */
 	public void refreshScreen()
 	{
-		repaint();
+			repaint();			
 	}
 
 	/**
@@ -546,37 +546,6 @@ public class Console extends JPanel implements KeyListener, Serializable
 		macros.putAll(console.macros);
 	}
 
-	// private class InputListener extends KeyAdapter implements Serializable
-	// {
-	// private Queue<Character> input;
-	// private Semaphore inputReady;
-	//
-	// public InputListener()
-	// {
-	// input = new LinkedList<Character>();
-	// inputReady = new Semaphore(0);
-	// }
-	//
-	// @Override
-	// public void keyPressed(KeyEvent event)
-	// {
-	// char key = event.getKeyChar();
-	// if(macros.containsKey(key))
-	// {
-	// for(char macro : macros.get(key))
-	// {
-	// input.add(macro);
-	// inputReady.release();
-	// }
-	// }
-	// else
-	// {
-	// input.add(event.getKeyChar());
-	// inputReady.release();
-	// }
-	// }
-	// }
-
 	public interface Camera
 	{
 		public Collection<Coord> getFoV();
@@ -587,4 +556,32 @@ public class Console extends JPanel implements KeyListener, Serializable
 
 		public int y();
 	}
+	
+	//^key constants
+	public static final char CTRLA = 1;
+	public static final char CTRLB = 2;
+	public static final char CTRLC = 3;
+	public static final char CTRLD = 4;
+	public static final char CTRLE = 5;
+	public static final char CTRLF = 6;
+	public static final char CTRLG = 7;
+	public static final char CTRLH = 8;
+	public static final char CTRLI = 9;
+	public static final char CTRLJ = 10;
+	public static final char CTRLK = 11;
+	public static final char CTRLL = 12;
+	public static final char CTRLM = 13;
+	public static final char CTRLN = 14;
+	public static final char CTRLO = 15;
+	public static final char CTRLP = 16;
+	public static final char CTRLQ = 17;
+	public static final char CTRLR = 18;
+	public static final char CTRLS = 19;
+	public static final char CTRLT = 20;
+	public static final char CTRLU = 21;
+	public static final char CTRLV = 22;
+	public static final char CTRLW = 23;
+	public static final char CTRLX = 24;
+	public static final char CTRLY = 25;
+	public static final char CTRLZ = 26;
 }

@@ -47,7 +47,6 @@ public class Level extends World
 	@Override
 	public void tick()
 	{
-		sleep(500);
 		player().act();
 		for(Monster monster : getActors(Monster.class))
 			monster.act();
@@ -56,18 +55,6 @@ public class Level extends World
 		for(Actor actor : getActors(Actor.class))
 			retrieveMessages(actor);
 		removeExpired();
-	}
-
-	private void sleep(long millis)
-	{
-		try
-		{
-			Thread.sleep(millis);
-		}
-		catch(InterruptedException exception)
-		{
-			exception.printStackTrace();
-		}
 	}
 
 	@Override

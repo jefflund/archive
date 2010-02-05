@@ -1,5 +1,6 @@
 package rl.creature;
 
+import jade.aim.Aim.AimFactory;
 import jade.core.Console;
 import jade.core.Console.Camera;
 import jade.fov.FoV.FoVFactory;
@@ -45,10 +46,10 @@ public class Player extends Creature implements Camera
 		Item item;
 		do
 		{
-			key = console.tryGetKey();
+			key = console.getKey();
 			switch(key)
 			{
-			case 17://^q
+			case Console.CTRLQ:
 				expire();
 				moved = true;
 				break;
@@ -239,29 +240,9 @@ public class Player extends Creature implements Camera
 		console.clearLine(4);
 	}
 	
-	@Override
 	public Coord getTarget()
 	{
-		console.saveBuffer();
-		final Coord target = new Coord(x(), y());
-		char key = '\0';
-		while(key != 't')
-		{
-			console.recallBuffer();
-			console.buffRelCamera(this, target, '*', Color.white);
-			console.refreshScreen();
-			key = console.getKey();
-			Direction dir = Tools.keyToDir(key, true, false);
-			if(dir != null)
-			{
-				target.translate(dir);
-				if(!fov.contains(target))
-					target.translate(dir.opposite());
-			}
-		}
-		console.recallBuffer();
-		console.refreshScreen();
-		return target;
+		return AimFactory.free().getAim(console, this);
 	}
 
 	public void calcFoV()

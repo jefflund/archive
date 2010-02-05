@@ -33,12 +33,12 @@ public class Bresenham implements Path
 
 	protected List<Coord> castray(World world, int x1, int y1, int x2, int y2)
 	{
-		final List<Coord> path = new LinkedList<Coord>();
+		List<Coord> path = new LinkedList<Coord>();
 		path.add(new Coord(x1, y1));
-		final int dx = Math.abs(x2 - x1) << 1;
-		final int dy = Math.abs(y2 - y1) << 1;
-		final int ix = x2 > x1 ? 1 : -1;
-		final int iy = y2 > y1 ? 1 : -1;
+		int dx = Math.abs(x2 - x1) << 1;
+		int dy = Math.abs(y2 - y1) << 1;
+		int ix = x2 > x1 ? 1 : -1;
+		int iy = y2 > y1 ? 1 : -1;
 		if(dx >= dy)
 		{
 			int error = dy - (dx >> 1);
