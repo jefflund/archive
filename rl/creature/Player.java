@@ -242,7 +242,7 @@ public class Player extends Creature implements Camera
 	
 	public Coord getTarget()
 	{
-		return AimFactory.letter(Creature.class).getAim(console, this);
+		return AimFactory.select(Creature.class).getAim(console, this);
 	}
 
 	public void calcFoV()

@@ -425,16 +425,6 @@ public class Console extends JPanel implements KeyListener, Serializable
 		}
 	}
 
-	public void keyReleased(KeyEvent e)
-	{
-		// do nothing
-	}
-
-	public void keyTyped(KeyEvent e)
-	{
-		// do nothing
-	}
-
 	/**
 	 * Returns the next key press. GetKey blocks for input.
 	 */
@@ -510,7 +500,7 @@ public class Console extends JPanel implements KeyListener, Serializable
 	 */
 	public void refreshScreen()
 	{
-			repaint();			
+		repaint();
 	}
 
 	/**
@@ -556,7 +546,7 @@ public class Console extends JPanel implements KeyListener, Serializable
 
 		public int y();
 	}
-	
+
 	//^key constants
 	public static final char CTRLA = 1;
 	public static final char CTRLB = 2;
@@ -584,4 +574,15 @@ public class Console extends JPanel implements KeyListener, Serializable
 	public static final char CTRLX = 24;
 	public static final char CTRLY = 25;
 	public static final char CTRLZ = 26;
+	public static final char ESC = 27;
+
+	public void keyReleased(KeyEvent e)
+	{
+		// do nothing
+	}
+
+	public void keyTyped(KeyEvent e)
+	{
+		// do nothing
+	}
 }

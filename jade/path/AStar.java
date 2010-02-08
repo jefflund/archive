@@ -113,18 +113,10 @@ public class AStar implements Path
 	 * it is the likley hood that a square will be on the shortest path between
 	 * two nodes. By default, it just calculates the distance from the c1 to c2,
 	 * but could be overridden to factor in other cost in node traversal.
-	 * 
-	 * @param c1
-	 *          the first node in question
-	 * @param c2
-	 *          the second node in question
-	 * @return the heuristic estimate of the cost to travel between c1 and c2
 	 */
 	protected double hEstimate(Coord c1, Coord c2)
 	{
-		final int a = c1.x() - c2.x();
-		final int b = c1.y() - c2.y();
-		return Math.sqrt(a * a + b * b);
+		return c1.distTo(c2);
 	}
 
 	private Node getNode(Coord coord)

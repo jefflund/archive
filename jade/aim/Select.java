@@ -1,26 +1,23 @@
 package jade.aim;
 
+import jade.aim.Aim.BaseAim;
 import jade.core.Console;
 import jade.core.Console.Camera;
 import jade.util.Coord;
 import jade.util.Direction;
 import jade.util.Tools;
 import java.awt.Color;
-import java.util.Collection;
+import java.util.List;
 
-/**
- * An implementation of Aim allowing selection from the camera's FoV.
- */
-public class Free implements Aim
+public class Select extends BaseAim
 {
-	/**
-	 * Lets the user choose any square within FoV
-	 */
 	public Coord getAim(Console console, Camera camera)
 	{
 		console.saveBuffer();
+		List<Coord> targets = getTargets(camera);
+		if(targets.isEmpty())
+			return returnFail(console);
 		Coord target = new Coord(camera.x(), camera.y());
-		Collection<Coord> fov = camera.getFoV();
 		char key = '\0';
 		while(key != 't')
 		{
@@ -33,9 +30,20 @@ public class Free implements Aim
 			Direction dir = Tools.keyToDir(key, true, false);
 			if(dir != null)
 			{
-				target.translate(dir);
-				if(!fov.contains(target))
-					target.translate(dir.opposite());
+				Coord newTarget = null;
+				for(Coord coord : targets)
+				{
+					if(coord.equals(target) || (dir.dx < 0 && coord.x() > target.x())
+							|| (dir.dx > 0 && coord.x() < target.x())
+							|| (dir.dy < 0 && coord.y() > target.y())
+							|| (dir.dy > 0 && coord.y() < target.y()))
+						continue;
+					if(newTarget == null
+							|| target.distTo(coord) < target.distTo(newTarget))
+						newTarget = coord;
+				}
+				if(newTarget != null)
+					target = newTarget;
 			}
 		}
 		console.recallBuffer();

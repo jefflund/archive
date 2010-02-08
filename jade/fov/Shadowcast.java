@@ -19,6 +19,11 @@ public class Shadowcast implements FoV
 		this.circular = circular;
 	}
 
+	public Collection<Coord> calcFoV(Actor actor, int range)
+	{
+		return calcFoV(actor.world(), actor.x(), actor.y(), range);
+	}
+	
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{
 		final Collection<Coord> fov = new TreeSet<Coord>();
@@ -29,11 +34,6 @@ public class Shadowcast implements FoV
 		if(circular)
 			Tools.filterCircle(fov, x, y, range);
 		return fov;
-	}
-
-	public Collection<Coord> calcFoV(Actor actor, int range)
-	{
-		return calcFoV(actor.world(), actor.x(), actor.y(), range);
 	}
 
 	private void scan(int depth, float startslope, float endslope, Coord orig,
