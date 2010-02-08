@@ -40,15 +40,23 @@ public class Spell
 			weave.attachTo(caster);
 			break;
 		case Other:
-			Coord target = caster.getTarget();
+			Coord target = caster.getTarget(Creature.class);
 			if(target == null)
+			{
+				caster.appendMessage("Spell cancelled");
 				return false;
+			}
 			Creature other = caster.world().getActorAt(target, Creature.class);
 			if(other != null)
 				weave.attachTo(other);
 			break;
 		case Area:
 			Coord area = caster.getTarget();
+			if(area == null)
+			{
+				caster.appendMessage("Spell cancelled");
+				return false;
+			}
 			caster.world().addActor(weave, area);
 			break;
 		}

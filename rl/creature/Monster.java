@@ -1,5 +1,6 @@
 package rl.creature;
 
+import jade.core.Actor;
 import jade.path.Path.PathFactory;
 import jade.util.Coord;
 import jade.util.Dice;
@@ -58,7 +59,7 @@ public class Monster extends Creature
 		else
 		{
 			List<Coord> path = PathFactory.aStar().getPath(world(), pos(),
-					getTarget());
+					getTarget(Player.class));
 			if(path == null)
 				move(Dice.global.nextDir());
 			else
@@ -66,7 +67,14 @@ public class Monster extends Creature
 		}
 	}
 
-	@Override
+	public Coord getTarget(Class<? extends Actor> targetType)
+	{
+		if(targetType == Player.class)
+			return target;
+		else
+			return null;
+	}
+	
 	public Coord getTarget()
 	{
 		return target;

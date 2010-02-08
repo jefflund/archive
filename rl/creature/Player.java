@@ -1,6 +1,7 @@
 package rl.creature;
 
 import jade.aim.Aim.AimFactory;
+import jade.core.Actor;
 import jade.core.Console;
 import jade.core.Console.Camera;
 import jade.fov.FoV.FoVFactory;
@@ -37,7 +38,7 @@ public class Player extends Creature implements Camera
 		inventory = new Inventory(this);
 		ranged = new Stat(10);
 	}
-	
+
 	@Override
 	public void act()
 	{
@@ -147,7 +148,7 @@ public class Player extends Creature implements Camera
 		}
 		else
 		{
-			Coord aim = getTarget();
+			Coord aim = getTarget(Monster.class);
 			List<Coord> path = PathFactory.bresenham().getPath(world(), pos(), aim);
 			for(Coord trajectory : path)
 			{
@@ -239,10 +240,15 @@ public class Player extends Creature implements Camera
 		console.clearLine(3);
 		console.clearLine(4);
 	}
-	
-	public Coord getTarget()
+
+	public Coord getTarget(Class<? extends Actor> targetType)
 	{
 		return AimFactory.select(Creature.class).getAim(console, this);
+	}
+
+	public Coord getTarget()
+	{
+		return AimFactory.free().getAim(console, this);
 	}
 
 	public void calcFoV()
