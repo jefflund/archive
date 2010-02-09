@@ -121,7 +121,10 @@ public class Demo
 			{
 				DemoActor hero = world().getActorAt(pos(), DemoActor.class);
 				if(hero != null)
+				{
 					attachTo(hero);
+					hero.setFace(new ColoredChar('@', Color.red));
+				}
 			}
 			else
 			{
