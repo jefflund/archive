@@ -9,6 +9,9 @@ import jade.util.Tools;
 import java.awt.Color;
 import java.util.List;
 
+/**
+ *	Allows the user to select targets using directional chooses
+ */
 public class Select extends BaseAim
 {
 	public Coord getAim(Console console, Camera camera)

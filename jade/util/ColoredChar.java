@@ -43,6 +43,17 @@ public class ColoredChar implements Serializable, Comparable<ColoredChar>
 	{
 		return new ColoredChar(ch, color.darker());
 	}
+	
+	/**
+	 * Returns the same ColoredChar with darker() called magnitude times
+	 */
+	public ColoredChar darker(int magnitude)
+	{
+		Color color = this.color;
+		for(int i = 0; i < magnitude; i++)
+			color = color.darker();
+		return new ColoredChar(ch, color.darker());
+	}
 
 	/**
 	 * Returns the same ColoredChar only brighter

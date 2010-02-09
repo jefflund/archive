@@ -13,9 +13,6 @@ import java.util.Collection;
  */
 public class Free implements Aim
 {
-	/**
-	 * Lets the user choose any square within FoV
-	 */
 	public Coord getAim(Console console, Camera camera)
 	{
 		console.saveBuffer();

@@ -14,9 +14,6 @@ import java.util.List;
  */
 public class Letter extends BaseAim
 {
-	/**
-	 * Replaces all Actors of the target type with letters and lets the user select one
-	 */
 	public Coord getAim(Console console, Camera camera)
 	{
 		List<Coord> targets = getTargets(camera);
