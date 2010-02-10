@@ -12,6 +12,7 @@ import jade.util.Direction;
 import jade.util.Tools;
 import java.awt.Color;
 import java.util.Collection;
+import java.util.List;
 
 public class Demo
 {
@@ -52,7 +53,7 @@ public class Demo
 				console.buffChar(x, y, world.look(x, y));
 		console.refreshScreen();
 	}
-	
+
 	private static void displayWorld2(World world, Actor actor)
 	{
 		Collection<Coord> fov = FoVFactory.shadowCircle().calcFoV(actor, 10);
@@ -78,15 +79,16 @@ public class Demo
 			removeExpired();
 		}
 
-		public ColoredChar look(int x, int y)
+		public List<ColoredChar> lookAll(int x, int y)
 		{
-			Actor actor = getActorAt(x, y, DemoActor.class);
+			List<ColoredChar> look = super.lookAll(x, y);
+			DemoTrap trap = getActorAt(x, y, DemoTrap.class);
+			if(trap != null)
+				look.add(trap.look());
+			DemoActor actor = getActorAt(x, y, DemoActor.class);
 			if(actor != null)
-				return actor.look();
-			actor = getActorAt(x, y, DemoTrap.class);
-			if(actor != null)
-				return actor.look();
-			return super.look(x, y);
+				look.add(actor.look());
+			return look;
 		}
 	}
 

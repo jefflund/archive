@@ -7,7 +7,8 @@ import jade.util.Coord;
 import java.util.List;
 
 /**
- *	An implementation of Aim in which the closest target is selected automatically.
+ * An implementation of Aim in which the closest target is selected
+ * automatically.
  */
 public class Closest extends BaseAim
 {

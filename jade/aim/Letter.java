@@ -9,8 +9,8 @@ import java.awt.Color;
 import java.util.List;
 
 /**
- *	An implementation of Aim in which the user selects targets by letter.
- *	The target type must be set (default is Actor). 
+ * An implementation of Aim in which the user selects targets by letter. The
+ * target type must be set (default is Actor).
  */
 public class Letter extends BaseAim
 {

@@ -72,6 +72,7 @@ public abstract class Creature extends Actor
 	}
 
 	public abstract Coord getTarget(Class<? extends Actor> targetType);
+
 	public abstract Coord getTarget();
 
 	public Stat hp()

@@ -10,7 +10,7 @@ import java.awt.Color;
 import java.util.List;
 
 /**
- *	Allows the user to select targets using directional chooses
+ * Allows the user to select targets using directional chooses
  */
 public class Select extends BaseAim
 {

@@ -43,7 +43,7 @@ public class ColoredChar implements Serializable, Comparable<ColoredChar>
 	{
 		return new ColoredChar(ch, color.darker());
 	}
-	
+
 	/**
 	 * Returns the same ColoredChar with darker() called magnitude times
 	 */
@@ -80,6 +80,6 @@ public class ColoredChar implements Serializable, Comparable<ColoredChar>
 
 	public boolean equals(ColoredChar obj)
 	{
-		return ch == obj.ch && color == obj.color; 
+		return ch == obj.ch && color == obj.color;
 	}
 }

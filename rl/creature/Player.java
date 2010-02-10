@@ -290,4 +290,9 @@ public class Player extends Creature implements Camera
 	{
 		spellbook.learnEffect(effect);
 	}
+	
+	public Console console()
+	{
+		return console;
+	}
 }

@@ -74,7 +74,7 @@ public class Monster extends Creature
 		else
 			return null;
 	}
-	
+
 	public Coord getTarget()
 	{
 		return target;

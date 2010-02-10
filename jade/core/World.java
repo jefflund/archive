@@ -6,8 +6,10 @@ import jade.util.Dice;
 import jade.util.Rect;
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -220,21 +222,44 @@ public abstract class World extends Messenger implements Serializable
 	}
 
 	/**
-	 * Returns the face of the tile at the given location. This method should be
-	 * overridden to reflect the tile's occupants.
+	 * Returns the top face visible from the tile. Normally this will be the one
+	 * drawn.
 	 */
-	public ColoredChar look(int x, int y)
+	public final ColoredChar look(int x, int y)
 	{
-		return grid[x][y].look();
+		List<ColoredChar> look = lookAll(x, y);
+		return look.get(look.size() - 1);
 	}
 
 	/**
-	 * Returns the face of the tile at the given location. This method should be
-	 * overridden to reflect the tile's occupants.
+	 * Returns the top face visible from the tile. Normally this will be the one
+	 * drawn.
 	 */
 	public final ColoredChar look(Coord coord)
 	{
 		return look(coord.x(), coord.y());
+	}
+
+	/**
+	 * Returns everything visible from a given location. The top item is the last
+	 * item in the list, with the actual tile being the first item in the list.
+	 */
+	public final List<ColoredChar> lookAll(Coord coord)
+	{
+		return lookAll(coord.x(), coord.y());
+	}
+
+	/**
+	 * Returns everything visible from a given location. The top item is the last
+	 * item in the list, with the actual tile being the first item in the list. By
+	 * default it only examines the tile, but should be overriden to take into
+	 * account the tile's occupants and the proper draw order of the occupants.
+	 */
+	public List<ColoredChar> lookAll(int x, int y)
+	{
+		List<ColoredChar> look = new ArrayList<ColoredChar>();
+		look.add(grid[x][y].look());
+		return look;
 	}
 
 	/**

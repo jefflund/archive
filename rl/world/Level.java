@@ -5,6 +5,7 @@ import jade.core.World;
 import jade.gen.Gen.GenFactory;
 import jade.util.ColoredChar;
 import jade.util.Dice;
+import java.util.List;
 import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
@@ -47,6 +48,8 @@ public class Level extends World
 	@Override
 	public void tick()
 	{
+		for(Script script : getActors(Script.class))
+			script.act();
 		player().act();
 		for(Monster monster : getActors(Monster.class))
 			monster.act();
@@ -58,18 +61,19 @@ public class Level extends World
 	}
 
 	@Override
-	public ColoredChar look(int x, int y)
+	public List<ColoredChar> lookAll(int x, int y)
 	{
-		Actor actor = getActorAt(x, y, Creature.class);
+		List<ColoredChar> look = super.lookAll(x, y);
+		Actor actor = getActorAt(x, y, Weave.class);
 		if(actor != null)
-			return actor.look();
+			look.add(actor.look());
 		actor = getActorAt(x, y, Item.class);
 		if(actor != null)
-			return actor.look();
-		actor = getActorAt(x, y, Weave.class);
+			look.add(actor.look());
+		actor = getActorAt(x, y, Creature.class);
 		if(actor != null)
-			return actor.look();
-		return super.look(x, y);
+			look.add(actor.look());
+		return look;
 	}
 
 	public Player player()

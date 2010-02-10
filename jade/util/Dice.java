@@ -34,7 +34,7 @@ public class Dice extends Random implements Serializable
 		int range = max - min;
 		return nextInt(range + 1) + min;
 	}
-	
+
 	/**
 	 * Performs a dice roll xdy, or an y sided dice x times. For example, a
 	 * monopoly roll would be 2d6.

@@ -131,14 +131,14 @@ public class Coord implements Comparable<Coord>, Serializable
 	{
 		return x() == other.x() && y() == other.y();
 	}
-	
+
 	public double distTo(Coord other)
 	{
 		int a = x - other.x;
 		int b = y - other.y;
 		return Math.sqrt(a * a + b * b);
 	}
-	
+
 	public double taxiDistTo(Coord other)
 	{
 		int a = Math.abs(x - other.x);

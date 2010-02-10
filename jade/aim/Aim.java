@@ -16,14 +16,14 @@ public interface Aim
 	 * Returns the user selected taraget.
 	 */
 	public Coord getAim(Console console, Camera camera);
-	
+
 	public class AimFactory
 	{
 		private static Aim free;
 		private static Letter letter;
 		private static Select select;
 		private static Closest closest;
-		
+
 		/**
 		 * User can select any tile within the camera's FoV.
 		 */
@@ -33,7 +33,7 @@ public interface Aim
 				free = new Free();
 			return free;
 		}
-		
+
 		/**
 		 * User selects target by letter
 		 */
@@ -44,7 +44,7 @@ public interface Aim
 			letter.setTargetType(targetType);
 			return letter;
 		}
-		
+
 		/**
 		 * User selects target using directional keys
 		 */
@@ -55,7 +55,7 @@ public interface Aim
 			select.setTargetType(targetType);
 			return select;
 		}
-		
+
 		/**
 		 * Closest target is chosen automatically.
 		 */
@@ -67,24 +67,24 @@ public interface Aim
 			return closest;
 		}
 	}
-	
+
 	/**
-	 *	Represents an implementation of Aim that requires a target type
+	 * Represents an implementation of Aim that requires a target type
 	 */
 	abstract class BaseAim implements Aim
 	{
 		private Class<? extends Actor> targetType;
-		
+
 		protected BaseAim()
 		{
 			setTargetType(Actor.class);
 		}
-		
+
 		protected void setTargetType(Class<? extends Actor> targetType)
 		{
 			this.targetType = targetType;
 		}
-		
+
 		protected List<Coord> getTargets(Camera camera)
 		{
 			List<Coord> targets = new ArrayList<Coord>();

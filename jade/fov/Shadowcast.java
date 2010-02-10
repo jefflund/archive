@@ -23,7 +23,7 @@ public class Shadowcast implements FoV
 	{
 		return calcFoV(actor.world(), actor.x(), actor.y(), range);
 	}
-	
+
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{
 		final Collection<Coord> fov = new TreeSet<Coord>();
