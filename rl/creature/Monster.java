@@ -1,12 +1,14 @@
 package rl.creature;
 
 import jade.core.Actor;
+import jade.core.Console;
 import jade.path.Path.PathFactory;
 import jade.util.Coord;
 import jade.util.Dice;
 import jade.util.Tools;
 import java.awt.Color;
 import java.util.List;
+import rl.world.Script;
 
 public class Monster extends Creature
 {
@@ -14,7 +16,8 @@ public class Monster extends Creature
 	{
 		Orc('o', Color.yellow, 5, 5, 5, 5, 1, 0),
 		Ogre('O', Color.pink, 5, 5, 5, 5, 3, 10),
-		Dragon('D', Color.red, 10, 10, 10, 10, 3, 90);
+		Dragon('D', Color.red, 10, 10, 10, 10, 3, 90),
+		Boss('U', Color.orange, 50, 50, 50, 50, 10, 120);
 
 		public char face;
 		public Color color;
@@ -44,6 +47,8 @@ public class Monster extends Creature
 	{
 		super(prototype);
 		target = new Coord();
+		if(prototype == Prototype.Boss)
+			attachBossScript();
 	}
 
 	@Override
@@ -78,5 +83,37 @@ public class Monster extends Creature
 	public Coord getTarget()
 	{
 		return target;
+	}
+
+	private void attachBossScript()
+	{
+		Script script = new Script()
+		{
+			public void act()
+			{
+				if(player().getFoV().contains(pos()))
+				{
+					Console console = console();
+					console.saveBuffer();
+					console.clearBuffer();
+					console.buffLine(0, "Boss: I shall crush your big toe!", Color.white);
+					console.refreshScreen();
+					console.getKey();
+					console.buffLine(1, "@: You'll pay for your evil-ness!", Color.white);
+					console.refreshScreen();
+					console.getKey();
+					console.buffLine(2, "Boss: Not if you pay first!", Color.white);
+					console.refreshScreen();
+					console.getKey();
+					console.buffLine(3, "@: You suck at come backs!", Color.white);
+					console.refreshScreen();
+					console.getKey();
+					console.recallBuffer();
+					console.refreshScreen();
+					expire();
+				}
+			}
+		};
+		script.attachTo(this);
 	}
 }

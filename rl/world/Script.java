@@ -3,6 +3,7 @@ package rl.world;
 import jade.core.Actor;
 import jade.core.Console;
 import java.awt.Color;
+import rl.creature.Player;
 
 public abstract class Script extends Actor
 {
@@ -13,6 +14,11 @@ public abstract class Script extends Actor
 	
 	protected Console console()
 	{
-		return ((Level)world()).player().console();
+		return player().console();
+	}
+	
+	protected Player player()
+	{
+		return ((Level)world()).player();
 	}
 }

@@ -26,6 +26,7 @@ public class Level extends World
 		addActor(new Monster(Prototype.Dragon), Dice.global);
 		addActor(new Monster(Prototype.Ogre), Dice.global);
 		addActor(new Monster(Prototype.Orc), Dice.global);
+		addActor(new Monster(Prototype.Boss), Dice.global);
 
 		addActor(new Item(Slot.Weapon, '|', null), Dice.global);
 		addActor(new Item(Slot.Armor, ']', null), Dice.global);

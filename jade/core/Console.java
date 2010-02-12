@@ -31,14 +31,14 @@ public class Console extends JPanel implements KeyListener, Serializable
 	public static final int DEFAULT_WIDTH = 80;
 	public static final int DEFAULT_HEIGHT = 24;
 
-	private int tileHeight;
-	private int tileWidth;
+	protected int tileHeight;
+	protected int tileWidth;
 	private Queue<Character> inputBuffer;
 	private Semaphore inputReady;
 	private Map<Coord, ColoredChar> buffer;
 	private Semaphore bufferReady;
 	private Map<Coord, ColoredChar> saved;
-	private Map<Camera, Coord> cameras;
+	protected Map<Camera, Coord> cameras;
 	private Map<Character, char[]> macros;
 
 	/**
@@ -486,10 +486,11 @@ public class Console extends JPanel implements KeyListener, Serializable
 	{
 		aquireBuffer();
 		super.paintComponent(page);
-		for(final Coord coord : buffer.keySet())
+		for(Coord coord : buffer.keySet())
 		{
-			page.setColor(buffer.get(coord).color());
-			page.drawString(buffer.get(coord).toString(), coord.x() * tileWidth,
+			ColoredChar ch = buffer.get(coord);
+			page.setColor(ch.color());
+			page.drawString(ch.toString(), coord.x() * tileWidth,
 					(coord.y() + 1) * tileHeight);
 		}
 		releaseBuffer();
