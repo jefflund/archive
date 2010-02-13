@@ -2,7 +2,7 @@ package rl.world;
 
 import jade.core.Actor;
 import jade.core.World;
-import jade.gen.Gen.GenFactory;
+import jade.gen.Gen;
 import jade.util.ColoredChar;
 import jade.util.Dice;
 import java.util.List;
@@ -18,10 +18,10 @@ public class Level extends World
 {
 	private Dungeon dungeon;
 
-	public Level(long seed, Dungeon dungeon)
+	public Level(long seed, Dungeon dungeon, Gen gen)
 	{
 		super(80, 23);
-		GenFactory.cellular().generate(this, seed);
+		gen.generate(this, seed);
 		this.dungeon = dungeon;
 		addActor(new Monster(Prototype.Dragon), Dice.global);
 		addActor(new Monster(Prototype.Ogre), Dice.global);

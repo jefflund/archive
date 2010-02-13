@@ -42,11 +42,13 @@ public class Monster extends Creature
 	};
 
 	private Coord target;
+	private boolean alert;
 
 	public Monster(Prototype prototype)
 	{
 		super(prototype);
 		target = new Coord();
+		alert = false;
 		if(prototype == Prototype.Boss)
 			attachBossScript();
 	}
@@ -54,8 +56,13 @@ public class Monster extends Creature
 	@Override
 	public void act()
 	{
-		if(world().player().getFoV().contains(pos()))
+		if(world().player().getFoV(this).contains(pos()))
+		{
+			if(!alert)
+				appendMessage(this + " wakes up");
+			alert = true;
 			target.move(world().player().pos());
+		}
 		if(target.equals(pos()))
 		{
 			move(Dice.global.nextDir());
@@ -65,8 +72,8 @@ public class Monster extends Creature
 		{
 			List<Coord> path = PathFactory.aStar().getPath(world(), pos(),
 					getTarget(Player.class));
-			if(path == null)
-				move(Dice.global.nextDir());
+			if(path == null);
+//				move(Dice.global.nextDir());
 			else
 				move(Tools.directionTo(pos(), path.get(0)));
 		}
@@ -84,6 +91,11 @@ public class Monster extends Creature
 	{
 		return target;
 	}
+	
+	public boolean alert()
+	{
+		return alert;
+	}
 
 	private void attachBossScript()
 	{
@@ -91,7 +103,7 @@ public class Monster extends Creature
 		{
 			public void act()
 			{
-				if(player().getFoV().contains(pos()))
+				if(player().getFoV((Monster)holder()).contains(pos()))
 				{
 					Console console = console();
 					console.saveBuffer();

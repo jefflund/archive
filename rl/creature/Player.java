@@ -13,6 +13,7 @@ import jade.util.Tools;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import rl.item.Inventory;
 import rl.item.Item;
 import rl.item.Item.Slot;
@@ -29,6 +30,7 @@ public class Player extends Creature implements Camera
 	private Spellbook spellbook;
 	private Inventory inventory;
 	private Stat ranged;
+	private Stat stealth;
 
 	public Player(Console console)
 	{
@@ -37,6 +39,7 @@ public class Player extends Creature implements Camera
 		spellbook = new Spellbook();
 		inventory = new Inventory(this);
 		ranged = new Stat(10);
+		stealth = new Stat(95);
 	}
 
 	@Override
@@ -261,6 +264,23 @@ public class Player extends Creature implements Camera
 		return fov;
 	}
 
+	public Collection<Coord> getFoV(Monster monster)
+	{
+		if(monster.alert() || !isHidden())
+			return fov;
+		else
+		{
+			if(fov.contains(monster.pos()))
+				monster.appendMessage(monster + " didn't see " + this);
+			return new TreeSet<Coord>();
+		}
+	}
+	
+	private boolean isHidden()
+	{
+		return Dice.global.nextInt(100) < stealth.value();
+	}
+
 	private <T> T choose(List<T> elements, String title)
 	{
 		console.saveBuffer();
@@ -290,7 +310,7 @@ public class Player extends Creature implements Camera
 	{
 		spellbook.learnEffect(effect);
 	}
-	
+
 	public Console console()
 	{
 		return console;

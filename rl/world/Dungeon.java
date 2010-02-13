@@ -1,5 +1,7 @@
 package rl.world;
 
+import jade.gen.Gen;
+import jade.gen.Gen.GenFactory;
 import jade.util.Dice;
 import rl.creature.Player;
 
@@ -13,8 +15,12 @@ public class Dungeon
 	{
 		levels = new Level[depth];
 		Dice dice = new Dice(seed);
-		for(int i = 0; i < depth; i++)
-			levels[i] = new Level(dice.nextLong(), this);
+		levels[0] = new Level(dice.nextLong(), this, GenFactory.wilderness());
+		for(int i = 1; i < depth; i++)
+		{
+			Gen gen = dice.nextBoolean() ? GenFactory.traditional() : GenFactory.cellular();
+			levels[i] = new Level(dice.nextLong(), this, gen);
+		}
 		this.player = player;
 		levels[0].addActor(player, dice);
 		this.depth = 0;
