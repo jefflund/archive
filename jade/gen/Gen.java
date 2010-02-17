@@ -24,6 +24,7 @@ public interface Gen
 		private static Gen traditional;
 		private static Gen wilderness;
 		private static Gen town;
+		private static Gen maze;
 
 		/**
 		 * Uses cellular automaton to generate cave like maps.
@@ -64,6 +65,13 @@ public interface Gen
 			if(town == null)
 				town = new Wilderness(true);
 			return town;
+		}
+		
+		public static Gen maze()
+		{
+			if(maze == null)
+				maze = new Maze();
+			return maze;
 		}
 	}
 }
