@@ -12,11 +12,13 @@ import java.util.TreeSet;
 /**
  * An implementation of Path that uses the A* pathfinding algorithm to find the
  * shortest path. Subclasses could adjust the heuristic estimates to produce
- * more interesting result.
+ * more interesting result. Note that certain heuristics will not always produce
+ * the optimal shortest path. If the optimal path is needed instead of a good
+ * path, use Dijkstra's algorithm instead.
  */
 public class AStar implements Path
 {
-	private final Map<Coord, Node> nodes;
+	private Map<Coord, Node> nodes;
 
 	protected AStar()
 	{
@@ -26,24 +28,24 @@ public class AStar implements Path
 	public List<Coord> getPath(World world, Coord start, Coord goal)
 	{
 		nodes.clear();
-		final Set<Node> closed = new TreeSet<Node>();
-		final Set<Node> open = new TreeSet<Node>();
+		Set<Node> closed = new TreeSet<Node>();
+		Set<Node> open = new TreeSet<Node>();
 		open.add(getNode(start));
 		getNode(start).gScore = 0;
 		getNode(start).hScore = hEstimate(start, goal);
 		getNode(start).fScore = getNode(start).hScore;
 		while(!open.isEmpty())
 		{
-			final Node x = minFScore(open);
+			Node x = minFScore(open);
 			if(x.coord.equals(goal))
 				return reconstructPath(x);
 			open.remove(x);
 			closed.add(x);
-			for(final Node y : getAdjacentNodes(x, world))
+			for(Node y : getAdjacentNodes(x, world))
 			{
 				if(closed.contains(y))
 					continue;
-				final double tentativeGScore = x.gScore + hEstimate(x.coord, y.coord);
+				double tentativeGScore = x.gScore + hEstimate(x.coord, y.coord);
 				boolean tentativeIsBetter = false;
 				if(!open.contains(y))
 				{
@@ -71,7 +73,7 @@ public class AStar implements Path
 
 	private Set<Node> getAdjacentNodes(Node node, World world)
 	{
-		final Set<Node> adjacent = new TreeSet<Node>();
+		Set<Node> adjacent = new TreeSet<Node>();
 		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y())));
 		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y() - 1)));
 		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y() + 1)));
@@ -80,8 +82,8 @@ public class AStar implements Path
 		adjacent.add(getNode(new Coord(node.coord.x() - 1, node.coord.y() + 1)));
 		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() - 1)));
 		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() + 1)));
-		final Set<Node> nonpassable = new TreeSet<Node>();
-		for(final Node n : adjacent)
+		Set<Node> nonpassable = new TreeSet<Node>();
+		for(Node n : adjacent)
 			if(!world.passable(n.coord.x(), n.coord.y()))
 				nonpassable.add(n);
 		adjacent.removeAll(nonpassable);
@@ -92,7 +94,7 @@ public class AStar implements Path
 	{
 		if(current.cameFrom != null)
 		{
-			final List<Coord> path = reconstructPath(current.cameFrom);
+			List<Coord> path = reconstructPath(current.cameFrom);
 			path.add(current.coord);
 			return path;
 		}
@@ -101,8 +103,10 @@ public class AStar implements Path
 
 	private Node minFScore(Set<Node> set)
 	{
+		//consider changing this to a priority queue for better asysomtotic
+		//runtime...not that it terribly matters in a roguelike :p
 		Node min = null;
-		for(final Node node : set)
+		for(Node node : set)
 			if(min == null || node.fScore < min.fScore)
 				min = node;
 		return min;
