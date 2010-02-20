@@ -1,5 +1,6 @@
 package jade.path;
 
+import jade.core.World;
 import jade.util.Coord;
 
 /**
@@ -8,10 +9,7 @@ import jade.util.Coord;
  */
 public class Dijkstra extends AStar
 {
-	/**
-	 * Dijkstra's heuristic estimate is always 0.
-	 */
-	protected final double hEstimate(Coord c1, Coord c2)
+	protected double hEstimate(Coord c1, Coord c2, World world)
 	{
 		return 0;
 	}
