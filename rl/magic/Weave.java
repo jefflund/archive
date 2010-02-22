@@ -8,8 +8,8 @@ public class Weave extends Actor
 {
 	public enum Effect
 	{
-		Fire(false, Color.red), FireRes(true, Color.orange),
-		Channel(true, Color.white);
+		FIRE(false, Color.red), FIRE_RES(true, Color.orange),
+		CHANNEL(true, Color.white);
 
 		private boolean undoNeeded;
 		private Color color;
@@ -82,13 +82,13 @@ public class Weave extends Actor
 	{
 		switch(effect)
 		{
-		case Fire:
+		case FIRE:
 			fire(target);
 			break;
-		case FireRes:
+		case FIRE_RES:
 			fireRes(target);
 			break;
-		case Channel:
+		case CHANNEL:
 			channel(target);
 			break;
 		}
@@ -99,12 +99,12 @@ public class Weave extends Actor
 	{
 		switch(effect)
 		{
-		case Fire:
+		case FIRE:
 			break;
-		case FireRes:
+		case FIRE_RES:
 			fireResUndo();
 			break;
-		case Channel:
+		case CHANNEL:
 			channelUndo();
 			break;
 		}

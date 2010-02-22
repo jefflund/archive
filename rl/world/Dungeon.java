@@ -15,11 +15,11 @@ public class Dungeon
 	{
 		levels = new Level[depth];
 		Dice dice = new Dice(seed);
-		levels[0] = new Level(dice.nextLong(), this, GenFactory.wilderness());
+		levels[0] = new Level(dice.nextLong(), this, GenFactory.wilderness(), 0);
 		for(int i = 1; i < depth; i++)
 		{
 			Gen gen = dice.nextBoolean() ? GenFactory.traditional() : GenFactory.cellular();
-			levels[i] = new Level(dice.nextLong(), this, gen);
+			levels[i] = new Level(dice.nextLong(), this, gen, i);
 		}
 		this.player = player;
 		levels[0].addActor(player, dice);

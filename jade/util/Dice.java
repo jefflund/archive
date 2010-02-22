@@ -2,6 +2,7 @@ package jade.util;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Random;
 
 /**
@@ -74,5 +75,12 @@ public class Dice extends Random implements Serializable
 	{
 		Direction[] values = Direction.values();
 		return values[nextInt(values.length)];
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T nextValue(Collection<T> set)
+	{
+		Object[] array = set.toArray();
+		return (T)array[nextInt(array.length)];
 	}
 }

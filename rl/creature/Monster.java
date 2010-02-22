@@ -8,7 +8,7 @@ import jade.util.Dice;
 import jade.util.Tools;
 import java.awt.Color;
 import java.util.List;
-import rl.prototype.Prototype;
+import rl.prototype.MPrototype;
 import rl.world.Script;
 
 public class Monster extends Creature
@@ -16,7 +16,7 @@ public class Monster extends Creature
 	private Coord target;
 	private boolean alert;
 
-	public Monster(Prototype prototype)
+	public Monster(MPrototype prototype)
 	{
 		super(prototype);
 		target = new Coord();

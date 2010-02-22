@@ -2,11 +2,10 @@ package rl.prototype;
 
 import jade.util.Config;
 import jade.util.Dice;
+import jade.util.Multimap;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
-public class Prototype
+public class MPrototype
 {
 	public char face;
 	public Color color;
@@ -17,7 +16,7 @@ public class Prototype
 	public int dmg;
 	public int fireRes;
 
-	private Prototype(char face, Color color, int hp, int mp, int atk, int def,
+	private MPrototype(char face, Color color, int hp, int mp, int atk, int def,
 			int dmg, int fireRes)
 	{
 		this.face = face;
@@ -30,11 +29,11 @@ public class Prototype
 		this.fireRes = fireRes;
 	}
 
-	private static List<Prototype> prototypes;
+	private static Multimap<Integer, MPrototype> prototypes;
 
-	public static void loadAll(Config data)
+	public static void load(Config data)
 	{
-		prototypes = new ArrayList<Prototype>();
+		prototypes = new Multimap<Integer, MPrototype>();
 		for(String monster : data.getSections())
 		{
 			char face = data.getProperty(monster, "face").charAt(0);
@@ -45,14 +44,18 @@ public class Prototype
 			int def = Integer.parseInt(data.getProperty(monster, "def"));
 			int dmg = Integer.parseInt(data.getProperty(monster, "dmg"));
 			int fireRes = Integer.parseInt(data.getProperty(monster, "fireRes"));
-			Prototype prototype = new Prototype(face, new Color(color), hp, mp, atk,
+			int depth = Integer.parseInt(data.getProperty(monster, "depth"));
+			MPrototype prototype = new MPrototype(face, new Color(color), hp, mp, atk,
 					def, dmg, fireRes);
-			prototypes.add(prototype);
+			prototypes.put(depth, prototype);
 		}
 	}
 
-	public static Prototype getAny()
+	public static MPrototype get(int depth)
 	{
-		return prototypes.get(Dice.global.nextInt(prototypes.size()));
+		assert(depth <= prototypes.lastKey());
+		Multimap<Integer, MPrototype> possible = prototypes.headMap(depth, true);
+		depth = Dice.global.nextValue(possible.keys());
+		return Dice.global.nextValue(possible.get(depth));
 	}
 }

@@ -4,7 +4,7 @@ import jade.core.Actor;
 import jade.util.Coord;
 import jade.util.Dice;
 import java.awt.Color;
-import rl.prototype.Prototype;
+import rl.prototype.MPrototype;
 import rl.world.Level;
 
 public abstract class Creature extends Actor
@@ -16,7 +16,7 @@ public abstract class Creature extends Actor
 	private Stat dmg;
 	private Stat fireRes;
 
-	public Creature(Prototype type)
+	public Creature(MPrototype type)
 	{
 		this(type.face, type.color, type.hp, type.mp, type.atk, type.def, type.dmg,
 				type.fireRes);

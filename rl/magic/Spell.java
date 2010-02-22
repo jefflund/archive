@@ -8,7 +8,7 @@ public class Spell
 {
 	public enum Target
 	{
-		Self, Other, Area
+		SELF, OTHER, AREA
 	}
 
 	private Effect effect;
@@ -36,10 +36,10 @@ public class Spell
 		Weave weave = new Weave(effect, magnitude, duration);
 		switch(target)
 		{
-		case Self:
+		case SELF:
 			weave.attachTo(caster);
 			break;
-		case Other:
+		case OTHER:
 			Coord target = caster.getTarget(Creature.class);
 			if(target == null)
 			{
@@ -50,7 +50,7 @@ public class Spell
 			if(other != null)
 				weave.attachTo(other);
 			break;
-		case Area:
+		case AREA:
 			Coord area = caster.getTarget();
 			if(area == null)
 			{

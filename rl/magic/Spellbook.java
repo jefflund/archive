@@ -18,7 +18,7 @@ public class Spellbook
 	{
 		spells = new ArrayList<Spell>();
 		knownEffects = new HashSet<Effect>();
-		knownEffects.add(Effect.Fire);
+		learnEffect(Effect.FIRE);
 	}
 
 	public void learnEffect(Effect effect)

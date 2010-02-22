@@ -117,10 +117,10 @@ public class Inventory
 
 	private boolean handsOccupied(Slot slot)
 	{
-		if(slot == Slot.Weapon)
-			return equipment.containsKey(Slot.Bow);
-		else if(slot == Slot.Bow)
-			return equipment.containsKey(Slot.Weapon);
+		if(slot == Slot.WEAPON)
+			return equipment.containsKey(Slot.BOW);
+		else if(slot == Slot.BOW)
+			return equipment.containsKey(Slot.WEAPON);
 		else
 			return false;
 	}

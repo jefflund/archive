@@ -3,13 +3,13 @@ package rl.item;
 import jade.core.Actor;
 import java.awt.Color;
 import rl.creature.Player;
+import rl.prototype.IPrototype;
 
 public class Item extends Actor
 {
 	public enum Slot
 	{
-		Armor(true), Weapon(true), Bow(true), Scroll(false);
-
+		ARMOR(true), WEAPON(true), BOW(true), SCROLL(false);
 		private boolean isEquipment;
 
 		Slot(boolean isEquipment)
@@ -21,9 +21,14 @@ public class Item extends Actor
 	private Slot slot;
 	private Enchantment enchantment;
 
-	public Item(Slot slot, char face, Enchantment enchantment)
+	public Item(IPrototype prototype)
 	{
-		super(face, Color.white);
+		this(prototype.slot, prototype.face, prototype.color, prototype.enchantment);
+	}
+
+	protected Item(Slot slot, char face, Color color, Enchantment enchantment)
+	{
+		super(face, color);
 		this.slot = slot;
 		if(enchantment != null)
 			enchant(enchantment);
@@ -43,7 +48,7 @@ public class Item extends Actor
 	@Override
 	public void act()
 	{
-		if(slot == Slot.Scroll)
+		if(slot == Slot.SCROLL)
 		{
 			if(enchantment != null)
 			{

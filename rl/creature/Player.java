@@ -143,7 +143,7 @@ public class Player extends Creature implements Camera
 
 	private boolean ranged()
 	{
-		Item bow = inventory.getEquiped(Slot.Bow);
+		Item bow = inventory.getEquiped(Slot.BOW);
 		if(bow == null)
 		{
 			appendMessage("No bow equiped");
@@ -177,7 +177,7 @@ public class Player extends Creature implements Camera
 
 	private boolean read()
 	{
-		List<Item> scrolls = inventory.getInventory(Slot.Scroll);
+		List<Item> scrolls = inventory.getInventory(Slot.SCROLL);
 		Item scroll = choose(scrolls, "Choose a scroll:");
 		if(scroll == null)
 		{

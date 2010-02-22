@@ -10,30 +10,23 @@ import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
 import rl.item.Item;
-import rl.item.Item.Slot;
 import rl.magic.Weave;
-import rl.prototype.Prototype;
+import rl.prototype.IPrototype;
+import rl.prototype.MPrototype;
 
 public class Level extends World
 {
 	private Dungeon dungeon;
 
-	public Level(long seed, Dungeon dungeon, Gen gen)
+	public Level(long seed, Dungeon dungeon, Gen gen, int depth)
 	{
 		super(80, 23);
 		gen.generate(this, seed);
 		this.dungeon = dungeon;
 		for(int i = 0; i < 4; i++)
-			addActor(new Monster(Prototype.getAny()), Dice.global);
-
-		addActor(new Item(Slot.Weapon, '|', null), Dice.global);
-		addActor(new Item(Slot.Armor, ']', null), Dice.global);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
-		addActor(new Item(Slot.Scroll, '!', null), Dice.global);
-		addActor(new Item(Slot.Bow, '}', null), Dice.global);
+			addActor(new Monster(MPrototype.get(depth)), Dice.global);
+		for(int i = 0; i < 8; i++)
+			addActor(new Item(IPrototype.get(depth)), Dice.global);
 	}
 
 	@Override

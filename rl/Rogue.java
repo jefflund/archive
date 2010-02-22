@@ -5,7 +5,8 @@ import jade.util.Config;
 import java.awt.Color;
 import java.io.FileReader;
 import rl.creature.Player;
-import rl.prototype.Prototype;
+import rl.prototype.IPrototype;
+import rl.prototype.MPrototype;
 import rl.world.Dungeon;
 
 public class Rogue extends Console
@@ -49,15 +50,12 @@ public class Rogue extends Console
 	{
 		try
 		{
-			Config data = new Config(new FileReader("monster.ini"));
-			Prototype.loadAll(data);
+			MPrototype.load(new Config(new FileReader("monster.ini")));
+			IPrototype.load(new Config(new FileReader("items.ini")));
 		}
 		catch(Exception exception)
 		{
 			exception.printStackTrace();
-			buffLine(0, "Error loading monsters", Color.white);
-			getKey();
-			exit();
 		}
 	}
 }
