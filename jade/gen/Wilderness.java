@@ -2,7 +2,7 @@ package jade.gen;
 
 import jade.core.World;
 import jade.util.Dice;
-import jade.util.Rect;
+import jade.util.type.Rect;
 import java.awt.Color;
 
 /**

@@ -1,8 +1,8 @@
 package rl.creature;
 
 import jade.core.Actor;
-import jade.util.Coord;
 import jade.util.Dice;
+import jade.util.type.Coord;
 import java.awt.Color;
 import rl.prototype.MPrototype;
 import rl.world.Level;

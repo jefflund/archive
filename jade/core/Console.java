@@ -1,8 +1,8 @@
 package jade.core;
 
-import jade.util.ColoredChar;
-import jade.util.Coord;
-import jade.util.Rect;
+import jade.util.type.ColoredChar;
+import jade.util.type.Coord;
+import jade.util.type.Rect;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;

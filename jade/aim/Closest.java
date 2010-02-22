@@ -3,7 +3,7 @@ package jade.aim;
 import jade.aim.Aim.BaseAim;
 import jade.core.Console;
 import jade.core.Console.Camera;
-import jade.util.Coord;
+import jade.util.type.Coord;
 import java.util.List;
 
 /**

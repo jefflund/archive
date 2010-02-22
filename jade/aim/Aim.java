@@ -1,11 +1,11 @@
 package jade.aim;
 
-import java.util.ArrayList;
-import java.util.List;
 import jade.core.Actor;
 import jade.core.Console;
 import jade.core.Console.Camera;
-import jade.util.Coord;
+import jade.util.type.Coord;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This interface represents a user targeting system

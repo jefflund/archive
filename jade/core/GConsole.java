@@ -1,7 +1,7 @@
 package jade.core;
 
-import jade.util.ColoredChar;
-import jade.util.Coord;
+import jade.util.type.ColoredChar;
+import jade.util.type.Coord;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -137,7 +137,6 @@ public class GConsole extends Console
 		for(Coord coord : inline)
 			tilesFromLook.remove(coord);
 		aquireBuffer();
-
 	}
 
 	/**

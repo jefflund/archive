@@ -1,5 +1,7 @@
 package jade.util;
 
+import jade.util.type.Coord;
+import jade.util.type.Direction;
 import java.util.Collection;
 import java.util.TreeSet;
 

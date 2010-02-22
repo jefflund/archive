@@ -1,10 +1,10 @@
 package jade.gen;
 
 import jade.core.World;
-import jade.util.Coord;
 import jade.util.Dice;
-import jade.util.Rect;
 import jade.util.Tools;
+import jade.util.type.Coord;
+import jade.util.type.Rect;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;

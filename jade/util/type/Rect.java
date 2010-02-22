@@ -1,4 +1,4 @@
-package jade.util;
+package jade.util.type;
 
 /**
  * Represents a rectangle boundry.

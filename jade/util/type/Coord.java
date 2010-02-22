@@ -1,4 +1,4 @@
-package jade.util;
+package jade.util.type;
 
 import java.io.Serializable;
 

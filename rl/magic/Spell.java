@@ -1,6 +1,6 @@
 package rl.magic;
 
-import jade.util.Coord;
+import jade.util.type.Coord;
 import rl.creature.Creature;
 import rl.magic.Weave.Effect;
 

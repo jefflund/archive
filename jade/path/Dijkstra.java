@@ -1,7 +1,7 @@
 package jade.path;
 
 import jade.core.World;
-import jade.util.Coord;
+import jade.util.type.Coord;
 
 /**
  * Implements path with Dijkstra's algorithm using A* with a heuristic estimate
@@ -9,6 +9,9 @@ import jade.util.Coord;
  */
 public class Dijkstra extends AStar
 {
+	/**
+	 * The heuristic estimate for Dijkstra's is always 0
+	 */
 	protected final double hEstimate(Coord c1, Coord c2, World world)
 	{
 		return 0;

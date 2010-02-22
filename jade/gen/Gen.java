@@ -1,7 +1,7 @@
 package jade.gen;
 
 import jade.core.World;
-import jade.util.Rect;
+import jade.util.type.Rect;
 
 /**
  * This interface represents something that can generate a map for a Jade World.
