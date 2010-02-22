@@ -9,10 +9,10 @@ import java.util.List;
 import rl.creature.Creature;
 import rl.creature.Monster;
 import rl.creature.Player;
-import rl.creature.Monster.Prototype;
 import rl.item.Item;
 import rl.item.Item.Slot;
 import rl.magic.Weave;
+import rl.prototype.Prototype;
 
 public class Level extends World
 {
@@ -23,10 +23,8 @@ public class Level extends World
 		super(80, 23);
 		gen.generate(this, seed);
 		this.dungeon = dungeon;
-		addActor(new Monster(Prototype.Dragon), Dice.global);
-		addActor(new Monster(Prototype.Ogre), Dice.global);
-		addActor(new Monster(Prototype.Orc), Dice.global);
-		addActor(new Monster(Prototype.Boss), Dice.global);
+		for(int i = 0; i < 4; i++)
+			addActor(new Monster(Prototype.getAny()), Dice.global);
 
 		addActor(new Item(Slot.Weapon, '|', null), Dice.global);
 		addActor(new Item(Slot.Armor, ']', null), Dice.global);

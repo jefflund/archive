@@ -4,7 +4,7 @@ import jade.core.Actor;
 import jade.util.Coord;
 import jade.util.Dice;
 import java.awt.Color;
-import rl.creature.Monster.Prototype;
+import rl.prototype.Prototype;
 import rl.world.Level;
 
 public abstract class Creature extends Actor

@@ -1,8 +1,11 @@
 package rl;
 
 import jade.core.Console;
+import jade.util.Config;
 import java.awt.Color;
+import java.io.FileReader;
 import rl.creature.Player;
+import rl.prototype.Prototype;
 import rl.world.Dungeon;
 
 public class Rogue extends Console
@@ -22,11 +25,12 @@ public class Rogue extends Console
 	public Rogue()
 	{
 		super();
+		init();
 		player = new Player(this);
 		addCamera(player, Player.VISION, Player.VISION);
 		dungeon = new Dungeon(10, 0, player);
 	}
-
+	
 	private void gameLoop()
 	{
 		while(!player.isExpired())
@@ -39,5 +43,21 @@ public class Rogue extends Console
 			dungeon.getLevel().tick();
 		}
 		exit();
+	}
+	
+	private void init()
+	{
+		try
+		{
+			Config data = new Config(new FileReader("monster.ini"));
+			Prototype.loadAll(data);
+		}
+		catch(Exception exception)
+		{
+			exception.printStackTrace();
+			buffLine(0, "Error loading monsters", Color.white);
+			getKey();
+			exit();
+		}
 	}
 }

@@ -106,6 +106,12 @@ public class Demo
 			if(dir != null)
 				move(dir);
 		}
+		
+		public void move(int dx, int dy)
+		{
+			if(world().passable(x() + dx, y() + dy))
+				super.move(dx, dy);
+		}
 	}
 
 	private static class DemoTrap extends Actor

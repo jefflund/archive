@@ -34,14 +34,14 @@ public class AStar implements Path
 	{
 		nodes.clear();
 		Set<Node> closed = new TreeSet<Node>();
-		Set<Node> open = new TreeSet<Node>();
+		TreeSet<Node> open = new TreeSet<Node>();
 		open.add(getNode(start));
 		getNode(start).gScore = 0;
 		getNode(start).hScore = hEstimate(start, goal, world);
 		getNode(start).fScore = getNode(start).hScore;
 		while(!open.isEmpty())
 		{
-			Node x = minFScore(open);
+			Node x = open.first();
 			if(x.coord.equals(goal))
 				return reconstructPath(x);
 			open.remove(x);
@@ -62,13 +62,26 @@ public class AStar implements Path
 					tentativeIsBetter = true;
 				if(tentativeIsBetter)
 				{
+					open.remove(y);
 					y.cameFrom = x;
 					y.gScore = tentativeGScore;
 					y.fScore = y.gScore + y.hScore;
+					open.add(y);
 				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * This method is the heuristic estimate used to optimize A*. In other words,
+	 * it is the likley hood that a square will be on the shortest path between
+	 * two nodes. By default, it just calculates the distance from the c1 to c2,
+	 * but could be overridden to factor in other cost in node traversal.
+	 */
+	protected double hEstimate(Coord c1, Coord c2, World world)
+	{
+		return c1.distTo(c2);
 	}
 
 	private Set<Node> getAdjacentNodes(Node node, World world)
@@ -101,26 +114,6 @@ public class AStar implements Path
 		return new LinkedList<Coord>();
 	}
 
-	private Node minFScore(Set<Node> set)
-	{
-		Node min = null;
-		for(Node node : set)
-			if(min == null || node.fScore < min.fScore)
-				min = node;
-		return min;
-	}
-
-	/**
-	 * This method is the heuristic estimate used to optimize A*. In other words,
-	 * it is the likley hood that a square will be on the shortest path between
-	 * two nodes. By default, it just calculates the distance from the c1 to c2,
-	 * but could be overridden to factor in other cost in node traversal.
-	 */
-	protected double hEstimate(Coord c1, Coord c2, World world)
-	{
-		return c1.distTo(c2);
-	}
-	
 	private double dist(Node n1, Node n2)
 	{
 		return n1.coord.distTo(n2.coord);
@@ -149,10 +142,20 @@ public class AStar implements Path
 		{
 			this.coord = coord;
 		}
-
+		
+		public boolean equals(Object obj)
+		{
+			return super.equals(obj);
+		}
+		
 		public int compareTo(Node other)
 		{
-			return coord.compareTo(other.coord);
+			if(fScore < other.fScore)
+				return -1;
+			else if(fScore > other.fScore)
+				return 1;
+			else
+				return coord.compareTo(other.coord);
 		}
 	}
 }

@@ -9,7 +9,7 @@ import jade.util.Coord;
  */
 public class Dijkstra extends AStar
 {
-	protected double hEstimate(Coord c1, Coord c2, World world)
+	protected final double hEstimate(Coord c1, Coord c2, World world)
 	{
 		return 0;
 	}

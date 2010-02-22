@@ -8,39 +8,11 @@ import jade.util.Dice;
 import jade.util.Tools;
 import java.awt.Color;
 import java.util.List;
+import rl.prototype.Prototype;
 import rl.world.Script;
 
 public class Monster extends Creature
 {
-	public enum Prototype
-	{
-		Orc('o', Color.yellow, 5, 5, 5, 5, 1, 0),
-		Ogre('O', Color.pink, 5, 5, 5, 5, 3, 10),
-		Dragon('D', Color.red, 10, 10, 10, 10, 3, 90),
-		Boss('U', Color.orange, 50, 50, 50, 50, 10, 120);
-
-		public char face;
-		public Color color;
-		public int hp;
-		public int mp;
-		public int atk;
-		public int def;
-		public int dmg;
-		public int fireRes;
-
-		private Prototype(char face, Color color, int hp, int mp, int atk, int def,
-				int dmg, int resFire)
-		{
-			this.face = face;
-			this.color = color;
-			this.hp = hp;
-			this.mp = mp;
-			this.atk = atk;
-			this.def = def;
-			this.dmg = dmg;
-		}
-	};
-
 	private Coord target;
 	private boolean alert;
 
@@ -49,7 +21,7 @@ public class Monster extends Creature
 		super(prototype);
 		target = new Coord();
 		alert = false;
-		if(prototype == Prototype.Boss)
+		if(look().ch() == 'U')//HACK!
 			attachBossScript();
 	}
 
@@ -72,10 +44,10 @@ public class Monster extends Creature
 		{
 			List<Coord> path = PathFactory.aStar().getPath(world(), pos(),
 					getTarget(Player.class));
-			if(path == null);
-//				move(Dice.global.nextDir());
-			else
+			if(path != null)
 				move(Tools.directionTo(pos(), path.get(0)));
+			else if(alert)
+				move(Dice.global.nextDir());
 		}
 	}
 
