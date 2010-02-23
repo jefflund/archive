@@ -4,7 +4,6 @@ import jade.core.Actor;
 import jade.util.Dice;
 import jade.util.type.Coord;
 import java.awt.Color;
-import rl.prototype.MPrototype;
 import rl.world.Level;
 
 public abstract class Creature extends Actor
@@ -16,7 +15,7 @@ public abstract class Creature extends Actor
 	private Stat dmg;
 	private Stat fireRes;
 
-	public Creature(MPrototype type)
+	public Creature(ProtoCreature type)
 	{
 		this(type.face, type.color, type.hp, type.mp, type.atk, type.def, type.dmg,
 				type.fireRes);
@@ -138,5 +137,30 @@ public abstract class Creature extends Actor
 					expire();
 			}
 		};
+	}
+	
+	public static class ProtoCreature
+	{
+		public char face;
+		public Color color;
+		public int hp;
+		public int mp;
+		public int atk;
+		public int def;
+		public int dmg;
+		public int fireRes;
+
+		public ProtoCreature(char face, Color color, int hp, int mp, int atk, int def,
+				int dmg, int fireRes)
+		{
+			this.face = face;
+			this.color = color;
+			this.hp = hp;
+			this.mp = mp;
+			this.atk = atk;
+			this.def = def;
+			this.dmg = dmg;
+			this.fireRes = fireRes;
+		}
 	}
 }

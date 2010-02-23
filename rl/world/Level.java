@@ -11,8 +11,6 @@ import rl.creature.Monster;
 import rl.creature.Player;
 import rl.item.Item;
 import rl.magic.Weave;
-import rl.prototype.IPrototype;
-import rl.prototype.MPrototype;
 
 public class Level extends World
 {
@@ -24,9 +22,9 @@ public class Level extends World
 		gen.generate(this, seed);
 		this.dungeon = dungeon;
 		for(int i = 0; i < 4; i++)
-			addActor(new Monster(MPrototype.get(depth)), Dice.global);
+			addActor(Prototype.getMonster(depth), Dice.global);
 		for(int i = 0; i < 8; i++)
-			addActor(new Item(IPrototype.get(depth)), Dice.global);
+			addActor(Prototype.getItem(depth), Dice.global);
 	}
 
 	@Override

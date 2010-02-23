@@ -3,7 +3,6 @@ package rl.item;
 import jade.core.Actor;
 import java.awt.Color;
 import rl.creature.Player;
-import rl.prototype.IPrototype;
 
 public class Item extends Actor
 {
@@ -21,12 +20,12 @@ public class Item extends Actor
 	private Slot slot;
 	private Enchantment enchantment;
 
-	public Item(IPrototype prototype)
+	public Item(ProtoItem prototype)
 	{
 		this(prototype.slot, prototype.face, prototype.color, prototype.enchantment);
 	}
 
-	protected Item(Slot slot, char face, Color color, Enchantment enchantment)
+	private Item(Slot slot, char face, Color color, Enchantment enchantment)
 	{
 		super(face, color);
 		this.slot = slot;
@@ -78,5 +77,21 @@ public class Item extends Actor
 	{
 		if(enchantment != null)
 			enchantment.deactivate();
+	}
+	
+	public static class ProtoItem
+	{
+		public Slot slot;
+		public char face;
+		public Color color;
+		public Enchantment enchantment;
+
+		public ProtoItem(Slot slot, char face, Color color, Enchantment enchantment)
+		{
+			this.slot = slot;
+			this.face = face;
+			this.color = color;
+			this.enchantment = enchantment;
+		}
 	}
 }

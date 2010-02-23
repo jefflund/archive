@@ -5,9 +5,8 @@ import jade.util.Config;
 import java.awt.Color;
 import java.io.FileReader;
 import rl.creature.Player;
-import rl.prototype.IPrototype;
-import rl.prototype.MPrototype;
 import rl.world.Dungeon;
+import rl.world.Prototype;
 
 public class Rogue extends Console
 {
@@ -50,8 +49,8 @@ public class Rogue extends Console
 	{
 		try
 		{
-			MPrototype.load(new Config(new FileReader("monster.ini")));
-			IPrototype.load(new Config(new FileReader("items.ini")));
+			Prototype.loadMonsters(new Config(new FileReader("monster.ini")));
+			Prototype.loadItems(new Config(new FileReader("items.ini")));
 		}
 		catch(Exception exception)
 		{
