@@ -46,6 +46,8 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public void addActor(Actor actor, int x, int y)
 	{
+		if(actor == null)
+			return;
 		assert (!actor.bound());
 		assert (!actor.held());
 		actor.setWorld(this);

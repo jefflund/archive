@@ -186,7 +186,7 @@ public class Player extends Creature implements Camera
 		}
 		else
 		{
-			scroll.act();
+			scroll.use();
 			return true;
 		}
 	}
@@ -272,6 +272,7 @@ public class Player extends Creature implements Camera
 		{
 			if(fov.contains(monster.pos()))
 				monster.appendMessage(monster + " didn't see " + this);
+			stealth.train(.005f);
 			return new TreeSet<Coord>();
 		}
 	}

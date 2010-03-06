@@ -21,10 +21,19 @@ public class Level extends World
 		super(80, 23);
 		gen.generate(this, seed);
 		this.dungeon = dungeon;
+		Prototype prototype = dungeon.prototype();
 		for(int i = 0; i < 4; i++)
-			addActor(Prototype.getMonster(depth), Dice.global);
-		for(int i = 0; i < 8; i++)
-			addActor(Prototype.getItem(depth), Dice.global);
+			addActor(prototype.getMonster(depth), Dice.global);
+		for(int i = 0; i < 4; i++)
+			addActor(prototype.getItem(depth), Dice.global);
+		Monster unique = prototype.getUnique(depth);
+		if(unique != null)
+			unique.attachBossScript();
+		addActor(unique, Dice.global);
+		Item artifact = prototype.getArtifact(depth);
+		if(artifact != null)
+			artifact.attachArtifactScript();
+		addActor(artifact, Dice.global);
 	}
 
 	@Override

@@ -1,12 +1,9 @@
 package rl;
 
 import jade.core.Console;
-import jade.util.Config;
 import java.awt.Color;
-import java.io.FileReader;
 import rl.creature.Player;
 import rl.world.Dungeon;
-import rl.world.Prototype;
 
 public class Rogue extends Console
 {
@@ -25,7 +22,6 @@ public class Rogue extends Console
 	public Rogue()
 	{
 		super();
-		init();
 		player = new Player(this);
 		addCamera(player, Player.VISION, Player.VISION);
 		dungeon = new Dungeon(10, 0, player);
@@ -43,18 +39,5 @@ public class Rogue extends Console
 			dungeon.getLevel().tick();
 		}
 		exit();
-	}
-	
-	private void init()
-	{
-		try
-		{
-			Prototype.loadMonsters(new Config(new FileReader("monster.ini")));
-			Prototype.loadItems(new Config(new FileReader("items.ini")));
-		}
-		catch(Exception exception)
-		{
-			exception.printStackTrace();
-		}
 	}
 }

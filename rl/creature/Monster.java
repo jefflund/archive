@@ -20,10 +20,8 @@ public class Monster extends Creature
 		super(prototype);
 		target = new Coord();
 		alert = false;
-		if(look().ch() == 'U')//HACK!
-			attachBossScript();
 	}
-
+	
 	@Override
 	public void act()
 	{
@@ -67,8 +65,8 @@ public class Monster extends Creature
 	{
 		return alert;
 	}
-
-	private void attachBossScript()
+	
+	public void attachBossScript()
 	{
 		Script script = new Script()
 		{
@@ -99,4 +97,5 @@ public class Monster extends Creature
 		};
 		script.attachTo(this);
 	}
+
 }

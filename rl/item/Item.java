@@ -1,8 +1,11 @@
 package rl.item;
 
 import jade.core.Actor;
+import jade.core.Console;
 import java.awt.Color;
 import rl.creature.Player;
+import rl.item.Enchantment.ProtoEnchant;
+import rl.world.Script;
 
 public class Item extends Actor
 {
@@ -25,12 +28,12 @@ public class Item extends Actor
 		this(prototype.slot, prototype.face, prototype.color, prototype.enchantment);
 	}
 
-	private Item(Slot slot, char face, Color color, Enchantment enchantment)
+	private Item(Slot slot, char face, Color color, ProtoEnchant enchantment)
 	{
 		super(face, color);
 		this.slot = slot;
 		if(enchantment != null)
-			enchant(enchantment);
+			enchant(new Enchantment(enchantment.effect, enchantment.magnitude));
 	}
 
 	private void enchant(Enchantment enchantment)
@@ -46,6 +49,10 @@ public class Item extends Actor
 
 	@Override
 	public void act()
+	{
+	}
+
+	public void use()
 	{
 		if(slot == Slot.SCROLL)
 		{
@@ -79,14 +86,37 @@ public class Item extends Actor
 			enchantment.deactivate();
 	}
 	
+	public void attachArtifactScript()
+	{
+		Script script = new Script()
+		{
+			public void act()
+			{
+				if(player() == holder())
+				{
+					Console console = console();
+					console.saveBuffer();
+					console.clearBuffer();
+					console.buffLine(0, "The thingi-ma-jib feels powerful!", Color.white);
+					console.refreshScreen();
+					console.getKey();
+					console.recallBuffer();
+					console.refreshScreen();
+					expire();
+				}
+			}
+		};
+		script.attachTo(this);
+	}
+	
 	public static class ProtoItem
 	{
 		public Slot slot;
 		public char face;
 		public Color color;
-		public Enchantment enchantment;
+		public ProtoEnchant enchantment;
 
-		public ProtoItem(Slot slot, char face, Color color, Enchantment enchantment)
+		public ProtoItem(Slot slot, char face, Color color, ProtoEnchant enchantment)
 		{
 			this.slot = slot;
 			this.face = face;

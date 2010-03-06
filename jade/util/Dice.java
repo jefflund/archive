@@ -81,6 +81,8 @@ public class Dice extends Random implements Serializable
 	@SuppressWarnings("unchecked")
 	public <T> T nextValue(Collection<T> set)
 	{
+		if(set.isEmpty())
+			return null;
 		Object[] array = set.toArray();
 		return (T)array[nextInt(array.length)];
 	}

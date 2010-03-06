@@ -6,20 +6,32 @@ import jade.util.Multimap;
 import java.awt.Color;
 import rl.creature.Monster;
 import rl.creature.Creature.ProtoCreature;
-import rl.item.Enchantment;
 import rl.item.Item;
+import rl.item.Enchantment.ProtoEnchant;
 import rl.item.Item.ProtoItem;
 import rl.item.Item.Slot;
 import rl.magic.Weave.Effect;
 
 public class Prototype
 {
-	private static Multimap<Integer, ProtoCreature> monsterPrototypes;
-	private static Multimap<Integer, ProtoItem> itemPrototypes;
-
-	public static void loadMonsters(Config data)
+	private Multimap<Integer, ProtoCreature> monsters;
+	private Multimap<Integer, ProtoCreature> uniques;
+	private Multimap<Integer, ProtoItem> items;
+	private Multimap<Integer, ProtoItem> artifacts;
+	
+	public void loadMonsters(Config data)
 	{
-		monsterPrototypes = new Multimap<Integer, ProtoCreature>();
+		monsters = loadCreatureConfig(data);
+	}
+	
+	public void loadUnique(Config data)
+	{
+		uniques = loadCreatureConfig(data);
+	}
+	
+	private Multimap<Integer, ProtoCreature> loadCreatureConfig(Config data)
+	{
+		Multimap<Integer, ProtoCreature> creatures = new Multimap<Integer, ProtoCreature>();
 		for(String monster : data.getSections())
 		{
 			char face = data.getProperty(monster, "face").charAt(0);
@@ -33,48 +45,86 @@ public class Prototype
 			int depth = Integer.parseInt(data.getProperty(monster, "depth"));
 			ProtoCreature prototype = new ProtoCreature(face, new Color(color), hp, mp, atk,
 					def, dmg, fireRes);
-			monsterPrototypes.put(depth, prototype);
+			creatures.put(depth, prototype);
 		}
-	}
-
-	public static Monster getMonster(int depth)
-	{
-		assert(depth <= monsterPrototypes.lastKey());
-		Multimap<Integer, ProtoCreature> possible = monsterPrototypes.headMap(depth, true);
-		depth = Dice.global.nextValue(possible.keys());
-		ProtoCreature prototype = Dice.global.nextValue(possible.get(depth));
-		return new Monster(prototype);
+		return creatures;
 	}
 	
-	public static void loadItems(Config data)
+	public void loadItems(Config data)
 	{
-		itemPrototypes = new Multimap<Integer, ProtoItem>();
+		items = loadItemConfig(data);
+	}
+	
+	public void loadArtifacts(Config data)
+	{
+		artifacts = loadItemConfig(data);
+	}
+	
+	private Multimap<Integer, ProtoItem> loadItemConfig(Config data)
+	{
+		Multimap<Integer, ProtoItem> items = new Multimap<Integer, ProtoItem>();
 		for(String item : data.getSections())
 		{
 			Slot slot = Slot.valueOf(data.getProperty(item, "slot").toUpperCase());
 			char face = data.getProperty(item, "face").charAt(0);
 			int rgb = Integer.parseInt(data.getProperty(item, "color"), 16);
 			Color color = new Color(rgb);
-			Enchantment enchantment = null;
+			ProtoEnchant enchantment = null;
 			if(data.getProperty(item, "enchantment") != null)
 			{
 				String[] parts = data.getProperty(item, "enchantment").split(",");
 				Effect effect = Effect.valueOf(parts[0].trim().toUpperCase());
 				int magnitude = Integer.parseInt(parts[1].trim());
-				enchantment = new Enchantment(effect, magnitude);
+				enchantment = new ProtoEnchant(effect, magnitude);
 			}
 			int depth = Integer.parseInt(data.getProperty(item, "depth"));
 			ProtoItem prototype = new ProtoItem(slot, face, color, enchantment);
-			itemPrototypes.put(depth, prototype);
+			items.put(depth, prototype);
 		}
+		return items;
 	}
 	
-	public static Item getItem(int depth)
+	public Monster getMonster(int depth)
 	{
-		assert(depth <= itemPrototypes.lastKey());
-		Multimap<Integer, ProtoItem> possible = itemPrototypes.headMap(depth, true);
-		depth = Dice.global.nextValue(possible.keys());
-		ProtoItem prototype = Dice.global.nextValue(possible.get(depth));
-		return new Item(prototype);
+		ProtoCreature prototype = getTemplatePrototype(monsters, depth);
+		return prototype == null ? null : new Monster(prototype);
+	}
+	
+	public Item getItem(int depth)
+	{
+		ProtoItem prototype = getTemplatePrototype(items, depth);
+		return prototype == null ? null : new Item(prototype);
+	}
+	
+	private <T> T getTemplatePrototype(Multimap<Integer, T> prototypes, Integer depth)
+	{
+		Multimap<Integer, T> headmap = prototypes.headMap(depth, true);
+		depth = Dice.global.nextValue(headmap.keys());
+		if(depth == null)
+			return null;
+		return Dice.global.nextValue(headmap.get(depth));
+	}
+	
+	public Monster getUnique(int depth)
+	{
+		ProtoCreature prototype = getUniquePrototype(uniques, depth);
+		return prototype == null ? null : new Monster(prototype);
+	}
+	
+	public Item getArtifact(int depth)
+	{
+		ProtoItem prototype = getUniquePrototype(artifacts, depth);
+		return prototype == null ? null : new Item(prototype);
+	}
+	
+	private <T> T getUniquePrototype(Multimap<Integer, T> prototypes, Integer depth)
+	{
+		Multimap<Integer, T> headmap = prototypes.headMap(depth, true);
+		depth = Dice.global.nextValue(headmap.keys());
+		if(depth == null)
+			return null;
+		T prototype = Dice.global.nextValue(headmap.get(depth));
+		prototypes.get(depth).remove(prototype);
+		return prototype;
 	}
 }

@@ -36,4 +36,16 @@ public class Enchantment extends Weave
 	{
 		active = true;
 	}
+
+	public static class ProtoEnchant
+	{
+		public Effect effect;
+		public int magnitude;
+		
+		public ProtoEnchant(Effect effect, int magnitude)
+		{
+			this.effect = effect;
+			this.magnitude = magnitude;
+		}
+	}
 }
