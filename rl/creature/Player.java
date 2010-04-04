@@ -23,7 +23,7 @@ import rl.magic.Weave.Effect;
 
 public class Player extends Creature implements Camera
 {
-	public static final int VISION = 5;
+	public static final int VISION = 10;
 	private static final float REGEN = .05f;
 	private Console console;
 	private Collection<Coord> fov;
