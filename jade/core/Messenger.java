@@ -52,7 +52,7 @@ public class Messenger implements Serializable
 	 */
 	public final String getMessages()
 	{
-		final String result = messages;
+		String result = messages;
 		clearMessages();
 		return result;
 	}

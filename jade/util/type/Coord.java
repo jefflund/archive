@@ -143,9 +143,52 @@ public class Coord implements Comparable<Coord>, Serializable
 	{
 		int a = Math.abs(x - other.x);
 		int b = Math.abs(y - other.y);
+		return a + b;
+	}
+	
+	public double rlDistTo(Coord other)
+	{
+		int a = Math.abs(x - other.x);
+		int b = Math.abs(y - other.y);
 		return Math.min(a, b);
 	}
 
+	/**
+	 * Returns the direction needed to get from start to goal.
+	 */
+	public Direction directionTo(Coord goal)
+	{
+		int dx = goal.x - x;
+		int dy = goal.y - y;
+		if(dx < 0)
+		{
+			if(dy < 0)
+				return Direction.NW;
+			else if(dy > 0)
+				return Direction.SW;
+			else
+				return Direction.W;
+		}
+		else if(dx > 0)
+		{
+			if(dy < 0)
+				return Direction.NE;
+			else if(dy > 0)
+				return Direction.SE;
+			else
+				return Direction.E;
+		}
+		else
+		{
+			if(dy < 0)
+				return Direction.N;
+			else if(dy > 0)
+				return Direction.S;
+			else
+				return Direction.O;
+		}
+	}
+	
 	@Override
 	public String toString()
 	{

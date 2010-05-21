@@ -17,6 +17,7 @@ import java.util.List;
 public class Demo
 {
 	private static Console console;
+	private static boolean display = true;
 
 	public static void main(String[] args) throws InterruptedException
 	{
@@ -24,22 +25,22 @@ public class Demo
 		console.buffChar(0, 0, '@', Color.white);
 		console.refreshScreen();
 		World world = new DemoWorld();
-		GenFactory.traditional().generate(world, System.currentTimeMillis());
+		GenFactory.traditional(3, 3).generate(world, System.currentTimeMillis());
 		Actor hero = new DemoActor();
 		world.addActor(hero, Dice.global);
 		for(int i = 0; i < 5; i++)
 			world.addActor(new DemoTrap(), Dice.global);
-		boolean display2 = true;
 		while(!hero.isExpired())
 		{
-			if(display2)
-				displayWorld2(world, hero);
-			else
+			if(display)
 				displayWorld(world);
+			else
+				displayWorld2(world, hero);
 			world.tick();
 		}
 		console.clearBuffer();
-		console.buffString(0, 0, "The trap got you!", Color.white);
+		if(hero.isExpired())
+			console.buffString(0, 0, "The trap got you!", Color.white);
 		console.refreshScreen();
 		console.getKey();
 		console.exit();
@@ -105,6 +106,10 @@ public class Demo
 			Direction dir = Tools.keyToDir(key, true, false);
 			if(dir != null)
 				move(dir);
+			else if(key == 'q')
+				console.exit();
+			else if(key == '\n')
+				display = !display;
 		}
 		
 		public void move(int dx, int dy)

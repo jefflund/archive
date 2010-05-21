@@ -25,7 +25,7 @@ public class GConsole extends Console
 	private Map<Coord, List<ColoredChar>> tilesFromLook;
 	private Semaphore tilesLock;
 	private Map<Coord, List<ColoredChar>> tilesFromLookSaved;
-	private final int tileSetSize;
+	private int tileSetSize;
 
 	/**
 	 * Constructs a default GConsole. The tiles are set to 32x32 and the console
@@ -73,7 +73,7 @@ public class GConsole extends Console
 	 */
 	public static GConsole getFramedConsole(String frameTitle)
 	{
-		final GConsole console = new GConsole();
+		GConsole console = new GConsole();
 		frameConsole(console, frameTitle);
 		return console;
 	}
@@ -84,7 +84,7 @@ public class GConsole extends Console
 	public static GConsole getFramedConsole(String frameTitle, int tileSize,
 			int width, int height, int tileSetSize)
 	{
-		final GConsole console = new GConsole(tileSize, width, height, tileSetSize);
+		GConsole console = new GConsole(tileSize, width, height, tileSetSize);
 		frameConsole(console, frameTitle);
 		return console;
 	}
@@ -154,7 +154,7 @@ public class GConsole extends Console
 			images.put(new ColoredChar(ch, color), tile);
 			return true;
 		}
-		catch(final IOException e)
+		catch(IOException e)
 		{
 			return false;
 		}

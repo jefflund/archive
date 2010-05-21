@@ -79,7 +79,8 @@ public class AStar implements Path
 	 * two nodes. By default, it just calculates the distance from the c1 to c2,
 	 * but could be overridden to factor in other cost in node traversal.
 	 */
-	protected double hEstimate(Coord c1, Coord c2, World world)
+	protected double hEstimate(Coord c1, Coord c2,
+			@SuppressWarnings("unused") World world)
 	{
 		return c1.distTo(c2);
 	}
@@ -87,22 +88,23 @@ public class AStar implements Path
 	private Set<Node> getAdjacentNodes(Node node, World world)
 	{
 		Set<Node> adjacent = new TreeSet<Node>();
-		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y())));
-		adjacent.add(getNode(new Coord(node.coord.x() - 1, node.coord.y())));
-		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() - 1)));
-		adjacent.add(getNode(new Coord(node.coord.x(), node.coord.y() + 1)));
-		adjacent.add(getNode(new Coord(node.coord.x() - 1, node.coord.y() - 1)));
-		adjacent.add(getNode(new Coord(node.coord.x() - 1, node.coord.y() + 1)));
-		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y() - 1)));
-		adjacent.add(getNode(new Coord(node.coord.x() + 1, node.coord.y() + 1)));
-		Set<Node> nonpassable = new TreeSet<Node>();
-		for(Node n : adjacent)
-			if(!world.passable(n.coord.x(), n.coord.y()))
-				nonpassable.add(n);
-		adjacent.removeAll(nonpassable);
+		addIfPassable(adjacent, node.coord.getTranslated(1, 0), world);
+		addIfPassable(adjacent, node.coord.getTranslated(-1, 0), world);
+		addIfPassable(adjacent, node.coord.getTranslated(1, -1), world);
+		addIfPassable(adjacent, node.coord.getTranslated(1, 1), world);
+		addIfPassable(adjacent, node.coord.getTranslated(-1, -1), world);
+		addIfPassable(adjacent, node.coord.getTranslated(-1, 1), world);
+		addIfPassable(adjacent, node.coord.getTranslated(1, -1), world);
+		addIfPassable(adjacent, node.coord.getTranslated(1, 1), world);
 		return adjacent;
 	}
-
+	
+	private void addIfPassable(Set<Node> set, Coord coord, World world)
+	{
+		if(world.passable(coord))
+			set.add(getNode(coord));
+	}
+	
 	private List<Coord> reconstructPath(Node current)
 	{
 		if(current.cameFrom != null)
@@ -142,12 +144,12 @@ public class AStar implements Path
 		{
 			this.coord = coord;
 		}
-		
+
 		public boolean equals(Object obj)
 		{
 			return super.equals(obj);
 		}
-		
+
 		public int compareTo(Node other)
 		{
 			if(fScore < other.fScore)

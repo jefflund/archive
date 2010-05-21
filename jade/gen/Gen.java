@@ -21,10 +21,11 @@ public interface Gen
 	public class GenFactory
 	{
 		private static Gen cellular;
-		private static Gen traditional;
+		private static Gen bsp;
 		private static Gen wilderness;
 		private static Gen town;
 		private static Gen maze;
+		private static Gen traditional;
 
 		/**
 		 * Uses cellular automaton to generate cave like maps.
@@ -40,11 +41,11 @@ public interface Gen
 		 * Uses binary space partitioning to generate traditional maps with rooms
 		 * and corridors.
 		 */
-		public static Gen traditional()
+		public static Gen bsp()
 		{
-			if(traditional == null)
-				traditional = new Traditional();
-			return traditional;
+			if(bsp == null)
+				bsp = new BSP();
+			return bsp;
 		}
 
 		/**
@@ -67,11 +68,25 @@ public interface Gen
 			return town;
 		}
 		
+		/**
+		 * Generates a perfect maze
+		 */
 		public static Gen maze()
 		{
 			if(maze == null)
 				maze = new Maze();
 			return maze;
+		}
+		
+		/**
+		 * Generates a grid of interconnected rooms like the origional rogue
+		 */
+		public static Gen traditional(int roomsX, int roomsY)
+		{
+			if(traditional == null)
+				traditional = new Traditional(roomsX, roomsY);
+			((Traditional)traditional).setDims(roomsX, roomsY);
+			return traditional;
 		}
 	}
 }

@@ -97,7 +97,7 @@ public class Console extends JPanel implements KeyListener, Serializable
 	 */
 	public static Console getFramedConsole(String frameTitle)
 	{
-		final Console console = new Console();
+		Console console = new Console();
 		frameConsole(console, frameTitle);
 		return console;
 	}
@@ -108,14 +108,14 @@ public class Console extends JPanel implements KeyListener, Serializable
 	public static Console getFramedConsole(String frameTitle, int tileSize,
 			int width, int height)
 	{
-		final Console console = new Console(tileSize, width, height);
+		Console console = new Console(tileSize, width, height);
 		frameConsole(console, frameTitle);
 		return console;
 	}
 
 	protected static void frameConsole(Console console, String frameTitle)
 	{
-		final JFrame frame = new JFrame(frameTitle);
+		JFrame frame = new JFrame(frameTitle);
 		frame.add(console);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -161,7 +161,7 @@ public class Console extends JPanel implements KeyListener, Serializable
 	 */
 	public char echoChar(Coord coord, Color color)
 	{
-		final char key = getKey();
+		char key = getKey();
 		buffChar(coord, key, color);
 		refreshScreen();
 		return key;
@@ -180,8 +180,8 @@ public class Console extends JPanel implements KeyListener, Serializable
 	 */
 	public void buffString(int x, int y, String str, Color color)
 	{
-		final int startX = x;
-		for(final char ch : str.toCharArray())
+		int startX = x;
+		for(char ch : str.toCharArray())
 		{
 			switch(ch)
 			{
@@ -548,7 +548,7 @@ public class Console extends JPanel implements KeyListener, Serializable
 		public int y();
 	}
 
-	//^key constants
+	//ctrl key constants
 	public static final char CTRLA = 1;
 	public static final char CTRLB = 2;
 	public static final char CTRLC = 3;

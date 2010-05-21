@@ -170,40 +170,4 @@ public final class Tools
 			value = max;
 		return value;
 	}
-
-	/**
-	 * Returns the direction needed to get from start to goal.
-	 */
-	public static Direction directionTo(Coord start, Coord goal)
-	{
-		int dx = goal.x() - start.x();
-		int dy = goal.y() - start.y();
-		if(dx < 0)
-		{
-			if(dy < 0)
-				return Direction.NW;
-			else if(dy > 0)
-				return Direction.SW;
-			else
-				return Direction.W;
-		}
-		else if(dx > 0)
-		{
-			if(dy < 0)
-				return Direction.NE;
-			else if(dy > 0)
-				return Direction.SE;
-			else
-				return Direction.E;
-		}
-		else
-		{
-			if(dy < 0)
-				return Direction.N;
-			else if(dy > 0)
-				return Direction.S;
-			else
-				return Direction.O;
-		}
-	}
 }

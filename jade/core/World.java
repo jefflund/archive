@@ -68,7 +68,7 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public final void addActor(Actor actor, Dice random)
 	{
-		final Coord pos = getOpenTile(random);
+		Coord pos = getOpenTile(random);
 		addActor(actor, pos.x(), pos.y());
 	}
 
@@ -79,7 +79,7 @@ public abstract class World extends Messenger implements Serializable
 	@SuppressWarnings("unchecked")
 	public final <T extends Actor> T getActorAt(int x, int y, Class<T> cls)
 	{
-		for(final Actor actor : grid[x][y].actors())
+		for(Actor actor : grid[x][y].actors())
 			if(cls.isInstance(actor))
 				return (T)actor;
 		return null;
@@ -101,8 +101,8 @@ public abstract class World extends Messenger implements Serializable
 	public final <T extends Actor> Collection<T> getActorsAt(int x, int y,
 			Class<T> cls)
 	{
-		final Collection<T> result = new HashSet<T>();
-		for(final Actor actor : grid[x][y].actors())
+		Collection<T> result = new HashSet<T>();
+		for(Actor actor : grid[x][y].actors())
 			if(cls.isInstance(actor))
 				result.add((T)actor);
 		return result;
@@ -123,11 +123,23 @@ public abstract class World extends Messenger implements Serializable
 	@SuppressWarnings("unchecked")
 	public final <T extends Actor> Collection<T> getActors(Class<T> cls)
 	{
-		final Collection<T> result = new HashSet<T>();
-		for(final Actor actor : actorRegister)
+		Collection<T> result = new HashSet<T>();
+		for(Actor actor : actorRegister)
 			if(cls.isInstance(actor))
 				result.add((T)actor);
 		return result;
+	}
+	
+	/**
+	 * Returns a single Actor of the specified class currently in the World.
+	 */
+	@SuppressWarnings("unchecked")
+	public final <T extends Actor> T getActor(Class<T> cls)
+	{
+		for(Actor actor : actorRegister)
+			if(cls.isInstance(actor))
+				return (T)actor;
+		return null;
 	}
 
 	/**
@@ -148,11 +160,11 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public final void removeExpired()
 	{
-		final Collection<Actor> expired = new HashSet<Actor>();
-		for(final Actor actor : actorRegister)
+		Collection<Actor> expired = new HashSet<Actor>();
+		for(Actor actor : actorRegister)
 			if(actor.isExpired())
 				expired.add(actor);
-		for(final Actor actor : expired)
+		for(Actor actor : expired)
 			if(actor.boundTo(this))
 				removeActor(actor);
 	}
@@ -297,14 +309,14 @@ public abstract class World extends Messenger implements Serializable
 	final void registerActor(Actor actor)
 	{
 		actorRegister.add(actor);
-		for(final Actor held : actor.holds())
+		for(Actor held : actor.holds())
 			registerActor(held);
 	}
 
 	final void unregisterActor(Actor actor)
 	{
 		actorRegister.remove(actor);
-		for(final Actor held : actor.holds())
+		for(Actor held : actor.holds())
 			unregisterActor(held);
 	}
 

@@ -2,7 +2,6 @@ package jade.gen;
 
 import jade.core.World;
 import jade.util.Dice;
-import jade.util.Tools;
 import jade.util.type.Coord;
 import jade.util.type.Rect;
 import java.awt.Color;
@@ -53,7 +52,7 @@ public class Maze implements Gen
 				stack.pop();
 			else
 			{
-				Coord dig = curr.getTranslated(Tools.directionTo(curr, next));
+				Coord dig = curr.getTranslated(curr.directionTo(next));
 				world.tile(dig).setTile('.', Color.white, true);
 				stack.push(next);
 			}

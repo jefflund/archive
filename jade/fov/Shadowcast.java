@@ -26,8 +26,8 @@ public class Shadowcast implements FoV
 
 	public Collection<Coord> calcFoV(World world, int x, int y, int range)
 	{
-		final Collection<Coord> fov = new TreeSet<Coord>();
-		final Coord orig = new Coord(x, y);
+		Collection<Coord> fov = new TreeSet<Coord>();
+		Coord orig = new Coord(x, y);
 		fov.add(orig);
 		for(int octant = 1; octant <= 8; octant++)
 			scan(1, 1f, 0, orig, fov, world, range, octant);
@@ -44,8 +44,8 @@ public class Shadowcast implements FoV
 		int y = Math.round(startslope * depth);
 		while(slope(depth, y) >= endslope)
 		{
-			final Coord curr = getCurr(orig, depth, y, octant);
-			final Coord prev = getPrev(orig, depth, y, octant, world);
+			Coord curr = getCurr(orig, depth, y, octant);
+			Coord prev = getPrev(orig, depth, y, octant, world);
 			if(world.passable(curr) && !world.passable(prev))
 				startslope = newStartslope(depth, endslope, y);
 			if(!world.passable(curr) && world.passable(prev))
@@ -103,7 +103,7 @@ public class Shadowcast implements FoV
 
 	private Coord getPrev(Coord orig, int x, int y, int octant, World world)
 	{
-		final Coord curr = getCurr(orig, x, y, octant);
+		Coord curr = getCurr(orig, x, y, octant);
 		if(curr.x() == 0 || curr.y() == 0 || curr.x() == world.width - 1
 				|| curr.y() == world.height - 1)
 			return curr;
