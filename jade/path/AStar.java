@@ -13,8 +13,8 @@ import java.util.TreeSet;
  * An implementation of Path that uses the A* pathfinding algorithm to find the
  * shortest path. Subclasses could adjust the heuristic estimates to produce
  * more interesting result. Note that certain heuristics will not always produce
- * the optimal shortest path. If the optimal path is absolutly needed, use
- * Dijkstra's algorithm instead.
+ * the optimal shortest path. If the optimal path is absolutely needed, ensure
+ * that the heuristic is admissible (never over estimates the distance to the goal).
  */
 public class AStar implements Path
 {
@@ -145,9 +145,16 @@ public class AStar implements Path
 			this.coord = coord;
 		}
 
+		@Override
 		public boolean equals(Object obj)
 		{
 			return super.equals(obj);
+		}
+		
+		@Override
+		public int hashCode()
+		{
+			return super.hashCode();
 		}
 
 		public int compareTo(Node other)

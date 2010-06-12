@@ -43,6 +43,7 @@ public class Traditional implements Gen
 		for(int x = 0; x < roomsX; x++)
 			for(int y = 0; y < roomsY; y++)
 				rooms[x][y].drawRoom(world);
+		//TODO connect rooms...see original rogue source for guideline
 	}
 	
 	private void floodWithWall(World world, Rect rect)

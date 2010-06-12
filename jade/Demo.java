@@ -71,6 +71,7 @@ public class Demo
 			super(Console.DEFAULT_WIDTH, Console.DEFAULT_HEIGHT);
 		}
 
+		@Override
 		public void tick()
 		{
 			for(DemoActor actor : getActors(DemoActor.class))
@@ -80,6 +81,7 @@ public class Demo
 			removeExpired();
 		}
 
+		@Override
 		public List<ColoredChar> lookAll(int x, int y)
 		{
 			List<ColoredChar> look = super.lookAll(x, y);
@@ -100,6 +102,7 @@ public class Demo
 			super('@', Color.white);
 		}
 
+		@Override
 		public void act()
 		{
 			char key = console.getKey();
@@ -112,6 +115,7 @@ public class Demo
 				display = !display;
 		}
 		
+		@Override
 		public void move(int dx, int dy)
 		{
 			if(world().passable(x() + dx, y() + dy))
@@ -128,6 +132,7 @@ public class Demo
 			super('*', Color.red);
 		}
 
+		@Override
 		public void act()
 		{
 			if(!held())

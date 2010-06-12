@@ -89,6 +89,7 @@ public class GConsole extends Console
 		return console;
 	}
 
+	@Override
 	public void buffCamera(Camera camera)
 	{
 		Coord center = cameras.get(camera);
@@ -101,6 +102,7 @@ public class GConsole extends Console
 		releaseBuffer();
 	}
 
+	@Override
 	public void clearBuffer()
 	{
 		super.clearBuffer();
@@ -109,6 +111,7 @@ public class GConsole extends Console
 		releaseBuffer();
 	}
 
+	@Override
 	public void saveBuffer()
 	{
 		super.saveBuffer();
@@ -118,6 +121,7 @@ public class GConsole extends Console
 		releaseBuffer();
 	}
 
+	@Override
 	public void recallBuffer()
 	{
 		super.recallBuffer();
@@ -127,6 +131,7 @@ public class GConsole extends Console
 		releaseBuffer();
 	}
 
+	@Override
 	public void clearLine(int y)
 	{
 		super.clearLine(y);
@@ -160,6 +165,7 @@ public class GConsole extends Console
 		}
 	}
 
+	@Override
 	protected void paintComponent(Graphics page)
 	{
 		super.paintComponent(page);

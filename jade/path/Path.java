@@ -23,27 +23,16 @@ public interface Path
 	{
 		private static Path aStar;
 		private static Path bresenham;
-		private static Path dijkstra;
 
 		/**
-		 * Uses A* to find the shortest path.
+		 * Uses A* to find the shortest path. The admissible heuristic used is
+		 * Cartesian distance.
 		 */
 		public static Path aStar()
 		{
 			if(aStar == null)
 				aStar = new AStar();
 			return aStar;
-		}
-
-		/**
-		 * Uses bresenham's line drawing to find a the optimal path. Slower than A*,
-		 * but guarantees the optimal solution.
-		 */
-		public static Path dijkstra()
-		{
-			if(dijkstra == null)
-				dijkstra = new Dijkstra();
-			return dijkstra;
 		}
 
 		/**

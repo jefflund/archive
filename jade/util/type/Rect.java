@@ -124,6 +124,7 @@ public class Rect
 		return result;
 	}
 
+	@Override
 	public String toString()
 	{
 		return upleft.toString() + " " + lowright.toString();
