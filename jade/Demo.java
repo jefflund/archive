@@ -12,7 +12,6 @@ import jade.util.type.Coord;
 import jade.util.type.Direction;
 import java.awt.Color;
 import java.util.Collection;
-import java.util.List;
 
 public class Demo
 {
@@ -66,9 +65,11 @@ public class Demo
 
 	private static class DemoWorld extends World
 	{
+		@SuppressWarnings("unchecked")
 		public DemoWorld()
 		{
 			super(Console.DEFAULT_WIDTH, Console.DEFAULT_HEIGHT);
+			setDrawOrder(DemoActor.class, DemoTrap.class);
 		}
 
 		@Override
@@ -79,19 +80,6 @@ public class Demo
 			for(DemoTrap trap : getActors(DemoTrap.class))
 				trap.act();
 			removeExpired();
-		}
-
-		@Override
-		public List<ColoredChar> lookAll(int x, int y)
-		{
-			List<ColoredChar> look = super.lookAll(x, y);
-			DemoTrap trap = getActorAt(x, y, DemoTrap.class);
-			if(trap != null)
-				look.add(trap.look());
-			DemoActor actor = getActorAt(x, y, DemoActor.class);
-			if(actor != null)
-				look.add(actor.look());
-			return look;
 		}
 	}
 

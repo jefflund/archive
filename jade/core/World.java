@@ -21,6 +21,7 @@ public abstract class World extends Messenger implements Serializable
 	public final int height;
 	private final Tile[][] grid;
 	private final HashSet<Actor> actorRegister;
+	private Class<? extends Actor>[] drawOrder;
 
 	/**
 	 * Creates a new World.
@@ -46,8 +47,7 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public void addActor(Actor actor, int x, int y)
 	{
-		if(actor == null)
-			return;
+		if(actor == null) return;
 		assert (!actor.bound());
 		assert (!actor.held());
 		actor.setWorld(this);
@@ -80,8 +80,7 @@ public abstract class World extends Messenger implements Serializable
 	public final <T extends Actor> T getActorAt(int x, int y, Class<T> cls)
 	{
 		for(Actor actor : grid[x][y].actors())
-			if(cls.isInstance(actor))
-				return (T)actor;
+			if(cls.isInstance(actor)) return (T)actor;
 		return null;
 	}
 
@@ -103,8 +102,7 @@ public abstract class World extends Messenger implements Serializable
 	{
 		Collection<T> result = new HashSet<T>();
 		for(Actor actor : grid[x][y].actors())
-			if(cls.isInstance(actor))
-				result.add((T)actor);
+			if(cls.isInstance(actor)) result.add((T)actor);
 		return result;
 	}
 
@@ -125,11 +123,10 @@ public abstract class World extends Messenger implements Serializable
 	{
 		Collection<T> result = new HashSet<T>();
 		for(Actor actor : actorRegister)
-			if(cls.isInstance(actor))
-				result.add((T)actor);
+			if(cls.isInstance(actor)) result.add((T)actor);
 		return result;
 	}
-	
+
 	/**
 	 * Returns a single Actor of the specified class currently in the World.
 	 */
@@ -137,8 +134,7 @@ public abstract class World extends Messenger implements Serializable
 	public final <T extends Actor> T getActor(Class<T> cls)
 	{
 		for(Actor actor : actorRegister)
-			if(cls.isInstance(actor))
-				return (T)actor;
+			if(cls.isInstance(actor)) return (T)actor;
 		return null;
 	}
 
@@ -148,8 +144,7 @@ public abstract class World extends Messenger implements Serializable
 	public final void removeActor(Actor actor)
 	{
 		assert (actor.boundTo(this));
-		if(actor.held())
-			actor.detachFrom();
+		if(actor.held()) actor.detachFrom();
 		removeFromGrid(actor);
 		unregisterActor(actor);
 		actor.setWorld(null);
@@ -162,11 +157,9 @@ public abstract class World extends Messenger implements Serializable
 	{
 		Collection<Actor> expired = new HashSet<Actor>();
 		for(Actor actor : actorRegister)
-			if(actor.isExpired())
-				expired.add(actor);
+			if(actor.isExpired()) expired.add(actor);
 		for(Actor actor : expired)
-			if(actor.boundTo(this))
-				removeActor(actor);
+			if(actor.boundTo(this)) removeActor(actor);
 	}
 
 	/**
@@ -223,16 +216,20 @@ public abstract class World extends Messenger implements Serializable
 			x = random.nextInt(x1, x2);
 			y = random.nextInt(y1, y2);
 			count++;
-			if(count == 1000)
-				for(int b = 0; b < height; b++)
-				{
-					for(int a = 0; a < width; a++)
-						System.out.print(look(a, b).ch());
-					System.out.println();
-				}
+			if(count == 1000) for(int b = 0; b < height; b++)
+			{
+				for(int a = 0; a < width; a++)
+					System.out.print(look(a, b).ch());
+				System.out.println();
+			}
 		}
 		while(!passable(x, y) || getActorsAt(x, y, Actor.class).size() > 0);
 		return new Coord(x, y);
+	}
+
+	public final void setDrawOrder(Class<? extends Actor>... drawOrder)
+	{
+		this.drawOrder = drawOrder;
 	}
 
 	/**
@@ -241,8 +238,7 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public final ColoredChar look(int x, int y)
 	{
-		List<ColoredChar> look = lookAll(x, y);
-		return look.get(look.size() - 1);
+		return lookAll(x, y).get(0);
 	}
 
 	/**
@@ -269,9 +265,15 @@ public abstract class World extends Messenger implements Serializable
 	 * default it only examines the tile, but should be overriden to take into
 	 * account the tile's occupants and the proper draw order of the occupants.
 	 */
-	public List<ColoredChar> lookAll(int x, int y)
+	public final List<ColoredChar> lookAll(int x, int y)
 	{
 		List<ColoredChar> look = new ArrayList<ColoredChar>();
+		if(drawOrder != null)
+		{
+			for(int i = drawOrder.length - 1; i >= 0; i--)
+				for(Actor actor : getActorsAt(x, y, drawOrder[i]))
+					look.add(actor.look());
+		}
 		look.add(grid[x][y].look());
 		return look;
 	}
