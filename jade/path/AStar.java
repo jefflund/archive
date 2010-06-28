@@ -14,7 +14,8 @@ import java.util.TreeSet;
  * shortest path. Subclasses could adjust the heuristic estimates to produce
  * more interesting result. Note that certain heuristics will not always produce
  * the optimal shortest path. If the optimal path is absolutely needed, ensure
- * that the heuristic is admissible (never over estimates the distance to the goal).
+ * that the heuristic is admissible (never over estimates the distance to the
+ * goal).
  */
 public class AStar implements Path
 {
@@ -37,7 +38,7 @@ public class AStar implements Path
 		TreeSet<Node> open = new TreeSet<Node>();
 		open.add(getNode(start));
 		getNode(start).gScore = 0;
-		getNode(start).hScore = hEstimate(start, goal, world);
+		getNode(start).hScore = hEstimate(start, goal);
 		getNode(start).fScore = getNode(start).hScore;
 		while(!open.isEmpty())
 		{
@@ -55,7 +56,7 @@ public class AStar implements Path
 				if(!open.contains(y))
 				{
 					open.add(y);
-					y.hScore = hEstimate(y.coord, goal, world);
+					y.hScore = hEstimate(y.coord, goal);
 					tentativeIsBetter = true;
 				}
 				else if(tentativeGScore < y.gScore)
@@ -79,8 +80,7 @@ public class AStar implements Path
 	 * two nodes. By default, it just calculates the distance from the c1 to c2,
 	 * but could be overridden to factor in other cost in node traversal.
 	 */
-	protected double hEstimate(Coord c1, Coord c2,
-			@SuppressWarnings("unused") World world)
+	protected double hEstimate(Coord c1, Coord c2)
 	{
 		return c1.distTo(c2);
 	}
@@ -98,13 +98,13 @@ public class AStar implements Path
 		addIfPassable(adjacent, node.coord.getTranslated(1, 1), world);
 		return adjacent;
 	}
-	
+
 	private void addIfPassable(Set<Node> set, Coord coord, World world)
 	{
 		if(world.passable(coord))
 			set.add(getNode(coord));
 	}
-	
+
 	private List<Coord> reconstructPath(Node current)
 	{
 		if(current.cameFrom != null)
@@ -150,7 +150,7 @@ public class AStar implements Path
 		{
 			return super.equals(obj);
 		}
-		
+
 		@Override
 		public int hashCode()
 		{

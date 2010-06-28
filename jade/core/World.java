@@ -47,7 +47,8 @@ public abstract class World extends Messenger implements Serializable
 	 */
 	public void addActor(Actor actor, int x, int y)
 	{
-		if(actor == null) return;
+		if(actor == null)
+			return;
 		assert (!actor.bound());
 		assert (!actor.held());
 		actor.setWorld(this);
@@ -80,7 +81,8 @@ public abstract class World extends Messenger implements Serializable
 	public final <T extends Actor> T getActorAt(int x, int y, Class<T> cls)
 	{
 		for(Actor actor : grid[x][y].actors())
-			if(cls.isInstance(actor)) return (T)actor;
+			if(cls.isInstance(actor))
+				return (T)actor;
 		return null;
 	}
 
@@ -102,7 +104,8 @@ public abstract class World extends Messenger implements Serializable
 	{
 		Collection<T> result = new HashSet<T>();
 		for(Actor actor : grid[x][y].actors())
-			if(cls.isInstance(actor)) result.add((T)actor);
+			if(cls.isInstance(actor))
+				result.add((T)actor);
 		return result;
 	}
 
@@ -123,7 +126,8 @@ public abstract class World extends Messenger implements Serializable
 	{
 		Collection<T> result = new HashSet<T>();
 		for(Actor actor : actorRegister)
-			if(cls.isInstance(actor)) result.add((T)actor);
+			if(cls.isInstance(actor))
+				result.add((T)actor);
 		return result;
 	}
 
@@ -134,7 +138,8 @@ public abstract class World extends Messenger implements Serializable
 	public final <T extends Actor> T getActor(Class<T> cls)
 	{
 		for(Actor actor : actorRegister)
-			if(cls.isInstance(actor)) return (T)actor;
+			if(cls.isInstance(actor))
+				return (T)actor;
 		return null;
 	}
 
@@ -144,7 +149,8 @@ public abstract class World extends Messenger implements Serializable
 	public final void removeActor(Actor actor)
 	{
 		assert (actor.boundTo(this));
-		if(actor.held()) actor.detachFrom();
+		if(actor.held())
+			actor.detachFrom();
 		removeFromGrid(actor);
 		unregisterActor(actor);
 		actor.setWorld(null);
@@ -157,9 +163,11 @@ public abstract class World extends Messenger implements Serializable
 	{
 		Collection<Actor> expired = new HashSet<Actor>();
 		for(Actor actor : actorRegister)
-			if(actor.isExpired()) expired.add(actor);
+			if(actor.isExpired())
+				expired.add(actor);
 		for(Actor actor : expired)
-			if(actor.boundTo(this)) removeActor(actor);
+			if(actor.boundTo(this))
+				removeActor(actor);
 	}
 
 	/**
@@ -216,17 +224,23 @@ public abstract class World extends Messenger implements Serializable
 			x = random.nextInt(x1, x2);
 			y = random.nextInt(y1, y2);
 			count++;
-			if(count == 1000) for(int b = 0; b < height; b++)
-			{
-				for(int a = 0; a < width; a++)
-					System.out.print(look(a, b).ch());
-				System.out.println();
-			}
+			if(count == 1000)
+				for(int b = 0; b < height; b++)
+				{
+					for(int a = 0; a < width; a++)
+						System.out.print(look(a, b).ch());
+					System.out.println();
+				}
 		}
 		while(!passable(x, y) || getActorsAt(x, y, Actor.class).size() > 0);
 		return new Coord(x, y);
 	}
 
+	/**
+	 * Sets the draw order for the world. When lookAll() is called it will select
+	 * the actors in the order given, then draw the tile itself. When look() is
+	 * called, the top actor's (or tile if there is none) face will be drawn.
+	 */
 	public final void setDrawOrder(Class<? extends Actor>... drawOrder)
 	{
 		this.drawOrder = drawOrder;

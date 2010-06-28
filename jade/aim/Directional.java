@@ -7,6 +7,9 @@ import jade.util.Tools;
 import jade.util.type.Coord;
 import jade.util.type.Direction;
 
+/**
+ *	Allows the user to select the closest target in 
+ */
 public class Directional extends BaseAim
 {
 	public Coord getAim(Console console, Camera camera)

@@ -57,6 +57,9 @@ public class Console extends JPanel implements KeyListener, Serializable
 		this(tileSize, tileSize * 2 / 3, width, height);
 	}
 
+	/**
+	 * Constructs a new console
+	 */
 	protected Console(int tileHeight, int tileWidth, int width, int height)
 	{
 		this.tileHeight = tileHeight;
@@ -113,6 +116,9 @@ public class Console extends JPanel implements KeyListener, Serializable
 		return console;
 	}
 
+	/**
+	 * Puts a console inside a JFrame
+	 */
 	protected static void frameConsole(Console console, String frameTitle)
 	{
 		JFrame frame = new JFrame(frameTitle);
@@ -405,6 +411,11 @@ public class Console extends JPanel implements KeyListener, Serializable
 		releaseBuffer();
 	}
 
+	/** 
+	 * Invoked when a key is pressed. Either puts the pressed key in the input
+	 * buffer, or puts a sequence of key presses into the buffer if they key
+	 * has an associated macro. 
+	 */
 	public void keyPressed(KeyEvent event)
 	{
 		char key = event.getKeyChar();

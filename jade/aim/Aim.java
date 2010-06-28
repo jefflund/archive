@@ -75,16 +75,26 @@ public interface Aim
 	{
 		private Class<? extends Actor> targetType;
 
+		/**
+		 * Constructs a base aim with a default target type of Actor
+		 */
 		protected BaseAim()
 		{
 			setTargetType(Actor.class);
 		}
 
+		/**
+		 * Selects the target type for the aim
+		 */
 		protected void setTargetType(Class<? extends Actor> targetType)
 		{
 			this.targetType = targetType;
 		}
 
+		/**
+		 * Returns a list of all targets of the selected target type that
+		 * are in the camera's field of vision.
+		 */
 		protected List<Coord> getTargets(Camera camera)
 		{
 			List<Coord> targets = new ArrayList<Coord>();
