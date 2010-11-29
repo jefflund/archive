@@ -1,173 +1,74 @@
 package jade.util;
 
-import jade.util.type.Coord;
 import jade.util.type.Direction;
-import java.util.Collection;
-import java.util.TreeSet;
 
 /**
- * A collecection of utility methods
+ * Tools contains varias static helper methods used through the jade library.
  */
 public final class Tools
 {
-	private Tools()
-	{
-		throw new IllegalAccessError("Tools cannot be instantiated");
-	}
+    private Tools()
+    {
+        throw new IllegalAccessError("Tools may not be instantiated");
+    }
 
-	/**
-	 * Takes a keypress char and turns it into a Direction, or null if the char
-	 * doesn't represent a Direction
-	 */
-	public static Direction keyToDir(char key, boolean vi, boolean numeric)
-	{
-		assert (vi || numeric);
-		if(vi && (Character.isLetter(key) || key == '.'))
-			return viToDir(key);
-		else if(numeric && Character.isDigit(key))
-			return numToDir(key);
-		else
-			return null;
-	}
+    /**
+     * Returns the string as is if the suffix is present, or returns the string
+     * concatinated with the suffix if it is not present.
+     * @param str the string needing the suffix
+     * @param suffix the suffix to be appended
+     * @return the str with the suffix at the end
+     */
+    public static String ensureSuffix(String str, String suffix)
+    {
+        if(str.endsWith(suffix))
+            return str;
+        else
+            return str + suffix;
+    }
 
-	private static Direction numToDir(char key)
-	{
-		switch(key)
-		{
-		case '6':
-			return Direction.E;
-		case '4':
-			return Direction.W;
-		case '8':
-			return Direction.N;
-		case '2':
-			return Direction.S;
-		case '1':
-			return Direction.SW;
-		case '3':
-			return Direction.SE;
-		case '9':
-			return Direction.NE;
-		case '7':
-			return Direction.NW;
-		case '5':
-			return Direction.O;
-		default:
-			return null;
-		}
-	}
+    /**
+     * Returns the integer clamped to the range [min, max]. In other words, if n
+     * < min, returns min; if n > max, returns max; otherwise returns n/
+     * @param n the integer to be clamped
+     * @param min the minimum return value
+     * @param max the maximum return value
+     * @return n clamped to the range [min, max]
+     */
+    public static int clamp(int n, int min, int max)
+    {
+        if(n < min)
+            return min;
+        else if(n > max)
+            return max;
+        else
+            return n;
+    }
 
-	private static Direction viToDir(char key)
-	{
-		switch(key)
-		{
-		case 'l':
-			return Direction.E;
-		case 'h':
-			return Direction.W;
-		case 'k':
-			return Direction.N;
-		case 'j':
-			return Direction.S;
-		case 'b':
-			return Direction.SW;
-		case 'n':
-			return Direction.SE;
-		case 'u':
-			return Direction.NE;
-		case 'y':
-			return Direction.NW;
-		case '.':
-			return Direction.O;
-		default:
-			return null;
-		}
-	}
-
-	/**
-	 * Returns true if str ends with suffix. (case sensitive)
-	 */
-	public static boolean strHasSuffix(String str, String suffix)
-	{
-		assert (str.length() >= suffix.length());
-		return str.substring(str.length() - suffix.length()).equals(suffix);
-	}
-
-	/**
-	 * Returns the string if it has the suffix, or returns the suffix concatenated
-	 * with the string if it does not.
-	 */
-	public static String strEnsureSuffix(String str, String suffix)
-	{
-		if(strHasSuffix(str, suffix))
-			return str;
-		return str + suffix;
-	}
-
-	/**
-	 * Returns the string concatinated with enough spaces to ensure the length.
-	 */
-	public static String strEnsureLength(String str, int length)
-	{
-		while(str.length() < length)
-			str += " ";
-		return str;
-	}
-
-	/**
-	 * Maps an integer to a char, with 0 mapping to 'a', 1 to 'b', 2 to 'c' and so
-	 * on.
-	 */
-	public static char intToAlpha(int i)
-	{
-		return (char)(i + 'a');
-	}
-
-	/**
-	 * Maps a char to an integer, with 'a' mapping to 0, 'b' to 1, 'c' to 2 and so
-	 * on.
-	 */
-	public static int alphaToInt(char ch)
-	{
-		return(ch - 'a');
-	}
-
-	/**
-	 * Removes an Coord from the field that are not with in the circle with the
-	 * given radius and center.
-	 */
-	public static void filterCircle(Collection<Coord> field, int x, int y,
-			int radius)
-	{
-		final Collection<Coord> out = new TreeSet<Coord>();
-		radius++;
-		for(final Coord coord : field)
-			if(!inCircle(x, y, coord.x(), coord.y(), radius))
-				out.add(coord);
-		field.removeAll(out);
-	}
-
-	/**
-	 * Returns true if the point (x, y) is in the circle centered at (cx, cy) with
-	 * radius r.
-	 */
-	public static boolean inCircle(int cx, int cy, int x, int y, int r)
-	{
-		final int a = x - cx;
-		final int b = y - cy;
-		return a * a + b * b < r * r;
-	}
-
-	/**
-	 * Returns the value if it within the given range, or the nearest extreama if
-	 * the value is outside the range.
-	 */
-	public static int clampToRange(int value, int min, int max)
-	{
-		if(value < min)
-			value = min;
-		if(value > max)
-			value = max;
-		return value;
-	}
+    public static Direction keyToDir(char key)
+    {
+        switch(key)
+        {
+        case 'l':
+            return Direction.E;
+        case 'h':
+            return Direction.W;
+        case 'k':
+            return Direction.N;
+        case 'j':
+            return Direction.S;
+        case 'b':
+            return Direction.SW;
+        case 'n':
+            return Direction.SE;
+        case 'u':
+            return Direction.NE;
+        case 'y':
+            return Direction.NW;
+        case '.':
+            return Direction.O;
+        default:
+            return null;
+        }
+    }
 }

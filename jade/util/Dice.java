@@ -1,89 +1,147 @@
 package jade.util;
 
-import jade.util.type.Direction;
 import java.awt.Color;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Random;
+import java.util.List;
 
 /**
- * For now Dice mearly extends Random and adds a few methods, but will
- * eventually be reimplementated as a Mersenne twister.
+ * A psuedorandom number generator for use in the Jade system. Dice is
+ * implemented using the extreamly fast multiply with carry algorithm. This
+ * method will produce integers with a reasonably uniform distribution on the
+ * range [0, 2^32 - 1], with a period of around 2^63. In addition, Dice provides
+ * some extra functionality that helps in the implementation of the Jade
+ * library.
  */
-public class Dice extends Random implements Serializable
+public class Dice
 {
-	/**
-	 * A default instance of Dice when you don't need a unique instance.
-	 */
-	public static final Dice global = new Dice();
+    public static Dice global = new Dice();
 
-	public Dice()
-	{
-		super();
-	}
+    private static final long a = 0xffffda61L;
+    private long x;
 
-	public Dice(long seed)
-	{
-		super(seed);
-	}
+    /**
+     * Creates a new instance of Dice with a seed based on the current system
+     * clock.
+     */
+    public Dice()
+    {
+        reseed();
+    }
 
-	/**
-	 * Returns an integer between min (inclusive) and max (inclusive)
-	 */
-	public int nextInt(int min, int max)
-	{
-		assert (min <= max);
-		int range = max - min;
-		return nextInt(range + 1) + min;
-	}
+    /**
+     * Creates a new instance of Dice seeded with the provided number.
+     * @param seed the seed of the Dice
+     */
+    public Dice(long seed)
+    {
+        reseed(seed);
+    }
 
-	/**
-	 * Performs a dice roll xdy, or an y sided dice x times. For example, a
-	 * monopoly roll would be 2d6.
-	 */
-	public int diceXdY(int x, int y)
-	{
-		int sum = 0;
-		for(int i = 0; i < x; i++)
-			sum += nextInt(1, y);
-		return sum;
-	}
+    /**
+     * Reseeds the Dice using the current state of the system clock
+     */
+    public void reseed()
+    {
+        reseed(System.currentTimeMillis());
+    }
 
-	/**
-	 * Returns a random color
-	 */
-	public Color nextColor()
-	{
-		final int r = nextInt(256);
-		final int g = nextInt(256);
-		final int b = nextInt(256);
-		return new Color(r, g, b);
-	}
+    /**
+     * Reseeds the Dice using the provided seed
+     * @param seed the new seed of the Dice
+     */
+    public void reseed(long seed)
+    {
+        x = seed & 0xffffffffL;
+    }
 
-	/**
-	 * Returns a random char between min (inclusive) and max (inclusive) on the
-	 * ascii table.
-	 */
-	public char nextChar(char min, char max)
-	{
-		return (char)nextInt(min, max);
-	}
+    /**
+     * Generates a single pseudorandom integer in the range [0, 2^32 - 1]
+     * @return an integer in the range [0, 2^32 - 1]
+     */
+    public int nextInt()
+    {
+        x = (a * (x & 0xffffffffL)) + (x >>> 32);
+        return Math.abs((int)x);
+    }
 
-	/**
-	 * Returns a random Direction
-	 */
-	public Direction nextDir()
-	{
-		Direction[] values = Direction.values();
-		return values[nextInt(values.length)];
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <T> T nextValue(Collection<T> set)
-	{
-		if(set.isEmpty())
-			return null;
-		Object[] array = set.toArray();
-		return (T)array[nextInt(array.length)];
-	}
+    /**
+     * Returns a single pseudorandom integer from 0 to max (non-inclusive).
+     * @param max the maximum value possible
+     * @return a single int in the range [0, max - 1]
+     */
+    public int nextInt(int max)
+    {
+        return nextInt() % max;
+    }
+
+    /**
+     * Generates a single pseudorandom integer from min to max (inclusive).
+     * @param min the minimum possible value
+     * @param max the maximum possible value
+     * @return a single integer in the range [min, max]
+     */
+    public int nextInt(int min, int max)
+    {
+        int range = max - min;
+        return nextInt(range + 1) + min;
+    }
+
+    /**
+     * Performs an xdy dice roll. In other words, returns the sum of x dice
+     * rolls, where each dice has y sides.
+     * @param x the number of dice to roll
+     * @param y the number of sides each dice has
+     * @return the result of an xdy roll
+     */
+    public int nextRoll(int x, int y)
+    {
+        int sum = 0;
+        for(int i = 0; i < x; i++)
+            sum += nextInt(1, y);
+        return sum;
+    }
+
+    /**
+     * Returns true with a probability chance / 100. Chance should be in the
+     * range [0, 100], although this is not enforced.
+     * @param chance the chance of true
+     * @return true with a probability chance / 100
+     */
+    public boolean nextChance(int chance)
+    {
+        return nextInt(100) < chance;
+    }
+
+    /**
+     * Returns true with a probablity 1/2.
+     * @return returns true with a probablity 1/2.
+     */
+    public boolean nextChance()
+    {
+        return nextInt(100) < 50;
+    }
+
+    /**
+     * Returns a random color generated by picking values for red, green and
+     * blue at random from the range [0, 255].
+     * @return a random color
+     */
+    public Color nextColor()
+    {
+        int r = nextInt(256);
+        int g = nextInt(256);
+        int b = nextInt(256);
+        return new Color(r, g, b);
+    }
+
+    /**
+     * Return a random element of the given list.
+     * @param <T> the type parameter of the list
+     * @param list the list from which to choose an element
+     * @return a random element of the given list
+     */
+    public <T> T nextItem(List<T> list)
+    {
+        int index = nextInt(list.size());
+        return list.get(index);
+    }
 }

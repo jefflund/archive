@@ -1,92 +1,64 @@
 package jade.gen;
 
 import jade.core.World;
-import jade.util.type.Rect;
+import jade.util.Dice;
+import jade.util.Factory;
 
 /**
- * This interface represents something that can generate a map for a Jade World.
+ * Base class for a random level generator. These generators are generally
+ * designed to be allowed to be chained together in Decorator pattern fashion,
+ * although some descending classes may or may not allow chaining. During
+ * generation, the Gen will first asked its chained generator to perform its
+ * step, after which it will perform its own step. In this way, various
+ * instances of Gen which place special feature could be chained to other
+ * algorithms that generates a basic levels in any number of interesting
+ * combinations. Note that in order to use the factory, all derived classes
+ * should have a default constructor. For this reason, all derived classes ought
+ * to have setters for any generation parameters.
  */
-public interface Gen
+public abstract class Gen
 {
-	/**
-	 * Generates a map on the World with the specified seed.
-	 */
-	public void generate(World world, long seed);
+    private Gen chained;
 
-	/**
-	 * Generates a map on the World in the given bounds with the specified seed.
-	 */
-	public void generate(World world, long seed, Rect rect);
+    public Gen(Gen chained)
+    {
+        this.chained = chained;
+    }
 
-	public class GenFactory
-	{
-		private static Gen cellular;
-		private static Gen bsp;
-		private static Gen wilderness;
-		private static Gen town;
-		private static Gen maze;
-		private static Gen traditional;
+    /**
+     * Randomly generates a level on the given Level using the provided dice.
+     * This method should never reseed the dice. Provided that the state of the
+     * Gen, the state of the World, and the state of the Dice are all the same
+     * for each call, this method should generate the same level from each call.
+     * @param world the world on which to generate a new level
+     * @param dice the dice used to provide randomness
+     */
+    public void generate(World world, Dice dice)
+    {
+        if(chained != null)
+            chained.generate(world, dice);
+        genStep(world, dice);
+    }
 
-		/**
-		 * Uses cellular automaton to generate cave like maps.
-		 */
-		public static Gen cellular()
-		{
-			if(cellular == null)
-				cellular = new Cellular();
-			return cellular;
-		}
+    /**
+     * Randomly generates a level on the given Level using the global instance
+     * of dice. This method should never reseed the dice. Provided that the
+     * state of the Gen, the state of the World, and the state of the gobal Dice
+     * is the same for each call, this method should generate the same level
+     * from each call.
+     * @param world the world on which to generate a new level
+     */
+    public final void generate(World world)
+    {
+        generate(world, Dice.global);
+    }
 
-		/**
-		 * Uses binary space partitioning to generate traditional maps with rooms
-		 * and corridors.
-		 */
-		public static Gen bsp()
-		{
-			if(bsp == null)
-				bsp = new BSP();
-			return bsp;
-		}
+    /**
+     * Peforms the generation step specified by this Gen.
+     * @param world
+     * @param dice
+     */
+    protected abstract void genStep(World world, Dice dice);
 
-		/**
-		 * Generates a fenced space with trees.
-		 */
-		public static Gen wilderness()
-		{
-			if(wilderness == null)
-				wilderness = new Wilderness(false);
-			return wilderness;
-		}
-
-		/**
-		 * Generates a wilderness with rectangular buildings.
-		 */
-		public static Gen town()
-		{
-			if(town == null)
-				town = new Wilderness(true);
-			return town;
-		}
-		
-		/**
-		 * Generates a perfect maze
-		 */
-		public static Gen maze()
-		{
-			if(maze == null)
-				maze = new Maze();
-			return maze;
-		}
-		
-		/**
-		 * Generates a grid of interconnected rooms like the origional rogue
-		 */
-		public static Gen traditional(int roomsX, int roomsY)
-		{
-			if(traditional == null)
-				traditional = new Traditional(roomsX, roomsY);
-			((Traditional)traditional).setDims(roomsX, roomsY);
-			return traditional;
-		}
-	}
+    public static Factory<Gen> factory = new Factory<Gen>();
 }

@@ -4,82 +4,48 @@ import java.awt.Color;
 import java.io.Serializable;
 
 /**
- * A character with an associated color. They are immutable once instantiated.
+ * A character with a color. This class is immutible once instantiated.
+ * ColoredChar is the type used as the face for all actors and tiles in the jade
+ * system, even if the display does not actually render characters.
  */
-public class ColoredChar implements Serializable, Comparable<ColoredChar>
+public class ColoredChar implements Serializable
 {
-	private final char ch;
-	private final Color color;
+    private final char ch;
+    private final Color color;
 
-	/**
-	 * Creates a new ColoredChar
-	 */
-	public ColoredChar(char ch, Color color)
-	{
-		this.ch = ch;
-		this.color = color;
-	}
+    /**
+     * Creates a new instance of ColoredChar with the given values. Once
+     * instantiated, these values are immutable.
+     * @param ch the character of the new ColoredChar
+     * @param color the color of the new ColoredChar
+     */
+    public ColoredChar(char ch, Color color)
+    {
+        this.ch = ch;
+        this.color = color;
+    }
 
-	/**
-	 * Gets the char portion of the ColoredChar
-	 */
-	public char ch()
-	{
-		return ch;
-	}
+    /**
+     * Getter for the char of the ColoredChar
+     * @return the char of the ColoredChar
+     */
+    public char ch()
+    {
+        return ch;
+    }
 
-	/**
-	 * Gets the color portion of the ColoredChar
-	 */
-	public Color color()
-	{
-		return color;
-	}
+    /**
+     * Getter for the color of the ColoredChar
+     * @return the color of the ColoredChar
+     */
+    public Color color()
+    {
+        return color;
+    }
 
-	/**
-	 * Returns the same ColoredChar only darker
-	 */
-	public ColoredChar darker()
-	{
-		return new ColoredChar(ch, color.darker());
-	}
-
-	/**
-	 * Returns the same ColoredChar with darker() called magnitude times
-	 */
-	public ColoredChar darker(int magnitude)
-	{
-		Color color = this.color;
-		for(int i = 0; i < magnitude; i++)
-			color = color.darker();
-		return new ColoredChar(ch, color.darker());
-	}
-
-	/**
-	 * Returns the same ColoredChar only brighter
-	 */
-	public ColoredChar brighter()
-	{
-		return new ColoredChar(ch, color.brighter());
-	}
-
-	@Override
-	public String toString()
-	{
-		return Character.toString(ch);
-	}
-
-	@Override
-	public int compareTo(ColoredChar other)
-	{
-		if(color.hashCode() == other.color.hashCode())
-			return ch - other.ch;
-		else
-			return color.hashCode() - other.color.hashCode();
-	}
-
-	public boolean equals(ColoredChar obj)
-	{
-		return ch == obj.ch && color == obj.color;
-	}
+    @Override
+    public String toString()
+    {
+        return Character.toString(ch);
+    }
 }

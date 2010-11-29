@@ -3,195 +3,184 @@ package jade.util.type;
 import java.io.Serializable;
 
 /**
- * Represents a Cartesian integer coordinate.
+ * A two dimensionally integer cartesian point. The (x,y) values of the Coord
+ * are mutable.
  */
-public class Coord implements Comparable<Coord>, Serializable
+public final class Coord implements Serializable
 {
-	private int x;
-	private int y;
+    private int x;
+    private int y;
 
-	/**
-	 * Creates a new Coord at the origin.
-	 */
-	public Coord()
-	{
-		move(0, 0);
-	}
+    /**
+     * Creates a new Coord at (x,y)
+     * @param x the x value of the Coord
+     * @param y the y value of the Coord
+     */
+    public Coord(int x, int y)
+    {
+        move(x, y);
+    }
 
-	/**
-	 * Creates a new Coord at the specified location.
-	 */
-	public Coord(int x, int y)
-	{
-		move(x, y);
-	}
+    /**
+     * Creates a new Coord at (x,y), where (x, y) is defined by the given coord.
+     * @param coord the Coord to copy
+     */
+    public Coord(Coord coord)
+    {
+        move(coord);
+    }
 
-	/**
-	 * Creates a new Coord at the specified location.
-	 */
-	public Coord(Coord coord)
-	{
-		move(coord);
-	}
+    /**
+     * Moves the Coord to (x,y).
+     * @param x the new x value of the Coord
+     * @param y the new y value of the Coord
+     */
+    public void move(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
 
-	/**
-	 * Changes the Coord to the new location
-	 */
-	public Coord move(int x, int y)
-	{
-		this.x = x;
-		this.y = y;
-		return this;
-	}
+    /**
+     * Moves this Coord to the location of the given coord
+     * @param coord the value this Coord is to to on
+     */
+    public final void move(Coord coord)
+    {
+        move(coord.x(), coord.y());
+    }
 
-	/**
-	 * Changes the Coord to the new location
-	 */
-	public final Coord move(Coord coord)
-	{
-		return move(coord.x, coord.y);
-	}
+    /**
+     * Translates the Coord by dx, dy. In other words, the new value of the
+     * coord will be (x,y) + (dx, dy).
+     * @param dx the amount to change x by
+     * @param dy the amount to change y by
+     */
+    public void translate(int dx, int dy)
+    {
+        x += dx;
+        y += dy;
+    }
 
-	/**
-	 * Changes the Coord by the specified amount
-	 */
-	public Coord translate(int dx, int dy)
-	{
-		x += dx;
-		y += dy;
-		return this;
-	}
+    /**
+     * Translates the Coord by dx, dy provided in the specified coord delta. In
+     * other words, the new value of the coord will be (x,y) + (dx, dy).
+     * @param delta the change this coord will take on
+     */
+    public final void translate(Coord delta)
+    {
+        translate(delta.x(), delta.y());
+    }
 
-	/**
-	 * Translates the Coord in the specified direction
-	 */
-	public Coord translate(Direction dir)
-	{
-		x += dir.dx;
-		y += dir.dy;
-		return this;
-	}
+    /**
+     * Translates 1 space in the direction provided. In other words, the new
+     * value of the coord will be (x, y) + (dx, dy) where (dx, dy) is the x and
+     * y value of the direction.
+     * @param delta the change this coord will take on
+     */
+    public final void translate(Direction delta)
+    {
+        translate(delta.x(), delta.y());
+    }
 
-	/**
-	 * Changes the Coord by the specified amount
-	 */
-	public final Coord translate(Coord coord)
-	{
-		return translate(coord.x, coord.y);
-	}
+    /**
+     * Returns a new Coord, whose value is (x,y) + (dx, dy).
+     * @param dx the amount in x the new Coord will differ from this one
+     * @param dy the amount in y the new Coord will differ from this one
+     * @return a new Coord translated by (dx, dy) from this one
+     */
+    public Coord getTranslated(int dx, int dy)
+    {
+        return new Coord(x + dx, y + dy);
+    }
 
-	/**
-	 * Gets a copy of this Coord translated by the specified amount
-	 */
-	public final Coord getTranslated(Coord coord)
-	{
-		return getTranslated(coord.x(), coord.y());
-	}
+    /**
+     * Returns a new Coord, whose value is (x, y) + (dx, dy), where (dx, dy) is
+     * given by the coord delta.
+     * @param delta the amount the new Coord will differ from this one
+     * @return a new Coord translated by delta from this one
+     */
+    public final Coord getTranslated(Coord delta)
+    {
+        return getTranslated(delta.x(), delta.y());
+    }
 
-	/**
-	 * Gets a copy of this Coord translated by the specified amount
-	 */
-	public Coord getTranslated(int x, int y)
-	{
-		return new Coord(this).translate(x, y);
-	}
+    /**
+     * Returns a new Coord, whose value is (x, y) + (dx, dy), where (dx, dy) is
+     * given by the direction delta.
+     * @param delta the amount the new Coord will differ from this one
+     * @return a new Coord translated by delta from this one
+     */
+    public final Coord getTranslated(Direction delta)
+    {
+        return getTranslated(delta.x(), delta.y());
+    }
 
-	/**
-	 * Gets a copy of this Coord translated in the specified direction
-	 */
-	public Coord getTranslated(Direction dir)
-	{
-		return new Coord(this).translate(dir);
-	}
+    /**
+     * Getter for the x value of the Coord
+     * @return the x value of the Coord
+     */
+    public int x()
+    {
+        return x;
+    }
 
-	/**
-	 * Gets the x portion of the Coord
-	 */
-	public int x()
-	{
-		return x;
-	}
+    /**
+     * Getter for the y value of the Coord
+     * @return the y value of the Coord
+     */
+    public int y()
+    {
+        return y;
+    }
 
-	/**
-	 * Gets the y portion of the Coord
-	 */
-	public int y()
-	{
-		return y;
-	}
+    @Override
+    public String toString()
+    {
+        return "(" + x + ", " + y + ")";
+    }
 
-	public int compareTo(Coord other)
-	{
-		if(x == other.x)
-			return y - other.y;
-		return x - other.x;
-	}
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(obj == null || !(obj instanceof Coord))
+            return false;
+        Coord coord = (Coord)obj;
+        return coord.x == x && coord.y == y;
+    }
 
-	public boolean equals(Coord other)
-	{
-		return x() == other.x() && y() == other.y();
-	}
+    @Override
+    public int hashCode()
+    {
+        // key unique when x,y < 2^16
+        return (x << 16) | (y & 0xFFFF);
+    }
 
-	public double distTo(Coord other)
-	{
-		int a = x - other.x;
-		int b = y - other.y;
-		return Math.sqrt(a * a + b * b);
-	}
+    /**
+     * Computes the cartesian distance to the other Coord. In other words,
+     * returns sqrt((x1 - x2)^2 + (y1 - y2)^2).
+     * @param other the coord with (x2, y2)
+     * @return the cartesian distance from this Coord to other
+     */
+    public double distCart(Coord other)
+    {
+        int a = x - other.x;
+        int b = y - other.y;
+        return Math.sqrt(a * a + b * b);
+    }
 
-	public double taxiDistTo(Coord other)
-	{
-		int a = Math.abs(x - other.x);
-		int b = Math.abs(y - other.y);
-		return a + b;
-	}
-	
-	public double rlDistTo(Coord other)
-	{
-		int a = Math.abs(x - other.x);
-		int b = Math.abs(y - other.y);
-		return Math.min(a, b);
-	}
-
-	/**
-	 * Returns the direction needed to get from start to goal.
-	 */
-	public Direction directionTo(Coord goal)
-	{
-		int dx = goal.x - x;
-		int dy = goal.y - y;
-		if(dx < 0)
-		{
-			if(dy < 0)
-				return Direction.NW;
-			else if(dy > 0)
-				return Direction.SW;
-			else
-				return Direction.W;
-		}
-		else if(dx > 0)
-		{
-			if(dy < 0)
-				return Direction.NE;
-			else if(dy > 0)
-				return Direction.SE;
-			else
-				return Direction.E;
-		}
-		else
-		{
-			if(dy < 0)
-				return Direction.N;
-			else if(dy > 0)
-				return Direction.S;
-			else
-				return Direction.O;
-		}
-	}
-	
-	@Override
-	public String toString()
-	{
-		return "(" + x + ", " + y + ")";
-	}
+    /**
+     * Returns the direction from this coord to the goal. Note that this does so
+     * naively and will always return a coord with dx and dy being in the set
+     * {-1, 0, 1}. This also makes it so that the time orthogonal directions are
+     * generated is when the difference from this Coord to the other is 0 in
+     * either x or y. However, following the directions generated by this method
+     * will yield an optimal path in rl distance, ignoring obstacles.
+     * @param goal the coordinate to which we wish to translate
+     * @return the direction from the coord to the goal
+     */
+    public Direction directionTo(Coord goal)
+    {
+        return Direction.fromCoord(goal.x - x, goal.y - y);
+    }
 }

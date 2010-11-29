@@ -2,20 +2,24 @@ package jade.path;
 
 import jade.core.World;
 import jade.util.type.Coord;
-import java.util.List;
 
-public class Greedy implements Path
+/**
+ * Uses the greedy best first algorithm to find paths. The algorithm is not
+ * optimal, but is complete. The algorithm is completely guided by its
+ * heuristic, and as such will always follow the heuristic if it can, rather
+ * than following the optimal path.
+ */
+public class Greedy extends GraphSearch
 {
-	@Override
-	public List<Coord> getPath(World world, Coord start, Coord goal)
-	{
-		//TODO implement greedy best first search
-		return null;
-	}
-	
-	@Override
-	public boolean hasPath(World world, Coord start, Coord goal)
-	{
-		return getPath(world, start, goal) != null;
-	}
+    @Override
+    protected final double gFunction(World world, Coord start, Coord goal)
+    {
+        return 0;
+    }
+
+    @Override
+    protected double hEstimate(World world, Coord start, Coord goal)
+    {
+        return start.distCart(goal);
+    }
 }
