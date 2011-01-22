@@ -111,6 +111,30 @@ public class Coord
     }
 
     /**
+     * Returns a new Coord, which is a copy of this one translated by (dx, dy).
+     * @param dx the change in x
+     * @param dy the change in y
+     * @return a new Coord, which is a copy of this one translated by (dx, dy)
+     */
+    public Coord translated(int dx, int dy)
+    {
+        Coord copy = new Coord(this);
+        copy.translate(dx, dy);
+        return copy;
+    }
+
+    /**
+     * Returns a new Coord, which is a copy of this one translated by (dx, dy),
+     * where (dx, dy) is given by the Coord delta.
+     * @param delta the change in (x, y)
+     * @return a new Coord, which is a copy of this one translated by (dx, dy)
+     */
+    public final Coord translated(Coord delta)
+    {
+        return translated(delta.x, delta.y);
+    }
+
+    /**
      * Returns the cartesian distance from this Coord to the other Coord.
      * @param other the other Coord over which distance is calculated
      * @return the cartesian distance from this Coord to the other Coord

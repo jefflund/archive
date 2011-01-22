@@ -1,5 +1,6 @@
 package jade;
 
+import jade.core.Actor;
 import jade.core.World;
 import jade.fov.FoV;
 import jade.fov.Raycast;
@@ -7,32 +8,56 @@ import jade.gen.Gen;
 import jade.gen.maps.BSP;
 import jade.ui.TermPanel;
 import jade.ui.Terminal;
+import jade.ui.Terminal.Camera;
+import jade.util.ColoredChar;
 import jade.util.Coord;
-import jade.util.Dice;
-import java.awt.Color;
+import jade.util.Direction;
+import java.util.Set;
 
 public class Demo
 {
+    private static class Player extends Actor implements Camera
+    {
+        private FoV fov;
+
+        public Player()
+        {
+            super(new ColoredChar('@'));
+            fov = new Raycast(false);
+        }
+
+        @Override
+        public Set<Coord> getFoV()
+        {
+            return fov.getFoV(world(), pos(), 5);
+        }
+    }
+
     public static void main(String[] args)
     {
         Terminal term = TermPanel.getFramedTerm("Jade Rogue");
         World world = new World(80, 24);
         Gen gen = new BSP();
-        FoV fov = new Raycast(false);
+        gen.generate(world);
+        Player player = new Player();
+        world.addActor(player);
+        term.addCamera(player, new Coord(6, 6));
+
+        char key;
         do
         {
-            gen.generate(world, Dice.global);
-            for(int x = 0; x < 80; x++)
-                for(int y = 0; y < 24; y++)
-                    term.bufferChar(x, y, world.tileAt(x, y));
-
-            Coord pos = world.getOpenTile();
-            for(Coord vis : fov.getFoV(world, pos, 10))
-                term.bufferChar(vis, world.tileAt(vis).ch(), Color.red);
-            term.bufferChar(pos, '@', Color.red);
+            term.clearBuffer();
+            term.bufferCamera(player);
+            term.bufferRelative(player, player.pos(), player.face());
             term.update();
+
+            key = term.getKey();
+            Direction d = Direction.viKeyDir(key);
+            if(d != null)
+                player.move(d);
         }
-        while(term.getKey() != 'q');
+        while(key != 'q');
+
         term.exit();
     }
 }

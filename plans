@@ -5,8 +5,6 @@ REVIEW JADE ALPHA 1:
             Maze
             Traditional
     ui
-        Terminal
-            Camera
         aim
             *
 
@@ -37,6 +35,8 @@ ALPHA 2 PLANS:
     FoV
         permissive fov
     UI
+        Camera
+            viewport, rather than just screen center
         Widget
             button, field, select, label
         Display

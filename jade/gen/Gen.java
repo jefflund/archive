@@ -23,7 +23,7 @@ public abstract class Gen
     {
         this.chained = chained;
     }
-    
+
     /**
      * Initializes a new Gen, with no chaining.
      */
@@ -45,6 +45,16 @@ public abstract class Gen
         if(chained != null)
             chained.generate(world, dice);
         genStep(world, dice);
+    }
+
+    /**
+     * Randomly generates or modifies the world map using the global instance of
+     * Dice for random number generation.
+     * @param world The World to be modified by the generator
+     */
+    public final void generate(World world)
+    {
+        generate(world, Dice.global);
     }
 
     /**
