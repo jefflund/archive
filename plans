@@ -1,0 +1,83 @@
+REVIEW JADE ALPHA 1:
+    gen
+        MapGen
+            Cellular
+            Maze
+            Traditional
+    ui
+        Terminal
+            Camera
+        aim
+            *
+
+TODO ALPHA 2:
+    Regenerate javadocs
+    Write improved tutorial
+    Improve wiki
+    ** Complete 7drl **
+    Promote on rgrd, basin, etc
+
+ALPHA 2 PLANS:
+    AI
+        PotentialField
+        Tracking
+            scent, sound, sight
+    Core
+        Dungeon
+        Wilderness
+        World
+            draworder, moveorder, scheduler
+        Actor
+            displaced action
+    Gen
+        FeatureGen
+            Monster Sprinkler
+            Vaults
+            Doors
+    FoV
+        permissive fov
+    UI
+        Widget
+            button, field, select, label
+        Display
+            vt100, graphic
+        Animation
+            dart, beam, ball
+
+FUTURE ALPHA 3 PLANS:
+    Story
+        NameGen (simple n-gram model)
+        QuestGen
+        PlotGen
+        DFMythGen
+    FoV
+        Gradient FoV
+    Core
+        translucent in addition to passable
+
+DISTANT FUTURE ALPHA 4 PLANS:
+    RealTime
+        multiplayer server (like MAngband)
+    Animated Tiles
+        tie into RT/MP server
+    AI
+        trainable AI models
+
+VAPOURWARE BETA 1:
+    Jade Roguelike
+        skill based leveling
+        unstructured magic system
+            power up spells
+        stealth system
+            massive assination bonuses
+        improved melee
+            move combos (tactics/swordplay/whatever)
+            special attacks (think d2 barbarian moves)
+        friendly ai
+            leadership, small scale battles
+            shopkeepers
+        random plot generation
+        competing factions, cities, etc
+        persistant mutable dungeons
+        lasting consequences
+            city destruction possible
