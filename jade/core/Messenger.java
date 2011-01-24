@@ -31,6 +31,21 @@ public class Messenger
     }
 
     /**
+     * Appends a message to the Messenger cache, with this Messenger as the
+     * source of the message. If the message does not have the specified suffix,
+     * it will be concatinated to the message.
+     * @param message the contents of the message
+     * @suffix the required message suffix
+     */
+    public void appendMessage(String message, String suffix)
+    {
+        if(message.endsWith(suffix))
+            appendMessage(message);
+        else
+            appendMessage(message + suffix);
+    }
+
+    /**
      * Clears the messages in the Messenger cache.
      */
     public void clearMessages()

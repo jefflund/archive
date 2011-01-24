@@ -46,7 +46,7 @@ public class Dice
         twister[0] = seed;
         for(int i = 1; i < N; i++)
             twister[i] = 0x6c078965 * (twister[i - 1] ^ (twister[i - 1] << 30))
-            + i;
+                    + i;
     }
 
     /**
@@ -144,19 +144,37 @@ public class Dice
             sum += next(1, y);
         return sum;
     }
-    
+
+    /**
+     * Returns a random element of an array.
+     * @param <T> the type of the elements of the array
+     * @param array the array from which an element is choosen
+     * @return a random element of an array
+     */
     public <T> T choose(T[] array)
     {
         int index = next(array.length);
         return array[index];
     }
-    
+
+    /**
+     * Returns a random element of a list.
+     * @param <T> the type of the elements of the list
+     * @param list the list from which an element is choosen
+     * @return a random element of a list
+     */
     public <T> T choose(List<T> list)
     {
         int index = next(list.size());
         return list.get(index);
     }
-    
+
+    /**
+     * Returns a random element of a collection.
+     * @param <T> the type of the elements of the collection
+     * @param collection the collection from which an element is choosen
+     * @return a random element of a collection
+     */
     public <T> T choose(Collection<T> collection)
     {
         int index = next(collection.size());
@@ -165,6 +183,15 @@ public class Dice
         while(index > 0)
             iter.next();
         return result;
+    }
+    
+    /**
+     * Returns a random direction
+     * @return a random direction
+     */
+    public Direction nextDir()
+    {
+        return choose(Direction.values());
     }
 
     private void generate()

@@ -3,11 +3,8 @@ REVIEW JADE ALPHA 1:
         MapGen
             Cellular
             Maze
-    ui
-        aim
-            *
 
-TODO ALPHA 2:
+TODO:
     Regenerate javadocs
     Write improved tutorial
     Improve wiki

@@ -14,6 +14,8 @@ public class Closest extends Aim
     public Closest(Class<? extends Actor> cls)
     {
         super(cls);
+        if(cls == null)
+            throw new IllegalStateException("Letter must have target type");
     }
 
     @Override

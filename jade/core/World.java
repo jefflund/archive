@@ -273,7 +273,8 @@ public class World extends Messenger
 
     /**
      * Returns a randomly choosen open tile within the given rectangle bounds
-     * using the given instance of Dice for random number generation.
+     * using the given instance of Dice for random number generation. A tile is
+     * considered open if it is passable and there is not Actor occupant.
      * @param dice the instance of Dice used for random number generation
      * @param x1 the minimum x value of the tile
      * @param y1 the minumum y value of the tile
@@ -287,18 +288,20 @@ public class World extends Messenger
         {
             int x = dice.next(x1, x2);
             int y = dice.next(y1, y2);
-            if(passable(x, y))
+            if(passable(x, y) && getActorAt(Actor.class, x, y) == null)
                 return new Coord(x, y);
         }
         for(int x = 0; x < width; x++)
             for(int y = 0; y < height; y++)
-                if(passable(x, y))
+                if(passable(x, y) && getActorAt(Actor.class, x, y) == null)
                     return new Coord(x, y);
         return new Coord();
     }
 
     /**
-     * Returns a randomly choosen open tile within the given rectangle bounds.
+     * Returns a randomly choosen open tile within the given rectangle bounds. A
+     * tile is considered open if it is passable and there is not Actor
+     * occupant.
      * @param x1 the minimum x value of the tile
      * @param y1 the minumum y value of the tile
      * @param x2 the maximum x value of the tile
@@ -312,7 +315,8 @@ public class World extends Messenger
 
     /**
      * Returns the location of a randomly choosen open tile using the given
-     * instance of Dice is used for random number generation.
+     * instance of Dice is used for random number generation. A tile is
+     * considered open if it is passable and there is not Actor occupant.
      * @param dice the instance of Dice used for random number generation
      * @return the location of a randomly choosen open tile
      */
@@ -323,7 +327,8 @@ public class World extends Messenger
 
     /**
      * Returns the location of a randomly choosen open tile. The global instance
-     * of Dice is used for random number generation.
+     * of Dice is used for random number generation. A tile is considered open
+     * if it is passable and there is not Actor occupant.
      * @return the location of a randomly choosen open tile
      */
     public final Coord getOpenTile()

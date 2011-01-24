@@ -108,50 +108,16 @@ public class TermPanel extends Terminal
     public void updateScreen()
     {
         screen.repaint();
-    }
-
-    @Override
-    public void bufferChar(Coord pos, ColoredChar ch)
-    {
-        synchronized(screenBuffer)
+        try
         {
-            super.bufferChar(pos, ch);
+            synchronized(screen)
+            {
+                screen.wait();
+            }
         }
-    }
-
-    @Override
-    public ColoredChar charAt(Coord coord)
-    {
-        synchronized(screenBuffer)
+        catch(InterruptedException e)
         {
-            return super.charAt(coord);
-        }
-    }
-
-    @Override
-    public void clearBuffer()
-    {
-        synchronized(screenBuffer)
-        {
-            super.clearBuffer();
-        }
-    }
-
-    @Override
-    public void saveBuffer()
-    {
-        synchronized(screenBuffer)
-        {
-            super.saveBuffer();
-        }
-    }
-
-    @Override
-    public void recallBuffer()
-    {
-        synchronized(screenBuffer)
-        {
-            super.recallBuffer();
+            e.printStackTrace();
         }
     }
 
@@ -178,15 +144,16 @@ public class TermPanel extends Terminal
         protected void paintComponent(Graphics page)
         {
             super.paintComponent(page);
-            synchronized(screenBuffer)
+            for(Coord coord : screenBuffer.keySet())
             {
-                for(Coord coord : screenBuffer.keySet())
-                {
-                    ColoredChar ch = screenBuffer.get(coord);
-                    page.setColor(ch.color());
-                    page.drawString(ch.toString(), tileWidth * coord.x(),
-                            tileHeight * (coord.y() + 1));
-                }
+                ColoredChar ch = screenBuffer.get(coord);
+                page.setColor(ch.color());
+                page.drawString(ch.toString(), tileWidth * coord.x(),
+                        tileHeight * (coord.y() + 1));
+            }
+            synchronized(this)
+            {
+                notify();
             }
         }
 

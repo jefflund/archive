@@ -10,8 +10,7 @@ import jade.ui.TermPanel;
 import jade.ui.Terminal;
 import jade.ui.Terminal.Camera;
 import jade.ui.aim.Aim;
-import jade.ui.aim.Directional;
-import jade.ui.aim.Letter;
+import jade.ui.aim.Select;
 import jade.util.ColoredChar;
 import jade.util.Coord;
 import jade.util.Direction;
@@ -45,8 +44,7 @@ public class Demo
         Player player = new Player();
         world.addActor(player);
         term.addCamera(player, new Coord(6, 6));
-        Aim aim = new Directional(Actor.class);
-        Aim aim2 = new Letter(Actor.class);
+        Aim aim = new Select(Player.class);
         for(int i = 0; i < 30; i++)
         {
             world.addActor(new Actor(new ColoredChar('D')));
@@ -66,8 +64,6 @@ public class Demo
                 player.move(d);
             else if(key == 't')
                 System.out.println(aim.getAim(term, player));
-            else if(key == 'T')
-                System.out.println(aim2.getAim(term, player));
         }
         while(key != 'q');
 

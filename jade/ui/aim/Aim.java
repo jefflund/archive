@@ -3,6 +3,7 @@ package jade.ui.aim;
 import jade.core.Actor;
 import jade.ui.Terminal;
 import jade.ui.Terminal.Camera;
+import jade.util.ColoredChar;
 import jade.util.Coord;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ import java.util.List;
  */
 public abstract class Aim
 {
+    protected static final ColoredChar pointer = new ColoredChar('*');
+
     private final Class<? extends Actor> targetType;
 
     /**

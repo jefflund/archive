@@ -2,7 +2,6 @@ package jade.ui.aim;
 
 import jade.ui.Terminal;
 import jade.ui.Terminal.Camera;
-import jade.util.ColoredChar;
 import jade.util.Coord;
 import jade.util.Direction;
 import java.util.Collection;
@@ -13,8 +12,6 @@ import java.util.Collection;
  */
 public class Free extends Aim
 {
-    private static final ColoredChar targetCh = new ColoredChar('*');
-    
     @Override
     public Coord getAim(Terminal term, Camera camera)
     {
@@ -25,7 +22,7 @@ public class Free extends Aim
         while(key != 't')
         {
             term.recallBuffer();
-            term.bufferRelative(camera, target, targetCh);
+            term.bufferRelative(camera, target, pointer);
             term.updateScreen();
 
             key = term.getKey();

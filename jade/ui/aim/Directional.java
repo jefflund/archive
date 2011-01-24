@@ -16,8 +16,10 @@ public class Directional extends Aim
     public Directional(Class<? extends Actor> cls)
     {
         super(cls);
+        if(cls == null)
+            throw new IllegalStateException("Letter must have target type");
     }
-    
+
     @Override
     public Coord getAim(Terminal term, Camera camera)
     {
