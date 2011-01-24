@@ -15,8 +15,19 @@ import java.util.Set;
  */
 public abstract class Terminal
 {
+    /**
+     * The screen buffer. A call to updateScreen will make the screen reflect
+     * the contents of this buffer.
+     */
     protected final Map<Coord, ColoredChar> screenBuffer;
+    /**
+     * The saved buffer. Calls to saveBuffer and recallBuffer use this buffer.
+     */
     protected final Map<Coord, ColoredChar> savedBuffer;
+    /**
+     * The camera registry. Saves registered instance of Camera along with their
+     * center position on screen.
+     */
     protected final Map<Camera, Coord> cameras;
 
     /**
@@ -129,7 +140,7 @@ public abstract class Terminal
 
     /**
      * Returns the next key press, blocking until there is one.
-     * @return
+     * @return the next key press
      */
     public abstract char getKey();
 
@@ -233,5 +244,8 @@ public abstract class Terminal
         bufferChar(pos.translated(offX, offY), ch);
     }
 
+    /**
+     * The character value of the ESC keyF
+     */
     public static final char ESC = 27;
 }

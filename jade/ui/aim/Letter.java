@@ -13,6 +13,10 @@ import java.util.List;
  */
 public class Letter extends Aim
 {
+    /**
+     * Initializes Letter with a given target type
+     * @param cls the target type for this Aim
+     */
     public Letter(Class<? extends Actor> cls)
     {
         super(cls);

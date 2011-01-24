@@ -6,6 +6,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Uses recursive shadowcasting to quickly calculate field of vision without
+ * revisiting any tiles.
+ */
 public class Shadowcast extends FoV
 {
     /**

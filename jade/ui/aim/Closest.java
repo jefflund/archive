@@ -11,6 +11,10 @@ import jade.util.Coord;
  */
 public class Closest extends Aim
 {
+    /**
+     * Initializes Closest with a given target type
+     * @param cls the target type for this Aim
+     */
     public Closest(Class<? extends Actor> cls)
     {
         super(cls);

@@ -225,6 +225,14 @@ public class World extends Messenger
         return null;
     }
 
+    /**
+     * Returns every tile that is visible at a given location, ordered such that
+     * the tile with least prioirty is first, and the most important (the tile
+     * returned by look), is last.
+     * @param x the x value of the location being queried
+     * @param y the y value of the location being queried
+     * @return every tile that is visible at a given location
+     */
     public List<ColoredChar> lookAll(int x, int y)
     {
         List<ColoredChar> look = new ArrayList<ColoredChar>();
@@ -234,17 +242,35 @@ public class World extends Messenger
         return look;
     }
 
+    /**
+     * Returns every tile that is visible at a given location, ordered such that
+     * the tile with least prioirty is first, and the most important (the tile
+     * returned by look), is last.
+     * @param coord the location being queried
+     * @return every tile that is visible at a given location
+     */
     public final List<ColoredChar> lookAll(Coord coord)
     {
         return lookAll(coord.x(), coord.y());
     }
 
+    /**
+     * Returns the face that should be drawn for the given location.
+     * @param x the x value of the location being queried
+     * @param y the y value of the location being queried
+     * @return the face that should be drawn for the given location.
+     */
     public final ColoredChar look(int x, int y)
     {
         List<ColoredChar> look = lookAll(x, y);
         return look.get(look.size() - 1);
     }
 
+    /**
+     * Returns the face that should be drawn for the given location.
+     * @param coord the location being queried
+     * @return the face that should be drawn for the given location.
+     */
     public final ColoredChar look(Coord coord)
     {
         return look(coord.x(), coord.y());

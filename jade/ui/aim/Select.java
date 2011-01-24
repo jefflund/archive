@@ -7,8 +7,16 @@ import jade.util.Coord;
 import jade.util.Direction;
 import java.util.List;
 
+/**
+ * Similar to free, but with restrictions based on a target type. The user is
+ * able to move a cursor in between tiles occupied by the target type.
+ */
 public class Select extends Aim
 {
+    /**
+     * Initializes Select with a given target type
+     * @param cls the target type for this Aim
+     */
     public Select(Class<? extends Actor> cls)
     {
         super(cls);

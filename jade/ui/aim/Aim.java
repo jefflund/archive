@@ -17,6 +17,9 @@ import java.util.List;
  */
 public abstract class Aim
 {
+    /**
+     * The default character for a pointer on screen.
+     */
     protected static final ColoredChar pointer = new ColoredChar('*');
 
     private final Class<? extends Actor> targetType;

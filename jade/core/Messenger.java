@@ -35,7 +35,7 @@ public class Messenger
      * source of the message. If the message does not have the specified suffix,
      * it will be concatinated to the message.
      * @param message the contents of the message
-     * @suffix the required message suffix
+     * @param suffix the required message suffix
      */
     public void appendMessage(String message, String suffix)
     {

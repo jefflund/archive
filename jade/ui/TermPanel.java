@@ -19,8 +19,19 @@ import javax.swing.JPanel;
  */
 public class TermPanel extends Terminal
 {
+    /**
+     * The default tile size
+     */
     public static final int DEFAULT_TILE = 12;
+    /**
+     * The default number of columns, which corresponds to the size of old
+     * school terminals.
+     */
     public static final int DEFAULT_COLS = 80;
+    /**
+     * The default number of rows, which corresponds to the size of old school
+     * terminals.
+     */
     public static final int DEFAULT_ROWS = 24;
 
     private Screen screen;

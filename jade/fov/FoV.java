@@ -44,7 +44,7 @@ public abstract class FoV
      * Returns the location of all visible tiles from (x, y) on the world, where
      * (x, y) is given by the Coord, within range r.
      * @param world the world on which (x, y) refers to
-     * @param coord the value of the center of the field of vision
+     * @param pos the value of the center of the field of vision
      * @param r the range of the field of vision
      * @return the location of all the visible tiles from (x, y)
      */

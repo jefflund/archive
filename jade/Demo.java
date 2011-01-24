@@ -16,6 +16,9 @@ import jade.util.Coord;
 import jade.util.Direction;
 import java.util.Set;
 
+/**
+ * A simple demo of some Jade Rogue features.
+ */
 public class Demo
 {
     private static class Player extends Actor implements Camera
@@ -35,6 +38,10 @@ public class Demo
         }
     }
 
+    /**
+     * Runs the demo.
+     * @param args command line args - nothing is done with them
+     */
     public static void main(String[] args)
     {
         Terminal term = TermPanel.getFramedTerm("Jade Rogue");

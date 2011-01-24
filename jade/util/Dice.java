@@ -32,6 +32,10 @@ public class Dice
         reseed(seed);
     }
 
+    /**
+     * Constructs an instance of Dice, with a seed based on the state of the
+     * clock.
+     */
     public Dice()
     {
         this((int)System.currentTimeMillis());
@@ -113,7 +117,7 @@ public class Dice
 
     /**
      * Returns true with a probability of pval / 100.
-     * @param pval the probability of true
+     * @param probablity the probability of true
      * @return true with probability pval / 100
      */
     public final boolean chance(int probablity)
@@ -184,7 +188,7 @@ public class Dice
             iter.next();
         return result;
     }
-    
+
     /**
      * Returns a random direction
      * @return a random direction

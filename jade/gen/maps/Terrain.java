@@ -17,16 +17,33 @@ public class Terrain extends MapGen
     private List<ColoredChar> pass;
     private List<ColoredChar> impass;
 
+    /**
+     * Initializes an instance of Terrain with default values.
+     */
     public Terrain()
     {
         this(10);
     }
 
+    /**
+     * Initializes an intnace of Terrain with a given probablity of an
+     * impassable tile.
+     * @param probImpass the probability of an impassable tile
+     */
     public Terrain(int probImpass)
     {
         this(probImpass, defaultPass(), defaultImpass());
     }
 
+    /**
+     * Initializes an instance of Terrain with a given probability of an
+     * impassable tile, as well as custom tiles. Passable and impassable tiles
+     * will be distributed according to the parameter probImpass, choosen with
+     * uniform chance from the two lists of tile faces.
+     * @param probImpass the probablity of an impassable tile
+     * @param pass the possible faces of the passable tiles
+     * @param impass the possible faces of the impassable tiles
+     */
     public Terrain(int probImpass, List<ColoredChar> pass,
             List<ColoredChar> impass)
     {

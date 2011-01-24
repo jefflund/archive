@@ -13,6 +13,10 @@ import jade.util.Direction;
 public class Directional extends Aim
 {
 
+    /**
+     * Initializes Directional with a given target type
+     * @param cls the target type for this Aim
+     */
     public Directional(Class<? extends Actor> cls)
     {
         super(cls);

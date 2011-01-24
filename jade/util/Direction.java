@@ -5,8 +5,42 @@ package jade.util;
  */
 public enum Direction
 {
-    NORTH(0, -1), NORTHEAST(1, -1), EAST(1, 0), SOUTHEAST(1, 1), SOUTH(0, 1), SOUTHWEST(
-            -1, 1), WEST(-1, 0), NORTHWEST(-1, -1), ORIGIN(0, 0);
+    /**
+     * Up on screen.
+     */
+    NORTH(0, -1),
+    /**
+     * Up-right on screen.
+     */
+    NORTHEAST(1, -1),
+    /**
+     * Right on screen.
+     */
+    EAST(1, 0),
+    /**
+     * Down-right on screen.
+     */
+    SOUTHEAST(1, 1),
+    /**
+     * Down on screen.
+     */
+    SOUTH(0, 1),
+    /**
+     * Down-left on screen.
+     */
+    SOUTHWEST(-1, 1),
+    /**
+     * Left on screen.
+     */
+    WEST(-1, 0),
+    /**
+     * Up-left on screen.
+     */
+    NORTHWEST(-1, -1),
+    /**
+     * No change on screen.
+     */
+    ORIGIN(0, 0);
 
     private int x;
     private int y;
@@ -117,7 +151,7 @@ public enum Direction
     /**
      * Returns the direction that corresponds to the opposite cardinal direction
      * as this one.
-     * @return
+     * @return the direction that corresponds to the opposite cardinal direction
      */
     public Direction opposite()
     {

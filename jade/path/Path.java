@@ -46,7 +46,7 @@ public abstract class Path
      * @param world the world on which the path is calculated
      * @param start the start of the path
      * @param end the end of the path
-     * @return
+     * @return the calculated path from start to end
      */
     public abstract List<Coord> calcPath(World world, Coord start, Coord end);
 }
