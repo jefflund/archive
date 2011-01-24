@@ -36,10 +36,7 @@ public abstract class Terminal
      */
     public void bufferChar(Coord pos, ColoredChar ch)
     {
-        synchronized(screenBuffer)
-        {
-            screenBuffer.put(pos, ch);
-        }
+        screenBuffer.put(pos, ch);
     }
 
     /**
@@ -111,7 +108,7 @@ public abstract class Terminal
     public void saveBuffer()
     {
         savedBuffer.clear();
-        savedBuffer.putAll(savedBuffer);
+        savedBuffer.putAll(screenBuffer);
     }
 
     /**
@@ -128,7 +125,7 @@ public abstract class Terminal
      * call to this method, there is no guarantee that the screen will be
      * updated to reflect the screen buffer.
      */
-    public abstract void update();
+    public abstract void updateScreen();
 
     /**
      * Returns the next key press, blocking until there is one.
@@ -235,4 +232,6 @@ public abstract class Terminal
         int offY = center.y() - camera.y();
         bufferChar(pos.translated(offX, offY), ch);
     }
+
+    public static final char ESC = 27;
 }

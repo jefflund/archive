@@ -53,7 +53,8 @@ public class TermPanel extends Terminal
      */
     public static TermPanel getFramedTerm(String frameTitle)
     {
-        return getFramedTerm(DEFAULT_TILE, DEFAULT_COLS, DEFAULT_ROWS, frameTitle);
+        return getFramedTerm(DEFAULT_TILE, DEFAULT_COLS, DEFAULT_ROWS,
+                frameTitle);
     }
 
     /**
@@ -66,7 +67,7 @@ public class TermPanel extends Terminal
      * @return a new TermPanel, with the custome dimensions
      */
     public static TermPanel getFramedTerm(int tileSize, int cols, int rows,
-    String frameTitle)
+            String frameTitle)
     {
         TermPanel term = new TermPanel(tileSize, cols, rows);
         JFrame frame = new JFrame(frameTitle);
@@ -104,9 +105,54 @@ public class TermPanel extends Terminal
     }
 
     @Override
-    public void update()
+    public void updateScreen()
     {
         screen.repaint();
+    }
+
+    @Override
+    public void bufferChar(Coord pos, ColoredChar ch)
+    {
+        synchronized(screenBuffer)
+        {
+            super.bufferChar(pos, ch);
+        }
+    }
+
+    @Override
+    public ColoredChar charAt(Coord coord)
+    {
+        synchronized(screenBuffer)
+        {
+            return super.charAt(coord);
+        }
+    }
+
+    @Override
+    public void clearBuffer()
+    {
+        synchronized(screenBuffer)
+        {
+            super.clearBuffer();
+        }
+    }
+
+    @Override
+    public void saveBuffer()
+    {
+        synchronized(screenBuffer)
+        {
+            super.saveBuffer();
+        }
+    }
+
+    @Override
+    public void recallBuffer()
+    {
+        synchronized(screenBuffer)
+        {
+            super.recallBuffer();
+        }
     }
 
     private class Screen extends JPanel implements KeyListener
@@ -138,8 +184,8 @@ public class TermPanel extends Terminal
                 {
                     ColoredChar ch = screenBuffer.get(coord);
                     page.setColor(ch.color());
-                    page.drawString(ch.toString(), tileWidth * coord.x(), tileHeight
-                    * (coord.y() + 1));
+                    page.drawString(ch.toString(), tileWidth * coord.x(),
+                            tileHeight * (coord.y() + 1));
                 }
             }
         }
@@ -158,13 +204,13 @@ public class TermPanel extends Terminal
         @Override
         public void keyReleased(KeyEvent event)
         {
-            //noop
+            // noop
         }
 
         @Override
         public void keyTyped(KeyEvent event)
         {
-            //noop
+            // noop
         }
     }
 }

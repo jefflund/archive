@@ -35,6 +35,12 @@ public enum Direction
         this.y = y;
     }
 
+    /**
+     * Returns the direction that corresponds with a given vi key. If no
+     * direction corresponds, null is returned instead.
+     * @param key the key being queried
+     * @return the direction that corresponds with a given vi key
+     */
     public static Direction viKeyDir(char key)
     {
         switch(key)
@@ -61,6 +67,12 @@ public enum Direction
         }
     }
 
+    /**
+     * Returns the direction that corresponds with a given numpad key. If no
+     * direction corresponds, null is returned instead.
+     * @param key the key being queried
+     * @return the direction that corresponds with a given numpad key
+     */
     public static Direction numKeyDir(char key)
     {
         switch(key)
@@ -88,11 +100,49 @@ public enum Direction
         }
     }
 
+    /**
+     * Returns the direction that corresponds with a given vi or numpad key. If
+     * no direction corresponds, null is returned instead.
+     * @param key the key being queried
+     * @return the direction that corresponds with a given vi or numpad key key
+     */
     public static Direction keyDir(char key)
     {
         Direction dir = viKeyDir(key);
         if(dir == null)
             dir = numKeyDir(key);
         return dir;
+    }
+
+    /**
+     * Returns the direction that corresponds to the opposite cardinal direction
+     * as this one.
+     * @return
+     */
+    public Direction opposite()
+    {
+        switch(this)
+        {
+        case EAST:
+            return WEST;
+        case WEST:
+            return EAST;
+        case NORTH:
+            return SOUTH;
+        case SOUTH:
+            return NORTH;
+        case NORTHEAST:
+            return SOUTHWEST;
+        case SOUTHWEST:
+            return NORTHEAST;
+        case NORTHWEST:
+            return SOUTHEAST;
+        case SOUTHEAST:
+            return NORTHWEST;
+        case ORIGIN:
+            return ORIGIN;
+        default:
+            return null;
+        }
     }
 }

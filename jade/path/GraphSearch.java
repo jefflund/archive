@@ -135,7 +135,7 @@ public abstract class GraphSearch extends Path
         return reconstructPath(bestNode);
     }
 
-    protected final Node getNode(Map<Coord, Node> nodes, Coord pos)
+    private Node getNode(Map<Coord, Node> nodes, Coord pos)
     {
         Node node = nodes.get(pos);
         if(node == null)

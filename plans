@@ -3,7 +3,6 @@ REVIEW JADE ALPHA 1:
         MapGen
             Cellular
             Maze
-            Traditional
     ui
         aim
             *
@@ -16,13 +15,9 @@ TODO ALPHA 2:
     Promote on rgrd, basin, etc
 
 ALPHA 2 PLANS:
-    AI
-        PotentialField
-        Tracking
-            scent, sound, sight
     Core
-        Dungeon
-        Wilderness
+        Dungeon (link multiple World vertically)
+        Wilderness (link multiple World horizontally) 
         World
             draworder, moveorder, scheduler
         Actor
@@ -35,6 +30,8 @@ ALPHA 2 PLANS:
     FoV
         permissive fov
     UI
+        Terminal
+            macros, keymappings
         Camera
             viewport, rather than just screen center
         Widget
@@ -45,6 +42,10 @@ ALPHA 2 PLANS:
             dart, beam, ball
 
 FUTURE ALPHA 3 PLANS:
+    AI
+        PotentialField
+        Tracking
+            scent, sound, sight
     Story
         NameGen (simple n-gram model)
         QuestGen

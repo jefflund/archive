@@ -9,6 +9,9 @@ import jade.gen.maps.BSP;
 import jade.ui.TermPanel;
 import jade.ui.Terminal;
 import jade.ui.Terminal.Camera;
+import jade.ui.aim.Aim;
+import jade.ui.aim.Directional;
+import jade.ui.aim.Letter;
 import jade.util.ColoredChar;
 import jade.util.Coord;
 import jade.util.Direction;
@@ -42,19 +45,29 @@ public class Demo
         Player player = new Player();
         world.addActor(player);
         term.addCamera(player, new Coord(6, 6));
+        Aim aim = new Directional(Actor.class);
+        Aim aim2 = new Letter(Actor.class);
+        for(int i = 0; i < 30; i++)
+        {
+            world.addActor(new Actor(new ColoredChar('D')));
+            world.addActor(new Player());
+        }
 
         char key;
         do
         {
             term.clearBuffer();
             term.bufferCamera(player);
-            term.bufferRelative(player, player.pos(), player.face());
-            term.update();
+            term.updateScreen();
 
             key = term.getKey();
             Direction d = Direction.viKeyDir(key);
             if(d != null)
                 player.move(d);
+            else if(key == 't')
+                System.out.println(aim.getAim(term, player));
+            else if(key == 'T')
+                System.out.println(aim2.getAim(term, player));
         }
         while(key != 'q');
 
