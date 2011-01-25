@@ -76,7 +76,7 @@ public class Demo
         // Terminal so the player's keyPresses can be used
         private Terminal term;
         // parameter to field of view
-        private static final int view = 5;
+        private static final int viewRange = 5;
         // for zombies
         private int brainLeft;
         private boolean infected;
@@ -139,7 +139,7 @@ public class Demo
         {
             // field of view generation is super easy!!
             // check out the fov package for more info
-            return fov.getFoV(world(), pos(), view);
+            return fov.getFoV(world(), pos(), viewRange);
         }
 
         public void setPos(int x, int y)
@@ -233,7 +233,6 @@ public class Demo
             // note that the order is important, the last thing added will be
             // the item returned by look.
             List<ColoredChar> look = new ArrayList<ColoredChar>();
-            look.add(tileAt(x, y));
             look.add(tileAt(x, y));
             for(Zombie zombie : getActorsAt(Zombie.class, x, y))
                 look.add(zombie.face());
