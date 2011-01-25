@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Represents anything that performs any action in a Jade World.
  */
-public class Actor extends Messenger
+public abstract class Actor extends Messenger
 {
     private ColoredChar face;
     private World world;
@@ -31,6 +31,12 @@ public class Actor extends Messenger
         holder = null;
         holds = new HashSet<Actor>();
     }
+
+    /**
+     * Carries out the action of the Actor. Often is usually called by the World
+     * in its tick method.
+     */
+    public abstract void act();
 
     /**
      * Returns the face of the Actor

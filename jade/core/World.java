@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * A level in which Jade Actors interact.
  */
-public class World extends Messenger
+public abstract class World extends Messenger
 {
     private Tile[][] grid;
     private int width;
@@ -33,6 +33,12 @@ public class World extends Messenger
                 grid[x][y] = new Tile();
         actorRegister = new HashSet<Actor>();
     }
+
+    /**
+     * Defines the events of one game world tick. Normally this method calls act
+     * for certain classes of Actor, and then calls removedExpired to clean up.
+     */
+    public abstract void tick();
 
     /**
      * Returns the width of the World

@@ -135,6 +135,17 @@ public class Coord
     }
 
     /**
+     * Returns a new Coord, which is a copy of this one tranlated by (dx, dy),
+     * where (dx, dy) is given by the Direction.
+     * @param direction the direction of change
+     * @return a new Coord, which is a copy of this one translated by (dx, dy)
+     */
+    public final Coord translated(Direction direction)
+    {
+        return translated(direction.dx(), direction.dy());
+    }
+
+    /**
      * Returns the cartesian distance from this Coord to the other Coord.
      * @param other the other Coord over which distance is calculated
      * @return the cartesian distance from this Coord to the other Coord
@@ -168,6 +179,44 @@ public class Coord
         int a = Math.abs(x - other.x);
         int b = Math.abs(y - other.y);
         return Math.min(a, b);
+    }
+
+    /**
+     * Returns the direction which is one step toward the given Coord.
+     * @param goal the Coord towards which the result points
+     * @return the direction which is one step toward the given Coord
+     */
+    public Direction directionTo(Coord goal)
+    {
+        int dx = goal.x - x;
+        int dy = goal.y - y;
+        if(dx < 0)
+        {
+            if(dy < 0)
+                return Direction.NORTHWEST;
+            else if(dy > 0)
+                return Direction.SOUTHWEST;
+            else
+                return Direction.WEST;
+        }
+        else if(dx > 0)
+        {
+            if(dy < 0)
+                return Direction.NORTHEAST;
+            else if(dy > 0)
+                return Direction.SOUTHEAST;
+            else
+                return Direction.EAST;
+        }
+        else
+        {
+            if(dy < 0)
+                return Direction.NORTH;
+            else if(dy > 0)
+                return Direction.SOUTH;
+            else
+                return Direction.ORIGIN;
+        }
     }
 
     @Override

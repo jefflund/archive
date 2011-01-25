@@ -1,9 +1,3 @@
-REVIEW JADE ALPHA 1:
-    gen
-        MapGen
-            Cellular
-            Maze
-
 TODO:
     Regenerate javadocs
     Write improved tutorial
