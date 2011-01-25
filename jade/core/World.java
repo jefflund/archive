@@ -243,8 +243,6 @@ public abstract class World extends Messenger
     {
         List<ColoredChar> look = new ArrayList<ColoredChar>();
         look.add(tileAt(x, y));
-        for(Actor actor : getActorsAt(Actor.class, x, y))
-            look.add(actor.face());
         return look;
     }
 

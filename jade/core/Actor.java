@@ -53,7 +53,7 @@ public abstract class Actor extends Messenger
      * have its face returned in World look methods.
      * @param face the new face of the Actor
      */
-    public void changeFace(ColoredChar face)
+    public void setFace(ColoredChar face)
     {
         this.face = face;
     }

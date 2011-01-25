@@ -245,7 +245,7 @@ public abstract class Terminal
     }
 
     /**
-     * The character value of the ESC keyF
+     * The character value of the ESC key
      */
     public static final char ESC = 27;
 }

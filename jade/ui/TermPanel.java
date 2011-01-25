@@ -119,16 +119,48 @@ public class TermPanel extends Terminal
     public void updateScreen()
     {
         screen.repaint();
-        try
+    }
+
+    /*
+     * Note that the next few methods are overidden simply to synchronize on the
+     * screen buffer. This is needed because swing has a separate thread for
+     * painting components. This thread causes conncurent modification
+     * exceptions on the screen buffer without synchronization.
+     */
+
+    @Override
+    public void bufferChar(Coord pos, ColoredChar ch)
+    {
+        synchronized(screenBuffer)
         {
-            synchronized(screen)
-            {
-                screen.wait();
-            }
+            super.bufferChar(pos, ch);
         }
-        catch(InterruptedException e)
+    }
+
+    @Override
+    public void clearBuffer()
+    {
+        synchronized(screenBuffer)
         {
-            e.printStackTrace();
+            super.clearBuffer();
+        }
+    }
+
+    @Override
+    public void recallBuffer()
+    {
+        synchronized(screenBuffer)
+        {
+            super.recallBuffer();
+        }
+    }
+
+    @Override
+    public void saveBuffer()
+    {
+        synchronized(screenBuffer)
+        {
+            super.saveBuffer();
         }
     }
 
@@ -155,16 +187,15 @@ public class TermPanel extends Terminal
         protected void paintComponent(Graphics page)
         {
             super.paintComponent(page);
-            for(Coord coord : screenBuffer.keySet())
+            synchronized(screenBuffer)
             {
-                ColoredChar ch = screenBuffer.get(coord);
-                page.setColor(ch.color());
-                page.drawString(ch.toString(), tileWidth * coord.x(),
-                        tileHeight * (coord.y() + 1));
-            }
-            synchronized(this)
-            {
-                notify();
+                for(Coord coord : screenBuffer.keySet())
+                {
+                    ColoredChar ch = screenBuffer.get(coord);
+                    page.setColor(ch.color());
+                    page.drawString(ch.toString(), tileWidth * coord.x(),
+                            tileHeight * (coord.y() + 1));
+                }
             }
         }
 
