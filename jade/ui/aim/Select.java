@@ -52,12 +52,14 @@ public class Select extends Aim
                 Coord newTarget = null;
                 for(Coord coord : targets)
                 {
+                    // if coord in wrong direction
                     if(coord.equals(target)
                             || (dir.dx() < 0 && coord.x() > target.x())
                             || (dir.dx() > 0 && coord.x() < target.x())
                             || (dir.dy() < 0 && coord.y() > target.y())
                             || (dir.dy() > 0 && coord.y() < target.y()))
                         continue;
+                    // get closest to old target in correct direction
                     if(newTarget == null
                             || (target.distCart(coord) < target
                                     .distCart(newTarget)))

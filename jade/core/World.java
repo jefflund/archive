@@ -314,6 +314,7 @@ public abstract class World extends Messenger
      */
     public Coord getOpenTile(Dice dice, int x1, int y1, int x2, int y2)
     {
+        // try 100 times to find an open tile
         for(int i = 0; i < 100; i++)
         {
             int x = dice.next(x1, x2);
@@ -321,11 +322,13 @@ public abstract class World extends Messenger
             if(passable(x, y) && getActorAt(Actor.class, x, y) == null)
                 return new Coord(x, y);
         }
+        // if that fails, just find any old open tile
         for(int x = 0; x < width; x++)
             for(int y = 0; y < height; y++)
                 if(passable(x, y) && getActorAt(Actor.class, x, y) == null)
                     return new Coord(x, y);
-        return new Coord();
+        // no open tile, return null
+        return null;
     }
 
     /**

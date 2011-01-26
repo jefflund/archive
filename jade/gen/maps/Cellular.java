@@ -87,11 +87,13 @@ public class Cellular extends MapGen
     {
         if(!openExists(world))
             return false;
-        Set<Coord> filled = floodFilled(world, dice);
+        // fills one random area, and return the set so we can count them
+        // this will tend to be the large connected area if there is one
+        Set<Coord> filled = floodFill(world, dice);
         int fillPercent = filled.size() * 100 / world.width() / world.height();
-        if(fillPercent > wallChance)
+        if(fillPercent > wallChance)// filled area must be large
         {
-            deleteExtra(world, filled);
+            deleteExtra(world, filled);// removes unconnected
             return true;
         }
         return false;
@@ -107,7 +109,7 @@ public class Cellular extends MapGen
             }
     }
 
-    private Set<Coord> floodFilled(World world, Dice dice)
+    private Set<Coord> floodFill(World world, Dice dice)
     {
         Stack<Coord> stack = new Stack<Coord>();
         stack.push(world.getOpenTile(dice));
@@ -140,15 +142,24 @@ public class Cellular extends MapGen
         return false;
     }
 
+    // the reason for the name stems from the origional parameter configuration
+    // but I didn't want to change it...
     private void apply45(boolean[][] buffer, boolean[][] temp, Dice dice)
     {
+        // do counts off buffer, and save changes to buffer
+        // otherwise changes prematurely affect counts!
         for(int x = 1; x < buffer.length - 1; x++)
             for(int y = 1; y < buffer[0].length - 1; y++)
             {
+                // wall if adjacent count greater than minCount1
+                // (ie sufficent food for the cell to live)
                 boolean minCond = wallcount(buffer, x, y, 1) >= minCount1;
+                // wall if cell isolated at range 2
+                // (ie spontaneous generation...makes islands cave walls too)
                 boolean maxCond = wallcount(buffer, x, y, 2) <= maxCount2;
                 temp[x][y] = !minCond && !maxCond;
             }
+        // save temp back to buffer
         for(int x = 1; x < buffer.length - 1; x++)
             for(int y = 1; y < buffer[0].length - 1; y++)
                 buffer[x][y] = temp[x][y];
@@ -175,6 +186,7 @@ public class Cellular extends MapGen
 
     private void finish(World world, boolean[][] buffer)
     {
+        // apply buffer to world
         for(int x = 0; x < world.width(); x++)
             for(int y = 0; y < world.height(); y++)
             {
@@ -188,6 +200,7 @@ public class Cellular extends MapGen
     private boolean[][] init(World world, Dice dice)
     {
         boolean[][] buffer = new boolean[world.width()][world.height()];
+        // fill the cave randomly - walls happen wallChance / 100 of the time
         for(int x = 1; x < world.width() - 1; x++)
             for(int y = 1; y < world.height() - 1; y++)
             {
@@ -196,6 +209,7 @@ public class Cellular extends MapGen
                 else
                     buffer[x][y] = true;
             }
+        // fence the cave in
         for(int x = 1; x < world.width() - 1; x++)
         {
             buffer[x][0] = false;

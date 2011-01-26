@@ -49,7 +49,7 @@ public class BSP extends MapGen
         head.divide(dice);
         head.makeRooms(world, dice);
         head.connect(world, dice);
-        head.addCycle(world, dice);
+        head.addCycle(world, dice);// a plain tree is boring
     }
 
     private void wallFill(World world)
@@ -77,7 +77,7 @@ public class BSP extends MapGen
 
         public BSPNode(World world, int minSize)
         {
-            connected = true;
+            connected = true;// head node has no sibling, so can't connect
             readyConnect = true;
             x1 = 0;
             y1 = 0;
@@ -90,16 +90,18 @@ public class BSP extends MapGen
             this.parent = parent;
             connected = false;
             readyConnect = true;
+            // vert means we divide on x
             x1 = parent.x1 + (vert && !left ? div + 1 : 0);
-            y1 = parent.y1 + (!vert && !left ? div + 1 : 0);
             x2 = vert && left ? parent.x1 + div : parent.x2;
+            // non vert means we divide on y
+            y1 = parent.y1 + (!vert && !left ? div + 1 : 0);
             y2 = !vert && left ? parent.y1 + div : parent.y2;
         }
 
         public void divide(Dice dice)
         {
             boolean vert = dice.chance();
-            int min = minSize + 4;
+            int min = minSize + 4;// +4 so we dont get aligned grid of rooms
             if(divTooSmall(vert, min))
                 vert = !vert;
             if(divTooSmall(vert, min))
@@ -138,8 +140,11 @@ public class BSP extends MapGen
                 left.connect(world, dice);
                 right.connect(world, dice);
             }
+            // only connect when children are connected, since me being
+            // connected only says something in my bounds connects to my
+            // siblings bounds
             readyConnect = true;
-            if(connected)
+            if(connected)// my sibling already connected to me
                 return;
             BSPNode sibling = sibling();
             if(sibling.readyConnect)
@@ -184,31 +189,33 @@ public class BSP extends MapGen
             {
                 corridor.add(new Coord(curr));
                 boolean digging = !world.passable(curr);
+                // dig horizontal, then vertical
                 if(curr.x() == end.x())
                     curr.translate(0, curr.y() < end.y() ? 1 : -1);
                 else
                     curr.translate(curr.x() < end.x() ? 1 : -1, 0);
                 if(digging && world.passable(curr))
                 {
+                    // dont actually dig the corridor if we only connected
+                    // to ourselves, just restart the corridor
                     if(neighbor.inside(curr))
                         break;
                     corridor.clear();
                 }
             }
+            // finally we dig the connecting corridor
             for(Coord coord : corridor)
                 world.setTile(coord, floorTile, true);
         }
 
         private BSPNode sibling()
         {
-            if(parent == null)
-                System.out.println("POOP");
             return this == parent.left ? parent.right : parent.left;
         }
 
         private boolean divTooSmall(boolean vert, int min)
         {
-            min *= 2;
+            min *= 2;// need space for two rooms
             return vert ? (x2 - x1) < min : (y2 - y1) < min;
         }
 

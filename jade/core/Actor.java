@@ -220,7 +220,7 @@ public abstract class Actor extends Messenger
         if(actor.bound())
         {
             setWorld(actor.world);
-            world.registerActor(this);
+            world.registerActor(this);// now world is the holder's world
         }
         holder = actor;
         actor.holds.add(this);
@@ -237,10 +237,10 @@ public abstract class Actor extends Messenger
     {
         assertHeld();
         holder.holds.remove(this);
-        pos = new Coord(holder.pos);
+        pos = new Coord(holder.pos);// now our position is independent of holder
         setHeldPos();
         holder = null;
-        if(bound())
+        if(bound())// still on holder's world
             setPos(pos);
     }
 

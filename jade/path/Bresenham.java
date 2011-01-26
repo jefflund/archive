@@ -20,6 +20,7 @@ public class Bresenham extends Path
 
     private List<Coord> castray(World world, int x1, int y1, int x2, int y2)
     {
+        // Rogue Basin article on Bresenham's
         List<Coord> path = new LinkedList<Coord>();
         path.add(new Coord(x1, y1));
         int dx = Math.abs(x2 - x1) << 1;

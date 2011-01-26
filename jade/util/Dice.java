@@ -181,6 +181,7 @@ public class Dice
      */
     public <T> T choose(Collection<T> collection)
     {
+        // assuming no random access, we just iterate...
         int index = next(collection.size());
         Iterator<T> iter = collection.iterator();
         T result = iter.next();
@@ -202,8 +203,8 @@ public class Dice
     {
         for(int i = 0; i < N; i++)
         {
-            int y = twister[i] & 0x80000000;
-            y += twister[(i + 1) % N] & 0x7fffffff;
+            int y = twister[i] & 0x80000000;// keep 32nd bit
+            y += twister[(i + 1) % N] & 0x7fffffff; // keep first 31 bits
             twister[i] = twister[(i + 397) % N] ^ (y >> 1);
             if(y % 2 == 1)
                 twister[i] = twister[i] ^ 0x9908b0df;

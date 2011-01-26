@@ -1,5 +1,4 @@
 TODO:
-    Write improved tutorial
     Improve wiki
     ** Complete 7drl **
     Promote on rgrd, basin, etc
@@ -34,6 +33,7 @@ ALPHA 2 PLANS:
 FUTURE ALPHA 3 PLANS:
     AI
         PotentialField
+            can be used to control packs
         Tracking
             scent, sound, sight
     Story
@@ -50,6 +50,7 @@ DISTANT FUTURE ALPHA 4 PLANS:
     RealTime
         multiplayer server (like MAngband)
     Animated Tiles
+        sliding tiles when they move
         tie into RT/MP server
     AI
         trainable AI models

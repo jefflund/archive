@@ -29,6 +29,7 @@ public class Raycast extends FoV
     {
         Set<Coord> result = new HashSet<Coord>();
         result.add(new Coord(x, y));
+        // send a ray to each tile on the boundry
         for(int dx = x - r; dx <= x + r; dx++)
         {
             result.addAll(castray(world, x, y, dx, y - r));
@@ -44,6 +45,7 @@ public class Raycast extends FoV
 
     private List<Coord> castray(World world, int x1, int y1, int x2, int y2)
     {
+        // calc path stops at an impassable tile
         return raycaster.calcPath(world, new Coord(x1, y1), new Coord(x2, y2));
     }
 }

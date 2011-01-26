@@ -37,14 +37,15 @@ public class Maze extends MapGen
         while(!stack.isEmpty())
         {
             Coord curr = stack.peek();
-            Coord next = getNext(curr, cells, dice);
-            if(next == null)
+            Coord next = getNext(curr, cells, dice);// get random uncovered dir
+            if(next == null)// no where to go, just backtrace
                 stack.pop();
             else
             {
+                // dig in random uncovered direction
                 Coord dig = curr.translated(curr.directionTo(next));
                 world.setTile(dig, floorTile, true);
-                stack.push(next);
+                stack.push(next);// continue from where we dug
             }
         }
     }
@@ -75,6 +76,7 @@ public class Maze extends MapGen
         for(int x = 0; x < world.width(); x++)
             for(int y = 0; y < world.height(); y++)
             {
+                // every other square is an open to start
                 if(x % 2 == 1 && y % 2 == 1 && x < world.width() - 1
                         && y < world.height() - 1)
                 {

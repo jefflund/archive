@@ -85,6 +85,51 @@ public abstract class Terminal
     }
 
     /**
+     * Places the string at (x, y) on the screen, in the given color.
+     * @param x the x value of the position of the string
+     * @param y the y value of the position of the string
+     * @param str the string to be buffered
+     * @param color the color of the string
+     */
+    public void bufferString(int x, int y, String str, Color color)
+    {
+        for(char ch : str.toCharArray())
+            bufferChar(x++, y, ch, color);
+    }
+
+    /**
+     * Places the string at (x, y) on the screen, in the given color.
+     * @param coord the (x, y) position of the string
+     * @param str the string to be buffered
+     * @param color the color of the string
+     */
+    public final void bufferString(Coord coord, String str, Color color)
+    {
+        bufferString(coord.x(), coord.y(), str, color);
+    }
+
+    /**
+     * Places the string at (x, y) on the screen, in white.
+     * @param coord the (x, y) position of the string
+     * @param str the string to be buffered
+     */
+    public final void bufferString(Coord coord, String str)
+    {
+        bufferString(coord, str, Color.white);
+    }
+
+    /**
+     * Places the string at (x, y) on the screen, in white.
+     * @param x the x value of the position of the string
+     * @param y the y value of the position of the string
+     * @param str the string to be buffered
+     */
+    public final void bufferString(int x, int y, String str)
+    {
+        bufferString(x, y, str, Color.white);
+    }
+
+    /**
      * Returns the contents of the buffer at the given coordinate
      * @param coord the location being queried
      * @return the contents of the buffer at coord
@@ -143,6 +188,13 @@ public abstract class Terminal
      * @return the next key press
      */
     public abstract char getKey();
+
+    /**
+     * Returns the next key press, but does not block if there is no available key
+     * press. Instead '\0' is returned if there is no key.
+     * @return the next key press
+     */
+    public abstract char tryGetKey();
 
     /**
      * An alias for System.exit(0).

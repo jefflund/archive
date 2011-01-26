@@ -76,7 +76,7 @@ public abstract class FoV
             int radius)
     {
         Collection<Coord> out = new HashSet<Coord>();
-        radius++;
+        radius++;// the circle looks better this way
         for(Coord coord : field)
             if(!inCircle(x, y, coord.x(), coord.y(), radius))
                 out.add(coord);

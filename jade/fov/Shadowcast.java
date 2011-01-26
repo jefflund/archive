@@ -42,8 +42,10 @@ public class Shadowcast extends FoV
         {
             Coord curr = getCurr(orig, depth, y, octant);
             Coord prev = getPrev(orig, depth, y, octant, world);
+            // we were scaning open tiles and hit a wall
             if(world.passable(curr) && !world.passable(prev))
                 startslope = newStartslope(depth, endslope, y);
+            // we were scaning wall tiles and hit an open tile
             if(!world.passable(curr) && world.passable(prev))
                 scan(depth + 1, startslope, newEndslope(depth, y), orig, fov,
                         world, range, octant);

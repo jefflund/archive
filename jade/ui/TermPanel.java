@@ -105,13 +105,24 @@ public class TermPanel extends Terminal
         {
             try
             {
-                screen.inputBuffer.wait();
+                screen.inputBuffer.wait();// block for key press
                 return screen.inputBuffer.remove();
             }
             catch(InterruptedException e)
             {
-                return 0;
+                return '\0';
             }
+        }
+    }
+
+    public char tryGetKey()
+    {
+        synchronized(screen.inputBuffer)
+        {
+            if(!screen.inputBuffer.isEmpty())
+                return screen.inputBuffer.remove();
+            else
+                return '\0';
         }
     }
 
@@ -206,7 +217,7 @@ public class TermPanel extends Terminal
             synchronized(inputBuffer)
             {
                 inputBuffer.add(key);
-                inputBuffer.notify();
+                inputBuffer.notify();// signal getKey
             }
         }
 

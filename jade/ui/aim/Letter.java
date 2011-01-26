@@ -29,6 +29,9 @@ public class Letter extends Aim
     {
         term.saveBuffer();
         List<Coord> targets = getTargets(camera);
+
+        // on screen, replace each target with letter corresponding to
+        // index in target list (ie 1=a, 2=b...)
         for(int i = 0; i < targets.size(); i++)
         {
             ColoredChar ch = new ColoredChar((char)('a' + i));
@@ -36,7 +39,7 @@ public class Letter extends Aim
         }
         term.updateScreen();
 
-        int choice = term.getKey() - 'a';
+        int choice = term.getKey() - 'a'; // reverse int to char mapping
         term.recallBuffer();
         term.updateScreen();
 

@@ -55,7 +55,7 @@ public abstract class GraphSearch extends Path
                     tentativeIsBetter = true;
                 if(tentativeIsBetter)
                 {
-                    open.remove(y);
+                    open.remove(y);// must reenqueue with updated priority
                     y.prev = x;
                     y.gScore = tentativeGScore;
                     y.fScore = y.gScore + y.hScore;

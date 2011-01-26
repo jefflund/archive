@@ -32,6 +32,8 @@ public class Demo
         // console emulation is easy in Jade
         // check out the Terminal API for more info
         Terminal term = TermPanel.getFramedTerm("Jade Rogue Demo");
+        term.bufferString(6, 6, "Welcome to Jade Rogue!!!!");
+        term.getKey();
 
         // world generation is really easy too
         // check out the gen package for other generation algorithms
@@ -93,9 +95,14 @@ public class Demo
         @Override
         public void act()
         {
+            // be a zombie if no brains are left...
             if(brainLeft < 0)
             {
-                move(Dice.global.nextDir());
+                move(Dice.global.nextDir());// move brainlessly
+                sleep();
+                char key = term.tryGetKey();
+                if(key == 'q' || key == Terminal.ESC)
+                    expire();
                 return;
             }
 
@@ -129,8 +136,25 @@ public class Demo
                 if(brainLeft == 10)
                     setFace(new ColoredChar('@', Color.red));
                 if(brainLeft == 0)
+                {
                     setFace(new ColoredChar('Z', Color.red));
+                    term.bufferString(0, 2 * viewRange, "YOU'RE A ZOMBIE!");
+                    term.updateScreen();
+                    term.getKey();
+                }
                 brainLeft--;
+            }
+        }
+
+        private void sleep()
+        {
+            try
+            {
+                Thread.sleep(250);
+            }
+            catch(InterruptedException e)
+            {
+                e.printStackTrace();
             }
         }
 

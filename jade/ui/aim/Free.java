@@ -21,11 +21,13 @@ public class Free extends Aim
         char key = '\0';
         while(key != 't')
         {
+            // show where current target is
             term.recallBuffer();
             term.bufferRelative(camera, target, pointer);
             term.updateScreen();
 
             key = term.getKey();
+
             if(key == Terminal.ESC)
             {
                 term.recallBuffer();
@@ -33,11 +35,12 @@ public class Free extends Aim
                 return null;
             }
 
+            // update pointer as needed
             Direction dir = Direction.viKeyDir(key);
             if(dir != null)
             {
                 target.translate(dir);
-                if(!fov.contains(target))
+                if(!fov.contains(target))// can't target what you can't see
                     target.translate(dir.opposite());
             }
         }
