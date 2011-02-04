@@ -236,33 +236,21 @@ public class Demo
         }
 
         @Override
-        public void tick()
+        protected List<Class<? extends Actor>> defaultActOrder()
         {
-            // tick contains the basic game logic
-            // the basic tick method has this structure
-            // just call variants of getActor(s) and have them act
-            for(Player actor : getActors(Player.class))
-                actor.act();
-            for(Zombie zombie : getActors(Zombie.class))
-                zombie.act();
-            // then remove everyone who was marked for removal
-            removeExpired();
+            List<Class<? extends Actor>> actOrder = new ArrayList<Class<? extends Actor>>();
+            actOrder.add(Player.class);
+            actOrder.add(Zombie.class);
+            return actOrder;
         }
 
         @Override
-        public List<ColoredChar> lookAll(int x, int y)
+        protected List<Class<? extends Actor>> defaultDrawOrder()
         {
-            // lookAll returns the list of what should be drawn.
-            // look uses it, and bufferCamera (in main) uses look
-            // note that the order is important, the last thing added will be
-            // the item returned by look.
-            List<ColoredChar> look = new ArrayList<ColoredChar>();
-            look.add(tileAt(x, y));
-            for(Zombie zombie : getActorsAt(Zombie.class, x, y))
-                look.add(zombie.face());
-            for(Player player : getActorsAt(Player.class, x, y))
-                look.add(player.face());
-            return look;
+            List<Class<? extends Actor>> drawOrder = new ArrayList<Class<? extends Actor>>();
+            drawOrder.add(Player.class);
+            drawOrder.add(Zombie.class);
+            return drawOrder;
         }
     }
 }
