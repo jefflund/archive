@@ -249,11 +249,11 @@ public class Demo
         public List<ColoredChar> lookAll(int x, int y)
         {
             List<ColoredChar> look = new ArrayList<ColoredChar>();
-            look.add(tileAt(x, y));
-            for(Zombie zombie : getActorsAt(Zombie.class, x, y))
-                look.add(zombie.face());
             for(Player player : getActorsAt(Player.class, x, y))
                 look.add(player.face());
+            for(Zombie zombie : getActorsAt(Zombie.class, x, y))
+                look.add(zombie.face());
+            look.add(tileAt(x, y));
             return look;
         }
     }

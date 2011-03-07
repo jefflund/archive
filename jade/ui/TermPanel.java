@@ -8,8 +8,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.SynchronousQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -101,29 +100,19 @@ public class TermPanel extends Terminal
     @Override
     public char getKey()
     {
-        synchronized(screen.inputBuffer)
+        try
         {
-            try
-            {
-                screen.inputBuffer.wait();// block for key press
-                return screen.inputBuffer.remove();
-            }
-            catch(InterruptedException e)
-            {
-                return '\0';
-            }
+            return screen.inputBuffer.take();
+        }
+        catch(InterruptedException e)
+        {
+            return '\0';
         }
     }
 
     public char tryGetKey()
     {
-        synchronized(screen.inputBuffer)
-        {
-            if(!screen.inputBuffer.isEmpty())
-                return screen.inputBuffer.remove();
-            else
-                return '\0';
-        }
+        return screen.inputBuffer.poll();
     }
 
     @Override
@@ -177,7 +166,7 @@ public class TermPanel extends Terminal
 
     private class Screen extends JPanel implements KeyListener
     {
-        public Queue<Character> inputBuffer;
+        public SynchronousQueue<Character> inputBuffer;
 
         private int tileWidth;
         private int tileHeight;
@@ -186,7 +175,7 @@ public class TermPanel extends Terminal
         {
             tileHeight = tileSize;
             tileWidth = tileHeight * 3 / 4;
-            inputBuffer = new LinkedList<Character>();
+            inputBuffer = new SynchronousQueue<Character>();
             addKeyListener(this);
             setPreferredSize(new Dimension(cols * tileWidth, rows * tileHeight));
             setFont(new Font(Font.MONOSPACED, Font.PLAIN, tileHeight));
@@ -213,11 +202,13 @@ public class TermPanel extends Terminal
         @Override
         public void keyPressed(KeyEvent event)
         {
-            char key = event.getKeyChar();
-            synchronized(inputBuffer)
+            try
             {
-                inputBuffer.add(key);
-                inputBuffer.notify();// signal getKey
+                inputBuffer.put(event.getKeyChar());
+            }
+            catch(InterruptedException e)
+            {
+                e.printStackTrace();
             }
         }
 
