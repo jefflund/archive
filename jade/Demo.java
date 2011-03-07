@@ -236,21 +236,25 @@ public class Demo
         }
 
         @Override
-        protected List<Class<? extends Actor>> defaultActOrder()
+        public void tick()
         {
-            List<Class<? extends Actor>> actOrder = new ArrayList<Class<? extends Actor>>();
-            actOrder.add(Player.class);
-            actOrder.add(Zombie.class);
-            return actOrder;
+            for(Player actor : getActors(Player.class))
+                actor.act();
+            for(Zombie zombie : getActors(Zombie.class))
+                zombie.act();
+            removeExpired();
         }
 
         @Override
-        protected List<Class<? extends Actor>> defaultDrawOrder()
+        public List<ColoredChar> lookAll(int x, int y)
         {
-            List<Class<? extends Actor>> drawOrder = new ArrayList<Class<? extends Actor>>();
-            drawOrder.add(Player.class);
-            drawOrder.add(Zombie.class);
-            return drawOrder;
+            List<ColoredChar> look = new ArrayList<ColoredChar>();
+            look.add(tileAt(x, y));
+            for(Zombie zombie : getActorsAt(Zombie.class, x, y))
+                look.add(zombie.face());
+            for(Player player : getActorsAt(Player.class, x, y))
+                look.add(player.face());
+            return look;
         }
     }
 }

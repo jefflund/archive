@@ -3,7 +3,6 @@ package jade.core;
 import jade.util.ColoredChar;
 import jade.util.Coord;
 import jade.util.Dice;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,14 +10,12 @@ import java.util.Set;
 /**
  * A level in which Jade Actors interact.
  */
-public class World extends Messenger
+public abstract class World extends Messenger
 {
     private Tile[][] grid;
     private int width;
     private int height;
     private Set<Actor> actorRegister;
-    private List<Class<? extends Actor>> actOrder;
-    private List<Class<? extends Actor>> drawOrder;
 
     /**
      * Constructs an empty World with the given dimensions.
@@ -34,47 +31,6 @@ public class World extends Messenger
             for(int y = 0; y < height; y++)
                 grid[x][y] = new Tile();
         actorRegister = new HashSet<Actor>();
-
-        actOrder = defaultActOrder();
-        drawOrder = defaultDrawOrder();
-    }
-
-    /**
-     * Returns the default act order for the World. Most likely this method
-     * should be overridden by extendsing classes. This method is used in the
-     * constructor to initialize the act order. Unoverridden, the act order
-     * contains a single element, namely Actor.class.
-     * @return the default act order for the World
-     */
-    protected List<Class<? extends Actor>> defaultActOrder()
-    {
-        List<Class<? extends Actor>> actOrder = new ArrayList<Class<? extends Actor>>();
-        actOrder.add(Actor.class);
-        return actOrder;
-    }
-
-    /**
-     * Returns the default act order for the World. Most likely this method
-     * should be overridden by extendsing classes. This method is used in the
-     * constructor to initialize the act order. Unoverridden, the act order
-     * contains a single element, namely Actor.class.
-     * @return the default act order for the World
-     */
-    protected List<Class<? extends Actor>> defaultDrawOrder()
-    {
-        List<Class<? extends Actor>> drawOrder = new ArrayList<Class<? extends Actor>>();
-        drawOrder.add(Actor.class);
-        return drawOrder;
-    }
-
-    /**
-     * Sets the new act order for the world. This is the order in which the act
-     * method for the Actors is called in the tick method.
-     * @param actOrder the new act order
-     */
-    public void setActorOrder(List<Class<? extends Actor>> actOrder)
-    {
-        this.drawOrder = actOrder;
     }
 
     /**
@@ -82,13 +38,7 @@ public class World extends Messenger
      * actors are called in the order specified by the act order. Finally,
      * removeExpired is called.
      */
-    public void tick()
-    {
-        for(Class<? extends Actor> cls : actOrder)
-            for(Actor actor : getActors(cls))
-                actor.act();
-        removeExpired();
-    }
+    public abstract void tick();
 
     /**
      * Returns the width of the World
@@ -282,37 +232,16 @@ public class World extends Messenger
     }
 
     /**
-     * Sets the draw order for the world. The method lookAll uses this draw
-     * order to determine which actor faces should be returned. The tile with
-     * the highest priority should be first in the draw order. Note that if the
-     * same class, or a parent of another class is present, then lookAll will
-     * return two copies of the same actor.
-     * @param drawOrder the new draw order
-     */
-    public void setDrawOrder(List<Class<? extends Actor>> drawOrder)
-    {
-        this.drawOrder = drawOrder;
-    }
-
-    /**
      * Returns every tile that is visible at a given location, ordered such that
      * the tile with highest prioirty (the tile returned by look) is first, and
      * the lowest prioirty is last. This last tile will be the face of the
-     * actual tile itself. Note that any actor which has a null face will not be
-     * included.
+     * actual tile itself. Note that any actor which has a null face should not
+     * be included.
      * @param x the x value of the location being queried
      * @param y the y value of the location being queried
      * @return every tile that is visible at a given location
      */
-    public List<ColoredChar> lookAll(int x, int y)
-    {
-        List<ColoredChar> look = new ArrayList<ColoredChar>();
-        for(Class<? extends Actor> cls : drawOrder)
-            for(Actor actor : getActorsAt(cls, x, y))
-                look.add(actor.face());
-        look.add(tileAt(x, y));
-        return look;
-    }
+    public abstract List<ColoredChar> lookAll(int x, int y);
 
     /**
      * Returns every tile that is visible at a given location, ordered such that

@@ -1,6 +1,6 @@
 TODO:
-    Improve wiki
     ** Complete 7drl **
+    Improve wiki
     Promote on rgrd, basin, etc
 
 ALPHA 2 PLANS:
@@ -8,7 +8,7 @@ ALPHA 2 PLANS:
         Dungeon (link multiple World vertically)
         Wilderness (link multiple World horizontally) 
         World
-            draworder, moveorder, scheduler
+            scheduler tied to act
         Actor
             displaced action
     Gen
@@ -55,11 +55,12 @@ DISTANT FUTURE ALPHA 4 PLANS:
     AI
         trainable AI models
 
-VAPOURWARE BETA 1:
+VAPOURWARE PLANS:
     Jade Roguelike
         skill based leveling
         unstructured magic system
             power up spells
+            custom spell creation
         stealth system
             massive assination bonuses
         improved melee
@@ -73,3 +74,4 @@ VAPOURWARE BETA 1:
         persistant mutable dungeons
         lasting consequences
             city destruction possible
+            npc death means something
