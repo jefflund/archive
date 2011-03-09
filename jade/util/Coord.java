@@ -150,10 +150,21 @@ public class Coord
      * @param other the other Coord over which distance is calculated
      * @return the cartesian distance from this Coord to the other Coord
      */
-    public double distCart(Coord other)
+    public final double distCart(Coord other)
     {
-        double a = x - other.x;
-        double b = y - other.y;
+        return distCart(other.x, other.y);
+    }
+
+    /**
+     * Return the cartesian distance from this Coord to the Coord (x, y)
+     * @param x the x value of the other Coord over which distance is calculated
+     * @param y the y value of the other Coord over which distance is calculated
+     * @return the cartesian distance from this Coord to (x, y)
+     */
+    public double distCart(int x, int y)
+    {
+        double a = this.x - x;
+        double b = this.y - y;
         return Math.sqrt(a * a + b * b);
     }
 
@@ -162,10 +173,21 @@ public class Coord
      * @param other the other Coord over which distance is calculated
      * @return the manhatan distance from this Coord to the other Coord
      */
-    public double distTaxi(Coord other)
+    public final double distTaxi(Coord other)
     {
-        int a = Math.abs(x - other.x);
-        int b = Math.abs(y - other.y);
+        return distTaxi(other.x, other.y);
+    }
+
+    /**
+     * Return the manhatan distance from this Coord to the Coord (x, y)
+     * @param x the x value of the other Coord over which distance is calculated
+     * @param y the y value of the other Coord over which distance is calculated
+     * @return the manhatan distance from this Coord to (x, y)
+     */
+    public double distTaxi(int x, int y)
+    {
+        int a = Math.abs(this.x - x);
+        int b = Math.abs(this.y - y);
         return a + b;
     }
 
@@ -174,10 +196,21 @@ public class Coord
      * @param other the other Coord over which distance is calculated
      * @return the roguelike distance from this Coord to the other Coord
      */
-    public double distRl(Coord other)
+    public final double distRl(Coord other)
     {
-        int a = Math.abs(x - other.x);
-        int b = Math.abs(y - other.y);
+        return distRl(other.x, other.y);
+    }
+
+    /**
+     * Return the roguelike distance from this Coord to the Coord (x, y)
+     * @param x the x value of the other Coord over which distance is calculated
+     * @param y the y value of the other Coord over which distance is calculated
+     * @return the roguelike distance from this Coord to (x, y)
+     */
+    public double distRl(int x, int y)
+    {
+        int a = Math.abs(this.x - x);
+        int b = Math.abs(this.y - y);
         return Math.min(a, b);
     }
 
@@ -186,10 +219,21 @@ public class Coord
      * @param goal the Coord towards which the result points
      * @return the direction which is one step toward the given Coord
      */
-    public Direction directionTo(Coord goal)
+    public final Direction directionTo(Coord goal)
     {
-        int dx = goal.x - x;
-        int dy = goal.y - y;
+        return directionTo(goal.x, goal.y);
+    }
+
+    /**
+     * Returns the direction which is one step toward the given (x, y)
+     * @param x the x value of the Coord towards which the result points
+     * @param y the y value of the Coord towards which the result points
+     * @return the direction which is one step toward the given Coord
+     */
+    public Direction directionTo(int x, int y)
+    {
+        int dx = x - this.x;
+        int dy = y - this.y;
         if(dx < 0)
         {
             if(dy < 0)

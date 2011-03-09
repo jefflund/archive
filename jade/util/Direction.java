@@ -179,4 +179,13 @@ public enum Direction
             return null;
         }
     }
+
+    /**
+     * Converts the Direction to a Coord
+     * @return the Direction converted to a Coord
+     */
+    public Coord coord()
+    {
+        return new Coord(x, y);
+    }
 }
