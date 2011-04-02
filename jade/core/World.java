@@ -119,7 +119,7 @@ public abstract class World extends Messenger
     /**
      * Removes all actors which have been marked as expired.
      */
-    public final void removeExpired()
+    public void removeExpired()
     {
         Set<Actor> expired = new HashSet<Actor>();
         for(Actor actor : actorRegister)
