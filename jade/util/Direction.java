@@ -1,6 +1,5 @@
 package jade.util;
 
-import util.Vector;
 
 /**
  * Represents a cardinal direction.
@@ -189,10 +188,5 @@ public enum Direction
     public Coord coord()
     {
         return new Coord(x, y);
-    }
-
-    public Vector vector()
-    {
-        return new Vector(x, y);
     }
 }

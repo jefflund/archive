@@ -166,6 +166,8 @@ public class TermPanel extends Terminal
 
     private class Screen extends JPanel implements KeyListener
     {
+        private static final long serialVersionUID = 3639782704485629934L;
+
         public SynchronousQueue<Character> inputBuffer;
 
         private int tileWidth;

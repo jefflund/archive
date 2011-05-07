@@ -33,10 +33,10 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Carries out the action of the Actor. Often is usually called by the World
-     * in its tick method.
+     * Carries out the action of the Actor. This is called by the World in its tick method. The
+     * return value should reflect the number of ticks until the actor can move again.
      */
-    public abstract void act();
+    public abstract int act();
 
     /**
      * Returns the face of the Actor
@@ -48,9 +48,9 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Changes the face of this Actor to a new one. Note that a null face is
-     * allowed, and implies that the Actor should never be drawn on screen, or
-     * have its face returned in World look methods.
+     * Changes the face of this Actor to a new one. Note that a null face is allowed, and implies
+     * that the Actor should never be drawn on screen, or have its face returned in World look
+     * methods.
      * @param face the new face of the Actor
      */
     public void setFace(ColoredChar face)
@@ -59,8 +59,7 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Returns the world on which the Actor resides, or null if the actor is not
-     * bound to a World.
+     * Returns the world on which the Actor resides, or null if the actor is not bound to a World.
      * @return the world on which the Actor currently resides
      */
     public World world()
@@ -88,8 +87,8 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Returns the x value of the location of the Actor on the World. An error
-     * is raised if the Actor is not bound to a World.
+     * Returns the x value of the location of the Actor on the World. An error is raised if the
+     * Actor is not bound to a World.
      * @return the x value of the location of the Actor on the World
      */
     public int x()
@@ -99,8 +98,8 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Returns the y value of the location of the Actor on the World. An error
-     * is raised if the Actor is not bound to a World.
+     * Returns the y value of the location of the Actor on the World. An error is raised if the
+     * Actor is not bound to a World.
      * @return the y value of the location of the Actor on the World
      */
     public int y()
@@ -110,10 +109,9 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Returns a copy of the location of the Actor on the World. An error is
-     * raised if the Actor is not bound to a World. Note that the result is a
-     * copy, and changes to this Coord will not be reflected in the state of the
-     * Actor.
+     * Returns a copy of the location of the Actor on the World. An error is raised if the Actor is
+     * not bound to a World. Note that the result is a copy, and changes to this Coord will not be
+     * reflected in the state of the Actor.
      * @return the location of the Actor on the World
      */
     public Coord pos()
@@ -123,8 +121,8 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Sets the position of the Actor on the World to (x, y). An error is raised
-     * if the Actor is not bound to a World or if it is held by another Actor.
+     * Sets the position of the Actor on the World to (x, y). An error is raised if the Actor is not
+     * bound to a World or if it is held by another Actor.
      * @param x the x value of the new location of the Actor on the World
      * @param y the y value of the new location of the Actor on the World
      */
@@ -138,9 +136,8 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Sets the position of the Actor on the World to the value of the given
-     * Coord. An error is raised if the Actor is not bound to a World or if it
-     * is held by another Actor.
+     * Sets the position of the Actor on the World to the value of the given Coord. An error is
+     * raised if the Actor is not bound to a World or if it is held by another Actor.
      * @param coord the new position of the Actor on the World
      */
     public final void setPos(Coord coord)
@@ -149,9 +146,8 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Sets the position of the Actor on the World to (x + dx, y + dy). An error
-     * is raised if the Actor is not bound to a World or if it is held by
-     * another Actor.
+     * Sets the position of the Actor on the World to (x + dx, y + dy). An error is raised if the
+     * Actor is not bound to a World or if it is held by another Actor.
      * @param dx the change x
      * @param dy the change y
      */
@@ -161,9 +157,8 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Sets the position of the Actor on the World to (x + dx, y + dy) where
-     * delta defines (dx, dy). An error is raised if the Actor is not bound to a
-     * World or if it is held by another Actor.
+     * Sets the position of the Actor on the World to (x + dx, y + dy) where delta defines (dx, dy).
+     * An error is raised if the Actor is not bound to a World or if it is held by another Actor.
      * @param delta the change in position
      */
     public final void move(Coord delta)
@@ -172,9 +167,8 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Sets the position of the Actor to be one step in the given direction. An
-     * error is raised if the Actor is not bound to a World or if it is held by
-     * another Actor.
+     * Sets the position of the Actor to be one step in the given direction. An error is raised if
+     * the Actor is not bound to a World or if it is held by another Actor.
      * @param dir the direction of change
      */
     public final void move(Direction dir)
@@ -183,8 +177,7 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Expires this Actor and every Actor held by this one, marking them for
-     * removal from its World.
+     * Expires this Actor and every Actor held by this one, marking them for removal from its World.
      */
     public void expire()
     {
@@ -194,8 +187,7 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Returns true if the Actor is expired, which means it is marked for
-     * removal from its World.
+     * Returns true if the Actor is expired, which means it is marked for removal from its World.
      * @return true if the Actor is expired
      */
     public boolean expired()
@@ -204,12 +196,10 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Attaches this Actor to the given Actor. The position of this Actor then
-     * becomes that of the new holder. This Actor is removed from its current
-     * World and bount to the World of the new holder, although it will not be
-     * found on the grid of the World. Any Actor held by this Actor will also be
-     * moved with the new holder. An error is raised if the Actor is already
-     * held.
+     * Attaches this Actor to the given Actor. The position of this Actor then becomes that of the
+     * new holder. This Actor is removed from its current World and bount to the World of the new
+     * holder, although it will not be found on the grid of the World. Any Actor held by this Actor
+     * will also be moved with the new holder. An error is raised if the Actor is already held.
      * @param actor the new holder
      */
     public void attach(Actor actor)
@@ -229,9 +219,9 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Releases this Actor from its holder. The position of this Actor becomes
-     * independent of its former holder. It is also recorded as occupying the
-     * World grid. An error is raised by this method if the Actor was not held.
+     * Releases this Actor from its holder. The position of this Actor becomes independent of its
+     * former holder. It is also recorded as occupying the World grid. An error is raised by this
+     * method if the Actor was not held.
      */
     public void detach()
     {
@@ -311,5 +301,11 @@ public abstract class Actor extends Messenger
     {
         if(!held())
             throw new IllegalStateException("Actor not held!");
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.valueOf(face);
     }
 }
