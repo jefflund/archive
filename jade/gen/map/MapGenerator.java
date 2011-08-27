@@ -8,6 +8,9 @@ import jade.gen.Generator;
  */
 public abstract class MapGenerator extends Generator
 {
+    /**
+     * Creates a new instance of {@code MapGenerator}, with no chained {@code Generator}.
+     */
     public MapGenerator()
     {
         super();

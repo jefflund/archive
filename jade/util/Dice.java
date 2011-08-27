@@ -1,7 +1,5 @@
 package jade.util;
 
-import jade.util.datatype.Direction;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -108,7 +106,7 @@ public class Dice
 
     /**
      * Returns true with a probability of percent / 100.
-     * @param probablity the probability of true
+     * @param percent the probability of true
      * @return true with probability percent / 100
      */
     public final boolean chance(int percent)
@@ -128,7 +126,7 @@ public class Dice
     /**
      * Returns a random element of a list.
      * @param <T> the type of the elements of the list
-     * @param list the list from which an element is chosen
+     * @param possible the list from which an element is chosen
      * @return a random element of a list
      */
     public <T> T choose(List<T> possible)
@@ -138,10 +136,5 @@ public class Dice
 
         int index = nextInt(possible.size());
         return possible.get(index);
-    }
-
-    public Direction nextDirection()
-    {
-        return choose(Arrays.asList(Direction.values()));
     }
 }

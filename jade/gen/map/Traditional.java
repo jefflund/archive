@@ -9,6 +9,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Uses a binary space partitioning algorithm to generate rooms, and the connect them using the
+ * binary space partition tree. Cycles are then added to make the maps more interesting. This
+ * algorithm yields traditional roguelike maps with rectangular rooms connected by corridors.
+ */
 public class Traditional extends MapGenerator
 {
     private ColoredChar wallTile;

@@ -196,6 +196,7 @@ public abstract class World extends Messenger
      * Returns an {@code Actor} of the given class located at (x, y), or null if there is none. If
      * there are multiple possible {@code Actor} that could be returned, an arbitrary {@code Actor}
      * is returned.
+     * @param <T> the generic type of the class to be returned
      * @param cls the {@code Class<T extends Actor>} of the {@code Actor} to be returned
      * @param x the x location being queried
      * @param y the y location being queried
@@ -210,6 +211,7 @@ public abstract class World extends Messenger
      * Returns an {@code Actor} of the given class at the given location, or null if there is none.
      * If there are multiple possible {@code Actor} that could be returned, an arbitrary {@code
      * Actor} is returned.
+     * @param <T> the generic type of the class to be returned
      * @param cls the {@code Class<T extends Actor>} of the {@code Actor} to be returned
      * @param pos the location being queried
      * @return an {@code Actor} of the given class located at (x, y)
@@ -224,6 +226,7 @@ public abstract class World extends Messenger
     /**
      * Returns a {@code Collection<T extends Actor>} of all {@code Actor} of the given class located
      * at (x, y).
+     * @param <T> the generic type of the class to be returned
      * @param cls the {@code Class<T extends Actor>} of the {@code Actor} to be returned
      * @param x the x location being queried
      * @param y the y location being queried
@@ -238,6 +241,7 @@ public abstract class World extends Messenger
     /**
      * Returns a {@code Collection<T extends Actor>} of all {@code Actor} of the given class at the
      * given location.
+     * @param <T> the generic type of the class type to be returned
      * @param cls the {@code Class<T extends Actor>} of the {@code Actor} to be returned
      * @param pos the location being queried
      * @return a {@code Collection<T extends Actor>} of all {@code Actor} of the given class located
@@ -254,6 +258,7 @@ public abstract class World extends Messenger
      * Returns an {@code Actor} of the given class, regardless of the location on the {@code World}
      * , or null if there is none. If there are multiple possible {@code Actor} that could be
      * returned, an arbitrary {@code Actor} is returned.
+     * @param <T> the generic type of the class to be returned
      * @param cls the {@code Class<T extends Actor>} of the {@code Actor} to be returned
      * @return an {@code Actor} of the given class
      */
@@ -265,6 +270,7 @@ public abstract class World extends Messenger
     /**
      * Returns a {@code Collection<T extends Actor>} of all {@code Actor} of the given class,
      * Regardless of their location on the {@code World}.
+     * @param <T> the generic type of the class to be returned
      * @param cls the {@code Class<T extends Actor>} of the {@code Actor} to be returned
      * @return a {@code Collection<T extends Actor>} of all {@code Actor} of the given class
      */
@@ -306,7 +312,7 @@ public abstract class World extends Messenger
      * highest priority (the tile returned by look) is first, and the lowest priority is last. This
      * last tile will be the face of the actual tile itself. Note that any actor which has a null
      * face will not be included.
-     * @param coord the location being queried
+     * @param pos the location being queried
      * @return every tile that is visible at a given location
      */
     public final List<ColoredChar> lookAll(Coordinate pos)
@@ -502,7 +508,6 @@ public abstract class World extends Messenger
      * instance of {@code Dice} is used as the default parameter for randomly choosing the tiles. If
      * after 100 randomly selected tiles are closed, then each tile will be checked and the first
      * open tile found is returned. If the entire {@code World} is closed, null is returned.
-     * @param dice the random number generator used to randomly select tiles
      * @param topLeft the bounds upper-left most value
      * @param bottomRight the bounds bottom-right most value
      * @return a randomly chosen open tile

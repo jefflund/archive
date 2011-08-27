@@ -10,6 +10,11 @@ import jade.util.Guard;
  */
 public abstract class FeatureGenerator extends Generator
 {
+    /**
+     * Creates a new instance of {@code FeatureGenerator} with the required chained {@code
+     * Generator}.
+     * @param chained the required chained {@code Generator}
+     */
     public FeatureGenerator(Generator chained)
     {
         super(chained);

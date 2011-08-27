@@ -7,6 +7,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Uses shadow casting to quickly calculate a view field. Shadow casting is more complicated than
+ * ray casting, but will only visit each tile once. This gives it a significant advantage over ray
+ * casting which revisits cells multiple times when the view field is large. For this reason, shadow
+ * casting is much more popular than the simpler ray casting.
+ */
 public class ShadowCaster extends ViewField
 {
     @Override

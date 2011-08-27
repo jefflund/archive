@@ -7,6 +7,14 @@ import jade.util.datatype.Coordinate;
 import java.util.HashSet;
 import java.util.Stack;
 
+/**
+ * Uses cellular automaton to generate interesting cave-like maps. This implementation always tries
+ * to make a connected map. For large maps, this is usually done by removing small unconnected
+ * portions of the map. For small maps, the whole map is usually scrapped and a new map generated.
+ * Since the map is small, this turns out to be fairly inexpensive. However, after 100 tries, the
+ * algorithm quits, most likely leaving a completely impassible {@code World}. This all but
+ * guaranteed on exceptionally small maps.
+ */
 public class Cellular extends MapGenerator
 {
     private int wallChance = 45;
@@ -15,16 +23,36 @@ public class Cellular extends MapGenerator
     private ColoredChar floor;
     private ColoredChar wall;
 
+    /**
+     * Creates a new instance of {@code Cellular} with the default open tile of '.' and a default
+     * closed tile of '#'.
+     */
     public Cellular()
     {
         this(ColoredChar.create('.'), ColoredChar.create('#'));
     }
 
+    /**
+     * Creates a new instance of {@code Cellular} with the specified open and closed tiles.
+     * @param floor the face of the open tiles
+     * @param wall the face of the closed tiles
+     */
     public Cellular(ColoredChar floor, ColoredChar wall)
     {
         this(floor, wall, 45, 5, 3);
     }
 
+    /**
+     * Creates a new instance of Cellular with the specified generation parameters. Great care
+     * should be taken when customizing these parameters, as certain configurations may make it
+     * impossible to generate good levels.
+     * @param floor the face of the open tiles
+     * @param wall the face of the closed tiles
+     * @param wallChance the chance out of 100 of seeding the map with a wall, as well as the
+     *        required percent of wall tiles for the map to be accepted
+     * @param minCount the minimum number of walls at distance 1 to generate a wall
+     * @param maxCount the maximum number of walls at distance 2 to generate a wall
+     */
     public Cellular(ColoredChar floor, ColoredChar wall, int wallChance, int minCount, int maxCount)
     {
         this.wallChance = wallChance;

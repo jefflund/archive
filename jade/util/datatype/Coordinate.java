@@ -7,7 +7,14 @@ import jade.util.Guard;
  */
 public class Coordinate
 {
+    /**
+     * The x value of the {@code Coordinate}
+     */
     protected int x;
+
+    /**
+     * The y value of the {@code Coordinate}
+     */
     protected int y;
 
     /**
@@ -30,6 +37,10 @@ public class Coordinate
         return new Coordinate(x, y);
     }
 
+    /**
+     * Returns a mutable copy of the {@code Coordinate}
+     * @return a mutable copy of the {@code Coordinate}
+     */
     public MutableCoordinate mutableCopy()
     {
         return new MutableCoordinate(x, y);
@@ -81,8 +92,8 @@ public class Coordinate
 
     /**
      * Returns a copy of this {@code Coordinate} translated by the specified (dx, dy).
-     * @param x the change in x
-     * @param y the change in y
+     * @param dx the change in x
+     * @param dy the change in y
      * @return a copy translated by (dx, dy)
      */
     public Coordinate getTranslated(int dx, int dy)

@@ -7,6 +7,10 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Generates terrain by randomly placing tiles according to a specific mixture of two discrete
+ * distributions.
+ */
 public class Terrain extends MapGenerator
 {
     private int probImpass;
@@ -22,8 +26,8 @@ public class Terrain extends MapGenerator
     }
 
     /**
-     * Initializes an intnace of Terrain with a given probablity of an impassable tile.
-     * @param probImpass the probability of an impassable tile
+     * Initializes an instance of Terrain with a given probability of an impassible tile.
+     * @param probImpass the probability of an impassible tile
      */
     public Terrain(int probImpass)
     {
@@ -31,12 +35,12 @@ public class Terrain extends MapGenerator
     }
 
     /**
-     * Initializes an instance of Terrain with a given probability of an impassable tile, as well as
-     * custom tiles. Passable and impassable tiles will be distributed according to the parameter
-     * probImpass, choosen with uniform chance from the two lists of tile faces.
-     * @param probImpass the probablity of an impassable tile
+     * Initializes an instance of Terrain with a given probability of an impassible tile, as well as
+     * custom tiles. Passable and impassible tiles will be distributed according to the parameter
+     * probImpass, chosen with uniform chance from the two lists of tile faces.
+     * @param probImpass the probability of an impassible tile
      * @param pass the possible faces of the passable tiles
-     * @param impass the possible faces of the impassable tiles
+     * @param impass the possible faces of the impassible tiles
      */
     public Terrain(int probImpass, List<ColoredChar> pass, List<ColoredChar> impass)
     {

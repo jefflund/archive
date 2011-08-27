@@ -10,6 +10,7 @@ import java.util.Set;
  * Represents a categorical distribution over {@code <T>}. This discrete distribution assigns a mass
  * to each possible outcome. This class represents these probabilities a set of frequencies. The
  * probability of any given event is equal to its count divided by the sum of all counts.
+ * @param <T> the type of the support of the distribution
  */
 public class Categorical<T>
 {
@@ -99,6 +100,7 @@ public class Categorical<T>
     /**
      * Returns a random sample from the categorical distribution using the provided {@code Dice} to
      * generate the sampled event.
+     * @param dice the {@code Dice} used to generate the sampled event
      * @return a random sample from the distribution
      */
     public T sample(Dice dice)
@@ -126,6 +128,7 @@ public class Categorical<T>
     /**
      * Returns a random sample from the categorical distribution using the default {@code
      * Dice.global} to generate the sampled event.
+     * @return a random sample from the categorical distribution
      */
     public final T sample()
     {

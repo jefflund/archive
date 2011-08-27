@@ -149,7 +149,6 @@ public abstract class Terminal
      * Buffers a {@code String} at location on the screen with a default {@code Color} of white.
      * @param coord the location of the first character of str
      * @param str the {@code String} being buffered
-     * @param color the {@code Color} of the {@code String} being buffered
      */
     public final void bufferString(Coordinate coord, String str)
     {

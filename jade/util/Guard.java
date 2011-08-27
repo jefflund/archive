@@ -3,7 +3,7 @@ package jade.util;
 /**
  * A collection of methods meant to help check method preconditions and postconditions.
  */
-public final class Guard<T>
+public final class Guard
 {
     /**
      * Throws an {@code IllegalArgumentException} if the supplied argument is null.
@@ -124,6 +124,7 @@ public final class Guard<T>
      * Returns the given return value if it is not null. Otherwise, an {@code IllegalStateException}
      * is thrown. The typical usage would be as the return statement in another method (eg {@code
      * return Guard.returnNonNull(value);}).
+     * @param <T> the type of the value being tested for non-null
      * @param value the value being returned and tested for non-null
      * @return value, if value is not null
      */

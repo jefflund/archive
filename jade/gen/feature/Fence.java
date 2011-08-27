@@ -5,10 +5,18 @@ import jade.gen.Generator;
 import jade.util.Dice;
 import jade.util.datatype.ColoredChar;
 
+/**
+ * Places a fence around a map. This is almost always a good idea as it will prevent line of sight
+ * calculations and {@code Actor} placement from happening outside the bounds of the {@code World}.
+ */
 public class Fence extends FeatureGenerator
 {
     private static final ColoredChar face = ColoredChar.create('#');
 
+    /**
+     * Generates a new instance of Fence, the the specified chained {@code Generator}.
+     * @param chained the chained {@code Generator}
+     */
     public Fence(Generator chained)
     {
         super(chained);

@@ -149,8 +149,8 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Returns the x positive of the {@code Actor}.
-     * @return the x positive of the {@code Actor}
+     * Returns the x location of the {@code Actor}.
+     * @return the x location of the {@code Actor}
      */
     public int x()
     {
@@ -160,8 +160,8 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Returns the y positive of the {@code Actor}.
-     * @return the y positive of the {@code Actor}
+     * Returns the y location of the {@code Actor}.
+     * @return the y location of the {@code Actor}
      */
     public int y()
     {
@@ -170,6 +170,10 @@ public abstract class Actor extends Messenger
         return pos.y();
     }
 
+    /**
+     * Returns a copy of the current position of the {@code Actor}.
+     * @return a copy of the current position of the {@code Actor}.
+     */
     public final Coordinate pos()
     {
         return pos.copy();
@@ -220,7 +224,7 @@ public abstract class Actor extends Messenger
     }
 
     /**
-     * Detaches this {@code Actor} from its current holder. Note that the {@code Actor must
+     * Detaches this {@code Actor} from its current holder. Note that the {@code Actor} must
      * currently be held when calling this method. If the {@code Actor} is bound, it will be placed
      * on the {@code World} at the current position of the holder.
      */
@@ -267,6 +271,7 @@ public abstract class Actor extends Messenger
 
     /**
      * Returns all the {@code Actor} the specified class currently being held by this one.
+     * @param <T> the generic type of the class being queried
      * @param cls the class being queried
      * @return all the {@code Actor} currently being held by this one
      */

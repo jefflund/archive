@@ -87,4 +87,10 @@ public class SprinklerTest
                     Assert.assertNotNull(world.getActorAt(Actor.class, x, y));
             }
     }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void nullPart()
+    {
+        new Sprinkler(Mockito.mock(Generator.class), null);
+    }
 }

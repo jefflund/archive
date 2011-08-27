@@ -21,6 +21,7 @@ public class ColoredChar
      * interned canonical version of the particular {@code ColoredChar}.
      * @param ch the {@code char} value of the {@code ColoredChar}
      * @param color the {@code Color} value of the {@code ColoredChar}
+     * @return the interned {@code ColoredChar} with the specified values
      */
     public static ColoredChar create(char ch, Color color)
     {
@@ -35,6 +36,7 @@ public class ColoredChar
      * Color.white} as the default {@code Color} value. This will always return the interned
      * canonical version of the particular {@code ColoredChar}.
      * @param ch the {@code char} value of the {@code ColoredChar}
+     * @return the interned {@code ColoredChar} with the specified values
      */
     public static ColoredChar create(char ch)
     {

@@ -1,7 +1,9 @@
 package rogue.creature;
 
+import java.util.Arrays;
 import jade.util.Dice;
 import jade.util.datatype.ColoredChar;
+import jade.util.datatype.Direction;
 
 public class Monster extends Creature
 {
@@ -13,6 +15,6 @@ public class Monster extends Creature
     @Override
     public void act()
     {
-        move(Dice.global.nextDirection());
+        move(Dice.global.choose(Arrays.asList(Direction.values())));
     }
 }

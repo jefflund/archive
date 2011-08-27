@@ -14,6 +14,7 @@ public final class Lambda
 {
     /**
      * Represents a lambda used in {@code filter}.
+     * @param <T> the type of the elements being filtered
      */
     public interface FilterFunc<T>
     {
@@ -28,6 +29,7 @@ public final class Lambda
     /**
      * Returns a new {@code Iterable<T>} which is all the elements of the given {@code Iterable<T>}
      * for which the provided {@code FilterFunc<T>} returns true.
+     * @param <T> the type of the elements being filtered
      * @param iterable the {@code Iterable<T>} being filtered
      * @param lambda returns true for any element of iterable to be retained
      * @return a filtered copy of iterable
@@ -45,6 +47,8 @@ public final class Lambda
 
     /**
      * Represents a lambda used in {@code map}.
+     * @param <T> the type of the elements being mapped
+     * @param <R> the type the elements are being mapped to
      */
     public interface MapFunc<T, R>
     {
@@ -59,6 +63,8 @@ public final class Lambda
     /**
      * Returns a new {@code Iterable<R>} which contains every element of the given {@code
      * Iterable<T>} mapped by the provided {@code MapFunc<T, R>}.
+     * @param <T> the type of the elements being mapped
+     * @param <R> the type the elements are being mapped to
      * @param iterable the iterable being mapped
      * @param lambda the mapping function
      * @return a new {@code Iterable<R>} which is the result of mapping iterable
@@ -76,6 +82,8 @@ public final class Lambda
     /**
      * Returns a new {@code Iterable<R>} containing only the elements of the given {@code
      * Iterable<T>} which are of type {@code R}.
+     * @param <T> the type of the elements being filtered
+     * @param <R> the type of the elements to be retained
      * @param iterable the iterable being queried
      * @param cls the class of {@code R}
      * @return the elements of iterable which are of type {@code R}
@@ -108,6 +116,7 @@ public final class Lambda
 
     /**
      * Returns the first element of the given {@code Iterable<T>}.
+     * @param <T> the type of the element being selected
      * @param iterable the {@code Iterable<T>} being queried
      * @return the first element of the iterable
      */
@@ -121,6 +130,7 @@ public final class Lambda
 
     /**
      * Converts an {@code Iterable<T>} to a new {@code List<T>}.
+     * @param <T> the type of the elements being converted to a list
      * @param iterable the {@code Iterable<T>} to be converted
      * @return a new {@code List<T>} whose contents are that of iterable
      */
@@ -136,6 +146,7 @@ public final class Lambda
 
     /**
      * Converts an {@code Iterable<T>} to a new {@code Set<T>}.
+     * @param <T> the type of the elements being converted to a set
      * @param iterable the {@code Iterable<T>} to be converted
      * @return a new {@code Set<T>} whose contents are that of iterable
      */

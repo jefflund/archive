@@ -2,8 +2,17 @@ package jade.util.datatype;
 
 import jade.util.Guard;
 
+/**
+ * A mutable version of {@code Coordinate}. One potential use is allowing multiple references to the
+ * same {@code MutableCoordinate} to all be simultaneously updated.
+ */
 public class MutableCoordinate extends Coordinate
 {
+    /**
+     * Creates a new instance of {@code MutableCoordinate} with the given (x, y) value.
+     * @param x the x value
+     * @param y the y value
+     */
     public MutableCoordinate(int x, int y)
     {
         super(x, y);

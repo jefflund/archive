@@ -1,6 +1,5 @@
 package jade.story.prob;
 
-import jade.util.Dice;
 import jade.util.Guard;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +13,8 @@ import java.util.Set;
  * weights of each of the underlying distributions is represented as the ratio of the counts of the
  * particular {@code Categorical} with respect to the sum of all the {@code Categorical} frequency
  * sums.
+ * @param <K> the type of the keys to the individual categorical distributions in the mixture
+ * @param <V> the type of the support of the categorical distributions in the mixture
  */
 public class MixtureCategorical<K, V>
 {
@@ -137,10 +138,10 @@ public class MixtureCategorical<K, V>
         return sumCountGiven(key) > 0 ? getCategorical(key).probability(value) : 0;
     }
 
-    public V sample(Dice dice)
-    {
-        return null;
-    }
+    // public V sample(Dice dice)
+    // {
+    // return null;
+    // }
 
     //
     // public V sample()
