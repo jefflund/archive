@@ -1,11 +1,14 @@
 package test.story.prob;
 
 import jade.story.prob.MixtureCategorical;
+import jade.util.Dice;
 import java.util.HashSet;
 import java.util.Set;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import test.util.DiceTest;
 
 public class MixtureCategoricalTest
 {
@@ -339,5 +342,72 @@ public class MixtureCategoricalTest
     public void probabilityEmptySupport()
     {
         mixture.probability('a');
+    }
+    
+    @Test
+    public void sampleUniform()
+    {
+        int[] expected = new int[10];
+        for(int i = 0; i < expected.length; i++)
+            expected[i] = 1;
+        testSample(expected);
+    }
+    
+    @Test
+    public void sampleStair()
+    {
+        int[] expected = new int[10];
+        for(int i = 0; i < expected.length; i++)
+            expected[i] = i;
+        testSample(expected);
+    }
+    
+    @Test
+    public void samplePower()
+    {
+        int[] expected = new int[10];
+        expected[0] = 1;
+        for(int i = 1; i < expected.length; i++)
+            expected[i] = expected[i - 1] * 2;
+        testSample(expected);    
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void sampleNullDice()
+    {
+        mixture.setCount('a', 'a', 1);
+        mixture.sample(null);
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void sampleNoSupport()
+    {
+        mixture.sample(Dice.global);
+    }
+    
+    @Test
+    public void sampleDefaultDice()
+    {
+        mixture = Mockito.spy(mixture);
+        mixture.incrementCount('a', 'a');
+        Mockito.doReturn('z').when(mixture).sample(Dice.global);
+
+        Assert.assertEquals(Character.valueOf('z'), mixture.sample());
+        Mockito.verify(mixture).sample(Dice.global);
+    }
+    
+    private void testSample(int[] expected)
+    {
+        for(int i = 0; i < expected.length; i++)
+            mixture.setCount((char)('a' + i), (char)i, expected[i]);
+        
+        Dice dice = DiceTest.getMockedSequenceDice();
+        int[] actual = new int[expected.length];
+        int actualSum = mixture.sumCounts() * expected.length;
+        for(int i = 0; i < actualSum; i++)
+            actual[mixture.sample(dice)]++;
+        
+        for(int i = 0; i < expected.length; i++)
+            Assert.assertEquals(expected[i] * actualSum, actual[i] * mixture.sumCounts());
     }
 }

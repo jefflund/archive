@@ -257,7 +257,7 @@ public class CategoricalTest
             dist.setCount(i, expected[i]);
 
         int[] actual = new int[expected.length];
-        int actualSum = dist.sumCounts() * 10;
+        int actualSum = dist.sumCounts() * expected.length;
         for(int i = 0; i < actualSum; i++)
             actual[dist.sample(dice)]++;
 

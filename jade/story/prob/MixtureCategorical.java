@@ -1,5 +1,6 @@
 package jade.story.prob;
 
+import jade.util.Dice;
 import jade.util.Guard;
 import java.util.HashMap;
 import java.util.Map;
@@ -138,17 +139,16 @@ public class MixtureCategorical<K, V>
         return sumCountGiven(key) > 0 ? getCategorical(key).probability(value) : 0;
     }
 
-    // public V sample(Dice dice)
-    // {
-    // return null;
-    // }
+    public V sample(Dice dice)
+    {
+        return totals.sample(dice);
+    }
 
-    //
-    // public V sample()
-    // {
-    // return null;
-    // }
-    //
+    public final V sample()
+    {
+        return sample(Dice.global);
+    }
+
     // public V sampleGiven(K key, Dice dice)
     // {
     // return null;
