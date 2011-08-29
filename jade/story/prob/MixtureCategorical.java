@@ -139,21 +139,46 @@ public class MixtureCategorical<K, V>
         return sumCountGiven(key) > 0 ? getCategorical(key).probability(value) : 0;
     }
 
+    /**
+     * Returns a random sample from the whole mixture of categorical distribution using the provided
+     * {@code Dice} to generate the sampled event.
+     * @param dice the {@code Dice} used to generate the sampled event
+     * @return a random sample from the distribution
+     */
     public V sample(Dice dice)
     {
         return totals.sample(dice);
     }
+
+    /**
+     * Returns a random sample from the whole mixture of categorical distribution using the global
+     * instance of {@code Dice} to generate the sampled event.
+     * @return a random sample from the distribution
+     */
 
     public final V sample()
     {
         return sample(Dice.global);
     }
 
+    /**
+     * Returns a random sample from the whole mixture of categorical distribution given a particular
+     * key, using the provided {@code Dice} to generate the sampled event. This is the same as
+     * sampling from the individual categorical distribution referenced by the key.
+     * @param dice the {@code Dice} used to generate the sampled event
+     * @return a random sample from the distribution
+     */
     public V sampleGiven(K key, Dice dice)
     {
         return getCategorical(key).sample(dice);
     }
 
+    /**
+     * Returns a random sample from the whole mixture of categorical distribution given a particular
+     * key, using the global instance of {@code Dice} to generate the sampled event. This is the
+     * same as sampling from the individual categorical distribution referenced by the key.
+     * @return a random sample from the distribution
+     */
     public V sampleGiven(K key)
     {
         return sampleGiven(key, Dice.global);
