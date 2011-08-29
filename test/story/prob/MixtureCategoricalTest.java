@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import test.util.DiceTest;
 
-public class MixtureCategoricalTest
+public class MixtureCategoricalTest extends ProbabilityTest
 {
     private MixtureCategorical<Character, Character> mixture;
 
@@ -343,48 +343,38 @@ public class MixtureCategoricalTest
     {
         mixture.probability('a');
     }
-    
+
     @Test
     public void sampleUniform()
     {
-        int[] expected = new int[10];
-        for(int i = 0; i < expected.length; i++)
-            expected[i] = 1;
-        testSample(expected);
+        testSample(uniform());
     }
-    
+
     @Test
     public void sampleStair()
     {
-        int[] expected = new int[10];
-        for(int i = 0; i < expected.length; i++)
-            expected[i] = i;
-        testSample(expected);
+        testSample(stair());
     }
-    
+
     @Test
     public void samplePower()
     {
-        int[] expected = new int[10];
-        expected[0] = 1;
-        for(int i = 1; i < expected.length; i++)
-            expected[i] = expected[i - 1] * 2;
-        testSample(expected);    
+        testSample(power());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void sampleNullDice()
     {
         mixture.setCount('a', 'a', 1);
         mixture.sample(null);
     }
-    
+
     @Test(expected = IllegalStateException.class)
     public void sampleNoSupport()
     {
         mixture.sample(Dice.global);
     }
-    
+
     @Test
     public void sampleDefaultDice()
     {
@@ -395,19 +385,88 @@ public class MixtureCategoricalTest
         Assert.assertEquals(Character.valueOf('z'), mixture.sample());
         Mockito.verify(mixture).sample(Dice.global);
     }
+
+    @Test
+    public void sampleGivenUniform()
+    {
+        testSampleGiven(uniform());
+    }
+
+    @Test
+    public void sampleGivenStair()
+    {
+        testSampleGiven(stair());
+    }
+
+    @Test
+    public void sampleGivenPower()
+    {
+        testSampleGiven(power());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void sampleGivenNullDice()
+    {
+        mixture.setCount('a', 'a', 1);
+        mixture.sampleGiven('a', null);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void sampleGivenNoSuppoort()
+    {
+        mixture.sampleGiven('a', Dice.global);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void sampleGivenNoGivenSupport()
+    {
+        mixture.setCount('b', 'a', 1);
+        mixture.sampleGiven('a', Dice.global);
+    }
     
+    @Test
+    public void sampleGivenDefaultDice()
+    {
+        mixture = Mockito.spy(mixture);
+        mixture.incrementCount('a', 'a');
+        Mockito.doReturn('z').when(mixture).sampleGiven('a', Dice.global);
+
+        Assert.assertEquals(Character.valueOf('z'), mixture.sampleGiven('a'));
+        Mockito.verify(mixture).sampleGiven('a', Dice.global);
+    }
+
     private void testSample(int[] expected)
     {
         for(int i = 0; i < expected.length; i++)
             mixture.setCount((char)('a' + i), (char)i, expected[i]);
-        
+
         Dice dice = DiceTest.getMockedSequenceDice();
         int[] actual = new int[expected.length];
         int actualSum = mixture.sumCounts() * expected.length;
         for(int i = 0; i < actualSum; i++)
             actual[mixture.sample(dice)]++;
-        
+
         for(int i = 0; i < expected.length; i++)
             Assert.assertEquals(expected[i] * actualSum, actual[i] * mixture.sumCounts());
+    }
+
+    private void testSampleGiven(int[] expected)
+    {
+        char key = 'a';
+
+        for(int i = 0; i < expected.length; i++)
+        {
+            mixture.setCount(key, (char)i, expected[i]);
+            mixture.setCount((char)(key + i + 1), (char)i, i);
+        }
+
+        Dice dice = DiceTest.getMockedSequenceDice();
+        int[] actual = new int[expected.length];
+        int actualSum = mixture.sumCountGiven(key) * expected.length;
+        for(int i = 0; i < actualSum; i++)
+            actual[mixture.sampleGiven(key, dice)]++;
+
+        for(int i = 0; i < expected.length; i++)
+            Assert.assertEquals(expected[i] * actualSum, actual[i] * mixture.sumCountGiven(key));
     }
 }

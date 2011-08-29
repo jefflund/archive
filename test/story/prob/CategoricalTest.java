@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import test.util.DiceTest;
 
-public class CategoricalTest
+public class CategoricalTest extends ProbabilityTest
 {
     private Categorical<Character> categorical;
 
@@ -198,29 +198,19 @@ public class CategoricalTest
     @Test
     public void sampleUniform()
     {
-        int[] expected = new int[10];
-        for(int i = 0; i < expected.length; i++)
-            expected[i] = 1;
-        testSample(expected);
+        testSample(uniform());
     }
 
     @Test
     public void sampleStair()
     {
-        int[] expected = new int[10];
-        for(int i = 0; i < expected.length; i++)
-            expected[i] = i;
-        testSample(expected);
+        testSample(stair());
     }
 
     @Test
     public void samplePower()
     {
-        int[] expected = new int[10];
-        expected[0] = 1;
-        for(int i = 1; i < expected.length; i++)
-            expected[i] = expected[i - 1] * 2;
-        testSample(expected);
+        testSample(power());
     }
 
     @Test(expected = IllegalArgumentException.class)

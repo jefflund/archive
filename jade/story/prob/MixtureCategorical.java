@@ -149,15 +149,15 @@ public class MixtureCategorical<K, V>
         return sample(Dice.global);
     }
 
-    // public V sampleGiven(K key, Dice dice)
-    // {
-    // return null;
-    // }
-    //
-    // public V sampleGiven(K key)
-    // {
-    // return null;
-    // }
+    public V sampleGiven(K key, Dice dice)
+    {
+        return getCategorical(key).sample(dice);
+    }
+
+    public V sampleGiven(K key)
+    {
+        return sampleGiven(key, Dice.global);
+    }
 
     private Categorical<V> getCategorical(K key)
     {
