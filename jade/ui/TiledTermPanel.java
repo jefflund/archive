@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import javax.imageio.ImageIO;
 
 public class TiledTermPanel extends TermPanel
 {
+    public static final int DEFAULT_TILESIZE = 16;
+
     private Map<Coordinate, List<ColoredChar>> tileBuffer;
     private Map<Coordinate, List<ColoredChar>> savedTile;
 
@@ -27,7 +30,7 @@ public class TiledTermPanel extends TermPanel
 
     public TiledTermPanel()
     {
-        this(new TiledScreen(DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_SIZE));
+        this(new TiledScreen(DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_TILESIZE));
     }
 
     private TiledTermPanel(TiledScreen screen)
@@ -133,13 +136,18 @@ public class TiledTermPanel extends TermPanel
         private static final long serialVersionUID = 6739172935885377439L;
 
         private Map<Coordinate, List<ColoredChar>> tileBuffer;
-        private Map<ColoredChar, Image> tiles;
+        private Map<ColoredChar, Image> tileRegister;
 
         public TiledScreen(int columns, int rows, int tileSize)
         {
-            super(columns, rows, tileSize);
+            this(columns, rows, tileSize, tileSize);
+        }
+
+        public TiledScreen(int columns, int rows, int tileWidth, int tileHeight)
+        {
+            super(columns, rows, tileWidth, tileHeight);
             tileBuffer = new HashMap<Coordinate, List<ColoredChar>>();
-            tiles = new HashMap<ColoredChar, Image>();
+            tileRegister = new HashMap<ColoredChar, Image>();
         }
 
         public void setTileBuffer(Map<Coordinate, List<ColoredChar>> buffer)
@@ -153,9 +161,9 @@ public class TiledTermPanel extends TermPanel
 
         public void registerTile(ColoredChar ch, Image tile)
         {
-            synchronized(tiles)
+            synchronized(tileRegister)
             {
-                tiles.put(ch, tile);
+                tileRegister.put(ch, tile);
             }
         }
 
@@ -167,13 +175,15 @@ public class TiledTermPanel extends TermPanel
             {
                 int x = tileWidth() * coord.x();
                 int y = tileHeight() * coord.y();
-
-                for(ColoredChar ch : tileBuffer.get(coord))
+                
+                List<ColoredChar> tiles = tileBuffer.get(coord);
+                Collections.reverse(tiles);
+                for(ColoredChar ch : tiles)
                 {
-                    if(tiles.containsKey(ch))
+                    if(tileRegister.containsKey(ch))
                     {
-                        page.drawImage(tiles.get(ch), x, y, tileWidth(),
-                                tileHeight(), null);
+                        page.drawImage(tileRegister.get(ch), x, y - tileHeight(),
+                                tileWidth(), tileHeight(), null);
                     }
                     else
                     {

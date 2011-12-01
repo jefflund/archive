@@ -36,16 +36,16 @@ public class TermPanel extends Terminal
      */
     public TermPanel(int columns, int rows, int fontSize)
     {
-        this(new Screen(DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_SIZE));
+        this(new Screen(columns, rows, fontSize));
     }
-
+    
     /**
      * Constructs a new {@code TermPanel} with the default dimensions. There will be 80 columns, 24
      * rows, and a font size of 12.
      */
     public TermPanel()
     {
-        this(80, 24, 12);
+        this(DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_SIZE);
     }
     
     protected TermPanel(Screen screen)
@@ -115,14 +115,19 @@ public class TermPanel extends Terminal
 
         public Screen(int columns, int rows, int fontSize)
         {
+            this(columns, rows, fontSize * 3 / 4, fontSize);
+        }
+        
+        public Screen(int columns, int rows, int tileWidth, int tileHeight)
+        {
             inputBuffer = new LinkedBlockingQueue<Character>();
             screenBuffer = new HashMap<Coordinate, ColoredChar>();
 
             addKeyListener(this);
-            tileWidth = fontSize * 3 / 4;
-            tileHeight = fontSize;
+            this.tileWidth = tileWidth;
+            this.tileHeight = tileHeight;
             setPreferredSize(new Dimension(columns * tileWidth, rows * tileHeight));
-            setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
+            setFont(new Font(Font.MONOSPACED, Font.PLAIN, tileHeight));
             setBackground(Color.black);
             setFocusable(true);
         }
