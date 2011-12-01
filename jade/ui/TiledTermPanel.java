@@ -5,10 +5,15 @@ import jade.util.Guard;
 import jade.util.datatype.ColoredChar;
 import jade.util.datatype.Coordinate;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.imageio.ImageIO;
 
 public class TiledTermPanel extends TermPanel
 {
@@ -40,6 +45,29 @@ public class TiledTermPanel extends TermPanel
     }
 
     @Override
+    protected TiledScreen screen()
+    {
+        return (TiledScreen) super.screen();
+    }
+
+    public boolean registerTile(String tileSet, int x, int y, ColoredChar ch)
+    {
+        try
+        {
+            int w = screen().tileWidth();
+            int h = screen().tileHeight();
+            BufferedImage tileset = ImageIO.read(new File(tileSet));
+            BufferedImage tile = tileset.getSubimage(x * w, y * h, w, h);
+            screen().registerTile(ch, tile);
+            return true;
+        }
+        catch(IOException e)
+        {
+            return false;
+        }
+    }
+
+    @Override
     public void clearBuffer()
     {
         super.clearBuffer();
@@ -65,7 +93,7 @@ public class TiledTermPanel extends TermPanel
     @Override
     public void refreshScreen()
     {
-        ((TiledScreen) panel()).setTileBuffer(tileBuffer);
+        screen().setTileBuffer(tileBuffer);
         super.refreshScreen();
     }
 
@@ -105,11 +133,13 @@ public class TiledTermPanel extends TermPanel
         private static final long serialVersionUID = 6739172935885377439L;
 
         private Map<Coordinate, List<ColoredChar>> tileBuffer;
+        private Map<ColoredChar, Image> tiles;
 
-        public TiledScreen(int columns, int rows, int fontSize)
+        public TiledScreen(int columns, int rows, int tileSize)
         {
-            super(columns, rows, fontSize);
+            super(columns, rows, tileSize);
             tileBuffer = new HashMap<Coordinate, List<ColoredChar>>();
+            tiles = new HashMap<ColoredChar, Image>();
         }
 
         public void setTileBuffer(Map<Coordinate, List<ColoredChar>> buffer)
@@ -118,6 +148,14 @@ public class TiledTermPanel extends TermPanel
             {
                 tileBuffer.clear();
                 tileBuffer.putAll(buffer);
+            }
+        }
+
+        public void registerTile(ColoredChar ch, Image tile)
+        {
+            synchronized(tiles)
+            {
+                tiles.put(ch, tile);
             }
         }
 
@@ -132,8 +170,16 @@ public class TiledTermPanel extends TermPanel
 
                 for(ColoredChar ch : tileBuffer.get(coord))
                 {
-                    page.setColor(ch.color());
-                    page.drawString(ch.toString(), x, y);
+                    if(tiles.containsKey(ch))
+                    {
+                        page.drawImage(tiles.get(ch), x, y, tileWidth(),
+                                tileHeight(), null);
+                    }
+                    else
+                    {
+                        page.setColor(ch.color());
+                        page.drawString(ch.toString(), x, y);
+                    }
                 }
             }
         }

@@ -85,6 +85,11 @@ public class TermPanel extends Terminal
     {
         return screen;
     }
+    
+    protected Screen screen()
+    {
+        return screen;
+    }
 
     @Override
     public char getKey() throws InterruptedException
@@ -121,7 +126,7 @@ public class TermPanel extends Terminal
             setBackground(Color.black);
             setFocusable(true);
         }
-        
+
         protected int tileWidth()
         {
             return tileWidth;
