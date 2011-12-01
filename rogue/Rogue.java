@@ -1,8 +1,8 @@
 package rogue;
 
 import jade.core.World;
-import jade.ui.TermPanel;
 import jade.ui.Terminal;
+import jade.ui.TiledTermPanel;
 import jade.util.datatype.ColoredChar;
 import java.awt.Color;
 import rogue.creature.Monster;
@@ -13,17 +13,19 @@ public class Rogue
 {
     public static void main(String[] args) throws InterruptedException
     {
-        Terminal term = TermPanel.getFramedTerminal("Jade Rogue");
+        Terminal term = TiledTermPanel.getFramedTerminal("Jade Rogue");
         Player player = new Player(term);
-        World world = new Level(80, 24, player);
+        World world = new Level(69, 24, player);
         world.addActor(new Monster(ColoredChar.create('D', Color.red)));
-
+        term.registerCamera(player, 5, 5);
+        
         while(!player.expired())
         {
             term.clearBuffer();
             for(int x = 0; x < world.width(); x++)
                 for(int y = 0; y < world.height(); y++)
-                    term.bufferChar(x, y, world.look(x, y));
+                    term.bufferChar(x + 11, y, world.look(x, y));
+            term.bufferCameras();
             term.refreshScreen();
 
             world.tick();

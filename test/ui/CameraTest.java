@@ -6,9 +6,7 @@ import jade.ui.Terminal;
 import jade.util.datatype.ColoredChar;
 import jade.util.datatype.Coordinate;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -264,25 +262,10 @@ public class CameraTest
         term.bufferRelative(camera, ColoredChar.create('*'), null);
     }
 
-    @Test
-    public void refreshDrawScreen()
-    {
-        Map<Coordinate, ColoredChar> expected = new HashMap<Coordinate, ColoredChar>();
-        for(int i = 0; i < 10; i++)
-        {
-            Coordinate coord = new Coordinate(i, i);
-            ColoredChar ch = ColoredChar.create((char)('a' + i));
-            expected.put(coord, ch);
-            term.bufferChar(coord, ch);
-        }
-        term.refreshScreen();
-        Mockito.verify(term).drawScreen(expected);
-    }
-
     private static class ConcreteTerminal extends Terminal
     {
         @Override
-        public void drawScreen(Map<Coordinate, ColoredChar> buffer)
+        public void refreshScreen()
         {}
 
         @Override

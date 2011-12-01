@@ -33,20 +33,12 @@ public abstract class Terminal
      * no changes to the buffer should be displayed.
      * @throws InterruptedException
      */
-    public final void refreshScreen()
+    public abstract void refreshScreen();
+    
+    protected final Map<Coordinate, ColoredChar> getBuffer()
     {
-        drawScreen(buffer);
+        return buffer;
     }
-
-    /**
-     * Updates the screen to reflect the current state of the buffer using the specific {@code
-     * Terminal} implementation. Note that the buffer is not actually accessible by implementing
-     * classes, but rather a snapshot of the buffer is provided as the parameter to this method.
-     * This snapshot is an {@code unmodifiableMap<Coordinate, ColoredChar>}.
-     * @param buffer a snapshot of the current state of the buffer.
-     * @throws InterruptedException
-     */
-    protected abstract void drawScreen(Map<Coordinate, ColoredChar> buffer);
 
     /**
      * Returns the next key press as a {@code char}. This method block until a key press is

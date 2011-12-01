@@ -21,6 +21,10 @@ import javax.swing.JPanel;
  */
 public class TermPanel extends Terminal
 {
+    public static final int DEFAULT_COLS = 80;
+    public static final int DEFAULT_ROWS = 24;
+    public static final int DEFAULT_SIZE = 12;
+    
     private Screen screen;
 
     /**
@@ -32,7 +36,7 @@ public class TermPanel extends Terminal
      */
     public TermPanel(int columns, int rows, int fontSize)
     {
-        screen = new Screen(columns, rows, fontSize);
+        this(new Screen(DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_SIZE));
     }
 
     /**
@@ -42,6 +46,11 @@ public class TermPanel extends Terminal
     public TermPanel()
     {
         this(80, 24, 12);
+    }
+    
+    protected TermPanel(Screen screen)
+    {
+        this.screen = screen;
     }
 
     /**
@@ -54,12 +63,17 @@ public class TermPanel extends Terminal
     public static TermPanel getFramedTerminal(String title)
     {
         TermPanel term = new TermPanel();
+        frameTermPanel(term, title);
+        return term;
+    }
+    
+    protected static void frameTermPanel(TermPanel term, String title)
+    {
         JFrame frame = new JFrame(title);
         frame.add(term.panel());
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        return term;
     }
 
     /**
@@ -79,13 +93,13 @@ public class TermPanel extends Terminal
     }
 
     @Override
-    protected void drawScreen(Map<Coordinate, ColoredChar> buffer)
+    public void refreshScreen()
     {
-        screen.setBuffer(buffer);
+        screen.setBuffer(getBuffer());
         screen.repaint();
     }
 
-    private class Screen extends JPanel implements KeyListener
+    protected static class Screen extends JPanel implements KeyListener
     {
         private static final long serialVersionUID = 7219226976524388778L;
 
@@ -106,6 +120,16 @@ public class TermPanel extends Terminal
             setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
             setBackground(Color.black);
             setFocusable(true);
+        }
+        
+        protected int tileWidth()
+        {
+            return tileWidth;
+        }
+        
+        protected int tileHeight()
+        {
+            return tileHeight;
         }
 
         @Override

@@ -1,17 +1,24 @@
 package rogue.creature;
 
+import java.util.Collection;
+import jade.fov.RayCaster;
+import jade.fov.ViewField;
+import jade.ui.Camera;
 import jade.ui.Terminal;
 import jade.util.datatype.ColoredChar;
+import jade.util.datatype.Coordinate;
 import jade.util.datatype.Direction;
 
-public class Player extends Creature
+public class Player extends Creature implements Camera
 {
     private Terminal term;
+    private ViewField fov;
 
     public Player(Terminal term)
     {
         super(ColoredChar.create('@'));
         this.term = term;
+        fov = new RayCaster();
     }
 
     @Override
@@ -37,5 +44,11 @@ public class Player extends Creature
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Collection<Coordinate> getViewField()
+    {
+        return fov.getViewField(world(), pos(), 5);
     }
 }
