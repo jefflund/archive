@@ -1,4 +1,4 @@
-"""A collection of useful data structures"""
+"""A collection of useful data structures and data loading functions"""
 
 class Index(object):
 
@@ -29,3 +29,12 @@ class Index(object):
 
     def __getitem__(self, token_type):
         return self._tokens[token_type]
+
+def load_stopwords(*stopword_files):
+    stopwords = set()
+    for filename in stopword_files:
+        for word in open(filename):
+            word = word.strip()
+            if len(word) > 0:
+                stopwords.add(word)
+    return stopwords
