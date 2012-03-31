@@ -13,7 +13,7 @@ class Corpus(object):
 
     def add_document(self, title, tokens):
         doc_index = self.titles.insert_token(title)
-        self.data[doc_index] = self.vocab.convert_token(tokens)
+        self.data[doc_index] = self.vocab.convert_tokens(tokens)
 
     def get_text(self, doc_index):
         return [self.vocab[i] for i in self.data[doc_index]]
