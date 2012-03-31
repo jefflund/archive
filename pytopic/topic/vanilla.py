@@ -11,8 +11,9 @@ class VanillaLDA(TopicModel):
         self.T = T
         self.alpha = alpha
         self.beta = beta
+        self.Vbeta = self.V * self.beta
 
-        self.z = [[0 for _ in size] for size in self.N]
+        self.z = [[0 for _ in range(size)] for size in self.N]
 
         self.s = [0 for _ in range(self.T)]
         self.h = [[0 for _ in range(self.T)] for _ in range(self.M)]
@@ -32,6 +33,12 @@ class VanillaLDA(TopicModel):
         counts = [self.prob_z(d, n, j) for j in range(self.T)]
         self.set_z(d, n, sample_counts(counts))
 
+    def prob_z(self, d, n, j):
+        prob = self.alpha + self.h[d][j]
+        prob *= self.beta + self.p[j][self.w[d][n]]
+        prob /= self.Vbeta + self.s[j]
+        return prob
+
     def set_z(self, d, n, z_dn):
 
         self.z[d][n] = z_dn
@@ -42,6 +49,6 @@ class VanillaLDA(TopicModel):
 
     def unset_z(self, d, n):
 
-        self.s[self.z[d][n]] += 1
-        self.h[d][self.z[d][n]] += 1
-        self.p[self.z[d][n]][self.w[d][n]] += 1
+        self.s[self.z[d][n]] -= 1
+        self.h[d][self.z[d][n]] -= 1
+        self.p[self.z[d][n]][self.w[d][n]] -= 1
