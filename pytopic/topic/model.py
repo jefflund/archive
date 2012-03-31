@@ -19,5 +19,10 @@ class TopicModel(object):
         """
 
     def inference(self, iterations):
+        """
+        TopicModel.inference(int): return None
+        Performs inference on the model for the given number of iterations
+        """
+
         for _ in range(iterations):
             self.iteration()
