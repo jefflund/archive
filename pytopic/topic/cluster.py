@@ -6,6 +6,7 @@ from util.sample import (sample_uniform, sample_order, sample_lcounts,
                          sample_counts)
 
 class ClusterLDA(TopicModel):
+    """ClusterLDA, which combines LDA with Mixture of Multinomials"""
 
     def __init__(self, corpus, K, T, gamma, alpha, beta):
         TopicModel.__init__(self, corpus)
@@ -44,17 +45,33 @@ class ClusterLDA(TopicModel):
                 self.sample_z(d, n)
 
     def sample_z(self, d, n):
+        """
+        ClusterLDA.sample_z(int, int): return None
+        Samples the value of z_dn according to the complete conditional
+        """
+
         self.unset_z(d, n)
         counts = [self.prob_z(d, n, j) for j in range(self.T)]
         self.set_z(d, n, sample_counts(counts))
 
     def prob_z(self, d, n, j):
+        """
+        ClusterLDA.prob_z(int, int, int): return float
+        Returns the probability p(z_dn=j|w, z_-dn, alpha, beta)
+        """
+
         prob = self.alpha + self.h[self.k[d]][j]
         prob *= self.beta + self.p[j][self.w[d][n]]
         prob /= self.Vbeta + self.s[j]
         return prob
 
     def set_z(self, d, n, z_dn):
+        """
+        ClusterLDA.set_z(int, int, int): return None
+        Sets the value of z_dn and updates the counters. Does not adjust the
+        counters for the previous value of z_dn.
+        """
+
         self.z[d][n] = z_dn
 
         self.s[z_dn] += 1
@@ -63,12 +80,22 @@ class ClusterLDA(TopicModel):
         self.r[d][z_dn] += 1
 
     def unset_z(self, d, n):
+        """
+        ClusterLDA.unset_z(int, int): return None
+        Adjust the counters so that z_dn is not used in the counts.
+        """
+
         self.s[self.z[d][n]] -= 1
         self.h[self.k[d]][self.z[d][n]] -= 1
         self.p[self.z[d][n]][self.w[d][n]] -= 1
         self.r[d][self.z[d][n]] -= 1
 
     def sample_k(self, d):
+        """
+        ClusterLDA.sample_k(int): return None
+        Samples the value of k_d according to the complete conditional
+        """
+
         lcounts = []
         for j in range(self.K):
             self.set_k(d, j)
@@ -76,6 +103,11 @@ class ClusterLDA(TopicModel):
         self.set_k(d, sample_lcounts(lcounts))
 
     def lprob_k(self, d, j):
+        """
+        ClusterLDA.lprob_k(int, int): return float
+        Returns the log probability log p(k_d=j| w, z, k_-d, alpha, beta)
+        """
+
         prob = math.log(self.gamma + self.l[j] - 1)
         for t in set(self.z[d]):
             prob += math.gamma(self.alpha + self.h[j][t])
@@ -85,6 +117,12 @@ class ClusterLDA(TopicModel):
         return prob
 
     def set_k(self, d, k_d):
+        """
+        ClusterLDA.set_k(int, int): return None
+        Updates the value k_d along with all counters. This method also adjust
+        the counters related to the previous value of k_d
+        """
+
         self.l[self.k[d]] -= 1
         for z in self.z[d]:
             self.h[self.k[d]][z] -= 1

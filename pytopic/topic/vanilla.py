@@ -1,9 +1,10 @@
-"""Implementation of vanilla LDA as described by Blei in 2003"""
+"""Implementation of LDA as described by Blei in 2003"""
 
 from topic.model import TopicModel
 from util.sample import sample_uniform, sample_counts
 
 class VanillaLDA(TopicModel):
+    """Latent Dirichlet Allocation with a Gibbs sampler"""
 
     def __init__(self, corpus, T, alpha, beta):
         TopicModel.__init__(self, corpus)
@@ -29,17 +30,32 @@ class VanillaLDA(TopicModel):
                 self.sample_z(d, n)
 
     def sample_z(self, d, n):
+        """
+        VanillaLDA.sample_z(int, int): return None
+        Samples the value of z_dn according to the complete conditional
+        """
+
         self.unset_z(d, n)
         counts = [self.prob_z(d, n, j) for j in range(self.T)]
         self.set_z(d, n, sample_counts(counts))
 
     def prob_z(self, d, n, j):
+        """
+        VanillaLDA.prob_z(int, int, int): return float
+        Returns the probability p(z_dn=j|w, z_-dn, alpha, beta)
+        """
+
         prob = self.alpha + self.h[d][j]
         prob *= self.beta + self.p[j][self.w[d][n]]
         prob /= self.Vbeta + self.s[j]
         return prob
 
     def set_z(self, d, n, z_dn):
+        """
+        VanillaLDA.set_z(int, int, int): return None
+        Sets the value of z_dn and updates the counters. Does not adjust the
+        counters for the previous value of z_dn.
+        """
 
         self.z[d][n] = z_dn
 
@@ -48,6 +64,10 @@ class VanillaLDA(TopicModel):
         self.p[z_dn][self.w[d][n]] += 1
 
     def unset_z(self, d, n):
+        """
+        VanillaLDA.unset_z(int, int): return None
+        Adjust the counters so that z_dn is not used in the counts.
+        """
 
         self.s[self.z[d][n]] -= 1
         self.h[d][self.z[d][n]] -= 1
