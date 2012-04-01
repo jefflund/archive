@@ -54,5 +54,17 @@ def sample_order(dim):
     random.shuffle(order)
     return order
 
-def ladd(logx, logy):
-    pass
+def ladd(log_x, log_y):
+    """
+    ladd(float, float): return float
+    Performs addition in log space
+    """
+
+    if log_y > log_x:
+        log_x, log_y = log_y, log_x
+    if math.isinf(log_x):
+        return log_x
+    neg_diff = log_y - log_x
+    if neg_diff < -50:
+        return log_x
+    return log_x + math.log(1 + math.exp(neg_diff))
