@@ -1,5 +1,6 @@
 """Utilities for sampling from various distributions"""
 
+import math
 import random
 
 def sample_uniform(dim):
@@ -24,6 +25,25 @@ def sample_counts(counts):
 
     raise ValueError()
 
+def sample_lcounts(lcounts):
+    """
+    sample_lcounts(list of float): return int
+    Returns an integer index sampled proportional to the given log counts
+    """
+
+    lsum = float('-inf')
+    for lcount in lcounts:
+        lsum = ladd(lsum, lcount)
+
+    sample = math.log(random.random()) + lsum
+    lcurr = float('-inf')
+    for key, lcount in enumerate(lcounts):
+        lcurr = ladd(lcurr, lcount)
+        if sample < lcurr:
+            return key
+
+    raise ValueError()
+
 def sample_order(dim):
     """
     sample_order(int): return list of int
@@ -34,3 +54,5 @@ def sample_order(dim):
     random.shuffle(order)
     return order
 
+def ladd(logx, logy):
+    pass
