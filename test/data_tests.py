@@ -1,7 +1,7 @@
 """Test for the Index class and other data helpers"""
 
 import unittest
-from pytopic.util.data import Index
+from pytopic.util.data import Index, load_stopwords
 
 class TestIndex(unittest.TestCase):
 
@@ -40,3 +40,12 @@ class TestIndex(unittest.TestCase):
         for i in range(len(tokens)):
             self.assertEqual(self.index.token_type(tokens[i]), types[i])
 
+class TestStopwords(unittest.TestCase):
+
+    def runTest(self):
+        stopwords1 = {'a', 'of', 'the', 'and'}
+        stopwords2 = {'there', 'the', 'here', 'by'}
+        self.assertEqual(stopwords1, load_stopwords('test_data/stopwords1'))
+        self.assertEqual(stopwords2, load_stopwords('test_data/stopwords2'))
+        joint = load_stopwords('test_data/stopwords1', 'test_data/stopwords2')
+        self.assertEqual(stopwords1 | stopwords2, joint)
