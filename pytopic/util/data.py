@@ -44,7 +44,7 @@ class Index(object):
         if the given token type has not been used.
         """
 
-        self._tokens[token_type]
+        return self._tokens[token_type]
 
     def __iter__(self):
         return iter(self._tokens)
