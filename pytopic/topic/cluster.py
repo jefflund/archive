@@ -1,7 +1,7 @@
 """Implementation of ClusterLDA, first described by Lund in 2011"""
 
 import math
-from topic.model import TopicModel
+from topic.model import TopicModel, top_n
 from util.sample import (sample_uniform, sample_order, sample_lcounts,
                          sample_counts)
 
@@ -134,3 +134,28 @@ class ClusterLDA(TopicModel):
         for z in self.z[d]:
             self.h[self.k[d]][z] += 1
         self.q[self.k[d]] += self.N[d]
+
+    def topic_words(self, t, n):
+        """
+        ClusterLDA.topic_words(int, int): return list of int
+        Returns the top n words for topic t
+        """
+
+        return top_n(self.p[t], n)
+
+
+    def cluster_topics(self, k, n):
+        """
+        ClusterLDA.cluster_topics(int, int): return list of int
+        Returns the top n topics for the cluster k
+        """
+
+        return top_n(self.h[k], n)
+
+    def doc_topics(self, d, n):
+        """
+        ClusterLDA.doc_topics(int, int): return int
+        Returns the top n topics for the document d
+        """
+
+        return top_n(self.r[d], n)
