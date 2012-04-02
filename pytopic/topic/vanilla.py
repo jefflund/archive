@@ -1,6 +1,6 @@
 """Implementation of LDA as described by Blei in 2003"""
 
-from topic.model import TopicModel
+from topic.model import TopicModel, top_n
 from util.sample import sample_uniform, sample_counts
 
 class VanillaLDA(TopicModel):
@@ -72,3 +72,19 @@ class VanillaLDA(TopicModel):
         self.s[self.z[d][n]] -= 1
         self.h[d][self.z[d][n]] -= 1
         self.p[self.z[d][n]][self.w[d][n]] -= 1
+
+    def topic_words(self, t, n):
+        """
+        VanillaLDA.topic_words(int, int): return list of int
+        Returns the top n words in topic t
+        """
+
+        return top_n(self.p[t], n)
+
+    def doc_topics(self, d, n):
+        """
+        VanillaLDA.doc_topics(int, int): return list of int
+        Returns the top n topics in document d
+        """
+
+        return top_n(self.h[d], n)

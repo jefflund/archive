@@ -26,3 +26,13 @@ class TopicModel(object):
 
         for _ in range(iterations):
             self.iteration()
+
+def top_n(counts, n):
+    """
+    top_n(list of int, int): return list of int
+    Returns the indices of the top n counts in the given list of counts, 
+    excluding any zero counts.
+    """
+
+    counts = [(i, c) for i, c in enumerate(counts) if c > 0]
+    return sorted(counts, key=lambda x: x[1], reverse=True)[:n]
