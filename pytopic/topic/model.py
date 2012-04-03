@@ -27,6 +27,12 @@ class TopicModel(object):
         for _ in range(iterations):
             self.iteration()
 
+    def print_state(self, verbose=False):
+        """
+        TopicModel.print_state(bool): return None
+        Prints a summary of the current state of the sampled model
+        """
+
 def top_n(counts, n):
     """
     top_n(list of int, int): return list of int

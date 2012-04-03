@@ -88,3 +88,6 @@ class VanillaLDA(TopicModel):
         """
 
         return top_n(self.h[d], n)
+
+    def print_state(self, verbose=False):
+        pass

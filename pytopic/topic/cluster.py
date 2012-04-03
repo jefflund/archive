@@ -159,3 +159,6 @@ class ClusterLDA(TopicModel):
         """
 
         return top_n(self.r[d], n)
+
+    def print_state(self, verbose=False):
+        pass
