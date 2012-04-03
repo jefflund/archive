@@ -5,6 +5,7 @@ from pipeline.corpus import CorpusReader, Tokenizer
 from util.data import load_stopwords
 from topic.model import TopicModel
 from topic.vanilla import VanillaLDA
+from topic.cluster import ClusterLDA
 
 class TestModel(unittest.TestCase):
 
@@ -65,3 +66,27 @@ class TestLDA(TestModel):
         TestModel.test_inference(self)
         if print_state:
             self.model.print_state()
+
+
+class TestCLDA(TestLDA):
+
+    def setUp(self):
+        self.corpus = TestCLDA.corpus
+        self.K = 2
+        self.T = 10
+        self.gamma = 2
+        self.alpha = .5
+        self.beta = .01
+        self.model = ClusterLDA(self.corpus, self.K, self.T,
+                                self.gamma, self.alpha, self.beta)
+
+    def test_model(self):
+        TestLDA.test_model(self)
+
+        self.assertEqual(self.K, self.model.K)
+        self.assertEqual(self.gamma, self.model.gamma)
+
+        self.assertEqual(self.model.M, len(self.model.k))
+        for d in range(self.model.M):
+            self.assertGreaterEqual(self.model.k[d], 0)
+            self.assertLess(self.model.k[d], self.K)
