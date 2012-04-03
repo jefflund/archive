@@ -1,9 +1,0 @@
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Duis porta tincidunt ornare.
-Vestibulum aliquam dapibus lorem vitae tincidunt.
-Curabitur viverra elit ac nulla laoreet suscipit.
-Suspendisse eget magna ligula.
-Vivamus auctor, odio quis fringilla vehicula, magna tortor vehicula lacus, gravida semper mi nibh ut enim.
-Nunc tortor tortor, imperdiet rutrum luctus sed, sagittis at nulla.
-Aliquam fringilla dolor eget mauris suscipit suscipit fermentum orci interdum.
-Suspendisse non fermentum justo.

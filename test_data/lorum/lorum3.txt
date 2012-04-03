@@ -1,8 +1,0 @@
-Mauris massa lectus, interdum id mattis vitae, vulputate quis lorem.
-Nulla vel ligula lacus.
-Etiam consequat lobortis dui et accumsan.
-Curabitur tempus consequat urna sit amet bibendum.
-Donec ut sem mauris, sit amet commodo mauris.
-Fusce eros odio, laoreet sit amet cursus ut, rhoncus ac dui.
-Nunc consectetur sapien non mauris condimentum pharetra.
-Donec mollis augue sed tellus rhoncus ut commodo metus malesuada.

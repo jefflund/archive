@@ -6,6 +6,7 @@ from util.data import load_stopwords
 from topic.model import TopicModel
 from topic.vanilla import VanillaLDA
 from topic.cluster import ClusterLDA
+from topic.mixmulti import MixtureMultinomial
 
 class TestModel(unittest.TestCase):
 
@@ -14,7 +15,6 @@ class TestModel(unittest.TestCase):
         stopwords = load_stopwords('test_data/latin_stop')
         reader = CorpusReader(Tokenizer(stopwords))
         reader.add_dir('test_data/lorum')
-        reader.add_dir('test_data/ipsum')
         cls.corpus = reader.read()
 
     def setUp(self):
@@ -85,3 +85,28 @@ class TestCLDA(TestLDA):
         for d in range(self.model.M):
             self.assertGreaterEqual(self.model.k[d], 0)
             self.assertLess(self.model.k[d], self.K)
+
+
+class TestMixMulti(TestModel):
+
+    def setUp(self):
+        self.corpus = TestMixMulti.corpus
+        self.K = 2
+        self.gamma = 2
+        self.beta = .01
+        self.model = MixtureMultinomial(self.corpus, self.K,
+                                        self.gamma, self.beta)
+
+    def test_model(self):
+        TestModel.test_model(self)
+
+        self.assertEqual(self.K, self.model.K)
+        self.assertEqual(self.gamma, self.model.gamma)
+
+        self.assertEqual(self.model.M, len(self.model.k))
+        for d in range(self.model.M):
+            self.assertGreaterEqual(self.model.k[d], 0)
+            self.assertLess(self.model.k[d], self.K)
+
+    def test_inference(self):
+        TestModel.test_inference(self)

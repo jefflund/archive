@@ -44,7 +44,7 @@ class TestReader(unittest.TestCase):
         self.reader = CorpusReader(Tokenizer([]))
 
     def test_file(self):
-        files = ['test_data/ipsum/ipsum0.txt', 'test_data/ipsum/ipsum1.txt']
+        files = ['test_data/lorum/lorum0.txt', 'test_data/lorum/lorum1.txt']
         for filename in files:
             self.reader.add_file(filename)
         files = [(filename, open(filename).read()) for filename in files]
@@ -54,8 +54,8 @@ class TestReader(unittest.TestCase):
         self.assertListEqual(files, retrieved)
 
     def test_dir(self):
-        self.reader.add_dir('test_data/ipsum')
-        files = ['test_data/ipsum/ipsum{}.txt'.format(i) for i in range(15)]
+        self.reader.add_dir('test_data/lorum')
+        files = ['test_data/lorum/lorum{}.txt'.format(i) for i in range(15)]
         files.sort()
         files = [(filename, open(filename).read()) for filename in files]
         self.reader.get_files()
@@ -72,16 +72,17 @@ class TestCorpus(unittest.TestCase):
     def setUp(self):
         self.stopwords = load_stopwords('test_data/latin_stop')
         reader = CorpusReader(Tokenizer(self.stopwords))
-        reader.add_dir('test_data/ipsum')
+        reader.add_dir('test_data/lorum')
         self.corpus = reader.read()
 
         self.data = {}
         for i in range(15):
-            title = 'test_data/ipsum/ipsum{}.txt'.format(i)
+            title = 'test_data/lorum/lorum{}.txt'.format(i)
             text = open(title).read().strip().split()
             text = [word.lower() for word in text]
             text = [word.replace('.', '') for word in text]
             text = [word.replace(',', '') for word in text]
+            text = [word.replace(';', '') for word in text]
             text = [word for word in text if len(word) > 2]
             text = [word for word in text if len(word) < 10]
             text = [word for word in text if word not in self.stopwords]

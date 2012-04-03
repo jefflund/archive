@@ -1,7 +1,7 @@
 """Implements the mixture of multinomials model"""
 
 import math
-from topic.model import TopicModel
+from topic.model import TopicModel, top_n
 from util.sample import sample_uniform, sample_order, sample_lcounts
 
 class MixtureMultinomial(TopicModel):
@@ -65,3 +65,17 @@ class MixtureMultinomial(TopicModel):
         self.q[k_d] += self.N[d]
         for w in self.w[d]:
             self.p[self.k[d]][w] += 1
+
+    def cluster_words(self, k, n):
+        return top_n(self.p[k], n)
+
+    def print_state(self, verbose=False):
+        for k in range(self.K):
+            print '{} -'.format(k),
+            for v in self.cluster_words(k, 10):
+                print self.vocab[v],
+            print
+
+        if verbose:
+            for d in range(self.M):
+                print '{} - {}'.format(self.titles[d], self.k[d])
