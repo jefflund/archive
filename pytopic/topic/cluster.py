@@ -110,10 +110,10 @@ class ClusterLDA(TopicModel):
 
         prob = math.log(self.gamma + self.l[j] - 1)
         for t in set(self.z[d]):
-            prob += math.gamma(self.alpha + self.h[j][t])
-            prob -= math.gamma(self.alpha + self.h[j][t] - self.r[d][t])
-        prob += math.gamma(self.Talpha + self.q[j] - self.N[d])
-        prob -= math.gamma(self.Talpha + self.q[j])
+            prob += math.lgamma(self.alpha + self.h[j][t])
+            prob -= math.lgamma(self.alpha + self.h[j][t] - self.r[d][t])
+        prob += math.lgamma(self.Talpha + self.q[j] - self.N[d])
+        prob -= math.lgamma(self.Talpha + self.q[j])
         return prob
 
     def set_k(self, d, k_d):
@@ -161,7 +161,6 @@ class ClusterLDA(TopicModel):
         return top_n(self.r[d], n)
 
     def print_state(self, verbose=False):
-
         for k in range(self.K):
             print '{} -'.format(k),
             for t in self.cluster_topics(k, 5):

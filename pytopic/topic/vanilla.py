@@ -90,7 +90,6 @@ class VanillaLDA(TopicModel):
         return top_n(self.h[d], n)
 
     def print_state(self, verbose=False):
-
         for t in range(self.T):
             print '{} -'.format(t),
             for v in self.topic_words(t, 15):
