@@ -5,6 +5,7 @@ from topic.model import TopicModel, top_n
 from util.sample import sample_uniform, sample_order, sample_lcounts
 
 class MixtureMultinomial(TopicModel):
+    """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
@@ -38,6 +39,11 @@ class MixtureMultinomial(TopicModel):
             self.sample_k(d)
 
     def sample_k(self, d):
+        """
+        MixtureMultinomial.sample_k(int): return None
+        Samples the value of k_d according to the complete conditional
+        """
+
         lcounts = []
         for j in range(self.K):
             self.set_k(d, j)
@@ -45,6 +51,11 @@ class MixtureMultinomial(TopicModel):
         self.set_k(d, sample_lcounts(lcounts))
 
     def lprob_k(self, d, j):
+        """
+        MixtureMultinomial.lprob_k(int, int): return float
+        Returns the log probability log p(k_d=j| w, z, k_-d, alpha, beta)
+        """
+
         prob = math.log(self.gamma + self.l[j] - 1)
         for v in self.doc_words[d]:
             prob += math.lgamma(self.beta + self.p[j][v])
@@ -54,6 +65,12 @@ class MixtureMultinomial(TopicModel):
         return prob
 
     def set_k(self, d, k_d):
+        """
+        MixtureMultinomial.set_k(int, int): return None
+        Updates the value k_d along with all counters. This method also adjust
+        the counters related to the previous value of k_d
+        """
+
         self.l[self.k[d]] -= 1
         self.q[self.k[d]] -= self.N[d]
         for w in self.w[d]:
@@ -67,6 +84,11 @@ class MixtureMultinomial(TopicModel):
             self.p[self.k[d]][w] += 1
 
     def cluster_words(self, k, n):
+        """
+        MixtureMultinomial.cluster_topics(int, int): return list of int
+        Returns the top n words for the cluster k
+        """
+
         return top_n(self.p[k], n)
 
     def print_state(self, verbose=False):
