@@ -34,5 +34,6 @@ def top_n(counts, n):
     excluding any zero counts.
     """
 
-    counts = [(i, c) for i, c in enumerate(counts) if c > 0]
-    return sorted(counts, key=lambda x: x[1], reverse=True)[:n]
+    keys = [i for i in range(len(counts)) if counts[i] > 0]
+    return sorted(keys, key=lambda x: counts[x], reverse=True)[:n]
+
