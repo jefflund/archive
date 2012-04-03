@@ -29,7 +29,7 @@ class TestIndex(unittest.TestCase):
         self.assertEqual('eggs', self.index.token_symbol(eggs))
 
         self.assertEqual(3, len(self.index))
-        self.assertSequenceEqual(['spam', 'ham', 'eggs'], list(self.index))
+        self.assertListEqual(['spam', 'ham', 'eggs'], list(self.index))
 
     def test_convert(self):
         self.index.insert_token('spam')
@@ -43,8 +43,8 @@ class TestIndex(unittest.TestCase):
 class TestStopwords(unittest.TestCase):
 
     def runTest(self):
-        latin = {'a', 'the', 'and', 'of'}
-        english = {'et', 'sed', 'ut', 'in'}
+        latin = {'et', 'sed', 'ut', 'in'}
+        english = {'a', 'the', 'and', 'of'}
         self.assertEqual(latin, load_stopwords('test_data/latin_stop'))
         self.assertEqual(english, load_stopwords('test_data/english_stop'))
         joint = load_stopwords('test_data/latin_stop', 'test_data/english_stop')
