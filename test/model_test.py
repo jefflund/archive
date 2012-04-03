@@ -62,11 +62,6 @@ class TestLDA(TestModel):
                 self.assertGreaterEqual(self.model.z[d][n], 0)
                 self.assertLess(self.model.z[d][n], self.T)
 
-    def test_inference(self, print_state=False):
-        TestModel.test_inference(self)
-        if print_state:
-            self.model.print_state()
-
 
 class TestCLDA(TestLDA):
 
