@@ -9,7 +9,7 @@ def rare_words(corpus, threshold):
     of documents.
     """
 
-    counts = [0 for _ in len(corpus.vocab)]
+    counts = [0 for _ in range(len(corpus.vocab))]
     for d in range(len(corpus)):
         for v in corpus[d]:
             counts[v] += 1
