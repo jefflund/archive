@@ -143,7 +143,6 @@ class ClusterLDA(TopicModel):
 
         return top_n(self.p[t], n)
 
-
     def cluster_topics(self, k, n):
         """
         ClusterLDA.cluster_topics(int, int): return list of int

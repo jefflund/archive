@@ -33,6 +33,7 @@ class TopicModel(object):
         Prints a summary of the current state of the sampled model
         """
 
+
 def top_n(counts, n):
     """
     top_n(list of int, int): return list of int

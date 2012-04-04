@@ -3,6 +3,7 @@
 from pipeline.corpus import Tokenizer
 
 class NewsTokenizer(Tokenizer):
+    """Tokenizer that skips newsgroups headers"""
 
     def __init__(self, stopwords, split_re='\s+', filter_re='[^a-zA-Z]'):
         Tokenizer.__init__(self, stopwords, split_re, filter_re)
