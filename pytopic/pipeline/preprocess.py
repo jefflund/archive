@@ -10,28 +10,37 @@ def rare_words(corpus, threshold):
     """
 
     counts = [0 for _ in len(corpus.vocab)]
-    for doc in corpus:
-        for v in doc:
+    for d in range(len(corpus)):
+        for v in corpus[d]:
             counts[v] += 1
     stopwords = {v for v, count in enumerate(counts) if count < threshold}
-
-    transformed = Corpus()
-    for d in range(len(corpus)):
-        tokens = [v for v in doc if v not in stopwords]
-        if len(tokens) > 0:
-            transformed.add_document(corpus.titles[d],
-                                     [corpus.vocab[v] for v in tokens])
-    return transformed
+    return _filter_types(corpus, stopwords)
 
 
 def stopwords(corpus, *stopword_filenames):
+    """
+    stopwords(Corpus, *str): return Corpus
+    Returns a new Corpus with all stopwords in the given stopwords files
+    removed from the data. The stopword files must contain one stopword per
+    line.
+    """
+
     stopwords = set()
     for filename in stopword_filenames:
         for word in open(filename):
             word = word.strip()
             if len(word) > 0:
                 stopwords.add(word)
+    stopwords = {corpus.vocab.token_type(v) for v in stopwords}
+    return _filter_types(corpus, stopwords)
 
 
-def tf_idf(corpus, threshold):
-    return corpus
+def _filter_types(corpus, stopwords):
+    transformed = Corpus()
+    for d in range(len(corpus)):
+        tokens = [v for v in corpus[d] if v not in stopwords]
+        if len(tokens) > 0:
+            transformed.add_document(corpus.titles[d],
+                                     [corpus.vocab[v] for v in tokens])
+    return transformed
+
