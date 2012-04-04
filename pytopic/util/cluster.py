@@ -61,6 +61,7 @@ class Contingency(object):
                 print _padded_str(self[gold_label, pred_label], pred_size),
             print
 
+
 def _padded_str(item, length):
     item = str(item)
     return item + ' ' * (len(item) - length)

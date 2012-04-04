@@ -11,6 +11,7 @@ def sample_uniform(dim):
 
     return random.randrange(dim)
 
+
 def sample_counts(counts):
     """
     sample_counts(list of float): return int
@@ -24,6 +25,7 @@ def sample_counts(counts):
         sample -= count
 
     raise ValueError()
+
 
 def sample_lcounts(lcounts):
     """
@@ -44,6 +46,7 @@ def sample_lcounts(lcounts):
 
     raise ValueError()
 
+
 def sample_order(dim):
     """
     sample_order(int): return list of int
@@ -53,6 +56,7 @@ def sample_order(dim):
     order = range(dim)
     random.shuffle(order)
     return order
+
 
 def ladd(log_x, log_y):
     """
