@@ -13,11 +13,12 @@ def rare_words(corpus, threshold):
     for d in range(len(corpus)):
         for v in corpus[d]:
             counts[v] += 1
-    stopwords = {v for v, count in enumerate(counts) if count < threshold}
-    return _filter_types(corpus, stopwords)
+    rare_words = {corpus.vocab[v] for v, count in enumerate(counts)
+                  if count < threshold}
+    return stopwords(corpus, rare_words)
 
 
-def stopwords(corpus, *stopword_filenames):
+def stopwords(corpus, stopwords):
     """
     stopwords(Corpus, *str): return Corpus
     Returns a new Corpus with all stopwords in the given stopwords files
@@ -25,22 +26,10 @@ def stopwords(corpus, *stopword_filenames):
     line.
     """
 
-    stopwords = set()
-    for filename in stopword_filenames:
-        for word in open(filename):
-            word = word.strip()
-            if len(word) > 0:
-                stopwords.add(word)
-    stopwords = {corpus.vocab.token_type(v) for v in stopwords}
-    return _filter_types(corpus, stopwords)
-
-
-def _filter_types(corpus, stopwords):
     transformed = Corpus()
     for d in range(len(corpus)):
-        tokens = [v for v in corpus[d] if v not in stopwords]
+        tokens = [corpus.vocab[v] for v in corpus[d]]
+        tokens = [v for v in tokens if v not in stopwords]
         if len(tokens) > 0:
-            transformed.add_document(corpus.titles[d],
-                                     [corpus.vocab[v] for v in tokens])
+            transformed.add_document(corpus.titles[d], tokens)
     return transformed
-
