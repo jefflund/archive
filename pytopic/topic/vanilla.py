@@ -6,6 +6,10 @@ from util.sample import sample_uniform, sample_counts
 class VanillaLDA(TopicModel):
     """Latent Dirichlet Allocation with a Gibbs sampler"""
 
+    # forgive the horrible variable names...it matches my white board...
+
+    # z_dn = topic of the nth word of document d
+
     # s_t = count of words with topic t
     # h_dt = count of words in document d with topic t 
     # p_tv = count of words of type v with topic t
