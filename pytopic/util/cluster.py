@@ -5,7 +5,7 @@ import os
 class Clustering(object):
 
     def __init__(self, labels, data):
-        self.labels = labels
+        self.labels = set(labels)
         self.data = data
 
     def __len__(self):
@@ -21,7 +21,7 @@ class Clustering(object):
     @classmethod
     def from_corpus(cls, corpus):
         data = [os.path.dirname(title) for title in corpus.titles]
-        return Clustering(set(data), data)
+        return Clustering(data, data)
 
 
 class Contingency(object):
