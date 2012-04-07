@@ -32,7 +32,7 @@ class VanillaLDA(TopicModel):
             for n in range(self.N[d]):
                 self.set_z(d, n, sample_uniform(self.T))
 
-    def iteration(self):
+    def sample(self):
         for d in range(self.M):
             for n in range(self.N[d]):
                 self.sample_z(d, n)

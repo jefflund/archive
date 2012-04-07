@@ -8,17 +8,13 @@ from util.data import load_stopwords
 class TestTokenizer(unittest.TestCase):
 
     def setUp(self):
-        self.tokenizer = Tokenizer({'foo', 'bar', 'baz'})
+        self.tokenizer = Tokenizer()
 
     def test_keep(self):
         self.assertFalse(self.tokenizer.keep(''))
         self.assertFalse(self.tokenizer.keep('a'))
         self.assertFalse(self.tokenizer.keep('at'))
         self.assertFalse(self.tokenizer.keep('foobarbazs'))
-
-        self.assertFalse(self.tokenizer.keep('foo'))
-        self.assertFalse(self.tokenizer.keep('bar'))
-        self.assertFalse(self.tokenizer.keep('baz'))
 
         self.assertTrue(self.tokenizer.keep('spam'))
         self.assertTrue(self.tokenizer.keep('eggs'))
@@ -30,18 +26,18 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual('ham', self.tokenizer.transform('*&(*&H3443a(*&m.'))
 
     def test_tokenize(self):
-        buff = StringIO.StringIO('SPAM eggs&*\nH@Am\nfoo bar$# 234baz')
+        buff = StringIO.StringIO('SPAM eggs&*\nH@Am\nfoo bar$# 234')
         docs = list(self.tokenizer.tokenize('python', buff))
         self.assertEqual(1, len(docs))
         title, words = docs[0]
         self.assertEqual('python', title)
-        self.assertListEqual(['spam', 'eggs', 'ham'], words)
+        self.assertListEqual(['spam', 'eggs', 'ham', 'foo', 'bar'], words)
 
 
 class TestReader(unittest.TestCase):
 
     def setUp(self):
-        self.reader = CorpusReader(Tokenizer([]))
+        self.reader = CorpusReader(Tokenizer())
 
     def test_file(self):
         files = ['test_data/lorum/lorum0.txt', 'test_data/lorum/lorum1.txt']
@@ -70,8 +66,7 @@ class TestReader(unittest.TestCase):
 class TestCorpus(unittest.TestCase):
 
     def setUp(self):
-        self.stopwords = load_stopwords('test_data/latin_stop')
-        reader = CorpusReader(Tokenizer(self.stopwords))
+        reader = CorpusReader(Tokenizer())
         reader.add_dir('test_data/lorum')
         self.corpus = reader.read()
 
@@ -85,7 +80,6 @@ class TestCorpus(unittest.TestCase):
             text = [word.replace(';', '') for word in text]
             text = [word for word in text if len(word) > 2]
             text = [word for word in text if len(word) < 10]
-            text = [word for word in text if word not in self.stopwords]
             self.data[title] = text
 
     def test_data(self):

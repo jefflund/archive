@@ -12,8 +12,7 @@ class TestModel(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        stopwords = load_stopwords('test_data/latin_stop')
-        reader = CorpusReader(Tokenizer(stopwords))
+        reader = CorpusReader(Tokenizer())
         reader.add_dir('test_data/lorum')
         cls.corpus = reader.read()
 
@@ -34,7 +33,7 @@ class TestModel(unittest.TestCase):
         i = [0]
         def inc():
             i[0] += 1
-        self.model.iteration = inc
+        self.model.sample = inc
         self.model.inference(1000)
         self.assertEqual(1000, i[0])
 

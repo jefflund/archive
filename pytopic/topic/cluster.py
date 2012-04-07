@@ -38,7 +38,7 @@ class ClusterLDA(TopicModel):
             for n in range(self.N[d]):
                 self.set_z(d, n, sample_uniform(self.T))
 
-    def iteration(self):
+    def sample(self):
         for d in sample_order(self.M):
             self.sample_k(d)
             for n in sample_order(self.N[d]):

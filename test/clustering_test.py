@@ -18,7 +18,7 @@ class TestContingency(unittest.TestCase):
         self.assertEqual(self.gold_data, gold.data)
 
     def test_corpus_clustering(self):
-        reader = CorpusReader(Tokenizer([]))
+        reader = CorpusReader(Tokenizer())
         reader.add_dir('test_data/lorum')
         reader.add_dir('test_data/ipsum')
         corpus = reader.read()
@@ -33,7 +33,7 @@ class TestContingency(unittest.TestCase):
             self.assertTrue(title.startswith(label))
 
     def test_model_clustering(self):
-        reader = CorpusReader(Tokenizer([]))
+        reader = CorpusReader(Tokenizer())
         reader.add_dir('test_data/lorum')
         corpus = reader.read()
         model = MixtureMultinomial(corpus, 4, 2, .01)

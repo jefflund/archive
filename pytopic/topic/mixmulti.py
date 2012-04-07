@@ -34,7 +34,7 @@ class MixtureMultinomial(TopicModel):
 
         self.doc_words = [set(self.w[d]) for d in range(self.M)]
 
-    def iteration(self):
+    def sample(self):
         for d in sample_order(self.M):
             self.sample_k(d)
 

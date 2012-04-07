@@ -12,11 +12,19 @@ class TopicModel(object):
         self.N = [len(doc) for doc in self.w]
         self.V = len(self.vocab)
 
+    def sample(self):
+        """
+        TopicModel.sample(): return None
+        Performs a single iteration of sampling.
+        """
+
     def iteration(self):
         """
         TopicModel.iteration(): return None
-        Performs a single iteration of inference
+        Performs a single iteration of inference, along with output.
         """
+
+        self.sample()
 
     def inference(self, iterations):
         """

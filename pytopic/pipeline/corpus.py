@@ -94,8 +94,7 @@ class CorpusReader(object):
 class Tokenizer(object):
     """Performs tokenization for a CorpusReader"""
 
-    def __init__(self, stopwords, split_re='\s+', filter_re='[^a-zA-Z]'):
-        self.stopwords = stopwords
+    def __init__(self, split_re='\s+', filter_re='[^a-zA-Z]'):
         self.split_re = re.compile(split_re)
         self.filter_re = re.compile(filter_re)
 
@@ -125,5 +124,4 @@ class Tokenizer(object):
         Returns true if the token symbol should be kept by the CorpusReader
         """
 
-        return (token not in self.stopwords and
-                len(token) > 2 and len(token) < 10)
+        return len(token) > 2 and len(token) < 10
