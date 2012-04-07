@@ -44,9 +44,9 @@ class Corpus(object):
 class CorpusReader(object):
     """Facilitates the construction of text corpora from files"""
 
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer=None):
         self.filelist = []
-        self.tokenizer = tokenizer
+        self.tokenizer = tokenizer if tokenizer is not None else Tokenizer()
 
     def add_file(self, filename):
         """

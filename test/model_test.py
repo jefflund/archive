@@ -1,8 +1,7 @@
 """Ensures that topic models do not crash - results to be verified by hand"""
 
 import unittest
-from pipeline.corpus import CorpusReader, Tokenizer
-from util.data import load_stopwords
+from pipeline.corpus import CorpusReader
 from topic.model import TopicModel
 from topic.vanilla import VanillaLDA
 from topic.cluster import ClusterLDA
@@ -12,7 +11,7 @@ class TestModel(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        reader = CorpusReader(Tokenizer())
+        reader = CorpusReader()
         reader.add_dir('test_data/lorum')
         cls.corpus = reader.read()
 

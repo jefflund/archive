@@ -8,7 +8,7 @@ import unittest
 class PreprocessRare(unittest.TestCase):
 
     def setUp(self):
-        reader = CorpusReader(Tokenizer())
+        reader = CorpusReader()
         reader.add_dir('test_data/lorum')
         self.corpus = reader.read()
 

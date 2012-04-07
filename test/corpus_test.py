@@ -3,7 +3,6 @@
 from pipeline.corpus import Tokenizer, CorpusReader, Corpus
 import StringIO
 import unittest
-from util.data import load_stopwords
 
 class TestTokenizer(unittest.TestCase):
 
@@ -37,7 +36,7 @@ class TestTokenizer(unittest.TestCase):
 class TestReader(unittest.TestCase):
 
     def setUp(self):
-        self.reader = CorpusReader(Tokenizer())
+        self.reader = CorpusReader()
 
     def test_file(self):
         files = ['test_data/lorum/lorum0.txt', 'test_data/lorum/lorum1.txt']
@@ -66,7 +65,7 @@ class TestReader(unittest.TestCase):
 class TestCorpus(unittest.TestCase):
 
     def setUp(self):
-        reader = CorpusReader(Tokenizer())
+        reader = CorpusReader()
         reader.add_dir('test_data/lorum')
         self.corpus = reader.read()
 
