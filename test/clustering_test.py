@@ -2,7 +2,7 @@
 
 import unittest
 from util.cluster import Clustering
-from pipeline.corpus import CorpusReader, Tokenizer
+from pipeline.corpus import CorpusReader
 from topic.mixmulti import MixtureMultinomial
 
 class TestContingency(unittest.TestCase):

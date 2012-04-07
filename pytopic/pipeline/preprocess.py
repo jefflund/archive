@@ -2,7 +2,7 @@
 
 from pipeline.corpus import Corpus
 
-def rare_words(corpus, threshold):
+def filter_rarewords(corpus, threshold):
     """
     rare_words(Corpus, int): return Corpus
     Removes words from the Corpus that appear in fewer than a threshold amount
@@ -13,12 +13,12 @@ def rare_words(corpus, threshold):
     for d in range(len(corpus)):
         for v in corpus[d]:
             counts[v] += 1
-    rare_words = {corpus.vocab[v] for v, count in enumerate(counts)
+    rarewords = {corpus.vocab[v] for v, count in enumerate(counts)
                   if count < threshold}
-    return stopwords(corpus, rare_words)
+    return filter_stopwords(corpus, rarewords)
 
 
-def stopwords(corpus, stopwords):
+def filter_stopwords(corpus, stopwords):
     """
     stopwords(Corpus, *str): return Corpus
     Returns a new Corpus with all stopwords in the given stopwords files

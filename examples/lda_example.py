@@ -1,11 +1,11 @@
 """Example of a run of lda"""
 
 from __future__ import division
-
 from pipeline.corpus import CorpusReader
-from util.data import load_stopwords
+from pipeline.preprocess import filter_stopwords
 from topic.vanilla import VanillaLDA
-from pipeline.preprocess import stopwords
+from util.data import load_stopwords
+
 
 def main():
     T = 100
@@ -18,7 +18,7 @@ def main():
     reader = CorpusReader()
     reader.add_dir(dataset_dir)
     corpus = reader.read()
-    corpus = stopwords(corpus, load_stopwords(stopwords_file))
+    corpus = filter_stopwords(corpus, load_stopwords(stopwords_file))
 
     lda = VanillaLDA(corpus, T, alpha, beta)
     lda.inference(500)

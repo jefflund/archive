@@ -1,7 +1,7 @@
 """Test the various pre-processes that can be done"""
 
-from pipeline.corpus import CorpusReader, Tokenizer
-from pipeline.preprocess import rare_words, stopwords
+from pipeline.corpus import CorpusReader
+from pipeline.preprocess import filter_rarewords, filter_stopwords
 from util.data import load_stopwords
 import unittest
 
@@ -14,7 +14,7 @@ class PreprocessRare(unittest.TestCase):
 
     def test_stopwords(self):
         stopwords_set = load_stopwords('test_data/latin_stop')
-        transformed = stopwords(self.corpus, stopwords_set)
+        transformed = filter_stopwords(self.corpus, stopwords_set)
         transformed_vocab = set(transformed.vocab)
         self.assertNotIn('et', transformed_vocab)
         self.assertNotIn('sed', transformed_vocab)
@@ -23,7 +23,7 @@ class PreprocessRare(unittest.TestCase):
 
     def test_rare_words(self):
 
-        transformed = rare_words(self.corpus, 5)
+        transformed = filter_rarewords(self.corpus, 5)
 
         corpus_vocab = set(self.corpus.vocab)
         transformed_vocab = set(transformed.vocab)
