@@ -1,10 +1,12 @@
 """Example of a run of lda"""
 
 from __future__ import division
+import pickle
 from pipeline.corpus import CorpusReader
 from pipeline.preprocess import filter_stopwords
 from topic.vanilla import VanillaLDA
 from util.data import load_stopwords
+from topic.model import print_hook, combined_hook, time_hook
 
 
 def main():
@@ -21,6 +23,7 @@ def main():
     corpus = filter_stopwords(corpus, load_stopwords(stopwords_file))
 
     lda = VanillaLDA(corpus, T, alpha, beta)
+    lda.output_hook = combined_hook(time_hook(lda), print_hook(lda, 10))
     lda.inference(500)
     lda.print_state(verbose=True)
 

@@ -1,4 +1,5 @@
 """Base class for graphical model"""
+import timeit
 
 class TopicModel(object):
     """Base class for a topic model of textual data"""
@@ -12,7 +13,7 @@ class TopicModel(object):
         self.N = [len(doc) for doc in self.w]
         self.V = len(self.vocab)
 
-        self.iterations = 0
+        self.timing = []
         self.output_hook = lambda i: None
 
     def sample(self):
@@ -27,9 +28,11 @@ class TopicModel(object):
         Performs a single iteration of inference, along with output.
         """
 
+        start = timeit.time.time()
         self.sample()
-        self.iterations += 1
-        self.output_hook(self.iterations)
+        end = timeit.time.time()
+        self.timing.append(end - start)
+        self.output_hook(len(self.timing))
 
     def inference(self, iterations):
         """
@@ -56,4 +59,22 @@ def top_n(counts, n):
 
     keys = [i for i in range(len(counts)) if counts[i] > 0]
     return sorted(keys, key=lambda x: counts[x], reverse=True)[:n]
+
+
+def print_hook(model, interval, verbose=False):
+    def hook(iteration):
+        if iteration % interval == 0:
+            model.print_state(verbose)
+    return hook
+
+def time_hook(model):
+    def hook(iteration):
+        print repr(model.timingq[-1])
+    return hook
+
+def combined_hook(*hooks):
+    def combined(iteration):
+        for hook in hooks:
+            hook(iteration)
+    return combined
 
