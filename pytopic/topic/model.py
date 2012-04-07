@@ -12,6 +12,9 @@ class TopicModel(object):
         self.N = [len(doc) for doc in self.w]
         self.V = len(self.vocab)
 
+        self.iterations = 0
+        self.output_hook = lambda i: None
+
     def sample(self):
         """
         TopicModel.sample(): return None
@@ -25,6 +28,8 @@ class TopicModel(object):
         """
 
         self.sample()
+        self.iterations += 1
+        self.output_hook(self.iterations)
 
     def inference(self, iterations):
         """
