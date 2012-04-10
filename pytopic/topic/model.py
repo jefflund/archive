@@ -62,17 +62,34 @@ def top_n(counts, n):
 
 
 def print_hook(model, interval, verbose=False):
+    """
+    print_hook(TopicModel, int, bool): return func
+    Returns an output hook which calls model.print_state on the model on the
+    given interval during inference
+    """
+
     def hook(iteration):
         if iteration % interval == 0:
             model.print_state(verbose)
     return hook
 
 def time_hook(model):
+    """
+    time_hook(TopicModel): return func
+    Returns an output hook which prints the time for the last sampling
+    iteration after each iteration.
+    """
+
     def hook(iteration):
         print repr(model.timing[-1])
     return hook
 
 def combined_hook(*hooks):
+    """
+    combined_hook(*func): return func
+    Returns an output hook which calls each of the given output hooks.
+    """
+
     def combined(iteration):
         for hook in hooks:
             hook(iteration)
