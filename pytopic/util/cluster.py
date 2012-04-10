@@ -3,6 +3,7 @@
 import os
 
 class Clustering(object):
+    """Abstraction for clusterings, both labeled data and inferred clusters"""
 
     def __init__(self, labels, data):
         self.labels = set(labels)
@@ -16,10 +17,23 @@ class Clustering(object):
 
     @classmethod
     def from_model(cls, model):
+        """
+        Clustering.from_model(TopicModel): return Clustering
+        Returns a Clustering using the inferred clusters from a TopicModel.
+        That TopicModel must have the attributes K and k, indicating the
+        number of clusters and the cluster assignments for each document.
+        """
+
         return Clustering(range(model.K), model.k)
 
     @classmethod
     def from_corpus(cls, corpus):
+        """
+        Clustering.from_corpus(Corpus): return Clustering
+        Returns a Clustering using the folder structure of the document titles
+        to determine the labels.
+        """
+
         data = [os.path.dirname(title) for title in corpus.titles]
         return Clustering(data, data)
 
@@ -52,19 +66,11 @@ class Contingency(object):
 
         print ' ' * gold_size,
         for pred_label in self.pred:
-            print _padded_str(pred_label, pred_size),
+            print str(pred_label).ljust(pred_size),
         print
 
         for gold_label in self.gold:
-            print _padded_str(gold_label, gold_size),
+            print str(gold_label).ljust(gold_size),
             for pred_label in self.pred:
-                print _padded_str(self[gold_label, pred_label], pred_size),
+                print str(self[gold_label, pred_label]).ljust(pred_size),
             print
-
-
-def _padded_str(item, length):
-    item = str(item)
-    return item + ' ' * (len(item) - length)
-
-
-
