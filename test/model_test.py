@@ -29,12 +29,19 @@ class TestModel(unittest.TestCase):
         self.assertEqual(len(self.corpus.vocab), self.model.V)
 
     def test_inference(self):
-        i = [0]
-        def inc():
-            i[0] += 1
-        self.model.sample = inc
+        sample_count = [0]
+        def inc_sample_count():
+            sample_count[0] += 1
+        self.model.sample = inc_sample_count
+
+        hook_list = []
+        def append_hook_list(iteration):
+            hook_list.append(iteration)
+        self.model.output_hook = append_hook_list
+
         self.model.inference(1000)
-        self.assertEqual(1000, i[0])
+        self.assertEqual(1000, sample_count[0])
+        self.assertSequenceEqual(hook_list, range(1, 1001))
 
 
 class TestLDA(TestModel):
