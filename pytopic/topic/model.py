@@ -81,7 +81,7 @@ def time_hook(model):
     """
 
     def hook(iteration):
-        print repr(model.timing[-1])
+        print len(model.timing), repr(model.timing[-1])
     return hook
 
 def combined_hook(*hooks):
