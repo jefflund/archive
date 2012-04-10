@@ -1,13 +1,11 @@
 """Example of a run of lda"""
 
 from __future__ import division
-import pickle
 from pipeline.corpus import CorpusReader
 from pipeline.preprocess import filter_stopwords
 from topic.vanilla import VanillaLDA
 from util.data import load_stopwords
 from topic.model import print_hook, combined_hook, time_hook
-
 
 def main():
     T = 100
