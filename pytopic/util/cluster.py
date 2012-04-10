@@ -1,6 +1,8 @@
 """Functionality for evaluating clustering quality"""
 
+from __future__ import division
 import os
+from util.sample import n_choose_2
 
 class Clustering(object):
     """Abstraction for clusterings, both labeled data and inferred clusters"""
@@ -47,16 +49,12 @@ class Contingency(object):
         self.gold = gold.labels
         self.pred = pred.labels
 
-        try:
-            self.counts = {(g, p): 0 for g in self.gold for p in self.pred}
-            for index in zip(gold.data, pred.data):
-                self.counts[index] += 1
-        except KeyError as err:
-            print self.counts
-            raise err
+        self.counts = {(g, p): 0 for g in self.gold for p in self.pred}
+        for index in zip(gold.data, pred.data):
+            self.counts[index] += 1
 
     def __len__(self):
-        return len(self.counts)
+        return sum(self.counts.values())
 
     def __getitem__(self, index):
         return self.counts[index]
@@ -80,3 +78,38 @@ class Contingency(object):
             for pred_label in self.pred:
                 print str(self[gold_label, pred_label]).ljust(pred_size),
             print
+
+def f_measure(contingency):
+    class_counts = {c: sum(contingency[c, k] for k in contingency.pred)
+                    for c in contingency.gold}
+    clust_counts = {k: sum(contingency[c, k] for c in contingency.gold)
+                    for k in contingency.pred}
+
+    f_measures = {}
+    for c in contingency.gold:
+        for k in contingency.pred:
+            recall = contingency[c, k] / class_counts[c]
+            precision = contingency[c, k] / clust_counts[k]
+            try:
+                f_measures[c, k] = recall * precision / (recall + precision)
+            except ZeroDivisionError:
+                f_measures[c, k] = 0
+
+    result = 0
+    normalizer = len(contingency)
+    for c in contingency.gold:
+        best_f_measure = max(f_measures[c, k] for k in contingency.pred)
+        result += best_f_measure * class_counts[c] / normalizer
+    return 2 * result
+
+def ari(contingency):
+    a_part = sum(n_choose_2(sum(contingency[c, k] for k in contingency.pred))
+                 for c in contingency.gold)
+    b_part = sum(n_choose_2(sum(contingency[c, k] for c in contingency.gold))
+                 for k in contingency.pred)
+    index = sum(n_choose_2(contingency[c, k])
+            for c in contingency.gold
+            for k in contingency.pred)
+    expected = (a_part * b_part) / n_choose_2(len(contingency))
+    maximum = (a_part + b_part) / 2
+    return (index - expected) / (maximum - expected)
