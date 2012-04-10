@@ -39,6 +39,7 @@ class Clustering(object):
 
 
 class Contingency(object):
+    """Represents a contingency matrix for two Clusterings on the same data"""
 
     def __init__(self, gold, pred):
         assert len(gold) == len(pred)
@@ -61,6 +62,11 @@ class Contingency(object):
         return self.counts[index]
 
     def print_contingency(self):
+        """
+        Contingency.print_contingency(): return None
+        Pretty prints the contingency matrix to stdout
+        """
+
         gold_size = max(len(str(label)) for label in self.gold)
         pred_size = max(len(str(label)) for label in self.pred)
 
