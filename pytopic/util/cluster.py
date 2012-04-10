@@ -2,6 +2,7 @@
 
 from __future__ import division
 import os
+import math
 from util.sample import n_choose_2
 
 class Clustering(object):
@@ -113,3 +114,31 @@ def ari(contingency):
     expected = (a_part * b_part) / n_choose_2(len(contingency))
     maximum = (a_part + b_part) / 2
     return (index - expected) / (maximum - expected)
+
+def variation_info(contingency):
+    num_datums = len(contingency)
+    gold_sums = {c:sum(contingency[c, k] for k in contingency.pred)
+                 for c in contingency.gold}
+    pred_sums = {k: sum(contingency[c, k] for c in contingency.gold)
+                 for k in contingency.pred}
+
+    entropy_gold = 0
+    for c in contingency.gold:
+        prob_c = gold_sums[c] / num_datums
+        entropy_gold -= prob_c * math.log(prob_c)
+
+    entropy_pred = 0
+    for k in contingency.pred:
+        prob_k = pred_sums[k] / num_datums
+        entropy_pred -= prob_k * math.log(prob_k)
+
+    mutal_information = 0
+    for c in contingency.gold:
+        for k in contingency.pred:
+            prob_ck = contingency[c, k] / num_datums
+            prob_c = gold_sums[c] / num_datums
+            prob_k = pred_sums[k] / num_datums
+            cond_prob = prob_ck / (prob_c * prob_k)
+            mutal_information += prob_ck * math.log(cond_prob)
+
+    return entropy_gold + entropy_pred - 2 * mutal_information
