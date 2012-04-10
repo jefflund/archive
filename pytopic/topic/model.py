@@ -69,7 +69,7 @@ def print_hook(model, interval, verbose=False):
 
 def time_hook(model):
     def hook(iteration):
-        print repr(model.timingq[-1])
+        print repr(model.timing[-1])
     return hook
 
 def combined_hook(*hooks):
