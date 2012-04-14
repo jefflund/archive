@@ -1,7 +1,7 @@
 """Test of the various clustering metrics"""
 
 import unittest
-from util.cluster import Clustering
+from util.cluster import Clustering, Contingency, f_measure, ari
 from pipeline.corpus import CorpusReader
 from topic.mixmulti import MixtureMultinomial
 
@@ -43,3 +43,20 @@ class TestContingency(unittest.TestCase):
 
         for d in range(model.M):
             self.assertEqual(model.k[d], gold.data[d])
+
+
+class TestMetrics(unittest.TestCase):
+
+    def setUp(self):
+        labels = [1, 2, 3]
+        gold_data = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3]
+        pred_data = [1, 2, 1, 2, 2, 3, 3, 3, 3, 3]
+        gold = Clustering(labels, gold_data)
+        pred = Clustering(labels, pred_data)
+        self.contingency = Contingency(gold, pred)
+
+    def test_f_measure(self):
+        self.assertAlmostEqual(0.684, f_measure(self.contingency), 3)
+
+    def test_ari(self):
+        self.assertAlmostEqual(.313, ari(self.contingency), 3)

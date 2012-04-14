@@ -72,3 +72,11 @@ def ladd(log_x, log_y):
     if neg_diff < -50:
         return log_x
     return log_x + math.log(1 + math.exp(neg_diff))
+
+def n_choose_2(n):
+    """
+    n_choose_2(int): return int
+    Returns n choose 2, or n(n-1)/2.
+    """
+
+    return (n * (n - 1)) / 2
