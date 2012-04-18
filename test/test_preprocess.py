@@ -1,9 +1,9 @@
 """Test the various pre-processes that can be done"""
 
-from pipeline.corpus import CorpusReader
-from pipeline.preprocess import filter_rarewords, filter_stopwords
-from util.data import load_stopwords
 import unittest
+from pytopic.pipeline.corpus import CorpusReader
+from pytopic.pipeline.preprocess import filter_rarewords, filter_stopwords
+from pytopic.util.data import load_stopwords
 
 class PreprocessRare(unittest.TestCase):
 

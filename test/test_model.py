@@ -1,11 +1,11 @@
 """Ensures that topic models do not crash - results to be verified by hand"""
 
 import unittest
-from pipeline.corpus import CorpusReader
-from topic.model import TopicModel
-from topic.vanilla import VanillaLDA
-from topic.cluster import ClusterLDA
-from topic.mixmulti import MixtureMultinomial
+from pytopic.pipeline.corpus import CorpusReader
+from pytopic.topic.model import TopicModel
+from pytopic.topic.vanilla import VanillaLDA
+from pytopic.topic.cluster import ClusterLDA
+from pytopic.topic.mixmulti import MixtureMultinomial
 
 class TestModel(unittest.TestCase):
 

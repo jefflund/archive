@@ -1,9 +1,9 @@
 """Test of the various clustering metrics"""
 
 import unittest
-from util.cluster import Clustering, Contingency, f_measure, ari
-from pipeline.corpus import CorpusReader
-from topic.mixmulti import MixtureMultinomial
+from pytopic.util.cluster import Clustering, Contingency, f_measure, ari
+from pytopic.pipeline.corpus import CorpusReader
+from pytopic.topic.mixmulti import MixtureMultinomial
 
 class TestContingency(unittest.TestCase):
 

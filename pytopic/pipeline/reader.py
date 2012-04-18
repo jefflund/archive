@@ -1,6 +1,6 @@
 """Special corpora-specific corpus building tools"""
 
-from pipeline.corpus import Tokenizer
+from pytopic.pipeline.corpus import Tokenizer
 
 class NewsTokenizer(Tokenizer):
     """Tokenizer that skips newsgroups headers"""

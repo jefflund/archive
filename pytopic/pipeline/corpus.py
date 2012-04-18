@@ -2,7 +2,7 @@
 
 import os
 import re
-from util.data import Index
+from pytopic.util.data import Index
 
 class Corpus(object):
     """A collection of text documents"""

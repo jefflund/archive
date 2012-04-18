@@ -1,8 +1,8 @@
 """Test of Corpus and corpus loading functionality"""
 
-from pipeline.corpus import Tokenizer, CorpusReader, Corpus
 import StringIO
 import unittest
+from pytopic.pipeline.corpus import Tokenizer, CorpusReader, Corpus
 
 class TestTokenizer(unittest.TestCase):
 

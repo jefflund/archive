@@ -1,7 +1,7 @@
 """Test for the Index class and other data helpers"""
 
 import unittest
-from util.data import Index, load_stopwords
+from pytopic.util.data import Index, load_stopwords
 
 class TestIndex(unittest.TestCase):
 

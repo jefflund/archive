@@ -1,11 +1,11 @@
 """Example of a run of lda"""
 
 from __future__ import division
-from pipeline.corpus import CorpusReader
-from pipeline.preprocess import filter_stopwords
-from topic.vanilla import VanillaLDA
-from util.data import load_stopwords
-from topic.model import print_hook, combined_hook, time_hook
+from pytopic.pipeline.corpus import CorpusReader
+from pytopic.pipeline.preprocess import filter_stopwords
+from pytopic.topic.vanilla import VanillaLDA
+from pytopic.util.data import load_stopwords
+from pytopic.topic.model import print_hook, combined_hook, time_hook
 
 def main():
     T = 100

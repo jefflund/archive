@@ -1,4 +1,5 @@
 """Base class for graphical model"""
+
 import timeit
 
 class TopicModel(object):

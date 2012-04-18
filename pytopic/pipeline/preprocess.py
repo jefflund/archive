@@ -1,6 +1,6 @@
 """Functions for preprocessing a corpus"""
 
-from pipeline.corpus import Corpus
+from pytopic.pipeline.corpus import Corpus
 
 def filter_rarewords(corpus, threshold):
     """

@@ -1,9 +1,10 @@
 """Functionality for evaluating clustering quality"""
 
 from __future__ import division
+
 import os
 import math
-from util.sample import n_choose_2
+from pytopic.util.sample import n_choose_2
 
 class Clustering(object):
     """Abstraction for clusterings, both labeled data and inferred clusters"""
