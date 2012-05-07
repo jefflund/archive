@@ -7,6 +7,15 @@ from pytopic.util.sample import sample_uniform, sample_order, sample_lcounts
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
+    # forgive the horrible variable names - they match my white board...
+
+    # k_d = cluster of the document d
+
+    # l_k = number of documents assigned to cluster k
+    # p_kv = number of tokens of type v in documents assigned to cluster k
+    # r_dv = number of tokens of type v in document d
+    # q_k = number of tokens in documents assigned to cluster k
+
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
 

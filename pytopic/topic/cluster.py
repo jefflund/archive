@@ -8,6 +8,18 @@ from pytopic.util.sample import (sample_uniform, sample_order, sample_lcounts,
 class ClusterLDA(TopicModel):
     """ClusterLDA, which combines LDA with Mixture of Multinomials"""
 
+    # forgive the horrible variable names - they match my white board...
+
+    # z_dn = topic of the nth word of document d
+    # k_d = cluster of the document d
+
+    # l_k = number of documents assigned to cluster k
+    # s_t = number of tokens with topic t
+    # h_kt = number of tokens with topic t in documents assigned to cluster k
+    # p_tv = number of tokens of type v assigned to topic t
+    # r_dt = number of tokens in document d with topic t
+    # p_k = number of tokens in documents assigned to cluster k
+
     def __init__(self, corpus, K, T, gamma, alpha, beta):
         TopicModel.__init__(self, corpus)
 

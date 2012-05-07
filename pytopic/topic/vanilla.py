@@ -6,7 +6,7 @@ from pytopic.util.sample import sample_uniform, sample_counts
 class VanillaLDA(TopicModel):
     """Latent Dirichlet Allocation with a Gibbs sampler"""
 
-    # forgive the horrible variable names...it matches my white board...
+    # forgive the horrible variable names - they match my white board...
 
     # z_dn = topic of the nth word of document d
 
