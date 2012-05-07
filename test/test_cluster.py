@@ -1,7 +1,8 @@
 """Test of the various clustering metrics"""
 
 import unittest
-from pytopic.util.cluster import Clustering, Contingency, f_measure, ari
+from pytopic.util.cluster import Clustering, Contingency, f_measure, ari, \
+    variation_info
 from pytopic.pipeline.corpus import CorpusReader
 from pytopic.topic.mixmulti import MixtureMultinomial
 
@@ -59,4 +60,7 @@ class TestMetrics(unittest.TestCase):
         self.assertAlmostEqual(0.684, f_measure(self.contingency), 3)
 
     def test_ari(self):
-        self.assertAlmostEqual(.313, ari(self.contingency), 3)
+        self.assertAlmostEqual(0.313, ari(self.contingency), 3)
+
+    def test_vi(self):
+        self.assertAlmostEqual(1.134, variation_info(self.contingency), 3)

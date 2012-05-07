@@ -140,6 +140,7 @@ def variation_info(contingency):
             prob_c = gold_sums[c] / num_datums
             prob_k = pred_sums[k] / num_datums
             cond_prob = prob_ck / (prob_c * prob_k)
-            mutal_information += prob_ck * math.log(cond_prob)
+            if cond_prob != 0 and not math.isnan(cond_prob):
+                mutal_information += prob_ck * math.log(cond_prob)
 
     return entropy_gold + entropy_pred - 2 * mutal_information
