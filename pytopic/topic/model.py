@@ -5,6 +5,13 @@ import timeit
 class TopicModel(object):
     """Base class for a topic model of textual data"""
 
+    # forgive the horrible variable names - they match my white board...
+
+    # w_dn = the token type of the nth word of the dth document
+    # M = the number of documents
+    # N_d = the number of tokens in document d
+    # V = the number of unique token types
+
     def __init__(self, corpus):
         self.titles = list(corpus.titles)
         self.vocab = list(corpus.vocab)
