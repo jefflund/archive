@@ -27,7 +27,8 @@ class BibleTokenizer(Tokenizer):
             if line == '':
                 continue
 
-            title, tokens = line.split(self.split_re, 1)
+            split = self.split_re.split(line)
+            title, tokens = split[0], split[1:]
             tokens = [self.transform(token) for token in tokens]
             tokens = [token for token in tokens if self.keep(token)]
             if len(tokens) > 0:

@@ -16,7 +16,7 @@ DELICIOUS = DATASETS + 'delicious'
 BIBLE = DATASETS + 'bible/bible.txt'
 TEST = DATASETS + 'test'
 
-PICKLED = DATASETS + 'pickled'
+PICKLED = DATASETS + 'pickled/'
 PICKLED_NEWSGROUPS = PICKLED + '20ng.corpus'
 PICKLED_DELICIOUS = PICKLED + 'delicious.corpus'
 PICKLED_BIBLE = PICKLED + 'bible.corpus'
