@@ -144,3 +144,16 @@ def variation_info(contingency):
                 mutal_information += prob_ck * math.log(cond_prob)
 
     return entropy_gold + entropy_pred - 2 * mutal_information
+
+def eval_hook(model, corpus, interval):
+    gold = Clustering.from_corpus(corpus)
+    pred = Clustering.from_model(model)
+    def hook(iteration):
+        if iteration % interval == 0:
+            contingency = Contingency(gold, pred)
+            print 'Time: '.format(repr(sum(model.timing)))
+            print 'Iterations: '.format(len(model.timing))
+            print 'ARI: '.format(repr(ari(contingency)))
+            print 'F-Measure: '.format(repr(f_measure(contingency)))
+            print 'VI: '.format(repr(variation_info(contingency)))
+    return hook
