@@ -151,9 +151,10 @@ def eval_hook(model, corpus, interval):
     def hook(iteration):
         if iteration % interval == 0:
             contingency = Contingency(gold, pred)
-            print 'Time: '.format(repr(sum(model.timing)))
-            print 'Iterations: '.format(len(model.timing))
-            print 'ARI: '.format(repr(ari(contingency)))
-            print 'F-Measure: '.format(repr(f_measure(contingency)))
-            print 'VI: '.format(repr(variation_info(contingency)))
+            print 'Time: {}'.format(repr(sum(model.timing)))
+            print 'Iterations: {}'.format(len(model.timing))
+            print 'ARI: {}'.format(repr(ari(contingency)))
+            print 'F-Measure: {}'.format(repr(f_measure(contingency)))
+            print 'VI: {}'.format(repr(variation_info(contingency)))
+            print
     return hook

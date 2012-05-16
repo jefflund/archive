@@ -55,6 +55,17 @@ def get_bible():
     return corpus
 
 
+def get_test():
+    stopwords = load_stopwords(STOP_ENGLISH)
+
+    reader = CorpusReader()
+    reader.add_dir(TEST)
+    corpus = reader.read()
+    corpus = filter_stopwords(corpus, stopwords)
+
+    return corpus
+
+
 if __name__ == '__main__':
     get_20ng()
     get_bible()
