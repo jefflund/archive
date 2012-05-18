@@ -24,7 +24,7 @@ def sample_counts(counts):
             return key
         sample -= count
 
-    raise ValueError()
+    raise ValueError(counts)
 
 
 def sample_lcounts(lcounts):
