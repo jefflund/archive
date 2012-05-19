@@ -2,7 +2,7 @@
 
 import math
 from pytopic.topic.model import TopicModel, top_n
-from pytopic.util.sample import sample_uniform, sample_order
+from pytopic.util.sample import sample_uniform, sample_order, sample_lcounts
 
 class ClusterLDA(TopicModel):
     """ClusterLDA, which combines LDA with Mixture of Multinomials"""
@@ -48,6 +48,9 @@ class ClusterLDA(TopicModel):
 
             for n in range(self.N[d]):
                 self.set_z(d, n, sample_uniform(self.T))
+
+    def set_anneal_temp(self, t):
+        self.sample_lcounts = lambda xs: sample_lcounts([x * t for x in xs])
 
     def sample(self):
         for d in sample_order(self.M):

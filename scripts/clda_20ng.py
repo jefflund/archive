@@ -8,7 +8,7 @@ from pytopic.util.cluster import eval_hook
 if __name__ == '__main__':
     params = [1, 4, 5, 6, 7, 8, 9]
 
-    pssh_node = int(os.environ.get('PSSH_NODENUM', '0'))
+    pssh_node = int(os.environ.get('PSSH_NODENUM', '2'))
     param_set = pssh_node % len(params)
 
     temp = params[param_set]
