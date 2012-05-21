@@ -20,7 +20,7 @@ class NaiveBayes(object):
         for label, doc in zip(labels, data):
             for word in doc:
                 self.word_counts[label][word] += 1
-        for label in labels:
+        for label in label_set:
             counter = self.word_counts[label]
             norm = sum(counter.values())
             for word in word_set:
@@ -41,3 +41,15 @@ class NaiveBayes(object):
 
     def _log_posterior(self, label, data):
         return self._log_likelihood(label, data) + self._log_prior(label)
+
+    def classify(self, data):
+        best_posterior = float('-inf')
+        best_label = None
+
+        for label in self.label_counts:
+            posterior = self._log_posterior(label, data)
+            if posterior > best_posterior:
+                best_posterior = posterior
+                best_label = label
+
+        return best_label
