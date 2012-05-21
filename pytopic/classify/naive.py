@@ -1,14 +1,15 @@
 from __future__ import division
 
+import os
 import math
 
 class NaiveBayes(object):
 
-    def __init__(self, labels, data, smooth=1):
+    def __init__(self, labels, data, prior=0):
         label_set = set(labels)
         word_set = reduce(set.union, data, set())
 
-        self.label_counts = {l: 0 for l in label_set}
+        self.label_counts = {l: prior for l in label_set}
         for label in labels:
             self.label_counts[label] += 1
         norm = sum(self.label_counts.values())
@@ -16,7 +17,7 @@ class NaiveBayes(object):
             self.label_counts[label] /= norm
             self.label_counts[label] = math.log(self.label_counts[label])
 
-        self.word_counts = {l: {w: 0 for w in word_set} for l in label_set}
+        self.word_counts = {l: {w: prior for w in word_set} for l in label_set}
         for label, doc in zip(labels, data):
             for word in doc:
                 self.word_counts[label][word] += 1
@@ -53,3 +54,32 @@ class NaiveBayes(object):
                 best_label = label
 
         return best_label
+
+    def validate(self, labels, data):
+        correct = 0
+
+        for label, doc in zip(labels, data):
+            if label == self.classify(doc):
+                correct += 1
+
+        return correct / len(data)
+
+def cross_fold_validate(labels, data, n=10):
+    accuracies = []
+
+    val_size = len(data) // n
+    for i in range(n):
+        start, end = i * val_size, (i + 1) * val_size
+        train_labels = labels[:start] + labels[end:]
+        train_data = data[:start] + data[end:]
+        val_labels = labels[start: end]
+        val_data = data[start: end]
+
+        classifier = NaiveBayes(train_labels, train_data)
+        accuracies.append(classifier.validate(val_labels, val_data))
+
+    return sum(accuracies) / len(accuracies)
+
+def validate_model(model, n=10):
+    labels = [os.path.dirname(title) for title in model.titles]
+    return cross_fold_validate(labels, model.z, n)
