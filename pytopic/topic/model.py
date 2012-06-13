@@ -1,7 +1,6 @@
 """Base class for graphical model"""
 
 import timeit
-from pytopic.util.sample import sample_counts, sample_lcounts
 
 class TopicModel(object):
     """Base class for a topic model of textual data"""
@@ -12,10 +11,6 @@ class TopicModel(object):
     # M = the number of documents
     # N_d = the number of tokens in document d
     # V = the number of unique token types
-
-    sample_counts = staticmethod(sample_counts)
-    sample_lcounts = staticmethod(sample_lcounts)
-
 
     def __init__(self, corpus):
         self.titles = list(corpus.titles)
@@ -62,9 +57,6 @@ class TopicModel(object):
         Prints a summary of the current state of the sampled model
         """
 
-    def set_anneal_temp(self, t):
-        self.sample_counts = lambda xs: sample_counts([x ** t for x in xs])
-        self.sample_lcounts = lambda xs: sample_lcounts([x * t for x in xs])
 
 def top_n(counts, n):
     """

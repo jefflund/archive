@@ -23,8 +23,6 @@ if __name__ == '__main__':
 
     lda = VanillaLDA(corpus, T, alpha, beta)
     lda.output_hook = print_hook(lda, 100)
-
-    lda.set_anneal_temp(1 / temp)
     lda.inference(1000)
 
     print 'Accuracy: {}'.format(repr(validate_model(lda)))

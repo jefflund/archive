@@ -23,9 +23,4 @@ if __name__ == '__main__':
 
     clda = ClusterLDA(corpus, K, T, gamma, alpha, beta)
     clda.output_hook = eval_hook(clda, corpus, 25)
-
-    clda.set_anneal_temp(1 / temp)
-    clda.inference(1000)
-
-    clda.set_anneal_temp(1)
     clda.inference(1000)
