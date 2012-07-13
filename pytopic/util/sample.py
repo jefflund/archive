@@ -1,5 +1,7 @@
 """Utilities for sampling from various distributions"""
 
+from __future__ import division
+
 import math
 import random
 
@@ -80,3 +82,8 @@ def n_choose_2(n):
     """
 
     return (n * (n - 1)) / 2
+
+def normalize(counts):
+    total = sum(counts.values())
+    for label in counts:
+        counts[label] /= total
