@@ -1,6 +1,6 @@
 from __future__ import division
 
-from pytopic.util.sample import normalize
+from pytopic.util.sample import log_normalize
 
 class NaiveBayes(object):
 
@@ -16,21 +16,28 @@ class NaiveBayes(object):
             for word in doc:
                 self.word_counts[label][word] += 1
 
-        normalize(self.label_counts)
+        log_normalize(self.label_counts)
         for label in self.labels:
-            normalize(self.word_counts[label])
+            log_normalize(self.word_counts[label])
 
     def classify(self, data):
-        return max(self.labels, key=lambda label: self._posterior(label, data))
+        return max(self.labels, key=lambda l: self._log_posterior(l, data))
 
-    def _prior(self, label):
+    def _log_prior(self, label):
         return self.label_counts[label]
 
-    def _likelihood(self, label, data):
-        likelihood = 1
+    def _log_likelihood(self, label, data):
+        log_likelihood = 0
         for word in data:
-            likelihood *= self.word_counts[label][word]
-        return likelihood
+            log_likelihood += self.word_counts[label][word]
+        return log_likelihood
 
-    def _posterior(self, label, data):
-        return self._prior(label) * self._likelihood(label, data)
+    def _log_posterior(self, label, data):
+        return self._prior(label) + self._likelihood(label, data)
+
+    def validate(self, labels, data):
+        correct = 0
+        for label, doc in zip(labels, data):
+            if label == self.classify(doc):
+                correct += 1
+        return correct / len(data)

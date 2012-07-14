@@ -83,7 +83,10 @@ def n_choose_2(n):
 
     return (n * (n - 1)) / 2
 
-def normalize(counts):
+def log_normalize(counts):
     total = sum(counts.values())
     for label in counts:
-        counts[label] /= total
+        if counts[label] == 0:
+            counts[label] = float('-inf')
+        else:
+            counts[label] = math.log(counts[label] / total)
