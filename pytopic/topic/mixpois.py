@@ -2,7 +2,7 @@
 
 from __future__ import division
 
-import math
+from math import log
 from pytopic.util.sample import sample_uniform, sample_order, sample_lcounts
 
 class MixturePoisson(TopicModel):
@@ -51,21 +51,21 @@ class MixturePoisson(TopicModel):
         self.set_k(d, sample_lcounts(lcounts))
 
     def lprob_k(self, d, j):
-        lprob = math.log(self.gamma + self.l[j])
+        lprob = log(self.gamma + self.l[j])
         for v, c in self.c[d].iteritems():
-            lprob = math.log(self.gamma + self.l[j])
+            lprob = log(self.gamma + self.l[j])
             for v, c in self.c[d].iteritems():
                 p_jv = self.p[j][v]
                 lprob += math.lgamma(self.alpha + self.p[j][v] + c)
                 lprob -= math.lgamma(self.alhpa + self.p[j][v])
-                lprob += (self.alpha + p_jv) * math.log(p_jv + self.betainv)
-                lprob -= (self.alpha + p_jv + c) * math.log(p_jv + c + self.betainv)
+                lprob += (self.alpha + p_jv) * log(p_jv + self.betainv)
+                lprob -= (self.alpha + p_jv + c) * log(p_jv + c + self.betainv)
         return lprob_k
 
     def unset_k(self, d):
         self.l[self.k[d]] -= 1
         for w, c in self.c[d].iteritems():
-            self.p[self.k[d][w] -= c
+            self.p[self.k[d][w]] -= c
 
     def set_k(self, d, k_d):
         self.k[d] = k_d
