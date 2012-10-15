@@ -114,3 +114,5 @@ class VanillaLDA(TopicModel):
                     print ')',
                 print
 
+        print
+
