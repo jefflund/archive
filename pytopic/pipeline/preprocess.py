@@ -31,3 +31,17 @@ def filter_stopwords(corpus, stopwords):
         if len(tokens) > 0:
             transformed.add_document(corpus.titles[d], tokens)
     return transformed
+
+def load_stopwords(*stopword_filenames):
+    """
+    load_stopwords(*str): return set of str
+    Reads stopword files with one stopword per line into a set
+    """
+
+    stopwords = set()
+    for filename in stopword_filenames:
+        for word in open(filename):
+            word = word.strip()
+            if len(word) > 0:
+                stopwords.add(word)
+    return stopwords

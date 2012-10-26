@@ -9,8 +9,8 @@ class Corpus(object):
 
     def __init__(self):
         self.vocab = Index()
-        self.titles = Index()
-        self.data = {}
+        self.titles = []
+        self.data = []
 
     def add_document(self, title, tokens):
         """
@@ -19,8 +19,8 @@ class Corpus(object):
         document with that title will be overridden.
         """
 
-        doc_index = self.titles.insert_token(title)
-        self.data[doc_index] = self.vocab.convert_tokens(tokens)
+        self.titles.append(title)
+        self.data.append(self.vocab.convert_tokens(tokens))
 
     def get_text(self, doc_index):
         """
@@ -46,7 +46,7 @@ class CorpusReader(object):
 
     def __init__(self, tokenizer=None):
         self.filelist = []
-        self.tokenizer = tokenizer if tokenizer is not None else Tokenizer()
+        self.tokenizer = Tokenizer() if tokenizer is None else tokenizer
 
     def add_file(self, filename):
         """

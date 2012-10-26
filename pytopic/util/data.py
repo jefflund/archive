@@ -54,18 +54,3 @@ class Index(object):
 
     def __getitem__(self, token_type):
         return self._tokens[token_type]
-
-
-def load_stopwords(*stopword_filenames):
-    """
-    load_stopwords(*str): return set of str
-    Reads stopword files with one stopword per line into a set
-    """
-
-    stopwords = set()
-    for filename in stopword_filenames:
-        for word in open(filename):
-            word = word.strip()
-            if len(word) > 0:
-                stopwords.add(word)
-    return stopwords
