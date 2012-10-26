@@ -13,17 +13,15 @@ def filter_rarewords(corpus, threshold):
     for d in range(len(corpus)):
         for v in corpus[d]:
             counts[v] += 1
-    rarewords = {corpus.vocab[v] for v, count in enumerate(counts)
-                  if count < threshold}
-    return filter_stopwords(corpus, rarewords)
+    rares = {corpus.vocab[v] for v, n in enumerate(counts) if n < threshold}
+    return filter_stopwords(corpus, rares)
 
 
 def filter_stopwords(corpus, stopwords):
     """
-    stopwords(Corpus, *str): return Corpus
-    Returns a new Corpus with all stopwords in the given stopwords files
-    removed from the data. The stopword files must contain one stopword per
-    line.
+    filter_stopwords(Corpus, set of str): return Corpus
+    Returns a new Corpus with all the stopwords in the given set removed from
+    the data.
     """
 
     transformed = Corpus()

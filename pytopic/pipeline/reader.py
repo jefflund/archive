@@ -33,4 +33,3 @@ class BibleTokenizer(Tokenizer):
             tokens = [token for token in tokens if self.keep(token)]
             if len(tokens) > 0:
                 yield title, tokens
-
