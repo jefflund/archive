@@ -124,4 +124,4 @@ class Tokenizer(object):
         Returns true if the token symbol should be kept by the CorpusReader
         """
 
-        return len(token) > 2 and len(token) < 10
+        return 2 < len(token) < 10
