@@ -15,9 +15,9 @@ class Index(object):
         """
 
         if token not in self._types:
+            self._types[token] = len(self._tokens)
             self._tokens.append(token)
-            self._types[token] = self._tokens.index(token)
-        return self._tokens.index(token)
+        return self._types[token]
 
     def convert_tokens(self, tokens):
         """
