@@ -5,8 +5,6 @@ from pytopic.util.sample import log_normalize
 class NaiveBayes(object):
 
     def __init__(self, labels, data):
-        print data
-
         self.labels = set(labels)
         vocab = reduce(set.union, data, set())
 
@@ -43,16 +41,15 @@ class NaiveBayes(object):
             predicted = self.classify(doc)
             if label == predicted:
                 correct += 1
-            print label, data, '=>', predicted
         return correct / len(data)
 
 def partition(labels, data, n):
-    data = [data[i::n] for i in range(n)]
     labels = [labels[i::n] for i in range(n)]
+    data = [data[i::n] for i in range(n)]
 
     for i in range(n):
-        train_data = sum(data[:i] + data[i + 1:], [])
         train_labels = sum(labels[:i] + labels[i + 1:], [])
+        train_data = sum(data[:i] + data[i + 1:], [])
         yield (train_labels, train_data), (labels[i], data[i])
 
 def cross_fold_validation(labels, data, n=10):
