@@ -1,6 +1,6 @@
 from __future__ import division
 
-from pytopic.util.compute import log_normalize
+from pytopic.util.compute import lnormalize
 
 class NaiveBayes(object):
 
@@ -16,9 +16,9 @@ class NaiveBayes(object):
             for word in doc:
                 self.word_counts[label][word] += 1
 
-        log_normalize(self.label_counts)
+        lnormalize(self.label_counts)
         for label in self.labels:
-            log_normalize(self.word_counts[label])
+            lnormalize(self.word_counts[label])
 
     def classify(self, data):
         return max(self.labels, key=lambda l: self._log_posterior(l, data))

@@ -82,9 +82,9 @@ def n_choose_2(n):
     return (n * (n - 1)) / 2
 
 
-def log_normalize(counts):
+def lnormalize(counts):
     """
-    log_normalize(dict): None
+    lnormalize(dict): None
     Normalizes the count dictionary in log space.
     """
 
