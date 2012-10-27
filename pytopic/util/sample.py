@@ -75,6 +75,7 @@ def ladd(log_x, log_y):
         return log_x
     return log_x + math.log(1 + math.exp(neg_diff))
 
+
 def n_choose_2(n):
     """
     n_choose_2(int): return int
@@ -83,10 +84,26 @@ def n_choose_2(n):
 
     return (n * (n - 1)) / 2
 
+
 def log_normalize(counts):
+    """
+    log_normalize(dict): None
+    Normalizes the count dictionary in log space.
+    """
+
     total = sum(counts.values())
     for label in counts:
         if counts[label] == 0:
             counts[label] = float('-inf')
         else:
             counts[label] = math.log(counts[label] / total)
+
+def top_n(counts, n):
+    """
+    top_n(list of int, int): return list of int
+    Returns the indices of the top n counts in the given list of counts, 
+    excluding any zero counts.
+    """
+
+    keys = [i for i in range(len(counts)) if counts[i] > 0]
+    return sorted(keys, key=lambda x: counts[x], reverse=True)[:n]

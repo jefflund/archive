@@ -49,14 +49,3 @@ class TopicModel(object):
         TopicModel.print_state(bool): return None
         Prints a summary of the current state of the sampled model
         """
-
-
-def top_n(counts, n):
-    """
-    top_n(list of int, int): return list of int
-    Returns the indices of the top n counts in the given list of counts, 
-    excluding any zero counts.
-    """
-
-    keys = [i for i in range(len(counts)) if counts[i] > 0]
-    return sorted(keys, key=lambda x: counts[x], reverse=True)[:n]
