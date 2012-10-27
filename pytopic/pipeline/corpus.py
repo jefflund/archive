@@ -37,8 +37,7 @@ class Corpus(object):
         return len(self.data)
 
     def __iter__(self):
-        for doc_index in sorted(self.data.keys()):
-            yield self.data[doc_index]
+        return iter(self.data)
 
 
 class CorpusReader(object):

@@ -1,9 +1,9 @@
 """Implementation of ClusterLDA, first described by Lund in 2011"""
 
 import math
-from pytopic.topic.model import TopicModel, top_n
+from pytopic.topic.model import TopicModel
 from pytopic.util.compute import (sample_uniform, sample_order, sample_lcounts,
-                                  sample_counts)
+                                  sample_counts, top_n)
 
 class ClusterLDA(TopicModel):
     """ClusterLDA, which combines LDA with Mixture of Multinomials"""
