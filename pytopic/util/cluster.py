@@ -82,6 +82,11 @@ class Contingency(object):
             print
 
 def f_measure(contingency):
+    """
+    f_measure(Contingency): float
+    Computes the F-1 measure for the given contingency matrix
+    """
+
     class_counts = {c: sum(contingency[c, k] for k in contingency.pred)
                     for c in contingency.gold}
     clust_counts = {k: sum(contingency[c, k] for c in contingency.gold)
@@ -105,6 +110,11 @@ def f_measure(contingency):
     return 2 * result
 
 def ari(contingency):
+    """
+    ari(Contingency): float
+    Computes the average rand index for the given contingency matrix
+    """
+
     a_part = sum(n_choose_2(sum(contingency[c, k] for k in contingency.pred))
                  for c in contingency.gold)
     b_part = sum(n_choose_2(sum(contingency[c, k] for c in contingency.gold))
@@ -117,6 +127,11 @@ def ari(contingency):
     return (index - expected) / (maximum - expected)
 
 def variation_info(contingency):
+    """
+    variation_info(Contingency): float
+    Computes the variation of information for the given contingency matrix
+    """
+
     num_datums = len(contingency)
     gold_sums = {c:sum(contingency[c, k] for k in contingency.pred)
                  for c in contingency.gold}

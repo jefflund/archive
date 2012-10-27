@@ -3,6 +3,7 @@ from __future__ import division
 from pytopic.util.compute import lnormalize
 
 class NaiveBayes(object):
+    """A simple Multinomial Naive Bayes classifier"""
 
     def __init__(self, labels, data):
         self.labels = set(labels)
@@ -21,6 +22,11 @@ class NaiveBayes(object):
             lnormalize(self.word_counts[label])
 
     def classify(self, data):
+        """
+        NaiveBayes.classify(iterable): object
+        Returns the label with the maximum posterior probability given the data
+        """
+
         return max(self.labels, key=lambda l: self._log_posterior(l, data))
 
     def _log_prior(self, label):
@@ -36,6 +42,12 @@ class NaiveBayes(object):
         return self._log_prior(label) + self._log_likelihood(label, data)
 
     def validate(self, labels, data):
+        """
+        NaiveBayes.validate(list of object, list of iterable): float
+        Computes the accuracy of the model on a list of data, using the given
+        labels as the true labels
+        """
+
         correct = 0
         for label, doc in zip(labels, data):
             predicted = self.classify(doc)
@@ -44,6 +56,12 @@ class NaiveBayes(object):
         return correct / len(data)
 
 def partition(labels, data, n):
+    """
+    partition(list of object, list of iterable, int): yield tuple of iterable
+    Splits the data and labels into n partitions, and then yields n different 
+    training and test sets. Each consists of a pair of labels and data.
+    """
+
     labels = [labels[i::n] for i in range(n)]
     data = [data[i::n] for i in range(n)]
 
@@ -53,6 +71,13 @@ def partition(labels, data, n):
         yield (train_labels, train_data), (labels[i], data[i])
 
 def cross_fold_validation(labels, data, n=10):
+    """
+    cross_fold_validation(list of object, list of iterable, int): float
+    After using partition to split the data n ways, trains up n models on the
+    partition training data and averages the accuracy on the test sets. This is
+    a way to validate the features in the data.
+    """
+
     accuracy = 0
     for train, test in partition(labels, data, n):
         train_labels, train_data = train
