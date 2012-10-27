@@ -1,7 +1,5 @@
 """Base class for graphical model"""
 
-import timeit
-
 class TopicModel(object):
     """Base class for a topic model of textual data"""
 

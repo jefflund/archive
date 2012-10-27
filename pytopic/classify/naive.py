@@ -1,6 +1,6 @@
 from __future__ import division
 
-from pytopic.util.sample import log_normalize
+from pytopic.util.compute import log_normalize
 
 class NaiveBayes(object):
 

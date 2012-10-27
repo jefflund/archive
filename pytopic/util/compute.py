@@ -70,10 +70,7 @@ def ladd(log_x, log_y):
         log_x, log_y = log_y, log_x
     if math.isinf(log_x):
         return log_x
-    neg_diff = log_y - log_x
-    if neg_diff < -50:
-        return log_x
-    return log_x + math.log(1 + math.exp(neg_diff))
+    return log_x + math.log(1 + math.exp(log_y - log_x))
 
 
 def n_choose_2(n):
