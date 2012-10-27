@@ -15,5 +15,12 @@ def get_corpus():
 
     return corpus
 
+def get_model(corpus):
+    lda = VanillaLDA(corpus, 20, .4, .01)
+    lda.inference(100)
+    return lda
+
 if __name__ == '__main__':
     corpus = get_corpus()
+    lda = get_model(corpus)
+
