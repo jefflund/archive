@@ -10,14 +10,8 @@ class Clustering(object):
     """Abstraction for clusterings, both labeled data and inferred clusters"""
 
     def __init__(self, labels, data):
-        self.labels = set(labels)
+        self.labels = labels
         self.data = data
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, index):
-        return self.data[index]
 
     @classmethod
     def from_model(cls, model):
@@ -39,7 +33,13 @@ class Clustering(object):
         """
 
         data = [os.path.dirname(title) for title in corpus.titles]
-        return Clustering(data, data)
+        return Clustering(set(data), data)
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, index):
+        return self.data[index]
 
 
 class Contingency(object):
@@ -48,8 +48,8 @@ class Contingency(object):
     def __init__(self, gold, pred):
         assert len(gold) == len(pred)
 
-        self.gold = gold.labels
-        self.pred = pred.labels
+        self.gold = list(gold.labels)
+        self.pred = list(pred.labels)
 
         self.counts = {(g, p): 0 for g in self.gold for p in self.pred}
         for index in zip(gold.data, pred.data):
@@ -144,17 +144,3 @@ def variation_info(contingency):
                 mutal_information += prob_ck * math.log(cond_prob)
 
     return entropy_gold + entropy_pred - 2 * mutal_information
-
-def eval_hook(model, corpus, interval):
-    gold = Clustering.from_corpus(corpus)
-    pred = Clustering.from_model(model)
-    def hook(iteration):
-        if iteration % interval == 0:
-            contingency = Contingency(gold, pred)
-            print 'Time: {}'.format(repr(sum(model.timing)))
-            print 'Iterations: {}'.format(len(model.timing))
-            print 'ARI: {}'.format(repr(ari(contingency)))
-            print 'F-Measure: {}'.format(repr(f_measure(contingency)))
-            print 'VI: {}'.format(repr(variation_info(contingency)))
-            print
-    return hook
