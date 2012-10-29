@@ -19,6 +19,8 @@ class TopicModel(object):
         self.N = [len(doc) for doc in self.w]
         self.V = len(self.vocab)
 
+        self._handlers = []
+
     def sample(self):
         """
         TopicModel.sample(): return None
@@ -32,6 +34,8 @@ class TopicModel(object):
         """
 
         self.sample()
+        for handler in self._handlers:
+            handler.handle(self)
 
     def inference(self, iterations):
         """
@@ -39,6 +43,8 @@ class TopicModel(object):
         Performs inference on the model for the given number of iterations
         """
 
+        for handler in self._handlers:
+            handler.restart()
         for _ in range(iterations):
             self.iteration()
 
@@ -47,3 +53,14 @@ class TopicModel(object):
         TopicModel.print_state(bool): return None
         Prints a summary of the current state of the sampled model
         """
+
+    def register_handler(self, handler):
+        self._handlers.append(handler)
+
+class IterationHandler(object):
+
+    def restart(self):
+        raise NotImplementedError()
+
+    def handle(self, model):
+        raise NotImplementedError()

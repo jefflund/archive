@@ -115,4 +115,3 @@ class VanillaLDA(TopicModel):
                 print
 
         print
-
