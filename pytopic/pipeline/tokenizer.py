@@ -38,6 +38,7 @@ class BibleTokenizer(Tokenizer):
 
 
 class HTMLTokenizer(Tokenizer, HTMLParser.HTMLParser):
+    """Tokenizer that extracts text from html files"""
 
     def __init__(self, split_re='\s+', filter_re='[^a-zA-Z]'):
         Tokenizer.__init__(self, split_re, filter_re)

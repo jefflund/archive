@@ -58,9 +58,14 @@ class TopicModel(object):
         self._handlers.append(handler)
 
 class IterationHandler(object):
+    """Base class for handlers run at each iteration of inference"""
 
     def restart(self):
+        """Called at the start of inference"""
+
         raise NotImplementedError()
 
     def handle(self, model):
+        """Called at the conclusion of each iteration"""
+
         raise NotImplementedError()

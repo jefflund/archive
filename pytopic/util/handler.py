@@ -3,6 +3,7 @@ import pickle
 from pytopic.topic.model import IterationHandler
 
 class Printer(IterationHandler):
+    """Calls print_state on the model at a specified iteration interval"""
 
     def __init__(self, iter_interval, verbose=False):
         self.iter_interval = iter_interval
@@ -19,6 +20,7 @@ class Printer(IterationHandler):
 
 
 class Timer(IterationHandler):
+    """Prints the timing of each iteration"""
 
     def __init__(self):
         self.restart()
@@ -35,6 +37,7 @@ class Timer(IterationHandler):
 
 
 class Checkpointer(IterationHandler):
+    """Pickles the model at the specified time interval"""
 
     def __init__(self, time_interval, filename):
         self.time_interval = time_interval
