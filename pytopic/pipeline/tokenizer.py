@@ -1,5 +1,7 @@
 """Special corpora-specific corpus building tools"""
 
+import HTMLParser
+import StringIO
 from pytopic.pipeline.corpus import Tokenizer
 
 class NewsTokenizer(Tokenizer):
@@ -33,3 +35,19 @@ class BibleTokenizer(Tokenizer):
             tokens = [token for token in tokens if self.keep(token)]
             if len(tokens) > 0:
                 yield title, tokens
+
+
+class HTMLTokenizer(Tokenizer, HTMLParser.HTMLParser):
+
+    def __init__(self, split_re='\s+', filter_re='[^a-zA-Z]'):
+        Tokenizer.__init__(self, split_re, filter_re)
+        HTMLParser.HTMLParser.__init__(self)
+
+    def tokenize(self, filename, buff):
+        self.stream = StringIO.StringIO()
+        self.feed(buff.read())
+        self.stream.seek(0)
+        return Tokenizer.tokenize(self, filename, self.stream)
+
+    def handle_data(self, data):
+        self.stream.write(data)
