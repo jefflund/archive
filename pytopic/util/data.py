@@ -7,9 +7,9 @@ class Index(object):
         self._tokens = []
         self._types = {}
 
-    def insert_token(self, token):
+    def add(self, token):
         """
-        Index.insert_token(str): return int
+        Index.add(str): return int
         Returns the unique token type for the given token symbol, inserting a
         new symbol and token type if needed.
         """
@@ -19,6 +19,21 @@ class Index(object):
             self._tokens.append(token)
         return self._types[token]
 
+    def add_unique(self, token):
+        """
+        Index.add_unique(str): return int
+        Returns the unique token type for the given token symbol, but raises a
+        KeyError if the token has already been inserted.
+        """
+
+        if token in self._types:
+            raise KeyError()
+        else:
+            token_type = len(self._tokens)
+            self._types[token] = token_type
+            self._tokens.append(token)
+            return token_type
+
     def convert_tokens(self, tokens):
         """
         Index.convert_tokens(iterable of str): return list of int
@@ -26,7 +41,7 @@ class Index(object):
         needed.
         """
 
-        return [self.insert_token(token) for token in tokens]
+        return [self.add(token) for token in tokens]
 
     def token_type(self, token):
         """

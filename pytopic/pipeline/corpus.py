@@ -9,8 +9,8 @@ class Corpus(object):
 
     def __init__(self):
         self.vocab = Index()
-        self.titles = []
-        self.data = []
+        self.titles = Index()
+        self.data = {}
 
     def add_document(self, title, tokens):
         """
@@ -19,8 +19,8 @@ class Corpus(object):
         document with that title will be overridden.
         """
 
-        self.titles.append(title)
-        self.data.append(self.vocab.convert_tokens(tokens))
+        doc_index = self.titles.add_unique(title)
+        self.data[doc_index] = self.vocab.convert_tokens(tokens)
 
     def get_text(self, doc_index):
         """
@@ -37,7 +37,8 @@ class Corpus(object):
         return len(self.data)
 
     def __iter__(self):
-        return iter(self.data)
+        for i in range(len(self)):
+            yield self.data[i]
 
 
 class CorpusReader(Reader):

@@ -2,7 +2,7 @@
 
 from pytopic.pipeline.corpus import Corpus
 
-def filter_rarewords(corpus, threshold):
+def filter_rarewords(corpus, threshold, retain_empty=False):
     """
     rare_words(Corpus, int): return Corpus
     Removes words from the Corpus that appear in fewer than a threshold amount
@@ -14,10 +14,10 @@ def filter_rarewords(corpus, threshold):
         for v in corpus[d]:
             counts[v] += 1
     rares = {corpus.vocab[v] for v, n in enumerate(counts) if n < threshold}
-    return filter_stopwords(corpus, rares)
+    return filter_stopwords(corpus, rares, retain_empty)
 
 
-def filter_stopwords(corpus, stopwords):
+def filter_stopwords(corpus, stopwords, retain_empty=False):
     """
     filter_stopwords(Corpus, set of str): return Corpus
     Returns a new Corpus with all the stopwords in the given set removed from
@@ -28,7 +28,7 @@ def filter_stopwords(corpus, stopwords):
     for d in range(len(corpus)):
         tokens = [corpus.vocab[v] for v in corpus[d]]
         tokens = [v for v in tokens if v not in stopwords]
-        if len(tokens) > 0:
+        if len(tokens) > 0 or retain_empty:
             transformed.add_document(corpus.titles[d], tokens)
     return transformed
 
