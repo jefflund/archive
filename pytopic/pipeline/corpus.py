@@ -2,7 +2,7 @@
 
 import os
 import re
-from pytopic.util.data import Index
+from pytopic.util.data import Index, Reader
 
 class Corpus(object):
     """A collection of text documents"""
@@ -40,42 +40,12 @@ class Corpus(object):
         return iter(self.data)
 
 
-class CorpusReader(object):
+class CorpusReader(Reader):
     """Facilitates the construction of text corpora from files"""
 
     def __init__(self, tokenizer=None):
-        self.filelist = []
+        Reader.__init__(self)
         self.tokenizer = Tokenizer() if tokenizer is None else tokenizer
-
-    def add_file(self, filename):
-        """
-        CorpusReader.add_file(str): return None
-        Adds a single filename to the list of files to be read
-        """
-
-        self.filelist.append(filename)
-
-    def add_dir(self, dirpath):
-        """
-        CorpusReader.add_dir(str): return None
-        Adds files in a directory (recursive) to the list of files to be read
-        """
-
-        for root, dirs, files in os.walk(dirpath):
-            dirs.sort()
-            files = [os.path.join(root, f) for f in sorted(files)]
-            self.filelist.extend(files)
-
-    def get_files(self):
-        """
-        CorpusReader.get_files(): return generator of tuple
-        Yields tuples of filenames and file objects for each of the filenames
-        which are to be read
-        """
-
-        for filename in self.filelist:
-            with open(filename) as buff:
-                yield filename, buff
 
     def read(self):
         """

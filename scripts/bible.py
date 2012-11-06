@@ -7,7 +7,8 @@ def get_corpus():
     reader.add_file('../data/bible/bible.txt')
     corpus = reader.read()
 
-    stopwords = load_stopwords('../data/stopwords/english.txt')
+    stopwords = load_stopwords('../data/stopwords/english.txt',
+                               '../data/stopwords/kj-english.txt')
     corpus = filter_stopwords(corpus, stopwords)
 
     return corpus

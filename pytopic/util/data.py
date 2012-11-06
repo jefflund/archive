@@ -54,3 +54,48 @@ class Index(object):
 
     def __getitem__(self, token_type):
         return self._tokens[token_type]
+
+
+class Reader(object):
+    """Base class for data import from text files"""
+
+    def __init__(self):
+        self.filelist = []
+
+    def add_file(self, filename):
+        """
+        Reader.add_file(str): return None
+        Adds a single filename to the list of files to be read
+        """
+
+        self.filelist.append(filename)
+
+    def add_dir(self, dirpath):
+        """
+        Reader.add_dir(str): return None
+        Adds files in a directory (recursive) to the list of files to be read
+        """
+
+        for root, dirs, files in os.walk(dirpath):
+            dirs.sort()
+            files = [os.path.join(root, f) for f in sorted(files)]
+            self.filelist.extend(files)
+
+    def get_files(self):
+        """
+        Reader.get_files(): return generator of tuple
+        Yields tuples of filenames and file objects for each of the filenames
+        which are to be read
+        """
+
+        for filename in self.filelist:
+            with open(filename) as buff:
+                yield filename, buff
+
+    def read(self):
+        """
+        Reader.read(): return object
+        Reads all of the files in the reader and constructs a data object
+        """
+
+        raise NotImplementedError()
