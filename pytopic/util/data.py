@@ -1,5 +1,7 @@
 """A collection of useful data structures and data loading functions"""
 
+import os
+
 class Index(object):
     """A mapping from unique token types, to the token symbols"""
 
