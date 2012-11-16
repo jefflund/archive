@@ -13,7 +13,7 @@ def filter_rarewords(corpus, threshold, retain_empty=False):
     for d in range(len(corpus)):
         for v in corpus[d]:
             counts[v] += 1
-    rares = {corpus.vocab[v] for v, n in enumerate(counts) if n < threshold}
+    rares = set(corpus.vocab[v] for v, n in enumerate(counts) if n < threshold)
     return filter_stopwords(corpus, rares, retain_empty)
 
 

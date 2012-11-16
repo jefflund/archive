@@ -173,9 +173,9 @@ class ClusterLDA(TopicModel):
 
     def print_state(self, verbose=False):
         for k in range(self.K):
-            print '{} -'.format(k),
+            print '{0} -'.format(k),
             for t in self.cluster_topics(k, 5):
-                print '{}('.format(t),
+                print '{0}('.format(t),
                 for v in self.topic_words(t, 3):
                     print self.vocab[v],
                 print ')',
@@ -183,15 +183,15 @@ class ClusterLDA(TopicModel):
 
         if verbose:
             for t in range(self.T):
-                print '{} -'.format(t),
+                print '{0} -'.format(t),
                 for v in self.topic_words(t, 15):
                     print self.vocab[v],
                 print
 
             for d in range(self.M):
-                print '{} ({}) -'.format(self.titles[d], self.k[d]),
+                print '{0} ({1}) -'.format(self.titles[d], self.k[d]),
                 for t in self.doc_topics(d, 5):
-                    print '{}('.format(t),
+                    print '{0}('.format(t),
                     for v in self.topic_words(t, 2):
                         print self.vocab[v],
                     print ')',

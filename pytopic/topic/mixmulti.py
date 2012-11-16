@@ -103,11 +103,11 @@ class MixtureMultinomial(TopicModel):
 
     def print_state(self, verbose=False):
         for k in range(self.K):
-            print '{} -'.format(k),
+            print '{0} -'.format(k),
             for v in self.cluster_words(k, 10):
                 print self.vocab[v],
             print
 
         if verbose:
             for d in range(self.M):
-                print '{} - {}'.format(self.titles[d], self.k[d])
+                print '{0} - {1}'.format(self.titles[d], self.k[d])

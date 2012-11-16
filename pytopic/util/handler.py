@@ -32,8 +32,9 @@ class Timer(IterationHandler):
     def handle(self, model):
         self.curr_interval += 1
         curr_time = time.time()
-        print '{} - {}'.format(self.curr_interval, curr_time - self.last_time)
+        iter_time = curr_time - self.last_time
         self.last_time = curr_time
+        print '{0} - {1}'.format(self.curr_interval, iter_time)
 
 
 class Checkpointer(IterationHandler):

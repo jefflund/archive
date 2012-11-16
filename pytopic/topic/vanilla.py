@@ -99,16 +99,16 @@ class VanillaLDA(TopicModel):
 
     def print_state(self, verbose=False):
         for t in range(self.T):
-            print '{} -'.format(t),
+            print '{0} -'.format(t),
             for v in self.topic_words(t, 15):
                 print self.vocab[v],
             print
 
         if verbose:
             for d in range(self.M):
-                print '{} -'.format(self.titles[d]),
+                print '{0} -'.format(self.titles[d]),
                 for t in self.doc_topics(d, 5):
-                    print '{}('.format(t),
+                    print '{0}('.format(t),
                     for v in self.topic_words(t, 2):
                         print self.vocab[v],
                     print ')',
