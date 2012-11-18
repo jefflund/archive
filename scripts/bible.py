@@ -1,7 +1,7 @@
 from pytopic.pipeline.corpus import CorpusReader
 from pytopic.pipeline.tokenizer import BibleTokenizer
 from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
-from pytopic.analysis.xref import XRefReader
+from pytopic.analysis.xref import XRefReader, Concordance
 
 def get_corpus():
     reader = CorpusReader(BibleTokenizer())
@@ -23,3 +23,4 @@ def get_xrefs(corpus):
 if __name__ == '__main__':
     corpus = get_corpus()
     xrefs = get_xrefs(corpus)
+    concord = Concordance(corpus)
