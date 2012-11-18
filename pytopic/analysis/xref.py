@@ -69,7 +69,13 @@ class Concordance(object):
         doc_sets = [self.index[word] for word in words]
         return set.intersection(*doc_sets)
 
+
 def precision_recall(xrefs, model):
+    """
+    precision_recall(XRefSet, xrefmodel): return float, float
+    Calculates the precision and recall of a model with cross references with
+    respect to a base XRefSet
+    """
 
     tp, fp, fn = 0, 0, 0
     for gold, pred in zip(xrefs, model):
