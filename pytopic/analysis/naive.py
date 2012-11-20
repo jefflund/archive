@@ -9,9 +9,8 @@ class NaiveBayes(object):
         self.labels = set(labels)
         vocab = reduce(set.union, data, set())
 
-        self.label_counts = dict((label, 0) for label in self.labels)
-        self.word_counts = dict((label, dict((word, 0) for word in vocab))
-                                for label in self.labels)
+        self.label_counts = {l: 0 for l in self.labels}
+        self.word_counts = {l: {w: 0 for w in vocab} for l in self.labels}
 
         for label, doc in zip(labels, data):
             self.label_counts[label] += 1
