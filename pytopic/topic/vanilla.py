@@ -6,14 +6,6 @@ from pytopic.util.compute import sample_uniform, sample_counts, top_n
 class VanillaLDA(TopicModel):
     """Latent Dirichlet Allocation with a Gibbs sampler"""
 
-    # forgive the horrible variable names - they match my white board...
-
-    # z_dn = topic of the nth word of document d
-
-    # s_t = count of words with topic t
-    # h_dt = count of words in document d with topic t 
-    # p_tv = count of words of type v with topic t
-
     def __init__(self, corpus, T, alpha, beta):
         TopicModel.__init__(self, corpus)
 
@@ -24,9 +16,9 @@ class VanillaLDA(TopicModel):
 
         self.z = [[0 for _ in range(size)] for size in self.N]
 
-        self.s = [0 for _ in range(self.T)]
-        self.h = [[0 for _ in range(self.T)] for _ in range(self.M)]
-        self.p = [[0 for _ in range(self.V)] for _ in range(self.T)]
+        self.c_t = [0 for _ in range(self.T)]
+        self.c_dt = [[0 for _ in range(self.T)] for _ in range(self.M)]
+        self.c_tv = [[0 for _ in range(self.V)] for _ in range(self.T)]
 
         for d in range(self.M):
             for n in range(self.N[d]):
@@ -53,9 +45,9 @@ class VanillaLDA(TopicModel):
         Returns the probability p(z_dn=j|w, z_-dn, alpha, beta)
         """
 
-        prob = self.alpha + self.h[d][j]
-        prob *= self.beta + self.p[j][self.w[d][n]]
-        prob /= self.Vbeta + self.s[j]
+        prob = self.alpha + self.c_dt[d][j]
+        prob *= self.beta + self.c_tv[j][self.w[d][n]]
+        prob /= self.Vbeta + self.c_t[j]
         return prob
 
     def set_z(self, d, n, z_dn):
@@ -67,9 +59,9 @@ class VanillaLDA(TopicModel):
 
         self.z[d][n] = z_dn
 
-        self.s[z_dn] += 1
-        self.h[d][z_dn] += 1
-        self.p[z_dn][self.w[d][n]] += 1
+        self.c_t[z_dn] += 1
+        self.c_dt[d][z_dn] += 1
+        self.c_tv[z_dn][self.w[d][n]] += 1
 
     def unset_z(self, d, n):
         """
@@ -77,9 +69,11 @@ class VanillaLDA(TopicModel):
         Adjust the counters so that z_dn is not used in the counts.
         """
 
-        self.s[self.z[d][n]] -= 1
-        self.h[d][self.z[d][n]] -= 1
-        self.p[self.z[d][n]][self.w[d][n]] -= 1
+        z_dn = self.z[d][n]
+
+        self.c_t[z_dn] -= 1
+        self.c_dt[d][z_dn] -= 1
+        self.c_tv[z_dn][self.w[d][n]] -= 1
 
     def topic_words(self, t, n):
         """
@@ -87,7 +81,7 @@ class VanillaLDA(TopicModel):
         Returns the top n words in topic t
         """
 
-        return top_n(self.p[t], n)
+        return top_n(self.c_tv[t], n)
 
     def doc_topics(self, d, n):
         """
@@ -95,7 +89,7 @@ class VanillaLDA(TopicModel):
         Returns the top n topics in document d
         """
 
-        return top_n(self.h[d], n)
+        return top_n(self.c_dt[d], n)
 
     def print_state(self, verbose=False):
         for t in range(self.T):
