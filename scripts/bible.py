@@ -2,7 +2,9 @@ from pytopic.pipeline.corpus import CorpusReader
 from pytopic.pipeline.tokenizer import BibleTokenizer
 from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
 from pytopic.analysis.xref import XRefReader, Concordance
+from pytopic.util.data import pickle_cache
 
+@pickle_cache('bible.pickle')
 def get_corpus():
     reader = CorpusReader(BibleTokenizer())
     reader.add_file('../data/bible/bible.txt')
@@ -13,7 +15,6 @@ def get_corpus():
     corpus = filter_stopwords(corpus, stopwords, retain_empty=True)
 
     return corpus
-
 
 def get_xrefs(corpus):
     reader = XRefReader(corpus)

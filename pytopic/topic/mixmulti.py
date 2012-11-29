@@ -1,9 +1,10 @@
 """Implements the mixture of multinomials model"""
 
 import math
-from pytopic.topic.model import TopicModel, init_counter
+from pytopic.topic.model import TopicModel
 from pytopic.util.compute import (sample_uniform, sample_order, sample_lcounts,
                                   top_n)
+from pytopic.util.data import init_counter
 
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""

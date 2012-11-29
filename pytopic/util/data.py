@@ -1,6 +1,7 @@
 """A collection of useful data structures and data loading functions"""
 
 import os
+import pickle
 
 class Index(object):
     """A mapping from unique token types, to the token symbols"""
@@ -116,3 +117,34 @@ class Reader(object):
         """
 
         raise NotImplementedError()
+
+
+def init_counter(*dims):
+    """
+    init_counter(*int): return matrix of int
+    Returns a matrix of zeros with the specified dimensions
+    """
+
+    if len(dims) == 1:
+        return [0] * dims[0]
+    else:
+        return [init_counter(*dims[1:]) for _ in range(dims[0])]
+
+
+def pickle_cache(pickle_path):
+    """
+    pickle_cache(str): decorator
+    Creates a decorator which caches the results of a parameterless function
+    to the specified pickle file.
+    """
+
+    def cache(data_func):
+        def wrapper():
+            if os.path.exists(pickle_path):
+                return pickle.load(open(pickle_path))
+            else:
+                data = data_func()
+                pickle.dump(data, open(pickle_path, 'w'))
+                return data
+        return wrapper
+    return cache

@@ -1,7 +1,8 @@
 """Implementation of LDA as described by Blei in 2003"""
 
-from pytopic.topic.model import TopicModel, init_counter
+from pytopic.topic.model import TopicModel
 from pytopic.util.compute import sample_uniform, sample_counts, top_n
+from pytopic.util.data import init_counter
 
 class VanillaLDA(TopicModel):
     """Latent Dirichlet Allocation with a Gibbs sampler"""

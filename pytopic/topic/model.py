@@ -58,18 +58,6 @@ class TopicModel(object):
         self._handlers.append(handler)
 
 
-def init_counter(*dims):
-    """
-    init_counter(*int): return matrix of int
-    Returns a matrix of zeros with the specified dimensions
-    """
-
-    if len(dims) == 1:
-        return [0] * dims[0]
-    else:
-        return [init_counter(*dims[1:]) for _ in range(dims[0])]
-
-
 class IterationHandler(object):
     """Base class for handlers run at each iteration of inference"""
 
