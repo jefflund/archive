@@ -1,6 +1,6 @@
 """Implementation of LDA as described by Blei in 2003"""
 
-from pytopic.topic.model import TopicModel
+from pytopic.topic.model import TopicModel, init_counter
 from pytopic.util.compute import sample_uniform, sample_counts, top_n
 
 class VanillaLDA(TopicModel):
@@ -16,9 +16,9 @@ class VanillaLDA(TopicModel):
 
         self.z = [[0 for _ in range(size)] for size in self.N]
 
-        self.c_t = [0 for _ in range(self.T)]
-        self.c_dt = [[0 for _ in range(self.T)] for _ in range(self.M)]
-        self.c_tv = [[0 for _ in range(self.V)] for _ in range(self.T)]
+        self.c_t = init_counter(self.T)
+        self.c_dt = init_counter(self.M, self.T)
+        self.c_tv = init_counter(self.T, self.V)
 
         for d in range(self.M):
             for n in range(self.N[d]):
