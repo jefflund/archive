@@ -1,24 +1,12 @@
 """Implementation of ClusterLDA, first described by Lund in 2011"""
 
 import math
-from pytopic.topic.model import TopicModel
+from pytopic.topic.model import TopicModel, init_counter
 from pytopic.util.compute import (sample_uniform, sample_order, sample_lcounts,
                                   sample_counts, top_n)
 
 class ClusterLDA(TopicModel):
     """ClusterLDA, which combines LDA with Mixture of Multinomials"""
-
-    # forgive the horrible variable names - they match my white board...
-
-    # z_dn = topic of the nth word of document d
-    # k_d = cluster of the document d
-
-    # l_k = number of documents assigned to cluster k
-    # s_t = number of tokens with topic t
-    # h_kt = number of tokens with topic t in documents assigned to cluster k
-    # p_tv = number of tokens of type v assigned to topic t
-    # r_dt = number of tokens in document d with topic t
-    # p_k = number of tokens in documents assigned to cluster k
 
     def __init__(self, corpus, K, T, gamma, alpha, beta):
         TopicModel.__init__(self, corpus)
@@ -35,17 +23,17 @@ class ClusterLDA(TopicModel):
         self.k = [0 for _ in range(self.M)]
         self.z = [[0 for _ in range(size)] for size in self.N]
 
-        self.l = [0 for _ in range(self.K)]
-        self.s = [0 for _ in range(self.T)]
-        self.h = [[0 for _ in range(self.T)] for _ in range(self.K)]
-        self.p = [[0 for _ in range(self.V)] for _ in range(self.T)]
-        self.r = [[0 for _ in range(self.T)] for _ in range(self.M)]
-        self.q = [0 for _ in range(self.K)]
+        self.c_k_doc = init_counter(self.K)
+        self.c_t = init_counter(self.T)
+        self.c_kt = init_counter(self.K, self.T)
+        self.c_tv = init_counter(self.T, self.V)
+        self.c_dt = init_counter(self.M, self.T)
+        self.c_k_token = init_counter(self.K)
 
         for d in range(self.M):
             self.k[d] = sample_uniform(self.K)
-            self.l[self.k[d]] += 1
-            self.q[self.k[d]] += self.N[d]
+            self.c_k_doc[self.k[d]] += 1
+            self.c_k_token[self.k[d]] += self.N[d]
 
             for n in range(self.N[d]):
                 self.set_z(d, n, sample_uniform(self.T))
@@ -72,9 +60,9 @@ class ClusterLDA(TopicModel):
         Returns the probability p(z_dn=j|w, z_-dn, alpha, beta)
         """
 
-        prob = self.alpha + self.h[self.k[d]][j]
-        prob *= self.beta + self.p[j][self.w[d][n]]
-        prob /= self.Vbeta + self.s[j]
+        prob = self.alpha + self.c_kt[self.k[d]][j]
+        prob *= self.beta + self.c_tv[j][self.w[d][n]]
+        prob /= self.Vbeta + self.c_t[j]
         return prob
 
     def set_z(self, d, n, z_dn):
@@ -86,10 +74,10 @@ class ClusterLDA(TopicModel):
 
         self.z[d][n] = z_dn
 
-        self.s[z_dn] += 1
-        self.h[self.k[d]][z_dn] += 1
-        self.p[z_dn][self.w[d][n]] += 1
-        self.r[d][z_dn] += 1
+        self.c_t[z_dn] += 1
+        self.c_kt[self.k[d]][z_dn] += 1
+        self.c_tv[z_dn][self.w[d][n]] += 1
+        self.c_dt[d][z_dn] += 1
 
     def unset_z(self, d, n):
         """
@@ -97,10 +85,10 @@ class ClusterLDA(TopicModel):
         Adjust the counters so that z_dn is not used in the counts.
         """
 
-        self.s[self.z[d][n]] -= 1
-        self.h[self.k[d]][self.z[d][n]] -= 1
-        self.p[self.z[d][n]][self.w[d][n]] -= 1
-        self.r[d][self.z[d][n]] -= 1
+        self.c_t[self.z[d][n]] -= 1
+        self.c_kt[self.k[d]][self.z[d][n]] -= 1
+        self.c_tv[self.z[d][n]][self.w[d][n]] -= 1
+        self.c_dt[d][self.z[d][n]] -= 1
 
     def sample_k(self, d):
         """
@@ -111,8 +99,8 @@ class ClusterLDA(TopicModel):
         lcounts = []
         for j in range(self.K):
             self.set_k(d, j)
-            lcounts.append(self.lprob_k(d, j))
-        self.set_k(d, sample_lcounts(lcounts))
+            lcounts.append(self.c_k_docprob_k(d, j))
+        self.c_tet_k(d, sample_lcounts(lcounts))
 
     def lprob_k(self, d, j):
         """
@@ -120,12 +108,12 @@ class ClusterLDA(TopicModel):
         Returns the log probability log p(k_d=j| w, z, k_-d, alpha, beta)
         """
 
-        prob = math.log(self.gamma + self.l[j] - 1)
+        prob = math.log(self.gamma + self.c_k_doc[j] - 1)
         for t in set(self.z[d]):
-            prob += math.lgamma(self.alpha + self.h[j][t])
-            prob -= math.lgamma(self.alpha + self.h[j][t] - self.r[d][t])
-        prob += math.lgamma(self.Talpha + self.q[j] - self.N[d])
-        prob -= math.lgamma(self.Talpha + self.q[j])
+            prob += math.lgamma(self.alpha + self.c_kt[j][t])
+            prob -= math.lgamma(self.alpha + self.c_kt[j][t] - self.c_dt[d][t])
+        prob += math.lgamma(self.Talpha + self.c_k_token[j] - self.N[d])
+        prob -= math.lgamma(self.Talpha + self.c_k_token[j])
         return prob
 
     def set_k(self, d, k_d):
@@ -135,17 +123,17 @@ class ClusterLDA(TopicModel):
         the counters related to the previous value of k_d
         """
 
-        self.l[self.k[d]] -= 1
+        self.c_k_doc[self.k[d]] -= 1
         for z in self.z[d]:
-            self.h[self.k[d]][z] -= 1
-        self.q[self.k[d]] -= self.N[d]
+            self.c_kt[self.k[d]][z] -= 1
+        self.c_k_token[self.k[d]] -= self.N[d]
 
         self.k[d] = k_d
 
-        self.l[self.k[d]] += 1
+        self.c_k_doc[self.k[d]] += 1
         for z in self.z[d]:
-            self.h[self.k[d]][z] += 1
-        self.q[self.k[d]] += self.N[d]
+            self.c_kt[self.k[d]][z] += 1
+        self.c_k_token[self.k[d]] += self.N[d]
 
     def topic_words(self, t, n):
         """
@@ -153,7 +141,7 @@ class ClusterLDA(TopicModel):
         Returns the top n words for topic t
         """
 
-        return top_n(self.p[t], n)
+        return top_n(self.c_tv[t], n)
 
     def cluster_topics(self, k, n):
         """
@@ -161,7 +149,7 @@ class ClusterLDA(TopicModel):
         Returns the top n topics for the cluster k
         """
 
-        return top_n(self.h[k], n)
+        return top_n(self.c_kt[k], n)
 
     def doc_topics(self, d, n):
         """
@@ -169,7 +157,7 @@ class ClusterLDA(TopicModel):
         Returns the top n topics for the document d
         """
 
-        return top_n(self.r[d], n)
+        return top_n(self.c_dt[d], n)
 
     def print_state(self, verbose=False):
         for k in range(self.K):
