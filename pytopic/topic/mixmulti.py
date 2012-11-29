@@ -1,21 +1,12 @@
 """Implements the mixture of multinomials model"""
 
 import math
-from pytopic.topic.model import TopicModel
+from pytopic.topic.model import TopicModel, init_counter
 from pytopic.util.compute import (sample_uniform, sample_order, sample_lcounts,
                                   top_n)
 
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
-
-    # forgive the horrible variable names - they match my white board...
-
-    # k_d = cluster of the document d
-
-    # l_k = number of documents assigned to cluster k
-    # p_kv = number of tokens of type v in documents assigned to cluster k
-    # r_dv = number of tokens of type v in document d
-    # q_k = number of tokens in documents assigned to cluster k
 
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
@@ -28,10 +19,10 @@ class MixtureMultinomial(TopicModel):
 
         self.k = [0 for _ in range(self.M)]
 
-        self.l = [0 for _ in range(self.K)]
-        self.p = [[0 for _ in range(self.V)] for _ in range(self.K)]
-        self.r = [[0 for _ in range(self.V)] for _ in range(self.M)]
-        self.q = [0 for _ in range(self.K)]
+        self.c_k_doc = init_counter(self.K)
+        self.c_kv = init_counter(self.K, self.V)
+        self.c_dv = init_counter(self.M, self.V)
+        self.c_k_token = init_counter(self.K)
 
         for d in range(self.M):
             self.k[d] = sample_uniform(self.K)
@@ -66,12 +57,12 @@ class MixtureMultinomial(TopicModel):
         Returns the log probability log p(k_d=j| w, z, k_-d, alpha, beta)
         """
 
-        prob = math.log(self.gamma + self.l[j] - 1)
+        prob = math.log(self.gamma + self.c_k_doc[j] - 1)
         for v in self.doc_words[d]:
-            prob += math.lgamma(self.beta + self.p[j][v])
-            prob += math.lgamma(self.beta + self.p[j][v] - self.r[d][v])
-        prob += math.lgamma(self.Vbeta + self.q[j] - self.N[d])
-        prob -= math.lgamma(self.Vbeta + self.q[j])
+            prob += math.lgamma(self.beta + self.c_kv[j][v])
+            prob += math.lgamma(self.beta + self.c_kv[j][v] - self.c_dv[d][v])
+        prob += math.lgamma(self.Vbeta + self.c_k_token[j] - self.N[d])
+        prob -= math.lgamma(self.Vbeta + self.c_k_token[j])
         return prob
 
     def set_k(self, d, k_d):
@@ -81,17 +72,17 @@ class MixtureMultinomial(TopicModel):
         the counters related to the previous value of k_d
         """
 
-        self.l[self.k[d]] -= 1
-        self.q[self.k[d]] -= self.N[d]
+        self.c_k_doc[self.k[d]] -= 1
+        self.c_k_token[self.k[d]] -= self.N[d]
         for w in self.w[d]:
-            self.p[self.k[d]][w] -= 1
+            self.c_kv[self.k[d]][w] -= 1
 
         self.k[d] = k_d
 
-        self.l[k_d] += 1
-        self.q[k_d] += self.N[d]
+        self.c_k_doc[k_d] += 1
+        self.c_k_token[k_d] += self.N[d]
         for w in self.w[d]:
-            self.p[self.k[d]][w] += 1
+            self.c_kv[self.k[d]][w] += 1
 
     def cluster_words(self, k, n):
         """
@@ -99,7 +90,7 @@ class MixtureMultinomial(TopicModel):
         Returns the top n words for the cluster k
         """
 
-        return top_n(self.p[k], n)
+        return top_n(self.c_kv[k], n)
 
     def print_state(self, verbose=False):
         for k in range(self.K):
