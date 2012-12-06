@@ -1,6 +1,7 @@
 """A collection of useful data structures and data loading functions"""
 
 import os
+import errno
 import pickle
 
 class Index(object):
@@ -131,9 +132,23 @@ def init_counter(*dims):
         return [init_counter(*dims[1:]) for _ in range(dims[0])]
 
 
+def ensure_dirs(path):
+    """
+    ensure_dirs(str): return None
+    Will create the directories for a particular file path. Unlike os.makedirs
+    ensure_dirs will not fail the path already exists.
+    """
+
+    dirpath = os.path.dirname(path)
+    try:
+        os.makedirs(dirpath)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
 def pickle_cache(pickle_path):
     """
-    pickle_cache(str): decorator
+    pickle_cache(str): return decorator
     Creates a decorator which caches the results of a parameterless function
     to the specified pickle file.
     """
@@ -144,6 +159,7 @@ def pickle_cache(pickle_path):
                 return pickle.load(open(pickle_path))
             else:
                 data = data_func(*args, **kwargs)
+                ensure_dirs(pickle_path)
                 pickle.dump(data, open(pickle_path, 'w'))
                 return data
         return load_data
