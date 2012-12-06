@@ -139,12 +139,12 @@ def pickle_cache(pickle_path):
     """
 
     def cache(data_func):
-        def wrapper():
+        def load_data(*args, **kwargs):
             if os.path.exists(pickle_path):
                 return pickle.load(open(pickle_path))
             else:
-                data = data_func()
+                data = data_func(*args, **kwargs)
                 pickle.dump(data, open(pickle_path, 'w'))
                 return data
-        return wrapper
+        return load_data
     return cache

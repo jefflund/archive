@@ -5,7 +5,7 @@ from pytopic.topic.vanilla import VanillaLDA
 from pytopic.util.handler import Printer, Timer
 from pytopic.util.data import pickle_cache
 
-@pickle_cache('newsgroups.pickle')
+@pickle_cache('pickle/newsgroups.corpus.pickle')
 def get_corpus():
     reader = CorpusReader(NewsTokenizer())
     reader.add_dir('../data/newsgroups/groups')
