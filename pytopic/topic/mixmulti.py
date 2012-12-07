@@ -59,7 +59,7 @@ class MixtureMultinomial(TopicModel):
         prob = math.log(self.gamma + self.c_k_doc[j] - 1)
         for v in set(self.w[d]):
             prob += math.lgamma(self.beta + self.c_kv[j][v])
-            prob += math.lgamma(self.beta + self.c_kv[j][v] - self.c_dv[d][v])
+            prob -= math.lgamma(self.beta + self.c_kv[j][v] - self.c_dv[d][v])
         prob += math.lgamma(self.Vbeta + self.c_k_token[j] - self.N[d])
         prob -= math.lgamma(self.Vbeta + self.c_k_token[j])
         return prob
