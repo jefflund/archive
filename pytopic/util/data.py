@@ -87,6 +87,9 @@ class Reader(object):
         Adds a single filename to the list of files to be read
         """
 
+        if not os.path.exists(filename):
+            raise RuntimeError('{} does not exist'.format(filename))
+
         self.filelist.append(filename)
 
     def add_dir(self, dirpath):
@@ -94,6 +97,11 @@ class Reader(object):
         Reader.add_dir(str): return None
         Adds files in a directory (recursive) to the list of files to be read
         """
+
+        if not os.path.exists(dirpath):
+            raise RuntimeError('{} does not exist'.format(dirpath))
+        elif os.path.isdir(dirpath):
+            raise RuntimeError('{} is not a directory'.format(dirpath))
 
         for root, dirs, files in os.walk(dirpath):
             dirs.sort()
