@@ -36,7 +36,7 @@ class Timer(IterationHandler):
         curr_time = time.time()
         iter_time = curr_time - self.last_time
         self.last_time = curr_time
-        print '{0} - {1}'.format(self.curr_interval, iter_time)
+        print '{0} {1}'.format(self.curr_interval, iter_time)
 
 
 class Checkpointer(IterationHandler):
