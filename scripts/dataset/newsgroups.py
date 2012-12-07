@@ -5,7 +5,7 @@ from pytopic.analysis.cluster import Clustering
 from pytopic.util.data import pickle_cache
 
 @pickle_cache('pickle/newsgroups/corpus.pickle')
-def get_newsgroups_corpus():
+def get_corpus():
     reader = CorpusReader(NewsTokenizer())
     reader.add_dir('../data/newsgroups/groups')
     corpus = reader.read()
@@ -18,9 +18,10 @@ def get_newsgroups_corpus():
     return corpus
 
 @pickle_cache('pickle/newsgroups/clustering.pickle')
-def get_newsgroups_clustering(corpus):
+def get_clustering(corpus):
     return Clustering.from_corpus(corpus)
 
 if __name__ == '__main__':
-    corpus = get_newsgroups_corpus()
-    clustering = get_newsgroups_clustering(corpus)
+    corpus = get_corpus()
+    clustering = get_clustering()
+

@@ -5,7 +5,7 @@ from pytopic.analysis.xref import XRefReader, Concordance
 from pytopic.util.data import pickle_cache
 
 @pickle_cache('pickle/bible/corpus.pickle')
-def get_bible_corpus():
+def get_corpus():
     reader = CorpusReader(BibleTokenizer())
     reader.add_file('../data/bible/bible.txt')
     corpus = reader.read()
@@ -17,16 +17,16 @@ def get_bible_corpus():
     return corpus
 
 @pickle_cache('pickle/bible/xrefs.pickle')
-def get_bible_xrefs(corpus):
+def get_xrefs(corpus):
     reader = XRefReader(corpus)
     reader.add_file('../data/bible/xref.txt')
     return reader.read()
 
 @pickle_cache('pickle/bible/concord.pickle')
-def get_bible_concordance(corpus):
+def get_concordance(corpus):
     return Concordance(corpus)
 
 if __name__ == '__main__':
-    corpus = get_bible_corpus()
-    xrefs = get_bible_xrefs(corpus)
-    concord = get_bible_concordance(corpus)
+    corpus = get_corpus()
+    xrefs = get_xrefs(corpus)
+    concord = get_concordance(corpus)

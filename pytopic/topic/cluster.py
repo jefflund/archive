@@ -100,8 +100,8 @@ class ClusterLDA(TopicModel):
         lcounts = []
         for j in range(self.K):
             self.set_k(d, j)
-            lcounts.append(self.c_k_docprob_k(d, j))
-        self.c_tet_k(d, sample_lcounts(lcounts))
+            lcounts.append(self.lprob_k(d, j))
+        self.set_k(d, sample_lcounts(lcounts))
 
     def lprob_k(self, d, j):
         """

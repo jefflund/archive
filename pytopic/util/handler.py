@@ -1,6 +1,8 @@
 import time
 import pickle
 from pytopic.topic.model import IterationHandler
+from pytopic.analysis.cluster import (Clustering, Contingency,
+                                      f_measure, ari, variation_info)
 
 class Printer(IterationHandler):
     """Calls print_state on the model at a specified iteration interval"""
@@ -54,3 +56,23 @@ class Checkpointer(IterationHandler):
             self.last_time = curr_time
             with open(self.filename, 'w') as outfile:
                 pickle.dump(model, outfile)
+
+
+class ClusterMetrics(IterationHandler):
+
+    def __init__(self, gold_clustering, iter_interval):
+        self.gold_clustering = gold_clustering
+        self.iter_interval = iter_interval
+        self.restart()
+
+    def restart(self):
+        self.curr_interval = 0
+
+    def handle(self, model):
+        self.curr_interval += 1
+        if self.curr_interval % self.iter_interval == 0:
+            pred_clustering = Clustering.from_model(model)
+            contingency = Contingency(self.gold_clustering, pred_clustering)
+            print 'ARI: {}'.format(ari(contingency))
+            print 'F-Measure: {}'.format(f_measure(contingency))
+            print 'VI: {}'.format(variation_info(contingency))
