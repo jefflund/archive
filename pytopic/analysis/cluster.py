@@ -95,9 +95,9 @@ def f_measure(contingency):
     f_measures = {}
     for c in contingency.gold:
         for k in contingency.pred:
-            recall = contingency[c, k] / class_counts[c]
-            precision = contingency[c, k] / clust_counts[k]
             try:
+                recall = contingency[c, k] / class_counts[c]
+                precision = contingency[c, k] / clust_counts[k]
                 f_measures[c, k] = recall * precision / (recall + precision)
             except ZeroDivisionError:
                 f_measures[c, k] = 0
