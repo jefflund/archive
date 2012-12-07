@@ -4,7 +4,7 @@ from __future__ import division
 
 import os
 import math
-from pytopic.util.compute import n_choose_2
+from pytopic.util.compute import n_choose_2, lim_plogp, lim_xlogy
 
 class Clustering(object):
     """Abstraction for clusterings, both labeled data and inferred clusters"""
@@ -141,21 +141,21 @@ def variation_info(contingency):
     entropy_gold = 0
     for c in contingency.gold:
         prob_c = gold_sums[c] / num_datums
-        entropy_gold -= prob_c * math.log(prob_c)
+        entropy_gold -= lim_plogp(prob_c)
 
     entropy_pred = 0
     for k in contingency.pred:
         prob_k = pred_sums[k] / num_datums
-        entropy_pred -= prob_k * math.log(prob_k)
+        entropy_pred -= lim_plogp(prob_k)
 
-    mutal_information = 0
+    mutual_information = 0
     for c in contingency.gold:
         for k in contingency.pred:
             prob_ck = contingency[c, k] / num_datums
             prob_c = gold_sums[c] / num_datums
             prob_k = pred_sums[k] / num_datums
-            cond_prob = prob_ck / (prob_c * prob_k)
-            if cond_prob != 0 and not math.isnan(cond_prob):
-                mutal_information += prob_ck * math.log(cond_prob)
+            if prob_c != 0 and prob_k != 0:
+                mutual_prob = prob_ck / (prob_c * prob_k)
+                mutual_information += lim_xlogy(prob_ck, mutual_prob)
 
-    return entropy_gold + entropy_pred - 2 * mutal_information
+    return entropy_gold + entropy_pred - 2 * mutual_information

@@ -104,3 +104,34 @@ def top_n(counts, n):
 
     keys = [i for i in range(len(counts)) if counts[i] > 0]
     return sorted(keys, key=lambda x: counts[x], reverse=True)[:n]
+
+def lim_plogp(p):
+    """
+    lim_plogp(float): float
+    Returns the limit of p log p as p approaches the given value.
+    When p approaches 0, then this is 0. Otherwise, it is simply p log p.
+    """
+
+    try:
+        return p * math.log(p)
+    except ValueError:
+        if p == 0:
+            return 0
+        else:
+            raise
+
+def lim_xlogy(x, y):
+    """
+    lim_xlogy(float, float): float
+    Returns the limit of x log y as x and y approach the given values.
+    For cases involving 0 the limit is 0, except when only y approaches 0.
+    Otherwise, the limit is simply x log y.
+    """
+
+    try:
+        return x * math.log(y)
+    except ValueError:
+        if x == 0:
+            return 0
+        else:
+            raise
