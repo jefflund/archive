@@ -28,11 +28,11 @@ class MixtureMultinomial(TopicModel):
         for d in range(self.M):
             self.k[d] = sample_uniform(self.K)
 
-            self.l[self.k[d]] += 1
-            self.q[self.k[d]] += self.N[d]
+            self.c_k_doc[self.k[d]] += 1
+            self.c_k_token[self.k[d]] += self.N[d]
             for w in self.w[d]:
-                self.p[self.k[d]][w] += 1
-                self.r[d][w] += 1
+                self.c_kv[self.k[d]][w] += 1
+                self.c_dv[d][w] += 1
 
         self.doc_words = [set(self.w[d]) for d in range(self.M)]
 
