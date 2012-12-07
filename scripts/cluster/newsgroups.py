@@ -18,10 +18,10 @@ def get_model(corpus, clustering):
 
     if node_num % 2 == 0:
         model_type = ClusterLDA
-        params = clda_params[param_num]
+        params = clda_params[param_num % len(clda_params)]
     else:
         model_type = MixtureMultinomial
-        params = mm_params[param_num]
+        params = mm_params[param_num % len(mm_params)]
 
     model = model_type(corpus, *params)
     model.register_handler(Timer())
