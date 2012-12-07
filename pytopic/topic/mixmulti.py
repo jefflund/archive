@@ -34,8 +34,6 @@ class MixtureMultinomial(TopicModel):
                 self.c_kv[self.k[d]][w] += 1
                 self.c_dv[d][w] += 1
 
-        self.doc_words = [set(self.w[d]) for d in range(self.M)]
-
     def sample(self):
         for d in sample_order(self.M):
             self.sample_k(d)
@@ -59,7 +57,7 @@ class MixtureMultinomial(TopicModel):
         """
 
         prob = math.log(self.gamma + self.c_k_doc[j] - 1)
-        for v in self.doc_words[d]:
+        for v in set(self.w[d]):
             prob += math.lgamma(self.beta + self.c_kv[j][v])
             prob += math.lgamma(self.beta + self.c_kv[j][v] - self.c_dv[d][v])
         prob += math.lgamma(self.Vbeta + self.c_k_token[j] - self.N[d])

@@ -2,5 +2,5 @@
 .project
 .pydevproject
 .settings
-pickle/
+pickle
 data

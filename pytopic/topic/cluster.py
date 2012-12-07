@@ -98,23 +98,33 @@ class ClusterLDA(TopicModel):
         """
 
         lcounts = []
+        doc_topic_set = set(self.z[d])
         for j in range(self.K):
             self.set_k(d, j)
-            lcounts.append(self.lprob_k(d, j))
+            lcounts.append(self.lprob_k(d, j, doc_topic_set))
         self.set_k(d, sample_lcounts(lcounts))
 
-    def lprob_k(self, d, j):
+    def lprob_k(self, d, j, doc_topic_set):
         """
         ClusterLDA.lprob_k(int, int): return float
         Returns the log probability log p(k_d=j| w, z, k_-d, alpha, beta)
         """
 
         prob = math.log(self.gamma + self.c_k_doc[j] - 1)
-        for t in set(self.z[d]):
-            prob += math.lgamma(self.alpha + self.c_kt[j][t])
-            prob -= math.lgamma(self.alpha + self.c_kt[j][t] - self.c_dt[d][t])
-        prob += math.lgamma(self.Talpha + self.c_k_token[j] - self.N[d])
-        prob -= math.lgamma(self.Talpha + self.c_k_token[j])
+
+        for t in doc_topic_set:
+            a_ckt = self.alpha + self.c_kt[j][t]
+            c_dt = self.c_dt[d][t]
+            if c_dt == 1:
+                prob += math.log(a_ckt - 1)
+            else:
+                prob += math.lgamma(a_ckt)
+                prob -= math.lgamma(a_ckt - c_dt)
+
+        talpha_c_k = self.Talpha + self.c_k_token[j]
+        prob += math.lgamma(talpha_c_k - self.N[d])
+        prob -= math.lgamma(talpha_c_k)
+
         return prob
 
     def set_k(self, d, k_d):
