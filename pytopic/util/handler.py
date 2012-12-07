@@ -73,6 +73,6 @@ class ClusterMetrics(IterationHandler):
         if self.curr_interval % self.iter_interval == 0:
             pred_clustering = Clustering.from_model(model)
             contingency = Contingency(self.gold_clustering, pred_clustering)
-            print 'ARI: {}'.format(ari(contingency))
-            print 'F-Measure: {}'.format(f_measure(contingency))
-            print 'VI: {}'.format(variation_info(contingency))
+            print 'ARI {}'.format(ari(contingency))
+            print 'FM {}'.format(f_measure(contingency))
+            print 'VI {}'.format(variation_info(contingency))
