@@ -7,11 +7,11 @@ from pytopic.util.data import pickle_cache
 @pickle_cache('pickle/bible/corpus.pickle')
 def get_corpus():
     reader = CorpusReader(BibleTokenizer())
-    reader.add_file('../data/bible/bible.txt')
+    reader.add_file('data/bible/bible.txt')
     corpus = reader.read()
 
-    stopwords = load_stopwords('../data/stopwords/english.txt',
-                               '../data/stopwords/kj-english.txt')
+    stopwords = load_stopwords('data/stopwords/english.txt',
+                               'data/stopwords/kj-english.txt')
     corpus = filter_stopwords(corpus, stopwords, retain_empty=True)
 
     return corpus
@@ -19,7 +19,7 @@ def get_corpus():
 @pickle_cache('pickle/bible/xrefs.pickle')
 def get_xrefs(corpus):
     reader = XRefReader(corpus)
-    reader.add_file('../data/bible/xref.txt')
+    reader.add_file('data/bible/xref.txt')
     return reader.read()
 
 @pickle_cache('pickle/bible/concord.pickle')

@@ -7,10 +7,10 @@ from pytopic.util.data import pickle_cache
 @pickle_cache('pickle/newsgroups/corpus.pickle')
 def get_corpus():
     reader = CorpusReader(NewsTokenizer())
-    reader.add_dir('../data/newsgroups/groups')
+    reader.add_dir('data/newsgroups/groups')
     corpus = reader.read()
 
-    stopwords = load_stopwords('../data/stopwords/english.txt')
+    stopwords = load_stopwords('data/stopwords/english.txt')
     stopwords.add('writes')
     stopwords.add('article')
     corpus = filter_stopwords(corpus, stopwords)
