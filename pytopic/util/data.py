@@ -100,7 +100,7 @@ class Reader(object):
 
         if not os.path.exists(dirpath):
             raise RuntimeError('{} does not exist'.format(dirpath))
-        elif os.path.isdir(dirpath):
+        elif not os.path.isdir(dirpath):
             raise RuntimeError('{} is not a directory'.format(dirpath))
 
         for root, dirs, files in os.walk(dirpath):
