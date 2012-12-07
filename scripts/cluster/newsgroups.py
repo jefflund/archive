@@ -1,34 +1,42 @@
+import os
 from scripts.dataset.newsgroups import get_corpus, get_clustering
 from pytopic.topic.cluster import ClusterLDA
 from pytopic.topic.mixmulti import MixtureMultinomial
 from pytopic.util.handler import Timer, ClusterMetrics
 
-def get_clda(corpus, clustering):
-    K = 20
-    T = 100
-    gamma = 4
-    alpha = .1
-    beta = .001
+# K T gamma alpha beta
+clda_params = [[20, 100, 2, .05, .001],
+               [20, 200, 2, .05, .001],
+               [20, 500, 2, .05, .001]]
 
-    clda = ClusterLDA(corpus, K, T, gamma, alpha, beta)
-    clda.register_handler(Timer())
-    clda.register_handler(ClusterMetrics(clustering, 10))
-    return clda
+# K gamma beta
+mm_params = [[20, 2, .1],
+             [20, 2, .01],
+             [20, 2, .001]]
 
+# get 20 newsgropus dataset
+corpus = get_corpus()
+clustering = get_clustering(corpus)
 
-def get_mm(corpus, clustering):
-    K = 20
-    gamma = 4
-    beta = .001
+# get run type from pssh
+node_num = int(os.environ.get('PSSH_NODENUM', 0))
+param_num = node_num // 2
 
-    mm = MixtureMultinomial(corpus, K, gamma, beta)
-    mm.register_handler(Timer())
-    mm.register_handler(ClusterMetrics(clustering, 10))
-    return mm
+# get model type and params
+if node_num % 2 == 0:
+    model_type = ClusterLDA
+    params = clda_params[param_num]
+else:
+    model_type = MixtureMultinomial
+    params = mm_params[param_num]
 
-if __name__ == '__main__':
-    corpus = get_corpus()
-    clustering = get_clustering(corpus)
-    clda = get_clda(corpus, clustering)
-    mm = get_mm(corpus, clustering)
-    mm.inference(100)
+# construct the model
+model = model_type(corpus, *params)
+model.register_handler(Timer())
+model.register_handler(ClusterMetrics(clustering, 10))
+
+# print out run type
+print model_type.__name__, params
+
+# perform inference
+model.inference(100)
