@@ -1,6 +1,6 @@
 """Special corpora-specific corpus building tools"""
 
-import HTMLParser
+import re
 import StringIO
 from pytopic.pipeline.corpus import Tokenizer
 
@@ -37,18 +37,20 @@ class BibleTokenizer(Tokenizer):
                 yield title, tokens
 
 
-class HTMLTokenizer(Tokenizer, HTMLParser.HTMLParser):
-    """Tokenizer that extracts text from html files"""
+class HTMLTokenizer(Tokenizer):
+    """Tokenizer that extracts text from html files using nltk"""
 
     def __init__(self, split_re='\s+', filter_re='[^a-zA-Z]'):
         Tokenizer.__init__(self, split_re, filter_re)
-        HTMLParser.HTMLParser.__init__(self)
 
     def tokenize(self, filename, buff):
-        self.stream = StringIO.StringIO()
-        self.feed(buff.read())
-        self.stream.seek(0)
-        return Tokenizer.tokenize(self, filename, self.stream)
-
-    def handle_data(self, data):
-        self.stream.write(data)
+        # borrowed from nltk.clean_html
+        text = buff.read().strip()
+        text = re.sub(r'(?is)<(script|style).*?>.*?(</\1>)', '', text)
+        text = re.sub(r'(?s)<!--(.*?)-->[\n]?', '', text)
+        text = re.sub(r'(?s)<.*?>', ' ', text)
+        text = re.sub(r'&nbsp;', ' ', text)
+        text = re.sub(r'  ', ' ', text)
+        text = re.sub(r'  ', ' ', text)
+        text = text.strip()
+        return Tokenizer.tokenize(self, filename, StringIO.StringIO(text))
