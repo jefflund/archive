@@ -64,8 +64,6 @@ class IterationHandler(object):
     def restart(self):
         """Called at the start of inference"""
 
-        raise NotImplementedError()
-
     def handle(self, model):
         """Called at the conclusion of each iteration"""
 

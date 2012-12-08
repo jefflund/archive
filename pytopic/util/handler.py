@@ -10,9 +10,6 @@ class Printer(IterationHandler):
     def __init__(self, iter_interval, verbose=False):
         self.iter_interval = iter_interval
         self.verbose = verbose
-        self.restart()
-
-    def restart(self):
         self.curr_interval = 0
 
     def handle(self, model):
@@ -25,11 +22,11 @@ class Timer(IterationHandler):
     """Prints the timing of each iteration"""
 
     def __init__(self):
+        self.curr_interval = 0
         self.restart()
 
     def restart(self):
         self.last_time = time.time()
-        self.curr_interval = 0
 
     def handle(self, model):
         self.curr_interval += 1
@@ -63,9 +60,6 @@ class ClusterMetrics(IterationHandler):
     def __init__(self, gold_clustering, iter_interval):
         self.gold_clustering = gold_clustering
         self.iter_interval = iter_interval
-        self.restart()
-
-    def restart(self):
         self.curr_interval = 0
 
     def handle(self, model):
