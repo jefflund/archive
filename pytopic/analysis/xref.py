@@ -69,7 +69,7 @@ class Concordance(object):
         doc_sets = [self.index[word] for word in words]
         return set.intersection(*doc_sets)
 
-    def __getitem__(self, index):
+    def __getitem__(self, word):
         return self.index[word]
 
     def __len__(self):
