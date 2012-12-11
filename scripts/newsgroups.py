@@ -11,9 +11,8 @@ def get_corpus():
     reader.add_dir('../data/newsgroups/groups')
     corpus = reader.read()
 
-    stopwords = load_stopwords('../data/stopwords/english.txt')
-    stopwords.add('writes')
-    stopwords.add('article')
+    stopwords = load_stopwords('../data/stopwords/english.txt',
+                               '../data/stopwords/newsgroups.txt')
     corpus = filter_stopwords(corpus, stopwords)
 
     return corpus

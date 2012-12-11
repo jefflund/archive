@@ -11,7 +11,7 @@ def get_corpus():
     corpus = reader.read()
 
     stopwords = load_stopwords('../data/stopwords/english.txt',
-                               '../data/stopwords/kj-english.txt')
+                               '../data/stopwords/king-james.txt')
     corpus = filter_stopwords(corpus, stopwords, retain_empty=True)
 
     return corpus
