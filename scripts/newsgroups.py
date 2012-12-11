@@ -2,7 +2,7 @@ from pytopic.pipeline.corpus import CorpusReader
 from pytopic.pipeline.tokenizer import NewsTokenizer
 from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
 from pytopic.util.data import pickle_cache
-from pytopic.topic.vanilla import VanillaLDA
+from pytopic.topic.basic import VanillaLDA
 from pytopic.util.handler import Printer, Timer
 
 @pickle_cache('../pickle/newsgroups-corpus.pickle')

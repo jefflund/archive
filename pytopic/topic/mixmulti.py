@@ -1,7 +1,7 @@
 """Implements the mixture of multinomials model"""
 
 import math
-from pytopic.topic.model import TopicModel
+from pytopic.topic.basic import TopicModel
 from pytopic.util.compute import (sample_uniform, sample_order, sample_lcounts,
                                   top_n)
 from pytopic.util.data import init_counter
