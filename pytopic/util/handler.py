@@ -1,6 +1,6 @@
 import time
 import pickle
-from pytopic.topic.basic import IterationHandler
+from pytopic.model.basic import IterationHandler
 from pytopic.analysis.cluster import (Clustering, Contingency,
                                       f_measure, ari, variation_info)
 

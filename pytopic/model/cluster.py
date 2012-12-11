@@ -1,7 +1,7 @@
 """Implementation of ClusterLDA, first described by Lund in 2011"""
 
 import math
-from pytopic.topic.basic import TopicModel
+from pytopic.model.basic import TopicModel
 from pytopic.util.compute import (sample_uniform, sample_order, sample_lcounts,
                                   sample_counts, top_n)
 from pytopic.util.data import init_counter
