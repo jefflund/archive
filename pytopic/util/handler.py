@@ -19,42 +19,6 @@ class Printer(IterationHandler):
             model.print_state(self.verbose)
 
 
-class MalletOutput(IterationHandler):
-
-    def __init__(self, iter_interval, filename):
-        self.iter_interval = iter_interval
-        self.curr_interval = 0
-        self.filename = filename
-
-    def handle(self, model):
-        self.curr_interval += 1
-        if self.curr_interval % self.iter_interval == 0:
-            with open(self.filename, 'w') as outfile:
-                self.write_mallet(outfile, model)
-
-    def write_mallet(self, outfile, model):
-        self.write_header(outfile)
-        self.write_params(outfile, model)
-
-        for d in range(model.M):
-            title = model.titles[d]
-            for n in range(model.N[d]):
-                w = model.w[d][n]
-                word = model.vocab[w]
-                z = model.z[d][n]
-                line = '{} {} {} {} {}\n'.format(d, title, n, w, word, z)
-                outfile.write(line)
-
-    def write_header(self, outfile):
-        outfile.write('#doc source pos typeindex type topic\n')
-
-    def write_params(self, outfile, model):
-        for attr in dir(model):
-            value = getattr(model, attr)
-            if type(value) is int or type(value) is float:
-                outfile.write('#{} {}\n'.format(attr, value))
-
-
 class Timer(IterationHandler):
     """Prints the timing of each iteration"""
 
@@ -93,6 +57,7 @@ class Checkpointer(IterationHandler):
 
 
 class ClusterMetrics(IterationHandler):
+    """Evaluates a clustering model using three external metrics"""
 
     def __init__(self, gold_clustering, iter_interval):
         self.gold_clustering = gold_clustering
@@ -107,3 +72,57 @@ class ClusterMetrics(IterationHandler):
             print 'ARI {}'.format(ari(contingency))
             print 'FM {}'.format(f_measure(contingency))
             print 'VI {}'.format(variation_info(contingency))
+
+
+class MalletOutput(IterationHandler):
+    """Writes a model to file in Mallet output format"""
+
+    def __init__(self, iter_interval, filename):
+        self.iter_interval = iter_interval
+        self.curr_interval = 0
+        self.filename = filename
+
+    def handle(self, model):
+        self.curr_interval += 1
+        if self.curr_interval % self.iter_interval == 0:
+            with open(self.filename, 'w') as outfile:
+                self.write_mallet(outfile, model)
+
+    def write_mallet(self, outfile, model):
+        """
+        MalletOutput.write_mallet(file, model): return None
+        Writes a model to the given file in Mallet output format
+        """
+
+        self.write_params(outfile, model)
+        self.write_header(outfile)
+
+        for d in range(model.M):
+            title = model.titles[d]
+            for n in range(model.N[d]):
+                w = model.w[d][n]
+                word = model.vocab[w]
+                z = model.z[d][n]
+                line = '{} {} {} {} {}\n'.format(d, title, n, w, word, z)
+                outfile.write(line)
+
+    def write_header(self, outfile):
+        """
+        MalletOutput.write_header(file): return None
+        Writes a comment describing the Mallet output format
+        """
+
+        outfile.write('#doc source pos typeindex type topic\n')
+
+    def write_params(self, outfile, model):
+        """
+        MalletOutput.write_params(file, model): return None
+        Writes all int and float attributes with their value in comments
+        """
+
+        for attr in dir(model):
+            value = getattr(model, attr)
+            if type(value) is int or type(value) is float:
+                outfile.write('#{} {}\n'.format(attr, value))
+
+
