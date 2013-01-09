@@ -4,6 +4,7 @@ from pytopic.model.basic import IterationHandler
 from pytopic.analysis.cluster import (Clustering, Contingency,
                                       f_measure, ari, variation_info)
 
+
 class Printer(IterationHandler):
     """Calls print_state on the model at a specified iteration interval"""
 
@@ -16,6 +17,42 @@ class Printer(IterationHandler):
         self.curr_interval += 1
         if self.curr_interval % self.iter_interval == 0:
             model.print_state(self.verbose)
+
+
+class MalletOutput(IterationHandler):
+
+    def __init__(self, iter_interval, filename):
+        self.iter_interval = iter_interval
+        self.curr_interval = 0
+        self.filename = filename
+
+    def handle(self, model):
+        self.curr_interval += 1
+        if self.curr_interval % self.iter_interval == 0:
+            with open(self.filename, 'w') as outfile:
+                self.write_mallet(outfile, model)
+
+    def write_mallet(self, outfile, model):
+        self.write_header(outfile)
+        self.write_params(outfile, model)
+
+        for d in range(model.M):
+            title = model.titles[d]
+            for n in range(model.N[d]):
+                w = model.w[d][n]
+                word = model.vocab[w]
+                z = model.z[d][n]
+                line = '{} {} {} {} {}\n'.format(d, title, n, w, word, z)
+                outfile.write(line)
+
+    def write_header(self, outfile):
+        outfile.write('#doc source pos typeindex type topic\n')
+
+    def write_params(self, outfile, model):
+        for attr in dir(model):
+            value = getattr(model, attr)
+            if type(value) is int or type(value) is float:
+                outfile.write('#{} {}\n'.format(attr, value))
 
 
 class Timer(IterationHandler):
