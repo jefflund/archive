@@ -3,7 +3,7 @@ from pytopic.pipeline.tokenizer import NewsTokenizer
 from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
 from pytopic.util.data import pickle_cache
 from pytopic.model.basic import VanillaLDA
-from pytopic.util.handler import Printer, Timer, MalletOutput
+from pytopic.util.handler import Printer, Timer
 
 @pickle_cache('../pickle/newsgroups-corpus.pickle')
 def get_corpus():
@@ -21,7 +21,6 @@ def get_model(corpus):
     lda = VanillaLDA(corpus, 20, .4, .01)
     lda.register_handler(Timer())
     lda.register_handler(Printer(10))
-    lda.register_handler(MalletOutput(10, 'newsgroups.mallet'))
     return lda
 
 if __name__ == '__main__':
