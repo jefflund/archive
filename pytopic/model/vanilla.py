@@ -2,8 +2,41 @@ from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_counts, top_n
 from pytopic.util.data import init_counter
 
+def gibbs_vanilla(model):
+    """
+    gibbs_vanilla(VanillaLDA): func
+    Gibbs sampling algorithm for LDA
+    """
+
+    M = model.M
+    w = model.w
+    c_dt = model.c_dt
+    c_tv = model.c_tv
+    c_t = model.c_t
+
+    def sample_model():
+        for d in range(M):
+            for n in range(model.N[d]):
+                sample_z(d, n)
+
+    def sample_z(d, n):
+        model.unset_z(d, n)
+        counts = [prob_z(d, n, j) for j in range(model.T)]
+        model.set_z(d, n, sample_counts(counts))
+
+    def prob_z(d, n, j):
+        prob = model.alpha + c_dt[d][j]
+        prob *= model.beta + c_tv[j][w[d][n]]
+        prob /= model.Vbeta + c_t[j]
+        return prob
+
+    return sample_model
+
+
 class VanillaLDA(TopicModel):
     """Latent Dirichlet Allocation with a Gibbs sampler"""
+
+    algorithms = {'gibbs': gibbs_vanilla}
 
     def __init__(self, corpus, T, alpha, beta):
         TopicModel.__init__(self, corpus)
@@ -81,34 +114,3 @@ class VanillaLDA(TopicModel):
                     print ')',
                 print
         print
-
-
-def gibbs_vanilla(model):
-    """
-    gibbs_vanilla(VanillaLDA): func
-    Gibbs sampling algorithm for LDA
-    """
-
-    M = model.M
-    w = model.w
-    c_dt = model.c_dt
-    c_tv = model.c_tv
-    c_t = model.c_t
-
-    def sample_model():
-        for d in range(M):
-            for n in range(model.N[d]):
-                sample_z(d, n)
-
-    def sample_z(d, n):
-        model.unset_z(d, n)
-        counts = [prob_z(d, n, j) for j in range(model.T)]
-        model.set_z(d, n, sample_counts(counts))
-
-    def prob_z(d, n, j):
-        prob = model.alpha + c_dt[d][j]
-        prob *= model.beta + c_tv[j][w[d][n]]
-        prob /= model.Vbeta + c_t[j]
-        return prob
-
-    return sample_model

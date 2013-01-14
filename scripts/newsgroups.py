@@ -4,7 +4,6 @@ from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
 from pytopic.util.data import pickle_cache
 from pytopic.model.vanilla import VanillaLDA
 from pytopic.util.handler import Printer, Timer
-from pytopic.model.inference import Gibbs
 
 @pickle_cache('../pickle/newsgroups-corpus.pickle')
 def get_corpus():
@@ -20,7 +19,6 @@ def get_corpus():
 
 def get_model(corpus):
     lda = VanillaLDA(corpus, 20, .4, .01)
-    lda.set_inference(Gibbs)
     lda.register_handler(Timer())
     lda.register_handler(Printer(10))
     return lda

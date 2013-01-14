@@ -28,7 +28,8 @@ class TopicModel(object):
         Performs inference on the model for the given number of iterations
         """
 
-        assert self._inference_algorithm is not None
+        if self._inference_algorithm is None:
+            self.set_inference('gibbs')
 
         for handler in self._handlers:
             handler.restart()
@@ -39,7 +40,13 @@ class TopicModel(object):
                 handler.handle(self)
 
     def set_inference(self, algorithm):
-        self._inference_algorithm = algorithm(self)
+        """
+        TopicModel.set_inference(str): return None
+        Sets the algorithm to be used for inference on the model. Currently the
+        only valid algorithms are: gibbs.
+        """
+
+        self._inference_algorithm = self.algorithms[algorithm](self)
 
     def print_state(self, verbose=False):
         """
@@ -61,10 +68,3 @@ class IterationHandler(object):
         """Called at the conclusion of each iteration"""
 
         raise NotImplementedError()
-
-class InferenceAlgorithm(object):
-    """Represents a class of inference algorithm"""
-
-    def __new__(cls, model):
-        implementation = cls.implementations[type(model)]
-        return implementation(model)
