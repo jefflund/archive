@@ -8,14 +8,16 @@ def gibbs_vanilla(model):
     Gibbs sampling algorithm for LDA
     """
 
-    M = model.M
+    alpha = model.alpha
+    beta = model.beta
+    Vbeta = model.beta
     w = model.w
     c_dt = model.c_dt
     c_tv = model.c_tv
     c_t = model.c_t
 
     def sample_model():
-        for d in range(M):
+        for d in range(model.M):
             for n in range(model.N[d]):
                 sample_z(d, n)
 
@@ -25,9 +27,9 @@ def gibbs_vanilla(model):
         model.set_z(d, n, sample_counts(counts))
 
     def prob_z(d, n, j):
-        prob = model.alpha + c_dt[d][j]
-        prob *= model.beta + c_tv[j][w[d][n]]
-        prob /= model.Vbeta + c_t[j]
+        prob = alpha + c_dt[d][j]
+        prob *= beta + c_tv[j][w[d][n]]
+        prob /= Vbeta + c_t[j]
         return prob
 
     return sample_model
