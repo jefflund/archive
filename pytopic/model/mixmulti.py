@@ -11,9 +11,8 @@ def gibbs_mixmulti(model):
     Creates a Gibbs sampling algorithm for mixture of multinomials
     """
 
-    M = model.M
     N = model.N
-    K = model.K
+    K = range(model.K)
     doc_words = [set(doc) for doc in model.w]
     gamma = model.gamma
     beta = model.beta
@@ -24,12 +23,12 @@ def gibbs_mixmulti(model):
     c_dv = model.c_dv
 
     def sample_model():
-        for d in range(M):
+        for d in range(model.M):
             sample_k(d)
 
     def sample_k(d):
         lcounts = []
-        for j in range(K):
+        for j in K:
             model.set_k(d, j)
             lcounts.append(lprob_k(d, j))
         model.set_k(d, sample_lcounts(lcounts))
