@@ -27,5 +27,3 @@ if __name__ == '__main__':
     corpus = get_corpus()
     lda = get_model(corpus)
     lda.inference(100)
-    self.set_z = model.set_z
-    self.unset_z = model.unset_z
