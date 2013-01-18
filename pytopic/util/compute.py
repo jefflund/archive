@@ -82,10 +82,34 @@ def n_choose_2(n):
     return (n * (n - 1)) / 2
 
 
+def normalize(counts):
+    """
+    normalize(dict): None
+    Normalizes the count dictionary
+    """
+
+    total = sum(counts.values())
+    for label in counts:
+        counts[label] /= total
+
+
 def lnormalize(counts):
     """
     lnormalize(dict): None
-    Normalizes the count dictionary in log space.
+    Normalizes a log count dictionary in log space
+    """
+
+    lsum = float('-inf')
+    for label in counts:
+        lsum = ladd(lsum, counts[label])
+    for label in counts:
+        counts[label] -= lsum
+
+
+def normalize_and_log(counts):
+    """
+    normalize_and_log(dict): None
+    Normalizes and dictionary and then converts it to log space
     """
 
     total = sum(counts.values())

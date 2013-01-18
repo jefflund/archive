@@ -1,6 +1,6 @@
 from __future__ import division
 
-from pytopic.util.compute import lnormalize
+from pytopic.util.compute import normalize_and_log
 
 class NaiveBayes(object):
     """A simple Multinomial Naive Bayes classifier"""
@@ -17,9 +17,9 @@ class NaiveBayes(object):
             for word in doc:
                 self.word_counts[label][word] += 1
 
-        lnormalize(self.label_counts)
+        normalize_and_log(self.label_counts)
         for label in self.labels:
-            lnormalize(self.word_counts[label])
+            normalize_and_log(self.word_counts[label])
 
     def classify(self, data):
         """
