@@ -62,14 +62,21 @@ def em_mixmulti(model):
     def em_iteration():
         update_lambda()
         update_phi()
-        posteriors = [compute_posterior(doc) for doc in w]
+        update_posteriors()
         update_model()
 
     def update_lambda():
-        lambda_ = [sum(posterior[d][k] for d in M) for k in K]
+        lambda_[:] = [sum(posterior[d][k] for d in M) for k in K]
 
     def update_phi():
-        pass
+        phi[:] = [[1 for v in V] for k in K]
+        for k in K:
+            for posterior, doc in zip(posteriors, w):
+                for v in doc:
+                    phi[k][v] += posterior[k] * doc[v]
+
+    def update_posteriors():
+        posteriors[:] = [compute_posterior(doc) for doc in w]
 
     def compute_posterior(doc):
         likelihood = [prod(phi[k][v] ** doc[v] for v in doc) for k in K]
