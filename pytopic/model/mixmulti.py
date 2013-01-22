@@ -1,8 +1,11 @@
 """Implements Mixture of Multinomials for document clustering"""
 
+from __future__ import division
+
 import math
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
+from pytopic.util.compute import normalize, prod
 from pytopic.util.data import init_counter
 
 def gibbs_mixmulti(model):
@@ -47,8 +50,35 @@ def gibbs_mixmulti(model):
 
 def em_mixmulti(model):
 
+    M = range(model.M)
+    K = range(model.K)
+    V = range(model.V)
+    w = model.c_dv
+
+    lambda_ = [model.c_k_doc[k] for k in K]
+    phi = [[model.c_kv[k][v] / model.c_k_token[k] for v in V] for k in K]
+    posteriors = [compute_posterior(doc) for doc in w]
+
     def em_iteration():
+        update_lambda()
+        update_phi()
+        posteriors = [compute_posterior(doc) for doc in w]
+        update_model()
+
+    def update_lambda():
         pass
+
+    def update_phi():
+        pass
+
+    def compute_posterior(doc):
+        p = [lambda_[k] * prod(phi[k][v] ** doc[v] for v in doc)) for k in K]
+        normalize(p)
+        return p
+
+    def update_model():
+        for d in M:
+            model.set_k(d, max(K, key=lambda k: posteriors[d][k]))
 
     return em_iteration
 
