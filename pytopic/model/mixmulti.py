@@ -45,10 +45,17 @@ def gibbs_mixmulti(model):
     return sample_model
 
 
+def em_mixmulti(model):
+
+    def em_iteration():
+        pass
+
+    return em_iteration
+
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
-    algorithms = {'gibbs': gibbs_mixmulti}
+    algorithms = {'gibbs': gibbs_mixmulti, 'em': em_mixmulti}
 
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
