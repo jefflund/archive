@@ -5,7 +5,7 @@ from __future__ import division
 import math
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
-from pytopic.util.compute import normalize, prod
+from pytopic.util.compute import lnormalize
 from pytopic.util.data import init_counter
 
 def gibbs_mixmulti(model):
@@ -55,9 +55,19 @@ def em_mixmulti(model):
     V = range(model.V)
     w = model.c_dv
 
-    lambda_ = [model.c_k_doc[k] for k in K]
-    phi = [[model.c_kv[k][v] / model.c_k_token[k] for v in V] for k in K]
-    posteriors = [compute_posterior(doc) for doc in w]
+    c_k_doc = model.c_k_doc
+    c_k_token = model.c_k_token
+    c_kv = model.c_kv
+
+    lambda_ = [math.log(lc_k_doc[k] / len(M)) for k in K]
+    phi = [[math.log(c_kv[k][v] / c_k_token[k]) for v in V] for k in K]
+
+    def calc_posterior(d):
+        post = [(lambda_[k] + sum(w[d][v] * phi[k][v] for v in V)) for k in K]
+        lnormalize(post)
+        return post
+
+    posteriors = [calc_posterior(d) for d in M]
 
     def em_iteration():
         update_lambda()
@@ -66,27 +76,18 @@ def em_mixmulti(model):
         update_model()
 
     def update_lambda():
-        lambda_[:] = [sum(posterior[d][k] for d in M) for k in K]
+        for k in K:
+            lambda_[k] = sum(posteriors[d][k] for d in M)
 
     def update_phi():
-        phi[:] = [[1 for v in V] for k in K]
-        for k in K:
-            for posterior, doc in zip(posteriors, w):
-                for v in doc:
-                    phi[k][v] += posterior[k] * doc[v]
+        pass
 
     def update_posteriors():
-        posteriors[:] = [compute_posterior(doc) for doc in w]
-
-    def compute_posterior(doc):
-        likelihood = [prod(phi[k][v] ** doc[v] for v in doc) for k in K]
-        posterior = [lam * lik for lam, lik in zip(lambda_, likelihood)]
-        normalize(posterior)
-        return p
+        posteriors[:] = [calc_posterior(d) for d in M]
 
     def update_model():
         for d in M:
-            model.set_k(d, max(K, key=lambda k: posteriors[d][k]))
+            model.set_k(d, max(K, key=lambda k: posteriors[d][k])
 
     return em_iteration
 

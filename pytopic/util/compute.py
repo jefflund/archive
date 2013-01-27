@@ -159,9 +159,3 @@ def lim_xlogy(x, y):
             return 0
         else:
             raise
-
-def prod(seq):
-    result = 1
-    for val in seq:
-        result *= val
-    return result
