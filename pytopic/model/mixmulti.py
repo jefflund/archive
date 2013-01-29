@@ -59,8 +59,10 @@ def em_mixmulti(model):
     c_k_token = model.c_k_token
     c_kv = model.c_kv
 
-    lambda_ = [math.log(lc_k_doc[k] / len(M)) for k in K]
-    phi = [[math.log(c_kv[k][v] / c_k_token[k]) for v in V] for k in K]
+    lambda_ = [math.log(c_k_doc[k] / len(M)) for k in K]
+    phi = [[math.log(1 + c_kv[k][v] / c_k_token[k]) for v in V] for k in K]
+    for k in K:
+        lnormalize(phi[k])
 
     def calc_posterior(d):
         post = [(lambda_[k] + sum(w[d][v] * phi[k][v] for v in V)) for k in K]
@@ -80,14 +82,20 @@ def em_mixmulti(model):
             lambda_[k] = sum(posteriors[d][k] for d in M)
 
     def update_phi():
-        pass
+        for k in K:
+            for v in V:
+                phi[k][v] = 0
+                for d in M:
+                    pseudocount = posteriors[d][k] + math.log(w[d][v])
+                    phi[k][v] = ladd(phi[k][v], pseudocount)
+            lnormalize(phi[k])
 
     def update_posteriors():
         posteriors[:] = [calc_posterior(d) for d in M]
 
     def update_model():
         for d in M:
-            model.set_k(d, max(K, key=lambda k: posteriors[d][k])
+            model.set_k(d, max(K, key=lambda k: posteriors[d][k]))
 
     return em_iteration
 
