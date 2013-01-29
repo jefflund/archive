@@ -93,6 +93,16 @@ def normalize(counts):
         counts[label] /= total
 
 
+def normalize_list(counts):
+    """
+    normalize(list): None
+    Normalizes the count list
+    """
+
+    total = sum(counts)
+    for i in range(len(counts)):
+        counts[i] /= total
+
 def lnormalize(counts):
     """
     lnormalize(dict): None
@@ -104,6 +114,14 @@ def lnormalize(counts):
         lsum = ladd(lsum, counts[label])
     for label in counts:
         counts[label] -= lsum
+
+
+def lnormalize_list(counts):
+    lsum = float('-inf')
+    for count in counts:
+        lsum = ladd(lsum, count)
+    for i in range(len(counts)):
+        counts[i] -= lsum
 
 
 def normalize_and_log(counts):
@@ -118,6 +136,16 @@ def normalize_and_log(counts):
             counts[label] = float('-inf')
         else:
             counts[label] = math.log(counts[label] / total)
+
+
+def normalize_and_log_list(counts):
+    total = sum(counts)
+    for i, x in enumerate(counts):
+        if x == 0:
+            counts[i] = float('-inf')
+        else:
+            counts[i] = math.log(x / total)
+
 
 def top_n(counts, n):
     """
