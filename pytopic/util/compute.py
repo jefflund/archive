@@ -35,11 +35,7 @@ def sample_lcounts(lcounts):
     Returns an integer index sampled proportional to the given log counts
     """
 
-    lsum = float('-inf')
-    for lcount in lcounts:
-        lsum = ladd(lsum, lcount)
-
-    sample = math.log(random.random()) + lsum
+    sample = math.log(random.random()) + lsum(lcounts)
     lcurr = float('-inf')
     for key, lcount in enumerate(lcounts):
         lcurr = ladd(lcurr, lcount)
@@ -71,6 +67,18 @@ def ladd(log_x, log_y):
     if math.isinf(log_x):
         return log_x
     return log_x + math.log(1 + math.exp(log_y - log_x))
+
+
+def lsum(lcounts):
+    """
+    lsum(list of float): float
+    Returns the log sum of the log space counts
+    """
+
+    ltotal = float('-inf')
+    for lcount in lcounts:
+        ltotal = ladd(ltotal, lcount)
+    return ltotal
 
 
 def n_choose_2(n):

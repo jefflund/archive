@@ -5,7 +5,7 @@ from __future__ import division
 import math
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
-from pytopic.util.compute import lnormalize_list, ladd
+from pytopic.util.compute import lnormalize_list, ladd, lsum
 from pytopic.util.data import init_counter
 
 def gibbs_mixmulti(model):
@@ -86,7 +86,8 @@ def em_mixmulti(model):
 
     def update_lambda():
         for k in K:
-            lambda_[k] = sum(posteriors[d][k] for d in M)
+            lambda_[k] = lsum(posteriors[d][k] for d in M)
+        lnormalize_list(lambda_)
 
     def update_phi():
         for k in K:
