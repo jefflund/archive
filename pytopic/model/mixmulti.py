@@ -5,7 +5,7 @@ from __future__ import division
 import math
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
-from pytopic.util.compute import lnormalize
+from pytopic.util.compute import lnormalize_list, ladd
 from pytopic.util.data import init_counter
 
 def gibbs_mixmulti(model):
@@ -55,6 +55,12 @@ def em_mixmulti(model):
     V = range(model.V)
     w = model.c_dv
 
+    doc_words = [set(doc) for doc in model.w]
+    word_docs = [set() for v in V]
+    for d in M:
+        for word in doc_words[d]:
+            word_docs[word].add(d)
+
     c_k_doc = model.c_k_doc
     c_k_token = model.c_k_token
     c_kv = model.c_kv
@@ -62,11 +68,12 @@ def em_mixmulti(model):
     lambda_ = [math.log(c_k_doc[k] / len(M)) for k in K]
     phi = [[math.log(1 + c_kv[k][v] / c_k_token[k]) for v in V] for k in K]
     for k in K:
-        lnormalize(phi[k])
+        lnormalize_list(phi[k])
 
     def calc_posterior(d):
-        post = [(lambda_[k] + sum(w[d][v] * phi[k][v] for v in V)) for k in K]
-        lnormalize(post)
+        likes = [sum(w[d][v] * phi[k][v] for v in doc_words[d]) for k in K]
+        post = [prior + like for prior, like in zip(lambda_, likes)]
+        lnormalize_list(post)
         return post
 
     posteriors = [calc_posterior(d) for d in M]
@@ -85,10 +92,10 @@ def em_mixmulti(model):
         for k in K:
             for v in V:
                 phi[k][v] = 0
-                for d in M:
+                for d in word_docs[v]:
                     pseudocount = posteriors[d][k] + math.log(w[d][v])
                     phi[k][v] = ladd(phi[k][v], pseudocount)
-            lnormalize(phi[k])
+            lnormalize_list(phi[k])
 
     def update_posteriors():
         posteriors[:] = [calc_posterior(d) for d in M]
