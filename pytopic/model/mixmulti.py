@@ -49,6 +49,10 @@ def gibbs_mixmulti(model):
 
 
 def em_mixmulti(model):
+    """
+    em_mixmulti(MixtureMultinomial): func
+    Creates an em inference algorithm for mixture of multinomials
+    """
 
     M = range(model.M)
     K = range(model.K)
