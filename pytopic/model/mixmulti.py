@@ -52,10 +52,10 @@ def gibbs_mixmulti(model):
     return annealed_gibbs_mixmulti(model, 1)
 
 
-def em_mixmulti(model):
+def annealed_em_mixmulti(model, temp):
     """
-    em_mixmulti(MixtureMultinomial): func
-    Creates an em inference algorithm for mixture of multinomials
+    annealed_em_mixmulti(MixtureMultinomial, float): func
+    Creates an annealed em inference algorithm for mixture of multinomials
     """
 
     M = range(model.M)
@@ -81,10 +81,21 @@ def em_mixmulti(model):
     def calc_posterior(d):
         likes = [sum(w[d][v] * phi[k][v] for v in doc_words[d]) for k in K]
         post = [prior + like for prior, like in zip(lambda_, likes)]
-        lnormalize_list(post)
         return post
 
-    posteriors = [calc_posterior(d) for d in M]
+    if temp == 0:
+        def update_posterior(d):
+            lposterior = calc_posterior(d)
+            lnormalize_list(lposterior)
+            return lposterior
+    else:
+        def update_posterior(d):
+            lposterior = calc_posterior(d)
+            lposterior = [post / temp for post in lposterior]
+            lnormalize_list(lposterior)
+            return lposterior
+
+    posteriors = [update_posterior(d) for d in M]
 
     def em_iteration():
         update_lambda()
@@ -107,7 +118,7 @@ def em_mixmulti(model):
             lnormalize_list(phi[k])
 
     def update_posteriors():
-        posteriors[:] = [calc_posterior(d) for d in M]
+        posteriors[:] = [update_posterior(d) for d in M]
 
     def update_model():
         for d in M:
@@ -115,12 +126,16 @@ def em_mixmulti(model):
 
     return em_iteration
 
+def em_mixmulti(model):
+    return annealed_em_mixmulti(model, 1)
+
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
     algorithms = {'gibbs': gibbs_mixmulti,
                   'annealed gibbs': annealed_gibbs_mixmulti,
-                  'em': em_mixmulti}
+                  'em': em_mixmulti,
+                  'annealed em': annealed_em_mixmulti}
 
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
