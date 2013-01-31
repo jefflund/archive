@@ -39,14 +39,14 @@ class TopicModel(object):
             for handler in self._handlers:
                 handler.handle(self)
 
-    def set_inference(self, algorithm):
+    def set_inference(self, algorithm, *params):
         """
         TopicModel.set_inference(str): return None
         Sets the algorithm to be used for inference on the model. Currently the
         only valid algorithms are: gibbs.
         """
 
-        self._inference_algorithm = self.algorithms[algorithm](self)
+        self._inference_algorithm = self.algorithms[algorithm](self, *params)
 
     def print_state(self, verbose=False):
         """
