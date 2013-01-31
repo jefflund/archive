@@ -8,12 +8,7 @@ from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
 from pytopic.util.compute import lnormalize_list, ladd, lsum
 from pytopic.util.data import init_counter
 
-def gibbs_mixmulti(model):
-    """
-    gibbs_mixmulti(MixtureMultinomial): func
-    Creates a Gibbs sampling algorithm for mixture of multinomials
-    """
-
+def annealed_gibbs_mixmulti(model, temp):
     N = model.N
     K = range(model.K)
     doc_words = [set(doc) for doc in model.w]
@@ -36,7 +31,7 @@ def gibbs_mixmulti(model):
             lcounts.append(lprob_k(d, j))
         model.set_k(d, sample_lcounts(lcounts))
 
-    def lprob_k(d, j):
+    def compute_lprob_k(d, j):
         prob = math.log(gamma + c_k_doc[j] - 1)
         for v in doc_words[d]:
             prob += math.lgamma(beta + c_kv[j][v])
@@ -45,7 +40,16 @@ def gibbs_mixmulti(model):
         prob -= math.lgamma(Vbeta + c_k_token[j])
         return prob
 
+    if temp == 1:
+        lprob_k = compute_lprob_k
+    else:
+        lprob_k = lambda d, j: compute_lprob_k(d, j) / temp
+
     return sample_model
+
+
+def gibbs_mixmulti(model):
+    return annealed_gibbs_mixmulti(model, 1)
 
 
 def em_mixmulti(model):
@@ -114,7 +118,9 @@ def em_mixmulti(model):
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
-    algorithms = {'gibbs': gibbs_mixmulti, 'em': em_mixmulti}
+    algorithms = {'gibbs': gibbs_mixmulti,
+                  'annealed gibbs': annealed_gibbs_mixmulti,
+                  'em': em_mixmulti}
 
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
