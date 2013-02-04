@@ -165,6 +165,7 @@ def top_n(counts, n):
     keys = [i for i in range(len(counts)) if counts[i] > 0]
     return sorted(keys, key=lambda x: counts[x], reverse=True)[:n]
 
+
 def lim_plogp(p):
     """
     lim_plogp(float): float
@@ -179,6 +180,7 @@ def lim_plogp(p):
             return 0
         else:
             raise
+
 
 def lim_xlogy(x, y):
     """
@@ -195,3 +197,14 @@ def lim_xlogy(x, y):
             return 0
         else:
             raise
+
+
+def digamma(x):
+    if 0 < x <= 1e-5:
+        return -.577215664901532860606512090082 - 1 / x
+    elif x >= 49:
+        inv = 1/ (x * x)
+        lx = math.log(x)
+        return lx - .5 / x - inv * ((1 / 12) + inv * (1 / 120 - inv / 252))
+    else:
+        return digamma(x + 1) - 1 / x
