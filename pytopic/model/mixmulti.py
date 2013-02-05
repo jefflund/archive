@@ -5,7 +5,7 @@ from __future__ import division
 import math
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
-from pytopic.util.compute import lnormalize_list, ladd, lsum
+from pytopic.util.compute import lnormalize_list, ladd, lsum, digamma
 from pytopic.util.data import init_counter
 
 def annealed_gibbs_mixmulti(model, temp):
@@ -80,8 +80,7 @@ def annealed_em_mixmulti(model, temp):
 
     def calc_posterior(d):
         likes = [sum(w[d][v] * phi[k][v] for v in doc_words[d]) for k in K]
-        post = [prior + like for prior, like in zip(lambda_, likes)]
-        return post
+        return [prior + like for prior, like in zip(lambda_, likes)]
 
     if temp == 0:
         def update_posterior(d):
@@ -129,13 +128,92 @@ def annealed_em_mixmulti(model, temp):
 def em_mixmulti(model):
     return annealed_em_mixmulti(model, 1)
 
+
+def vem_mixmulti(model):
+
+    gamma = model.gamma
+    beta = model.beta
+
+    M = range(model.M)
+    K = range(model.K)
+    V = range(model.V)
+    w = model.c_dv
+
+    doc_words = [set(doc) for doc in model.w]
+    word_docs = [set() for v in V]
+    for d in M:
+        for word in doc_words[d]:
+            word_docs[word].add(d)
+
+    c_k_doc = model.c_k_doc
+    c_k_token = model.c_k_token
+    c_kv = model.c_kv
+
+    a = [gamma + c_k_doc[k] / len(M) for k in K]
+    b = [[beta + c_kv[k][v] / c_k_token[k] for v in V] for k in K]
+
+    def calc_digammas():
+        di_suma = digamma(sum(a))
+        di_adiff = [digamma(a[k]) - di_suma for k in K]
+
+        di_sumb = [digamma(sum(b[k])) for k in K]
+        di_bdiff = [[b[k][v] - di_sumb[k] for v in V] for k in K]
+
+        return di_adiff, di_bdiff
+
+    di_adiff, di_bdiff = calc_digammas()
+
+    def calc_theta(d):
+        bs = [sum(w[d][v] * di_bdiff[k][v] for v in doc_words[d]) for k in K]
+        return [a + b for a, b in zip(di_adiff, bs)]
+
+    def update_theta(d):
+        theta = calc_theta(d)
+        lnormalize_list(theta)
+        return theta
+
+    theta = [update_theta(d) for d in M]
+
+    def vem_iteration():
+        update_a()
+        update_b()
+        update_digamms()
+        update_thetas()
+        update_model()
+
+    def update_a():
+        theta_sums = [lsum(theta[d][k] for d in M) for k in K]
+        a[:] = [gamma + math.exp(theta_sum) for theta_sum in theta_sums]
+
+    def update_b():
+        for k in K:
+            for v in V:
+                b[k][v] = beta
+                for d in word_docs[v]:
+                    b[k][v] += math.exp(theta[d][k]) * w[d][v]
+
+    def update_digamms():
+        di_adiff[:], di_bdiff[:] = calc_digammas()
+
+    def update_thetas():
+        theta[:] = [update_theta(d) for d in M]
+
+    def update_model():
+        for d in M:
+            model.set_k(d, max(K, key=lambda k: theta[d][k]))
+
+    return vem_iteration
+
+
+
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
     algorithms = {'gibbs': gibbs_mixmulti,
                   'annealed gibbs': annealed_gibbs_mixmulti,
                   'em': em_mixmulti,
-                  'annealed em': annealed_em_mixmulti}
+                  'annealed em': annealed_em_mixmulti,
+                  'vem': vem_mixmulti}
 
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
