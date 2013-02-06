@@ -6,6 +6,7 @@ import math
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
 from pytopic.util.compute import lnormalize_list, ladd, lsum, digamma
+from pytopic.util.compute import normalize_list
 from pytopic.util.data import init_counter
 
 def annealed_gibbs_mixmulti(model, temp):
@@ -93,7 +94,6 @@ def annealed_em_mixmulti(model, temp):
                 lnormalize_list(posteriors[d])
             return posteriors
 
-
     def calc_posterior(d, lambda_, phi):
         likes = [sum(w[d][v] * phi[k][v] for v in doc_words[d]) for k in K]
         return [prior + like for prior, like in zip(lambda_, likes)]
@@ -133,6 +133,9 @@ def em_mixmulti(model):
 
 
 def vem_mixmulti(model):
+    gamma = model.gamma
+    beta = model.beta
+
     M = range(model.M)
     K = range(model.K)
     V = range(model.V)
@@ -145,38 +148,50 @@ def vem_mixmulti(model):
             word_docs[word].add(d)
 
     def init_theta():
-        a = [math.log(model.c_k_doc[k]) for k in K]
-        lnormalize_list(a)
+        lambda_ = [math.log(model.c_k_doc[k]) for k in K]
+        lnormalize_list(lambda_)
 
-        b = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
+        phi = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
         for k in K:
-            lnormalize_list(b[k])
+            lnormalize_list(phi[k])
 
-        return update_theta(a, b)
-
-    def update_theta(a, b):
-        theta = [calc_theta(d, a, b) for d in M]
+        theta = [[lambda_[k] for k in K] for d in M]
         for d in M:
+            for k in K:
+                theta[d][k] += sum(w[d][v] * phi[k][v] for v in doc_words[d])
             lnormalize_list(theta[d])
+
         return theta
 
-    def calc_theta(d, a, b):
-        bsums = [sum(w[d][v] * b[k][v] for v in doc_words[d]) for k in K]
-        return [prior + like for prior, like in zip(a, bsums)]
+    def update_theta(a, b):
+        dig_suma = digamma(sum(a))
+        dig_a = [digamma(a[k]) - dig_suma for k in K]
+
+        dig_sumb = [digamma(sum(b[k])) for k in K]
+        dig_b = [[digamma(b[k][v]) - dig_sumb[k] for v in V] for k in K]
+
+        theta = [[dig_a[k] for k in K] for d in M]
+        for d in M:
+            for k in K:
+                theta[d][k] += sum(w[d][v] * dig_b[k][v] for v in doc_words[d])
+            lnormalize_list(theta[d])
+
+        return theta
 
     def calc_a():
-        a = [lsum(theta[d][k] for d in M) for k in K]
-        lnormalize_list(a)
+        a = [gamma for k in K]
+        for k in K:
+            a[k] += math.exp(lsum(theta[d][k] for d in M))
+        normalize_list(a)
         return a
 
     def calc_b():
-        b = [[0 for v in V] for k in K]
+        b = [[beta for v in V] for k in K]
         for k in K:
             for v in V:
                 for d in word_docs[v]:
-                    pseudocount = theta[d][k] + math.log(w[d][v])
-                    b[k][v] = ladd(b[k][v], pseudocount)
-            lnormalize_list(b[k])
+                    b[k][v] += math.exp(theta[d][k]) * w[d][v]
+            normalize_list(b[k])
         return b
 
     def update_model():
