@@ -79,7 +79,6 @@ def annealed_em_mixmulti(model, temp):
 
         return update_posteriors(lambda_, phi)
 
-    # TODO annealing
     if temp == 1:
         def update_posteriors(lambda_, phi):
             posteriors = [calc_posterior(d, lambda_, phi) for d in M]
@@ -134,10 +133,6 @@ def em_mixmulti(model):
 
 
 def vem_mixmulti(model):
-
-    gamma = model.gamma
-    beta = model.beta
-
     M = range(model.M)
     K = range(model.K)
     V = range(model.V)
@@ -149,65 +144,54 @@ def vem_mixmulti(model):
         for word in doc_words[d]:
             word_docs[word].add(d)
 
-    c_k_doc = model.c_k_doc
-    c_k_token = model.c_k_token
-    c_kv = model.c_kv
+    def init_theta():
+        a = [math.log(model.c_k_doc[k]) for k in K]
+        lnormalize_list(a)
 
-    a = [gamma + c_k_doc[k] / len(M) for k in K]
-    b = [[beta + c_kv[k][v] / c_k_token[k] for v in V] for k in K]
+        b = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
+        for k in K:
+            lnormalize_list(b[k])
 
-    def calc_digammas():
-        di_suma = digamma(sum(a))
-        di_adiff = [digamma(a[k]) - di_suma for k in K]
+        return update_theta(a, b)
 
-        di_sumb = [digamma(sum(b[k])) for k in K]
-        di_bdiff = [[b[k][v] - di_sumb[k] for v in V] for k in K]
-
-        return di_adiff, di_bdiff
-
-    di_adiff, di_bdiff = calc_digammas()
-
-    def calc_theta(d):
-        bs = [sum(w[d][v] * di_bdiff[k][v] for v in doc_words[d]) for k in K]
-        return [a + b for a, b in zip(di_adiff, bs)]
-
-    def update_theta(d):
-        theta = calc_theta(d)
-        lnormalize_list(theta)
+    def update_theta(a, b):
+        theta = [calc_theta(d, a, b) for d in M]
+        for d in M:
+            lnormalize_list(theta[d])
         return theta
 
-    theta = [update_theta(d) for d in M]
+    def calc_theta(d, a, b):
+        bsums = [sum(w[d][v] * b[k][v] for v in doc_words[d]) for k in K]
+        return [prior + like for prior, like in zip(a, bsums)]
 
-    def vem_iteration():
-        update_a()
-        update_b()
-        update_digamms()
-        update_thetas()
-        update_model()
+    def calc_a():
+        a = [lsum(theta[d][k] for d in M) for k in K]
+        lnormalize_list(a)
+        return a
 
-    def update_a():
-        theta_sums = [lsum(theta[d][k] for d in M) for k in K]
-        a[:] = [gamma + math.exp(theta_sum) for theta_sum in theta_sums]
-
-    def update_b():
+    def calc_b():
+        b = [[0 for v in V] for k in K]
         for k in K:
             for v in V:
-                b[k][v] = beta
                 for d in word_docs[v]:
-                    b[k][v] += math.exp(theta[d][k]) * w[d][v]
-
-    def update_digamms():
-        di_adiff[:], di_bdiff[:] = calc_digammas()
-
-    def update_thetas():
-        theta[:] = [update_theta(d) for d in M]
+                    pseudocount = theta[d][k] + math.log(w[d][v])
+                    b[k][v] = ladd(b[k][v], pseudocount)
+            lnormalize_list(b[k])
+        return b
 
     def update_model():
         for d in M:
             model.set_k(d, max(K, key=lambda k: theta[d][k]))
 
-    return vem_iteration
+    theta = init_theta()
 
+    def vem_iteration():
+        a = calc_a()
+        b = calc_b()
+        theta[:] = update_theta(a, b)
+        update_model()
+
+    return vem_iteration
 
 
 class MixtureMultinomial(TopicModel):
