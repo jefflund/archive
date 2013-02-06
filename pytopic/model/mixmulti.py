@@ -69,61 +69,65 @@ def annealed_em_mixmulti(model, temp):
         for word in doc_words[d]:
             word_docs[word].add(d)
 
-    c_k_doc = model.c_k_doc
-    c_k_token = model.c_k_token
-    c_kv = model.c_kv
+    def init_posteriors():
+        lambda_ = [math.log(model.c_k_doc[k]) for k in K]
+        lnormalize_list(lambda_)
 
-    lambda_ = [math.log(c_k_doc[k] / len(M)) for k in K]
-    phi = [[math.log(1 + c_kv[k][v] / c_k_token[k]) for v in V] for k in K]
-    for k in K:
-        lnormalize_list(phi[k])
+        phi = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
+        for k in K:
+            lnormalize_list(phi[k])
 
-    def calc_posterior(d):
+        return update_posteriors(lambda_, phi)
+
+    # TODO annealing
+    if temp == 1:
+        def update_posteriors(lambda_, phi):
+            posteriors = [calc_posterior(d, lambda_, phi) for d in M]
+            for posterior in posteriors:
+                lnormalize_list(posterior)
+            return posteriors
+    else:
+        def update_posteriors(lambda_, phi):
+            posteriors = [calc_posterior(d, lambda_, phi) for d in M]
+            for d in M:
+                posteriors[d] = [post / temp for post in posteriors[d]]
+                lnormalize_list(posteriors[d])
+            return posteriors
+
+
+    def calc_posterior(d, lambda_, phi):
         likes = [sum(w[d][v] * phi[k][v] for v in doc_words[d]) for k in K]
         return [prior + like for prior, like in zip(lambda_, likes)]
 
-    if temp == 0:
-        def update_posterior(d):
-            lposterior = calc_posterior(d)
-            lnormalize_list(lposterior)
-            return lposterior
-    else:
-        def update_posterior(d):
-            lposterior = calc_posterior(d)
-            lposterior = [post / temp for post in lposterior]
-            lnormalize_list(lposterior)
-            return lposterior
-
-    posteriors = [update_posterior(d) for d in M]
-
-    def em_iteration():
-        update_lambda()
-        update_phi()
-        update_posteriors()
-        update_model()
-
-    def update_lambda():
-        for k in K:
-            lambda_[k] = lsum(posteriors[d][k] for d in M)
+    def calc_lambda():
+        lambda_ = [lsum(posteriors[d][k] for d in M) for k in K]
         lnormalize_list(lambda_)
+        return lambda_
 
-    def update_phi():
+    def calc_phi():
+        phi = [[0 for v in V] for k in K]
         for k in K:
             for v in V:
-                phi[k][v] = 0
                 for d in word_docs[v]:
                     pseudocount = posteriors[d][k] + math.log(w[d][v])
                     phi[k][v] = ladd(phi[k][v], pseudocount)
             lnormalize_list(phi[k])
-
-    def update_posteriors():
-        posteriors[:] = [update_posterior(d) for d in M]
+        return phi
 
     def update_model():
         for d in M:
             model.set_k(d, max(K, key=lambda k: posteriors[d][k]))
 
+    posteriors = init_posteriors()
+
+    def em_iteration():
+        lambda_ = calc_lambda()
+        phi = calc_phi()
+        posteriors[:] = update_posteriors(lambda_, phi)
+        update_model()
+
     return em_iteration
+
 
 def em_mixmulti(model):
     return annealed_em_mixmulti(model, 1)
