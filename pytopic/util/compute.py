@@ -210,5 +210,15 @@ def digamma(x):
         return digamma(x + 1) - 1 / x
 
 
+def trigamma(x):
+    inv = 1 / (x * x)
+    if 0 < x <= 1e-5:
+        return inc
+    elif x >= 49:
+        return 1 / x + inv / 2 + inv / x * (1 / 6 - inv * (1 / 30 + inv / 42))
+    else:
+        return trigamma(x + 1) + inv
+
+
 def argmax_list(counts):
     return max(range(len(counts)), key=lambda i: counts[i])
