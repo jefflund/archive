@@ -147,10 +147,10 @@ def em_mixmulti(model):
     return annealed_em_mixmulti(model, 1)
 
 
-def vem_mixmulti(model):
+def annealed_vem_mixmulti(model, temp):
     """
-    vem_mixmulti(MixtureMultinomial): func
-    Creates an variational em inference algorithm for the mixture of
+    annealed_vem_mixmulti(MixtureMultinomial): func
+    Creates an annealed variational em inference algorithm for the mixture of
     multinomials model
     """
 
@@ -184,8 +184,7 @@ def vem_mixmulti(model):
 
         return theta
 
-    # TODO annealing
-    def update_theta(a, b):
+    def calc_theta(a, b):
         dig_suma = digamma(sum(a))
         dig_a = [digamma(a[k]) - dig_suma for k in K]
 
@@ -196,9 +195,22 @@ def vem_mixmulti(model):
         for d in M:
             for k in K:
                 theta[d][k] += sum(w[d][v] * dig_b[k][v] for v in doc_words[d])
-            lnormalize_list(theta[d])
 
         return theta
+
+    if temp == 1:
+        def update_theta(a, b):
+            theta = calc_theta(a, b)
+            for d in M:
+                lnormalize_list(theta[d])
+            return theta
+    else:
+        def update_theta(a, b):
+            theta = calc_theta(a, b)
+            for d in M:
+                theta[d] = [t / temp for t in theta[d]]
+                lnormalize_list(theta[d])
+            return theta
 
     def calc_a():
         a = [gamma for k in K]
@@ -231,6 +243,15 @@ def vem_mixmulti(model):
     return vem_iteration
 
 
+def vem_mixmulti(model):
+    """
+    vem_mixmulti(MixtureMultinomial): func
+    Creates an variational em inference algorithm for the mixture of
+    multinomials model
+    """
+
+    return annealed_vem_mixmulti(model, 1)
+
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
@@ -238,7 +259,8 @@ class MixtureMultinomial(TopicModel):
                   'annealed gibbs': annealed_gibbs_mixmulti,
                   'em': em_mixmulti,
                   'annealed em': annealed_em_mixmulti,
-                  'vem': vem_mixmulti}
+                  'vem': vem_mixmulti,
+                  'annealed vem': annealed_vem_mixmulti}
 
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
