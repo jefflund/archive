@@ -208,3 +208,7 @@ def digamma(x):
         return lx - .5 / x - inv * ((1 / 12) + inv * (1 / 120 - inv / 252))
     else:
         return digamma(x + 1) - 1 / x
+
+
+def argmax_list(counts):
+    return max(range(len(counts)), key=lambda i: counts[i])

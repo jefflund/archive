@@ -6,15 +6,10 @@ import math
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
 from pytopic.util.compute import lnormalize_list, ladd, lsum, digamma
-from pytopic.util.compute import normalize_list
+from pytopic.util.compute import normalize_list, argmax_list
 from pytopic.util.data import init_counter
 
-def annealed_gibbs_mixmulti(model, temp):
-    """
-    annealed_gibbs_mixmulti(MixtureMultinomial, float): func
-    Creates an annealed Gibbs sampler for the Mixture of Multinomials model
-    """
-
+def _gibbs_mixmulti(model, temp, use_argmax):
     N = model.N
     K = range(model.K)
     doc_words = [set(doc) for doc in model.w]
@@ -35,7 +30,7 @@ def annealed_gibbs_mixmulti(model, temp):
         for j in K:
             model.set_k(d, j)
             lcounts.append(lprob_k(d, j))
-        model.set_k(d, sample_lcounts(lcounts))
+        model.set_k(d, sample(lcounts))
 
     def compute_lprob_k(d, j):
         prob = math.log(gamma + c_k_doc[j] - 1)
@@ -51,6 +46,11 @@ def annealed_gibbs_mixmulti(model, temp):
     else:
         lprob_k = lambda d, j: compute_lprob_k(d, j) / temp
 
+    if use_argmax:
+        sample = argmax_list
+    else:
+        sample = sample_lcounts
+
     return sample_model
 
 
@@ -60,7 +60,35 @@ def gibbs_mixmulti(model):
     Creates a Gibbs sampler for the mixture of multinomials model
     """
 
-    return annealed_gibbs_mixmulti(model, 1)
+    return _gibbs_mixmulti(model, 1, False)
+
+
+def annealed_gibbs_mixmulti(model, temp):
+    """
+    annealed_gibbs_mixmulti(MixtureMultinomial, float): func
+    Creates an annealed Gibbs sampler for the Mixture of Multinomials model
+    """
+
+    return _gibbs_mixmulti(model, temp, False)
+
+
+def map_mixmulti(model):
+    """
+    map_mixmulti(model): func
+    Returns an argmax version of the Gibbs sampler for Mixture of Multinomials
+    """
+
+    return _gibbs_mixmulti(model, 1, True)
+
+
+def annealed_map_mixmulti(model, temp):
+    """
+    map_mixmulti(model): func
+    Returns an argmax version of the annealed Gibbs sampler for the Mixture of
+    Multinomials model
+    """
+
+    return _gibbs_mixmulti(model, temp, True)
 
 
 def annealed_em_mixmulti(model, temp):
@@ -257,6 +285,8 @@ class MixtureMultinomial(TopicModel):
 
     algorithms = {'gibbs': gibbs_mixmulti,
                   'annealed gibbs': annealed_gibbs_mixmulti,
+                  'map': map_mixmulti,
+                  'annealed map': annealed_map_mixmulti,
                   'em': em_mixmulti,
                   'annealed em': annealed_em_mixmulti,
                   'vem': vem_mixmulti,

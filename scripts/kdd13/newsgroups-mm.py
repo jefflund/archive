@@ -4,8 +4,8 @@ from pytopic.util.handler import Printer, Timer, ClusterMetrics
 from pytopic.analysis.cluster import Clustering
 
 def get_model(corpus):
-    mm = MixtureMultinomial(corpus, 20, 2, 2)
-    mm.set_inference('vem')
+    mm = MixtureMultinomial(corpus, 20, 2, .001)
+    mm.set_inference('map')
     mm.register_handler(Timer())
     mm.register_handler(Printer(10))
     mm.register_handler(ClusterMetrics(Clustering.from_corpus(corpus), 10))
