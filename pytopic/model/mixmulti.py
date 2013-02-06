@@ -10,6 +10,11 @@ from pytopic.util.compute import normalize_list
 from pytopic.util.data import init_counter
 
 def annealed_gibbs_mixmulti(model, temp):
+    """
+    annealed_gibbs_mixmulti(MixtureMultinomial, float): func
+    Creates an annealed Gibbs sampler for the Mixture of Multinomials model
+    """
+
     N = model.N
     K = range(model.K)
     doc_words = [set(doc) for doc in model.w]
@@ -50,6 +55,11 @@ def annealed_gibbs_mixmulti(model, temp):
 
 
 def gibbs_mixmulti(model):
+    """
+    gibbs_mixmulti(MixtureMultinomial): func
+    Creates a Gibbs sampler for the mixture of multinomials model
+    """
+
     return annealed_gibbs_mixmulti(model, 1)
 
 
@@ -129,10 +139,21 @@ def annealed_em_mixmulti(model, temp):
 
 
 def em_mixmulti(model):
+    """
+    em_mixmulti(MixtureMultinomial): func
+    Creates an em inference algorithm for the mixture of multinomials model
+    """
+
     return annealed_em_mixmulti(model, 1)
 
 
 def vem_mixmulti(model):
+    """
+    vem_mixmulti(MixtureMultinomial): func
+    Creates an variational em inference algorithm for the mixture of
+    multinomials model
+    """
+
     gamma = model.gamma
     beta = model.beta
 
@@ -163,6 +184,7 @@ def vem_mixmulti(model):
 
         return theta
 
+    # TODO annealing
     def update_theta(a, b):
         dig_suma = digamma(sum(a))
         dig_a = [digamma(a[k]) - dig_suma for k in K]
