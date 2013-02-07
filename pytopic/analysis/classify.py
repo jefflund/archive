@@ -1,6 +1,17 @@
 from __future__ import division
 
-from pytopic.util.compute import normalize_and_log
+def normalize_and_log(counts):
+    """
+    normalize_and_log(dict): None
+    Normalizes and dictionary and then converts it to log space
+    """
+
+    total = sum(counts.values())
+    for label in counts:
+        if counts[label] == 0:
+            counts[label] = float('-inf')
+        else:
+            counts[label] = math.log(counts[label] / total)
 
 class NaiveBayes(object):
     """A simple Multinomial Naive Bayes classifier"""

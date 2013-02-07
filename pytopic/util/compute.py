@@ -92,18 +92,7 @@ def n_choose_2(n):
 
 def normalize(counts):
     """
-    normalize(dict): None
-    Normalizes the count dictionary
-    """
-
-    total = sum(counts.values())
-    for label in counts:
-        counts[label] /= total
-
-
-def normalize_list(counts):
-    """
-    normalize(list): None
+    normalize(list of float): None
     Normalizes the count list
     """
 
@@ -111,48 +100,18 @@ def normalize_list(counts):
     for i in range(len(counts)):
         counts[i] /= total
 
+
 def lnormalize(counts):
     """
-    lnormalize(dict): None
-    Normalizes a log count dictionary in log space
+    lnormalize(list of float): None
+    Normalizes the count list in log space
     """
 
-    lsum = float('-inf')
-    for label in counts:
-        lsum = ladd(lsum, counts[label])
-    for label in counts:
-        counts[label] -= lsum
-
-
-def lnormalize_list(counts):
     lsum = float('-inf')
     for count in counts:
         lsum = ladd(lsum, count)
     for i in range(len(counts)):
         counts[i] -= lsum
-
-
-def normalize_and_log(counts):
-    """
-    normalize_and_log(dict): None
-    Normalizes and dictionary and then converts it to log space
-    """
-
-    total = sum(counts.values())
-    for label in counts:
-        if counts[label] == 0:
-            counts[label] = float('-inf')
-        else:
-            counts[label] = math.log(counts[label] / total)
-
-
-def normalize_and_log_list(counts):
-    total = sum(counts)
-    for i, x in enumerate(counts):
-        if x == 0:
-            counts[i] = float('-inf')
-        else:
-            counts[i] = math.log(x / total)
 
 
 def top_n(counts, n):
@@ -220,5 +179,10 @@ def trigamma(x):
         return trigamma(x + 1) + inv
 
 
-def argmax_list(counts):
+def argmax(counts):
+    """
+    argmax(list of float): int
+    Returns the index of the highest count in the list
+    """
+
     return max(range(len(counts)), key=lambda i: counts[i])

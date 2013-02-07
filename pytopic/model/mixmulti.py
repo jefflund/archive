@@ -5,8 +5,8 @@ from __future__ import division
 import math
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
-from pytopic.util.compute import lnormalize_list, ladd, lsum, digamma
-from pytopic.util.compute import normalize_list, argmax_list
+from pytopic.util.compute import lnormalize, ladd, lsum, digamma
+from pytopic.util.compute import normalize, argmax
 from pytopic.util.data import init_counter
 
 def _gibbs_mixmulti(model, temp, use_argmax):
@@ -47,7 +47,7 @@ def _gibbs_mixmulti(model, temp, use_argmax):
         lprob_k = lambda d, j: compute_lprob_k(d, j) / temp
 
     if use_argmax:
-        sample = argmax_list
+        sample = argmax
     else:
         sample = sample_lcounts
 
@@ -110,11 +110,11 @@ def annealed_em_mixmulti(model, temp):
 
     def init_posteriors():
         lambda_ = [math.log(model.c_k_doc[k]) for k in K]
-        lnormalize_list(lambda_)
+        lnormalize(lambda_)
 
         phi = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
         for k in K:
-            lnormalize_list(phi[k])
+            lnormalize(phi[k])
 
         return update_posteriors(lambda_, phi)
 
@@ -122,14 +122,14 @@ def annealed_em_mixmulti(model, temp):
         def update_posteriors(lambda_, phi):
             posteriors = [calc_posterior(d, lambda_, phi) for d in M]
             for posterior in posteriors:
-                lnormalize_list(posterior)
+                lnormalize(posterior)
             return posteriors
     else:
         def update_posteriors(lambda_, phi):
             posteriors = [calc_posterior(d, lambda_, phi) for d in M]
             for d in M:
                 posteriors[d] = [post / temp for post in posteriors[d]]
-                lnormalize_list(posteriors[d])
+                lnormalize(posteriors[d])
             return posteriors
 
     def calc_posterior(d, lambda_, phi):
@@ -138,7 +138,7 @@ def annealed_em_mixmulti(model, temp):
 
     def calc_lambda():
         lambda_ = [lsum(posteriors[d][k] for d in M) for k in K]
-        lnormalize_list(lambda_)
+        lnormalize(lambda_)
         return lambda_
 
     def calc_phi():
@@ -148,7 +148,7 @@ def annealed_em_mixmulti(model, temp):
                 for d in word_docs[v]:
                     pseudocount = posteriors[d][k] + math.log(w[d][v])
                     phi[k][v] = ladd(phi[k][v], pseudocount)
-            lnormalize_list(phi[k])
+            lnormalize(phi[k])
         return phi
 
     def update_model():
@@ -198,17 +198,17 @@ def annealed_vem_mixmulti(model, temp):
 
     def init_theta():
         lambda_ = [math.log(model.c_k_doc[k]) for k in K]
-        lnormalize_list(lambda_)
+        lnormalize(lambda_)
 
         phi = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
         for k in K:
-            lnormalize_list(phi[k])
+            lnormalize(phi[k])
 
         theta = [[lambda_[k] for k in K] for d in M]
         for d in M:
             for k in K:
                 theta[d][k] += sum(w[d][v] * phi[k][v] for v in doc_words[d])
-            lnormalize_list(theta[d])
+            lnormalize(theta[d])
 
         return theta
 
@@ -230,21 +230,21 @@ def annealed_vem_mixmulti(model, temp):
         def update_theta(a, b):
             theta = calc_theta(a, b)
             for d in M:
-                lnormalize_list(theta[d])
+                lnormalize(theta[d])
             return theta
     else:
         def update_theta(a, b):
             theta = calc_theta(a, b)
             for d in M:
                 theta[d] = [t / temp for t in theta[d]]
-                lnormalize_list(theta[d])
+                lnormalize(theta[d])
             return theta
 
     def calc_a():
         a = [gamma for k in K]
         for k in K:
             a[k] += math.exp(lsum(theta[d][k] for d in M))
-        normalize_list(a)
+        normalize(a)
         return a
 
     def calc_b():
@@ -253,7 +253,7 @@ def annealed_vem_mixmulti(model, temp):
             for v in V:
                 for d in word_docs[v]:
                     b[k][v] += math.exp(theta[d][k]) * w[d][v]
-            normalize_list(b[k])
+            normalize(b[k])
         return b
 
     def update_model():
