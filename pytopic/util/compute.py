@@ -213,7 +213,7 @@ def digamma(x):
 def trigamma(x):
     inv = 1 / (x * x)
     if 0 < x <= 1e-5:
-        return inc
+        return inv
     elif x >= 49:
         return 1 / x + inv / 2 + inv / x * (1 / 6 - inv * (1 / 30 + inv / 42))
     else:
