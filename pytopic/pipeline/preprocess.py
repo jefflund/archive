@@ -1,6 +1,7 @@
 """Functions for preprocessing a corpus"""
 
 from pytopic.pipeline.corpus import Corpus
+from pytopic.util.compute import sample_order
 
 def filter_rarewords(corpus, threshold, retain_empty=False):
     """
@@ -45,3 +46,28 @@ def load_stopwords(*stopword_filenames):
             if len(word) > 0:
                 stopwords.add(word)
     return stopwords
+
+def split_corpus(corpus, training_proportion):
+    """
+    split_corpus(Corpus, float): return Corpus, Corpus
+    Splits a corpus into a training and test set. Both corpora will have the
+    complete vocabularly of the original Corpus, and the documents are shuffled
+    before splitting, to ensure an even mix of document types.
+    """
+
+    training = Corpus()
+    test = Corpus()
+    training.vocab = corpus.vocab
+    test.vocab = corpus.vocab
+
+    break_point = int(len(corpus) * training_proportion)
+    doc_ids = sample_order(len(corpus))
+
+    for d in doc_ids[:break_point]:
+        doc_index = training.titles.add_unique(corpus.titles[d])
+        training.data[doc_index] = corpus.data[d]
+    for d in doc_ids[break_point:]:
+        doc_index = test.titles.add_unique(corpus.titles[d])
+        test.data[doc_index] = corpus.data[d]
+
+    return training, test
