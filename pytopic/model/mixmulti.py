@@ -2,6 +2,7 @@
 
 from __future__ import division
 
+import collections
 import math
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
@@ -354,3 +355,22 @@ class MixtureMultinomial(TopicModel):
         if verbose:
             for d in range(self.M):
                 print '{0} - {1}'.format(self.titles[d], self.k[d])
+
+    def calc_perplexity(self, corpus):
+        K = range(self.K)
+
+        lambda_ = [math.log(self.gamma + c) for c in self.c_k_doc]
+        lnormalize(lambda_)
+
+        phi = [[math.log(self.beta + c) for c in c_k] for c_k in self.c_kv]
+        for phi_k in phi:
+            lnormalize(phi_k)
+
+        docs = [collections.Counter(doc) for doc in corpus]
+
+        p = 0
+        for w in docs:
+            p += lsum(lambda_[k] + sum(w[v] * phi[k][v] for v in w) for k in K)
+        p /= sum(len(doc) for doc in corpus)
+
+        return math.exp(-p)
