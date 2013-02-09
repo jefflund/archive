@@ -19,13 +19,26 @@ def get_model(corpus, opts):
 
     return mm
 
+
+def convert_param(param):
+    if param.isdigit():
+        return int(param)
+    elif param.isalpha():
+        return param.lower() in ['true', 'yes']
+    else:
+        return float(param)
+
+
 def get_opts():
     parser = argparse.ArgumentParser(description='Runs MM on 20NG')
     parser.add_argument('--inference', nargs='+', default=['gibbs'])
     parser.add_argument('--num-iters', type=int, default=100)
     parser.add_argument('--print-interval', type=int, default=10)
     parser.add_argument('--train-percent', type=float, default=.5)
-    return parser.parse_args()
+    opts = parser.parse_args()
+    opts.inference[1:] = [convert_param(param) for param in opts.inference[1:]]
+    return opts
+
 
 def main():
     opts = get_opts()
@@ -33,6 +46,7 @@ def main():
     corpus = get_newsgroups()
     model = get_model(corpus, opts)
     model.inference(opts.num_iters)
+
 
 if __name__ == '__main__':
     main()
