@@ -12,8 +12,6 @@ from pytopic.util.compute import normalize, argmax
 from pytopic.util.data import init_counter
 
 def _gibbs(model, temp, use_argmax):
-    temp = int(temp)
-
     N = model.N
     K = range(model.K)
     doc_words = [set(doc) for doc in model.w]
@@ -101,8 +99,6 @@ def annealed_em(model, temp):
     Creates an annealed em inference algorithm for mixture of multinomials
     """
 
-    temp = int(temp)
-
     M = range(model.M)
     K = range(model.K)
     V = range(model.V)
@@ -187,8 +183,6 @@ def annealed_vem(model, temp):
     Creates an annealed variational em inference algorithm for the mixture of
     multinomials model
     """
-
-    temp = int(temp)
 
     gamma = model.gamma
     beta = model.beta
@@ -289,11 +283,10 @@ def vem(model):
     return annealed_vem(model, 1)
 
 def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
-
-    pop_size = int(pop_size)
-    eliteness = float(eliteness)
-    mutate_prob = float(mutate_prob)
-    keep_elite = keep_elite.lower() == 'true'
+    """
+    ga(MixtureMultinomial, int, float, float, bool): func
+    Creates a genetic algorithm inference algorithm for mixture of multinomials
+    """
 
     K = model.K
     M = range(model.M)
