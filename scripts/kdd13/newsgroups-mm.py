@@ -15,7 +15,6 @@ def get_model(corpus, opts):
     mm.register_handler(Timer())
     mm.register_handler(Printer(opts.print_interval))
     mm.register_handler(ClusterMetrics(clustering, opts.print_interval))
-    mm.register_handler(Perplexity(training, opts.print_interval))
     mm.register_handler(Perplexity(test, opts.print_interval))
 
     return mm
