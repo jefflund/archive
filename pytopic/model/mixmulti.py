@@ -4,13 +4,14 @@ from __future__ import division
 
 import collections
 import math
+import random
 from pytopic.model.basic import TopicModel
 from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
 from pytopic.util.compute import lnormalize, ladd, lsum, digamma
 from pytopic.util.compute import normalize, argmax
 from pytopic.util.data import init_counter
 
-def _gibbs_mixmulti(model, temp, use_argmax):
+def _gibbs(model, temp, use_argmax):
     N = model.N
     K = range(model.K)
     doc_words = [set(doc) for doc in model.w]
@@ -55,46 +56,46 @@ def _gibbs_mixmulti(model, temp, use_argmax):
     return sample_model
 
 
-def gibbs_mixmulti(model):
+def gibbs(model):
     """
-    gibbs_mixmulti(MixtureMultinomial): func
+    gibbs(MixtureMultinomial): func
     Creates a Gibbs sampler for the mixture of multinomials model
     """
 
-    return _gibbs_mixmulti(model, 1, False)
+    return _gibbs(model, 1, False)
 
 
-def annealed_gibbs_mixmulti(model, temp):
+def annealed_gibbs(model, temp):
     """
-    annealed_gibbs_mixmulti(MixtureMultinomial, float): func
+    annealed_gibbs(MixtureMultinomial, float): func
     Creates an annealed Gibbs sampler for the Mixture of Multinomials model
     """
 
-    return _gibbs_mixmulti(model, temp, False)
+    return _gibbs(model, temp, False)
 
 
-def map_mixmulti(model):
+def map(model):
     """
-    map_mixmulti(model): func
+    map(model): func
     Returns an argmax version of the Gibbs sampler for Mixture of Multinomials
     """
 
-    return _gibbs_mixmulti(model, 1, True)
+    return _gibbs(model, 1, True)
 
 
-def annealed_map_mixmulti(model, temp):
+def annealed_map(model, temp):
     """
-    map_mixmulti(model): func
+    map(model): func
     Returns an argmax version of the annealed Gibbs sampler for the Mixture of
     Multinomials model
     """
 
-    return _gibbs_mixmulti(model, temp, True)
+    return _gibbs(model, temp, True)
 
 
-def annealed_em_mixmulti(model, temp):
+def annealed_em(model, temp):
     """
-    annealed_em_mixmulti(MixtureMultinomial, float): func
+    annealed_em(MixtureMultinomial, float): func
     Creates an annealed em inference algorithm for mixture of multinomials
     """
 
@@ -167,18 +168,18 @@ def annealed_em_mixmulti(model, temp):
     return em_iteration
 
 
-def em_mixmulti(model):
+def em(model):
     """
-    em_mixmulti(MixtureMultinomial): func
+    em(MixtureMultinomial): func
     Creates an em inference algorithm for the mixture of multinomials model
     """
 
-    return annealed_em_mixmulti(model, 1)
+    return annealed_em(model, 1)
 
 
-def annealed_vem_mixmulti(model, temp):
+def annealed_vem(model, temp):
     """
-    annealed_vem_mixmulti(MixtureMultinomial): func
+    annealed_vem(MixtureMultinomial): func
     Creates an annealed variational em inference algorithm for the mixture of
     multinomials model
     """
@@ -272,26 +273,96 @@ def annealed_vem_mixmulti(model, temp):
     return vem_iteration
 
 
-def vem_mixmulti(model):
+def vem(model):
     """
-    vem_mixmulti(MixtureMultinomial): func
+    vem(MixtureMultinomial): func
     Creates an variational em inference algorithm for the mixture of
     multinomials model
     """
 
-    return annealed_vem_mixmulti(model, 1)
+    return annealed_vem(model, 1)
+
+def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
+
+    K = model.K
+    M = range(model.M)
+    doc_words = [set(doc) for doc in model.w]
+    w = model.c_dv
+
+    def init_gene(index):
+        if index == 0:
+            return [k for k in model.k]
+        else:
+            return [sample_uniform(K) for _ in M]
+
+    def mutate(gene):
+        for d in M:
+            if random.random() < mutate_prob:
+                gene[d] = sample_uniform(K)
+
+    def cross_over(parent_a, parent_b):
+        parents = zip(parents_a, parent_b)
+
+        select = [int(random.getrandbits(1)) for _ in M]
+        child_a = [p[i] for p, i in zip(parents, select)]
+
+        select = [(i - 1) * -1 for i in select]
+        child_b = [p[(i - 1)] for p, i in zip(parents, select)]
+
+        return child_a, child_b
+
+    def reproduce(parent_a, parent_b):
+        child_a, child_b = cross_over(parent_a, parent_b)
+        mutate(child_a)
+        mutate(child_b)
+        return child_a, child_b
+
+    def evaluate(gene):
+        lambda_ = [math.log(self.gamma + c) for c in self.c_k_doc]
+        lnormalize(lambda_)
+
+        phi = [[math.log(self.beta + c) for c in c_k] for c_k in self.c_kv]
+        for phi_k in phi:
+            lnormalize(phi_k)
+
+        fitness = 0
+        for d, k_d in enumerate(gene):
+            fitness += lambda_[k_d]
+            fitness += sum(w[d][v] * phi[k_d][v] for v in doc_words[d])
+        return fitness
+
+    def update_model(gene):
+        for d, k_d in enumerate(gene):
+            model.set_k(d, k_d)
+
+    population = [init_gene(i) for i in pop_size]
+    elite_size = int(pop_size * eliteness)
+
+    def generation():
+        fitness = [evaluate(gene) for gene in population]
+        update_model(population[argmax(fitness)])
+        elite = top_n(fitness, elite_size)
+
+        new_population = [population[e] for e in elite] if keep_elite else []
+        while len(new_population) < pop_size:
+            parent_a = population[random.choice(elite)]
+            parent_b = population[random.choice(elite)]
+            new_population.extend(reproduce(parent_a, parent_b))
+        population[:] = new_population
+
 
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
-    algorithms = {'gibbs': gibbs_mixmulti,
-                  'annealed gibbs': annealed_gibbs_mixmulti,
-                  'map': map_mixmulti,
-                  'annealed map': annealed_map_mixmulti,
-                  'em': em_mixmulti,
-                  'annealed em': annealed_em_mixmulti,
-                  'vem': vem_mixmulti,
-                  'annealed vem': annealed_vem_mixmulti}
+    algorithms = {'gibbs': gibbs,
+                  'annealed gibbs': annealed_gibbs,
+                  'map': map,
+                  'annealed map': annealed_map,
+                  'em': em,
+                  'annealed em': annealed_em,
+                  'vem': vem,
+                  'annealed vem': annealed_vem,
+                  'ga': ga}
 
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
