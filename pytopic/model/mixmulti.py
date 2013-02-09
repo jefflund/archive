@@ -356,7 +356,7 @@ class MixtureMultinomial(TopicModel):
             for d in range(self.M):
                 print '{0} - {1}'.format(self.titles[d], self.k[d])
 
-    def calc_perplexity(self, corpus):
+    def perplexity(self, corpus):
         K = range(self.K)
 
         lambda_ = [math.log(self.gamma + c) for c in self.c_k_doc]
