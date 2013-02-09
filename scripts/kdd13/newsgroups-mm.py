@@ -29,6 +29,7 @@ def get_opts():
 
 def main():
     opts = get_opts()
+    print opts
     corpus = get_newsgroups()
     model = get_model(corpus, opts)
     model.inference(opts.num_iters)
