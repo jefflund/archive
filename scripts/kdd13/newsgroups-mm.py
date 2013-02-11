@@ -16,7 +16,6 @@ def get_model(corpus, opts):
     mm.set_inference(*opts.inference)
 
     mm.register_handler(Timer())
-    mm.register_handler(Printer(opts.print_interval))
     mm.register_handler(ClusterMetrics(clustering, opts.print_interval))
     mm.register_handler(Perplexity(test, opts.print_interval))
 
@@ -47,7 +46,8 @@ def get_pssh_opts():
     pssh_opts = ['--inference gibbs',
                  '--inference em',
                  '--inference vem',
-                 '--inference map']
+                 '--inference map',
+                 '--inference ga']
     args = pssh_opts[int(os.environ['PSSH_NODENUM']) % len(pssh_opts)]
     return get_cli_opts(args.split())
 
