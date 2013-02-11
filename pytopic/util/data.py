@@ -13,7 +13,7 @@ class Index(object):
 
     def add(self, token):
         """
-        Index.add(str): return int
+        Index.add(str): int
         Returns the unique token type for the given token symbol, inserting a
         new symbol and token type if needed.
         """
@@ -25,7 +25,7 @@ class Index(object):
 
     def add_unique(self, token):
         """
-        Index.add_unique(str): return int
+        Index.add_unique(str): int
         Returns the unique token type for the given token symbol, but raises a
         KeyError if the token has already been inserted.
         """
@@ -40,7 +40,7 @@ class Index(object):
 
     def convert_tokens(self, tokens):
         """
-        Index.convert_tokens(iterable of str): return list of int
+        Index.convert_tokens(iterable of str): list of int
         Converts a list of token symbols to token types, inserting tokens as
         needed.
         """
@@ -49,7 +49,7 @@ class Index(object):
 
     def token_type(self, token):
         """
-        Index.token_type(str): return int
+        Index.token_type(str): int
         Returns the token type of the given token symbol, raising a KeyError
         if the given token has not been previously inserted.
         """
@@ -58,7 +58,7 @@ class Index(object):
 
     def token_symbol(self, token_type):
         """
-        Index.token_symbol(int): return str
+        Index.token_symbol(int): str
         Returns the token symbol for the given token type, raising a KeyError
         if the given token type has not been used.
         """
@@ -83,7 +83,7 @@ class Reader(object):
 
     def add_file(self, filename):
         """
-        Reader.add_file(str): return None
+        Reader.add_file(str): None
         Adds a single filename to the list of files to be read
         """
 
@@ -94,7 +94,7 @@ class Reader(object):
 
     def add_dir(self, dirpath):
         """
-        Reader.add_dir(str): return None
+        Reader.add_dir(str): None
         Adds files in a directory (recursive) to the list of files to be read
         """
 
@@ -108,9 +108,34 @@ class Reader(object):
             files = [os.path.join(root, f) for f in sorted(files)]
             self.filelist.extend(files)
 
+    def add_index(self, indexname, data_dir=''):
+        """
+        Reader.add_index(str, str): None
+        Adds the files from an index file to the Reader. The index file should
+        have one file per line. The data dir gives the root directory from
+        which the index file indexes
+        """
+
+        with open(indexname) as filelist:
+            for filename in filelist:
+                filename = filename.strip()
+                if len(filename)> 0:
+                    self.add_file(os.path.join(data_dir, filename))
+
+    def add_index_dir(self, dirpath, data_dir=''):
+        """
+        Reader.add_index_dir(str. str): None
+        Treats each file in the directory as an index file and addes the
+        indicated files to the Reader.
+        """
+
+        for root, _, files in os.walk(dirpath):
+            for indexfile in files:
+                self.add_index(os.path.join(root, indexfile), data_dir)
+
     def get_files(self):
         """
-        Reader.get_files(): return generator of tuple
+        Reader.get_files(): generator of tuple
         Yields tuples of filenames and file objects for each of the filenames
         which are to be read
         """
@@ -121,7 +146,7 @@ class Reader(object):
 
     def read(self):
         """
-        Reader.read(): return object
+        Reader.read(): object
         Reads all of the files in the reader and constructs a data object
         """
 
@@ -130,7 +155,7 @@ class Reader(object):
 
 def init_counter(*dims):
     """
-    init_counter(*int): return matrix of int
+    init_counter(*int): matrix of int
     Returns a matrix of zeros with the specified dimensions
     """
 
@@ -142,7 +167,7 @@ def init_counter(*dims):
 
 def ensure_dirs(path):
     """
-    ensure_dirs(str): return None
+    ensure_dirs(str): None
     Will create the directories for a particular file path. Unlike os.makedirs
     ensure_dirs will not fail the path already exists.
     """
@@ -156,7 +181,7 @@ def ensure_dirs(path):
 
 def pickle_cache(pickle_path):
     """
-    pickle_cache(str): return decorator
+    pickle_cache(str): decorator
     Creates a decorator which caches the results of a parameterless function
     to the specified pickle file.
     """
