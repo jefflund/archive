@@ -114,14 +114,16 @@ def lnormalize(counts):
         counts[i] -= lsum
 
 
-def top_n(counts, n):
+def top_n(counts, n, only_positive=True):
     """
     top_n(list of int, int): return list of int
     Returns the indices of the top n counts in the given list of counts, 
     excluding any zero counts.
     """
 
-    keys = [i for i in range(len(counts)) if counts[i] > 0]
+    keys = range(len(counts))
+    if only_positive:
+        keys = [i for i in keys if counts[i] > 0]
     return sorted(keys, key=lambda x: counts[x], reverse=True)[:n]
 
 
@@ -157,6 +159,7 @@ def lim_xlogy(x, y):
         else:
             raise
 
+# both the digamma and trigamma algorithms are borrowed from Apache Commons
 
 def digamma(x):
     if 0 < x <= 1e-5:

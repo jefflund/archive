@@ -288,8 +288,12 @@ def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
     Creates a genetic algorithm inference algorithm for mixture of multinomials
     """
 
-    K = model.K
+    gamma = model.gamma
+    beta = model.beta
+
+    K = range(model.K)
     M = range(model.M)
+    V = range(model.V)
     doc_words = [set(doc) for doc in model.w]
     w = model.c_dv
 
@@ -297,15 +301,15 @@ def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
         if index == 0:
             return [k for k in model.k]
         else:
-            return [sample_uniform(K) for _ in M]
+            return [sample_uniform(len(K)) for _ in M]
 
     def mutate(gene):
         for d in M:
             if random.random() < mutate_prob:
-                gene[d] = sample_uniform(K)
+                gene[d] = sample_uniform(len(K))
 
     def cross_over(parent_a, parent_b):
-        parents = zip(parents_a, parent_b)
+        parents = zip(parent_a, parent_b)
 
         select = [int(random.getrandbits(1)) for _ in M]
         child_a = [p[i] for p, i in zip(parents, select)]
@@ -322,10 +326,16 @@ def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
         return child_a, child_b
 
     def evaluate(gene):
-        lambda_ = [math.log(self.gamma + c) for c in self.c_k_doc]
+        c_k = collections.Counter(gene)
+        c_kv = [collections.Counter() for k in K]
+        for d in M:
+            for v in doc_words[d]:
+                c_kv[gene[d]][v] += w[d][v]
+
+        lambda_ = [math.log(gamma + c_k[k]) for k in K]
         lnormalize(lambda_)
 
-        phi = [[math.log(self.beta + c) for c in c_k] for c_k in self.c_kv]
+        phi = [[math.log(beta + c_kv[k][v]) for v in V] for k in K]
         for phi_k in phi:
             lnormalize(phi_k)
 
@@ -345,7 +355,7 @@ def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
     def generation():
         fitness = [evaluate(gene) for gene in population]
         update_model(population[argmax(fitness)])
-        elite = top_n(fitness, elite_size)
+        elite = top_n(fitness, elite_size, False)
 
         new_population = [population[e] for e in elite] if keep_elite else []
         while len(new_population) < pop_size:
@@ -353,6 +363,8 @@ def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
             parent_b = population[random.choice(elite)]
             new_population.extend(reproduce(parent_a, parent_b))
         population[:] = new_population
+
+    return generation
 
 
 class MixtureMultinomial(TopicModel):
