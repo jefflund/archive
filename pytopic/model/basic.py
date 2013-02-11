@@ -1,5 +1,7 @@
 """Basic generative model of text, including vanilla LDA"""
 
+import sys
+
 class TopicModel(object):
     """Base class for a generative model of textual data"""
 
@@ -28,9 +30,6 @@ class TopicModel(object):
         Performs inference on the model for the given number of iterations
         """
 
-        if self._inference_algorithm is None:
-            self.set_inference('gibbs')
-
         for handler in self._handlers:
             handler.restart()
 
@@ -38,6 +37,8 @@ class TopicModel(object):
             self._inference_algorithm()
             for handler in self._handlers:
                 handler.handle(self)
+
+        sys.stdout.flush()
 
     def set_inference(self, algorithm, *params):
         """
