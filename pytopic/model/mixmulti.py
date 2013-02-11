@@ -366,6 +366,9 @@ def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
 
     return generation
 
+def default_ga(model):
+    return ga(model, 100, .1, .01, False)
+
 
 class MixtureMultinomial(TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
@@ -378,7 +381,8 @@ class MixtureMultinomial(TopicModel):
                   'annealed em': annealed_em,
                   'vem': vem,
                   'annealed vem': annealed_vem,
-                  'ga': ga}
+                  'ga': default_ga,
+                  'custom ga': ga}
 
     def __init__(self, corpus, K, gamma, beta):
         TopicModel.__init__(self, corpus)
