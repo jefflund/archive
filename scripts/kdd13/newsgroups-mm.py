@@ -1,4 +1,7 @@
+#!/usr/bin/pypy
+
 import argparse
+import os
 from scripts.kdd13.corpora import get_newsgroups
 from pytopic.model.mixmulti import MixtureMultinomial
 from pytopic.util.handler import Printer, Timer, ClusterMetrics, Perplexity
@@ -29,15 +32,31 @@ def convert_param(param):
         return float(param)
 
 
-def get_opts():
+def get_cli_opts(args=None):
     parser = argparse.ArgumentParser(description='Runs MM on 20NG')
     parser.add_argument('--inference', nargs='+', default=['gibbs'])
-    parser.add_argument('--num-iters', type=int, default=100)
+    parser.add_argument('--num-iters', type=int, default=1000)
     parser.add_argument('--print-interval', type=int, default=10)
-    parser.add_argument('--train-percent', type=float, default=.5)
-    opts = parser.parse_args()
+    parser.add_argument('--train-percent', type=float, default=.8)
+    opts = parser.parse_args(args)
     opts.inference[1:] = [convert_param(param) for param in opts.inference[1:]]
     return opts
+
+
+def get_pssh_opts():
+    pssh_opts = ['--inference gibbs',
+                 '--inference em',
+                 '--inference vem',
+                 '--inference map']
+    args = pssh_opts[int(os.environ['PSSH_NODENUM']) % len(pssh_opts)]
+    return get_cli_opts(args.split())
+
+
+def get_opts():
+    if 'PSSH_NODENUM' in os.environ:
+        return get_pssh_opts()
+    else:
+        return get_cli_opts()
 
 
 def main():
