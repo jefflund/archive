@@ -1,6 +1,10 @@
+#!/usr/bin/python
+
 from __future__ import division
 
+import argparse
 import os
+import evilplot # not publicly released yet...this will soon change
 
 def median(values):
     values = sorted(values)
@@ -14,65 +18,77 @@ def parse_value(line):
 
 
 def parse_file(filename):
-    params = None
-    times = []
+    param = None
     data = {}
+    keys = {'Time'}
     curr_iter = 0
+    curr_time = 0
 
     with open(filename) as lines:
         for line in lines:
             if line.startswith('/usr/bin/xauth'):
                 continue
             elif line.startswith('inference'):
-                params = ' '.join(eval(line.split()[1]))
+                param = ' '.join(eval(line.split()[1]))
             elif line[0].isdigit(): # read an iteration number
                 curr_iter, time = parse_value(line)
                 curr_iter = int(curr_iter)
-                times.append(time)
-            elif 0 < curr_iter <= 1000:# if we're past the header
-                key, value = parse_value(line)
-                if key not in data:
-                    data[key] = {}
-                data[key][curr_iter] = value
+                curr_time += time
+            elif curr_iter > 0:
+                if curr_iter not in data:
+                    data[curr_iter] = {}
+                    data[curr_iter]['Time'] = curr_time
 
-    return params, times, data
+                key, value = parse_value(line)
+                data[curr_iter][key] = value
+                keys.add(key)
+
+    return param, {key: [data[i][key] for i in sorted(data)] for key in keys}
 
 
 def parse_files(dirpath):
-    all_times = {}
     all_data = {}
     for root, _, files in os.walk(dirpath):
         files = [os.path.join(root, filename) for filename in files]
         for filename in files:
-            params, times, data = parse_file(filename)
-            if params is None:
+            param, data = parse_file(filename)
+            if param is None:
                 continue
 
-            if params not in all_data:
-                all_data[params] = {}
-                all_times[params] = []
+            if param not in all_data:
+                all_data[param] = {}
+            for key, value in data.iteritems():
+                if key not in all_data[param]:
+                    all_data[param][key] = []
+                all_data[param][key].append(value)
 
-            all_times[params].extend(times)
-            for key, values in data.iteritems():
-                if key not in all_data[params]:
-                    all_data[params][key] = []
-                all_data[params][key].append(values)
+    for param in all_data:
+        for key in all_data[param]:
+            values = zip(*all_data[param][key])
+            values = [median(value) for value in values]
+            all_data[param][key] = values
 
-    return all_times, all_data
+    return all_data
 
 
-def combine_data(times, data):
-    for param, values in times.iteritems():
-        times[param] = median(values)
+def create_points(data, param, yname, xname='Time', style='lines'):
+    data = list(zip(data[param][xname], data[param][yname]))
+    return evilplot.Points(data, style=style, linewidth=1, title=param)
 
-    # start: data[inference][metric][run_num][iter_num] = value
-    # goal:  data[inference][metric][iter_index] = median value
+
+def create_plot(data, yname, xname='Time', style='lines'):
+    plot = evilplot.Plot()
     for param in data:
-        for metric in data[param]:
-            values = []
-            for iter_num in data[param][metric][0]: # iter_num from first run
-                value = median(run[iter_num] for run in data[param][metric])
-                values.append(value)
-            data[param][metric] = values
+        plot.append(create_points(data, param, yname, xname, style))
+    return plot
 
-    return times, data
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('data')
+    parser.add_argument('yname')
+    parser.add_argument('xname', default='Time', nargs='?')
+    parser.add_argument('--style', default='lines')
+    opts = parser.parse_args()
+
+    data = parse_files(opts.data)
+    create_plot(data, opts.yname, opts.xname, opts.style).show()
