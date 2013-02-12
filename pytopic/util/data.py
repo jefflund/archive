@@ -79,23 +79,23 @@ class Reader(object):
     """Base class for data import from text files"""
 
     def __init__(self):
-        self.filelist = []
+        self.filelist = set()
 
     def add_file(self, filename):
         """
         Reader.add_file(str): None
-        Adds a single filename to the list of files to be read
+        Adds a single filename to the set of files to be read
         """
 
         if not os.path.exists(filename):
             raise RuntimeError('{} does not exist'.format(filename))
 
-        self.filelist.append(filename)
+        self.filelist.add(filename)
 
     def add_dir(self, dirpath):
         """
         Reader.add_dir(str): None
-        Adds files in a directory (recursive) to the list of files to be read
+        Adds files in a directory (recursive) to the set of files to be read
         """
 
         if not os.path.exists(dirpath):
@@ -104,9 +104,7 @@ class Reader(object):
             raise RuntimeError('{} is not a directory'.format(dirpath))
 
         for root, dirs, files in os.walk(dirpath):
-            dirs.sort()
-            files = [os.path.join(root, f) for f in sorted(files)]
-            self.filelist.extend(files)
+            self.filelist.update(os.path.join(root, f) for f in files)
 
     def add_index(self, indexname, data_dir=''):
         """
@@ -140,7 +138,7 @@ class Reader(object):
         which are to be read
         """
 
-        for filename in self.filelist:
+        for filename in sorted(self.filelist):
             with open(filename) as buff:
                 yield filename, buff
 
