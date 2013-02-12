@@ -159,7 +159,8 @@ def lim_xlogy(x, y):
         else:
             raise
 
-# both the digamma and trigamma algorithms are borrowed from Apache Commons
+# both the digamma and trigamma algorithms are ported from Apache Commons,
+# which is (duh) released under the Apache 2.0 license, just like PyTopic
 
 def digamma(x):
     if 0 < x <= 1e-5:
