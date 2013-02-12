@@ -16,7 +16,7 @@ class Clustering(object):
     @classmethod
     def from_model(cls, model):
         """
-        Clustering.from_model(TopicModel): return Clustering
+        Clustering.from_model(TopicModel): Clustering
         Returns a Clustering using the inferred clusters from a TopicModel.
         That TopicModel must have the attributes K and k, indicating the
         number of clusters and the cluster assignments for each document.
@@ -27,13 +27,39 @@ class Clustering(object):
     @classmethod
     def from_corpus(cls, corpus):
         """
-        Clustering.from_corpus(Corpus): return Clustering
+        Clustering.from_corpus(Corpus): Clustering
         Returns a Clustering using the folder structure of the document titles
         to determine the labels.
         """
 
         data = [os.path.dirname(title) for title in corpus.titles]
         return Clustering(set(data), data)
+
+    @classmethod
+    def from_indices(cls, corpus, dirpath, data_dir=''):
+        """
+        Clustering.from_indices(Corpus, str, str): Clustering
+        Returns a Clustering using the index structure. The provided corpus is
+        used to order the clustering data. Each index file is assumed to
+        represent a separate clustering
+        """
+
+        labels = set()
+        data = {}
+
+        for root, _, files in os.walk(dirpath):
+            for indexfile in files:
+                indexfile = os.path.join(root, indexfile)
+                labels.add(indexfile)
+                with open(indexfile) as filelist:
+                    for filename in filelist:
+                        filename = filename.strip()
+                        if len(filename) > 0:
+                            filename = os.path.join(data_dir, filename)
+                            data[filename] = indexfile
+
+        data = [data[corpus.titles[d]] for d in range(len(corpus))]
+        return Clustering(labels, data)
 
     def __len__(self):
         return len(self.data)
@@ -63,7 +89,7 @@ class Contingency(object):
 
     def print_contingency(self):
         """
-        Contingency.print_contingency(): return None
+        Contingency.print_contingency(): None
         Pretty prints the contingency matrix to stdout
         """
 
