@@ -51,11 +51,16 @@ def get_model(training, test, clustering, opts):
 
     return model
 
+def print_opts(opts):
+    for key, value in vars(opts).iteritems():
+        print '{}: {}'.format(key, value)
+
 def main(dataset_name, corpus_func, clustering_func):
     opts = get_opts(dataset_name)
-    print opts
-    corpus = corpus_func()
-    training, test = split_corpus(corpus, opts.train_percent)
+    print_opts(opts)
+
+    training, test = split_corpus(corpus_func(), opts.train_percent)
     clustering = clustering_func(training)
     model = get_model(training, test, clustering, opts)
+
     model.inference(opts.num_iters)
