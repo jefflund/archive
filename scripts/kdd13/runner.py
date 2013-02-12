@@ -17,7 +17,7 @@ def get_cli_opts(dataset_name, args=None):
     desc = 'Run mixture of multinomials on the {} dataset'.format(dataset_name)
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('--inference', nargs='+', default=['gibbs'])
-    parser.add_argument('--num-iters', type=int, default=1500)
+    parser.add_argument('--num-iters', type=int, default=1000)
     parser.add_argument('--print-interval', type=int, default=10)
     parser.add_argument('--train-percent', type=float, default=.8)
     opts = parser.parse_args(args)
