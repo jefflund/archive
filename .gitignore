@@ -1,6 +1,2 @@
 *.pyc
-.project
-.pydevproject
-.settings
-pickle
-data
+evilplot
