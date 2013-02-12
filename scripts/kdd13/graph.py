@@ -29,7 +29,8 @@ def parse_file(filename):
             if line.startswith('/usr/bin/xauth'):
                 continue
             elif line.startswith('inference'):
-                param = ' '.join(eval(line.split()[1]))
+                param = eval(line.split(None, 1)[1])
+                param = ' '.join(str(item) for item in param)
             elif line[0].isdigit(): # read an iteration number
                 curr_iter, time = parse_value(line)
                 curr_iter = int(curr_iter)
