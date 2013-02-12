@@ -14,3 +14,16 @@ def get_newsgroups():
     corpus = filter_stopwords(corpus, stopwords)
 
     return corpus
+
+
+@pickle_cache('../pickle/enron-corpus.pickle')
+def get_enron():
+    reader = CorpusReader(NewsTokenizer())
+    reader.add_index_dir('../data/enron/indices/ldc_split/all',
+                         '../data/enron')
+    corpus = reader.read()
+
+    stopwords = load_stopwords('../data/stopwords/english.txt')
+    corpus = filter_stopwords(corpus, stopwords)
+
+    return corpus
