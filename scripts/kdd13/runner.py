@@ -26,12 +26,12 @@ def get_cli_opts(dataset_name, args=None):
 
 
 def get_pssh_opts(dataset_name):
-    pssh_opts = ['--inference gibbs',
-                 '--inference em',
-                 '--inference vem',
-                 '--inference map']
+    pssh_opts = [['--inference', 'annealed gibbs', '2'],
+                 ['--inference', 'annealed map', '2'],
+                 ['--inference', 'annealed em', '2'],
+                 ['--inference', 'annealed vem', '2']]
     args = pssh_opts[int(os.environ['PSSH_NODENUM']) % len(pssh_opts)]
-    return get_cli_opts(dataset_name, args.split())
+    return get_cli_opts(dataset_name, args)
 
 
 def get_opts(dataset_name):
