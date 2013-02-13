@@ -17,14 +17,25 @@ def get_cli_opts(dataset_name, args=None):
 
 
 def get_pssh_opts(dataset_name):
-    pssh_opts = [['--inference', 'gibbs'],
-                 ['--inference', 'gibbs', '--anneal'],
-                 ['--inference', 'map'],
-                 ['--inference', 'map', '--anneal'],
-                 ['--inference', 'em'],
-                 ['--inference', 'em', '--anneal'],
-                 ['--inference', 'vem'],
-                 ['--inference', 'vem', '--anneal']]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--no-anneal', action='store_true', default=False)
+    parser.add_argument('--no-unanneal', action='store_true', default=False)
+    opts = parser.parse_args()
+
+    assert not opts.no_anneal or not opts.no_unanneal
+
+    pssh_opts = []
+    if not opts.no_unanneal:
+        pssh_opts.extend([['--inference', 'gibbs'],
+                          ['--inference', 'map'],
+                          ['--inference', 'em'],
+                          ['--inference', 'vem']])
+    if not opts.no_anneal:
+        pssh_opts.extend([['--inference', 'gibbs', '--anneal'],
+                          ['--inference', 'map', '--anneal'],
+                          ['--inference', 'em', '--anneal'],
+                          ['--inference', 'vem', '--anneal']])
+
     args = pssh_opts[int(os.environ['PSSH_NODENUM']) % len(pssh_opts)]
     return get_cli_opts(dataset_name, args)
 
@@ -65,6 +76,7 @@ def main(dataset_name, corpus_func, clustering_func):
 
     if opts.anneal:
         opts.inference = 'annealed {}'.format(opts.inference)
+        opts.num_iters //= 4
         model.set_inference(opts.inference, 25)
         model.inference(opts.num_iters)
         model.set_inference(opts.inference, 10)
