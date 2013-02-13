@@ -79,15 +79,15 @@ def run(opts, corpus_func, clustering_func):
 
     if opts.anneal:
         opts.inference = 'annealed {}'.format(opts.inference)
-        #opts.num_iters //= 4
+        opts.num_iters //= 4
         model.set_inference(opts.inference, 25)
         model.inference(opts.num_iters)
-        #model.set_inference(opts.inference, 10)
-        #model.inference(opts.num_iters)
-        #model.set_inference(opts.inference, 5)
-        #model.inference(opts.num_iters)
-        #model.set_inference(opts.inference, 1)
-        #model.inference(opts.num_iters)
+        model.set_inference(opts.inference, 10)
+        model.inference(opts.num_iters)
+        model.set_inference(opts.inference, 5)
+        model.inference(opts.num_iters)
+        model.set_inference(opts.inference, 1)
+        model.inference(opts.num_iters)
     else:
         model.set_inference(opts.inference)
         model.inference(opts.num_iters)
