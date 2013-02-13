@@ -77,9 +77,15 @@ def create_points(data, param, yname, xname='Time', style='lines'):
     return evilplot.Points(data, style=style, linewidth=1, title=param)
 
 
-def create_plot(data, yname, xname='Time', style='lines'):
+def create_plot(data, opts):
     plot = evilplot.Plot()
+    yname = opts.yname
+    xname = opts.xname
+    style = opts.style
+    no_anneal = opts.no_anneal
     for param in data:
+        if no_anneal and param.startswith('anneal'):
+            continue
         plot.append(create_points(data, param, yname, xname, style))
     return plot
 
@@ -89,10 +95,11 @@ def main():
     parser.add_argument('--xname', default='Time')
     parser.add_argument('--yname', default='FM')
     parser.add_argument('--style', default='lines')
+    parser.add_argument('--no-anneal', action='store_true', default=False)
     opts = parser.parse_args()
 
     data = parse_files(*opts.data)
-    create_plot(data, opts.yname, opts.xname, opts.style).show()
+    create_plot(data, opts).show()
 
 if __name__ == '__main__':
     main()
