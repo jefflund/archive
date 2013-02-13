@@ -46,21 +46,22 @@ def parse_file(filename):
     return param, {key: [data[i][key] for i in sorted(data)] for key in keys}
 
 
-def parse_files(dirpath):
+def parse_files(*dirpaths):
     all_data = {}
-    for root, _, files in os.walk(dirpath):
-        files = [os.path.join(root, filename) for filename in files]
-        for filename in files:
-            param, data = parse_file(filename)
-            if param is None:
-                continue
+    for dirpath in dirpaths:
+        for root, _, files in os.walk(dirpath):
+            files = [os.path.join(root, filename) for filename in files]
+            for filename in files:
+                param, data = parse_file(filename)
+                if param is None:
+                    continue
 
-            if param not in all_data:
-                all_data[param] = {}
-            for key, value in data.iteritems():
-                if key not in all_data[param]:
-                    all_data[param][key] = []
-                all_data[param][key].append(value)
+                if param not in all_data:
+                    all_data[param] = {}
+                for key, value in data.iteritems():
+                    if key not in all_data[param]:
+                        all_data[param][key] = []
+                    all_data[param][key].append(value)
 
     for param in all_data:
         for key in all_data[param]:
@@ -84,13 +85,13 @@ def create_plot(data, yname, xname='Time', style='lines'):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('data')
-    parser.add_argument('yname')
-    parser.add_argument('xname', default='Time', nargs='?')
+    parser.add_argument('data', nargs='+')
+    parser.add_argument('--xname', default='Time')
+    parser.add_argument('--yname', default='FM')
     parser.add_argument('--style', default='lines')
     opts = parser.parse_args()
 
-    data = parse_files(opts.data)
+    data = parse_files(*opts.data)
     create_plot(data, opts.yname, opts.xname, opts.style).show()
 
 if __name__ == '__main__':
