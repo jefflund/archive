@@ -29,8 +29,7 @@ def parse_file(filename):
             if line.startswith('/usr/bin/xauth'):
                 continue
             elif line.startswith('inference'):
-                param = eval(line.split(None, 1)[1])
-                param = ' '.join(str(item) for item in param)
+                param = line.split(None, 1)[1].strip()
             elif line[0].isdigit(): # read an iteration number
                 curr_iter, time = parse_value(line)
                 curr_iter = int(curr_iter)
@@ -83,7 +82,7 @@ def create_plot(data, yname, xname='Time', style='lines'):
         plot.append(create_points(data, param, yname, xname, style))
     return plot
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('data')
     parser.add_argument('yname')
@@ -93,3 +92,6 @@ if __name__ == '__main__':
 
     data = parse_files(opts.data)
     create_plot(data, opts.yname, opts.xname, opts.style).show()
+
+if __name__ == '__main__':
+    main()
