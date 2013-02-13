@@ -12,6 +12,10 @@ def median(values):
     return (values[index] + values[-index]) / 2
 
 
+def mean(values):
+    return sum(values) / len(values)
+
+
 def parse_value(line):
     key, value = line.split()
     return key, float(value)
@@ -46,9 +50,9 @@ def parse_file(filename):
     return param, {key: [data[i][key] for i in sorted(data)] for key in keys}
 
 
-def parse_files(*dirpaths):
+def parse_files(opts):
     all_data = {}
-    for dirpath in dirpaths:
+    for dirpath in opts.data:
         for root, _, files in os.walk(dirpath):
             files = [os.path.join(root, filename) for filename in files]
             for filename in files:
@@ -66,7 +70,10 @@ def parse_files(*dirpaths):
     for param in all_data:
         for key in all_data[param]:
             values = zip(*all_data[param][key])
-            values = [median(value) for value in values]
+            if opts.use_mean:
+                values = [mean(value) for value in values]
+            else:
+                values = [median(value) for value in values]
             all_data[param][key] = values
 
     return all_data
@@ -96,9 +103,10 @@ def main():
     parser.add_argument('--yname', default='FM')
     parser.add_argument('--style', default='lines')
     parser.add_argument('--no-anneal', action='store_true', default=False)
+    parser.add_argument('--use-mean', action='store_true', default=False)
     opts = parser.parse_args()
 
-    data = parse_files(*opts.data)
+    data = parse_files(opts)
     create_plot(data, opts).show()
 
 if __name__ == '__main__':
