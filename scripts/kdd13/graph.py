@@ -21,6 +21,9 @@ def parse_value(line):
     return key, float(value)
 
 
+def sort_data(param, data, keys):
+    return param, {key: [data[i][key] for i in sorted(data)] for key in keys}
+
 def parse_file(filename):
     param = None
     data = {}
@@ -33,6 +36,12 @@ def parse_file(filename):
             if line.startswith('/usr/bin/xauth'):
                 continue
             elif line.startswith('inference'):
+                if param is not None:
+                    yield sort_data(param, data, keys)
+                    data = {}
+                    keys = {'Time'}
+                    curr_iter = 0
+                    curr_time = 0
                 param = line.split(None, 1)[1].strip()
             elif line[0].isdigit(): # read an iteration number
                 curr_iter, time = parse_value(line)
@@ -47,7 +56,8 @@ def parse_file(filename):
                 data[curr_iter][key] = value
                 keys.add(key)
 
-    return param, {key: [data[i][key] for i in sorted(data)] for key in keys}
+    if param is not None:
+        yield sort_data(param, data, keys)
 
 
 def parse_files(opts):
@@ -56,16 +66,13 @@ def parse_files(opts):
         for root, _, files in os.walk(dirpath):
             files = [os.path.join(root, filename) for filename in files]
             for filename in files:
-                param, data = parse_file(filename)
-                if param is None:
-                    continue
-
-                if param not in all_data:
-                    all_data[param] = {}
-                for key, value in data.iteritems():
-                    if key not in all_data[param]:
-                        all_data[param][key] = []
-                    all_data[param][key].append(value)
+                for param, data in parse_file(filename):
+                    if param not in all_data:
+                        all_data[param] = {}
+                    for key, value in data.iteritems():
+                        if key not in all_data[param]:
+                            all_data[param][key] = []
+                        all_data[param][key].append(value)
 
     for param in all_data:
         for key in all_data[param]:
