@@ -111,7 +111,7 @@ def annealed_em(model, temp):
             word_docs[word].add(d)
 
     def init_posteriors():
-        lambda_ = [math.log(model.c_k_doc[k]) for k in K]
+        lambda_ = [math.log(1 + model.c_k_doc[k]) for k in K]
         lnormalize(lambda_)
 
         phi = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
@@ -199,7 +199,7 @@ def annealed_vem(model, temp):
             word_docs[word].add(d)
 
     def init_theta():
-        lambda_ = [math.log(model.c_k_doc[k]) for k in K]
+        lambda_ = [math.log(1 + model.c_k_doc[k]) for k in K]
         lnormalize(lambda_)
 
         phi = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
