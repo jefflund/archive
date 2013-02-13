@@ -35,6 +35,7 @@ def get_opts(dataset_name):
     else:
         return get_cli_opts(dataset_name)
 
+
 def get_model(training, test, clustering, opts):
     K = len(clustering.labels)
     model = MixtureMultinomial(training, K, 2, .001)
@@ -45,12 +46,14 @@ def get_model(training, test, clustering, opts):
 
     return model
 
+
 def print_opts(opts):
     header = 'inference: '
     if opts.anneal:
         header += 'annealed '
     header += opts.inference
     print header
+
 
 def main(dataset_name, corpus_func, clustering_func):
     opts = get_opts(dataset_name)
