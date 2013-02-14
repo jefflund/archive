@@ -1,6 +1,7 @@
 """Basic generative model of text, including vanilla LDA"""
 
 import sys
+import time
 
 class TopicModel(object):
     """Base class for a generative model of textual data"""
@@ -30,15 +31,31 @@ class TopicModel(object):
         Performs inference on the model for the given number of iterations
         """
 
+        self.reset_handlers()
+        for _ in range(iterations):
+            self._inference_algorithm()
+            self.call_handlers()
+
+    def timed_inference(self, seconds):
+        """
+        TopicModel.timed_inference(int): return None
+        Performs inference on the model for the given number of seconds
+        """
+
+        end_time = time.time() + seconds
+
+        self.reset_handlers()
+        while time.time() < end_time:
+            self._inference_algorithm()
+            self.call_handlers()
+
+    def reset_handlers(self):
         for handler in self._handlers:
             handler.restart()
 
-        for _ in range(iterations):
-            self._inference_algorithm()
-            for handler in self._handlers:
-                handler.handle(self)
-
-        sys.stdout.flush()
+    def call_handlers(self):
+        for handler in self._handlers:
+            handler.handle(self)
 
     def set_inference(self, algorithm, *params):
         """

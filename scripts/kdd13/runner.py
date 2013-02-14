@@ -10,7 +10,7 @@ def get_opts(dataset_name, args=None):
     desc = 'Run mixture of multinomials on the {} dataset'.format(dataset_name)
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('--inference', action='store', default='gibbs')
-    parser.add_argument('--num-iters', type=int, default=100)
+    parser.add_argument('--run-time', type=int, default=1200)
     parser.add_argument('--print-interval', type=int, default=1)
     parser.add_argument('--train-percent', type=float, default=.8)
     parser.add_argument('--anneal', action='store_true', default=False)
@@ -79,15 +79,15 @@ def run(opts, corpus_func, clustering_func):
 
     if opts.anneal:
         opts.inference = 'annealed {}'.format(opts.inference)
-        opts.num_iters //= 4
+        opts.run_time //= 4
         model.set_inference(opts.inference, 25)
-        model.inference(opts.num_iters)
+        model.timed_inference(opts.run_time)
         model.set_inference(opts.inference, 10)
-        model.inference(opts.num_iters)
+        model.timed_inference(opts.run_time)
         model.set_inference(opts.inference, 5)
-        model.inference(opts.num_iters)
+        model.timed_inference(opts.run_time)
         model.set_inference(opts.inference, 1)
-        model.inference(opts.num_iters)
+        model.timed_inference(opts.run_time)
     else:
         model.set_inference(opts.inference)
-        model.inference(opts.num_iters)
+        model.timed_inference(opts.run_time)
