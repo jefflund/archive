@@ -10,7 +10,7 @@ def get_opts(dataset_name, args=None):
     desc = 'Run mixture of multinomials on the {} dataset'.format(dataset_name)
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('--inference', action='store', default='gibbs')
-    parser.add_argument('--num-iters', type=int, default=20)
+    parser.add_argument('--num-iters', type=int, default=100)
     parser.add_argument('--print-interval', type=int, default=1)
     parser.add_argument('--train-percent', type=float, default=.8)
     parser.add_argument('--anneal', action='store_true', default=False)
