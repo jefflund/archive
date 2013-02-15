@@ -32,7 +32,6 @@ class TopicModel(object):
         Performs inference on the model for the given number of iterations
         """
 
-        self.reset_handlers()
         for _ in range(iterations):
             self.iteration()
 
@@ -44,7 +43,6 @@ class TopicModel(object):
 
         end_time = time.time() + seconds
 
-        self.reset_handlers()
         while time.time() < end_time:
             self.iteration()
 
@@ -52,10 +50,6 @@ class TopicModel(object):
             self._inference_algorithm()
             self.num_iters += 1
             self.call_handlers()
-
-    def reset_handlers(self):
-        for handler in self._handlers:
-            handler.restart()
 
     def call_handlers(self):
         for handler in self._handlers:
@@ -82,9 +76,6 @@ class TopicModel(object):
 
 class IterationHandler(object):
     """Base class for handlers run at each iteration of inference"""
-
-    def restart(self):
-        """Called at the start of inference"""
 
     def handle(self, model):
         """Called at the conclusion of each iteration"""

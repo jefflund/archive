@@ -21,9 +21,6 @@ class Timer(IterationHandler):
     """Prints the timing of each iteration"""
 
     def __init__(self):
-        self.restart()
-
-    def restart(self):
         self.last_time = time.time()
 
     def handle(self, model):
@@ -39,9 +36,6 @@ class Checkpointer(IterationHandler):
     def __init__(self, time_interval, filename):
         self.time_interval = time_interval
         self.filename = filename
-        self.restart()
-
-    def restart(self):
         self.last_time = time.time()
 
     def handle(self, model):
