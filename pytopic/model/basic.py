@@ -33,8 +33,7 @@ class TopicModel(object):
 
         self.reset_handlers()
         for _ in range(iterations):
-            self._inference_algorithm()
-            self.call_handlers()
+            self.iteration()
 
     def timed_inference(self, seconds):
         """
@@ -46,6 +45,9 @@ class TopicModel(object):
 
         self.reset_handlers()
         while time.time() < end_time:
+            self.iteration()
+
+    def iteration(self):
             self._inference_algorithm()
             self.call_handlers()
 
