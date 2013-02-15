@@ -33,7 +33,10 @@ class TopicModel(object):
         """
 
         for _ in range(iterations):
-            self.iteration()
+            try:
+                self.iteration()
+            except StopIteration:
+                break
 
     def timed_inference(self, seconds):
         """
@@ -44,7 +47,10 @@ class TopicModel(object):
         end_time = time.time() + seconds
 
         while time.time() < end_time:
-            self.iteration()
+            try:
+                self.iteration()
+            except StopIteration:
+                break
 
     def iteration(self):
             self._inference_algorithm()
