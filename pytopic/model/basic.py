@@ -53,11 +53,8 @@ class TopicModel(object):
                 break
 
     def iteration(self):
-            self._inference_algorithm()
-            self.num_iters += 1
-            self.call_handlers()
-
-    def call_handlers(self):
+        self._inference_algorithm()
+        self.num_iters += 1
         for handler in self._handlers:
             handler.handle(self)
 
