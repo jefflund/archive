@@ -27,7 +27,7 @@ def get_model(training, test, clustering, opts):
     model.register_handler(Timer())
     model.register_handler(ClusterMetrics(clustering, opts.print_interval))
     model.register_handler(Perplexity(test, opts.print_interval))
-    model.register_handler(ClusterConvergeceCheck(model.k, True))
+    model.register_handler(ClusterConvergeceCheck(model.k))
 
     return model
 

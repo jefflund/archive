@@ -126,9 +126,8 @@ class Perplexity(IterationHandler):
 
 class ClusterConvergeceCheck(IterationHandler):
 
-    def __init__(self, init_state=None, print_changes=False):
+    def __init__(self, init_state):
         self.last_state = [k for k in init_state]
-        self.print_changes = print_changes
 
     def handle(self, model):
         changes = 0
@@ -136,7 +135,5 @@ class ClusterConvergeceCheck(IterationHandler):
             if self.last_state[d] != k_d:
                 self.last_state[d] = k_d
                 changes += 1
-        if self.print_changes:
-            print 'Changes', changes
         if changes == 0:
             raise StopIteration()
