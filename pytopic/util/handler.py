@@ -11,11 +11,9 @@ class Printer(IterationHandler):
     def __init__(self, iter_interval, verbose=False):
         self.iter_interval = iter_interval
         self.verbose = verbose
-        self.curr_iter = 0
 
     def handle(self, model):
-        self.curr_iter += 1
-        if self.curr_iter % self.iter_interval == 0:
+        if model.num_iters % self.iter_interval == 0:
             model.print_state(self.verbose)
 
 
@@ -23,18 +21,16 @@ class Timer(IterationHandler):
     """Prints the timing of each iteration"""
 
     def __init__(self):
-        self.curr_iter = 0
         self.restart()
 
     def restart(self):
         self.last_time = time.time()
 
     def handle(self, model):
-        self.curr_iter += 1
         curr_time = time.time()
         iter_time = curr_time - self.last_time
         self.last_time = curr_time
-        print '{0} {1}'.format(self.curr_iter, iter_time)
+        print '{0} {1}'.format(model.num_iters, iter_time)
 
 
 class Checkpointer(IterationHandler):
@@ -62,11 +58,9 @@ class ClusterMetrics(IterationHandler):
     def __init__(self, gold_clustering, iter_interval):
         self.gold_clustering = gold_clustering
         self.iter_interval = iter_interval
-        self.curr_iter = 0
 
     def handle(self, model):
-        self.curr_iter += 1
-        if self.curr_iter % self.iter_interval == 0:
+        if model.num_iters % self.iter_interval == 0:
             pred_clustering = Clustering.from_model(model)
             contingency = Contingency(self.gold_clustering, pred_clustering)
             print 'ARI {}'.format(ari(contingency))
@@ -79,12 +73,10 @@ class MalletOutput(IterationHandler):
 
     def __init__(self, iter_interval, filename):
         self.iter_interval = iter_interval
-        self.curr_iter = 0
         self.filename = filename
 
     def handle(self, model):
-        self.curr_iter += 1
-        if self.curr_iter % self.iter_interval == 0:
+        if model.num_iters % self.iter_interval == 0:
             with open(self.filename, 'w') as outfile:
                 self.write_mallet(outfile, model)
 
@@ -132,9 +124,7 @@ class Perplexity(IterationHandler):
     def __init__(self, test_corpus, iter_interval):
         self.test_corpus = test_corpus
         self.iter_interval = iter_interval
-        self.curr_iter = 0
 
     def handle(self, model):
-        self.curr_iter += 1
-        if self.curr_iter % self.iter_interval == 0:
+        if model.num_iters % self.iter_interval == 0:
             print 'Perplexity {}'.format(model.perplexity(self.test_corpus))
