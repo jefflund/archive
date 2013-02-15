@@ -18,6 +18,7 @@ class TopicModel(object):
         self._handlers = []
 
         self._inference_algorithm = None
+        self.num_iters = 0
 
     def sample(self):
         """
@@ -49,6 +50,7 @@ class TopicModel(object):
 
     def iteration(self):
             self._inference_algorithm()
+            self.num_iters += 1
             self.call_handlers()
 
     def reset_handlers(self):
