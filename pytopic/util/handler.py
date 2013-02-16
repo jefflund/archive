@@ -118,10 +118,16 @@ class Perplexity(IterationHandler):
     def __init__(self, test_corpus, iter_interval):
         self.test_corpus = test_corpus
         self.iter_interval = iter_interval
+        self.best_perplex = float('inf')
 
     def handle(self, model):
         if model.num_iters % self.iter_interval == 0:
-            print 'Perplexity {}'.format(model.perplexity(self.test_corpus))
+            curr_perplex = model.perplexity(self.test_corpus)
+            print 'Perplexity {}'.format(min(curr_perplex, self.best_perplex))
+
+    def restart(self, model):
+        curr_perplex = model.perplexity(self.test_corpus)
+        self.best_perplex = min(curr_perplex, self.best_perplex)
 
 
 class ClusterConvergeceCheck(IterationHandler):
