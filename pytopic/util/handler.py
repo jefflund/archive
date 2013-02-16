@@ -73,7 +73,7 @@ class ClusterMetrics(IterationHandler):
         self.best_fm = max(self.best_fm, f_measure(contingency))
         self.best_vi = min(self.best_vi, variation_info(contingency))
 
-    def get_contingency(self, model)
+    def get_contingency(self, model):
         pred_clustering = Clustering.from_model(model)
         return Contingency(self.gold_clustering, pred_clustering)
 
