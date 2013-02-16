@@ -44,7 +44,7 @@ class HTMLTokenizer(Tokenizer):
         Tokenizer.__init__(self, split_re, filter_re)
 
     def tokenize(self, filename, buff):
-        # borrowed from nltk.clean_html
+        # borrowed from nltk.clean_html, which falls under Apache License 2.0
         text = buff.read().strip()
         text = re.sub(r'(?is)<(script|style).*?>.*?(</\1>)', '', text)
         text = re.sub(r'(?s)<!--(.*?)-->[\n]?', '', text)
