@@ -409,6 +409,10 @@ class MixtureMultinomial(TopicModel):
                 self.c_kv[self.k[d]][w] += 1
                 self.c_dv[d][w] += 1
 
+    def reinitialize(self):
+        for d in range(self.M):
+            self.set_k(d, sample_uniform(self.K))
+
     def set_k(self, d, k_d):
         """
         MixtureMultinomial.set_k(int, int): return None

@@ -20,6 +20,9 @@ class TopicModel(object):
         self._inference_algorithm = None
         self.num_iters = 0
 
+    def reinitialize(self):
+        raise NotImplementedError()
+
     def sample(self):
         """
         TopicModel.sample(): return None
@@ -61,6 +64,8 @@ class TopicModel(object):
     def random_restart(self, algorithm=None, *params):
         for handler in self._handlers:
             handler.restart(self)
+
+        self.reinitialize()
 
         if algorithm is not None:
             self.set_inference(algorithm *params)
