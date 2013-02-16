@@ -4,6 +4,7 @@ from __future__ import division
 
 import argparse
 import os
+import itertools
 import evilplot # not publicly released yet...this will soon change
 
 def median(values):
@@ -14,6 +15,10 @@ def median(values):
 
 def mean(values):
     return sum(values) / len(values)
+
+def long_zip(iters):
+    tuples = itertools.izip_longest(*iters)
+    return [tuple(x for x in t if x is not None) for t in tuples]
 
 
 def pad_run(values, n):
@@ -80,13 +85,20 @@ def parse_files(opts):
                             all_data[param][key] = []
                         all_data[param][key].append(value)
 
+    max_time = 0
+    for param in all_data:
+        max_time = max(max_time, max(all_data[param]['Time'], key=max)[-1])
+    print max_time
+
     for param in all_data:
         for key in all_data[param]:
             values = all_data[param][key]
             if key != 'Time':
                 max_len = max(len(value) for value in values)
-                values = [pad_run(value, max_len) for value in values]
-            values = zip(*values)
+                values = [pad_run(value, max_len + 1) for value in values]
+            else:
+                values = [value + [max_time] for value in values]
+            values = long_zip(values)
 
             if opts.use_mean:
                 all_data[param][key] = [mean(value) for value in values]
