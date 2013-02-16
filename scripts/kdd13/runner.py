@@ -17,6 +17,7 @@ def get_opts(dataset_name, args=None):
     parser.add_argument('--train-percent', type=float, default=.8)
     parser.add_argument('--anneal', action='store_true', default=False)
     parser.add_argument('--seed', type=int, default=None)
+    parser.add_argument('--random-restart', action='store_true', default=False)
     opts = parser.parse_args(args)
     return opts
 
@@ -34,11 +35,13 @@ def get_model(training, test, clustering, opts):
 
 
 def print_opts(opts):
-    header = 'inference: '
+    header = ['inference:']
     if opts.anneal:
-        header += 'annealed '
-    header += opts.inference
-    print header
+        header.append('annealed')
+    if opts.random_restart:
+        header.append('random restart')
+    header.append(opts.inference)
+    print ' '.join(header)
     print 'seed:', opts.seed
 
 
@@ -52,14 +55,19 @@ def main(dataset_name, corpus_func, clustering_func):
 
 def pssh_main(dataset_name, corpus_func, clustering_func):
     seed = str(int(random.getrandbits(32)))
-    pssh_opts = [['--inference', 'gibbs', '--seed', seed],
-                 ['--inference', 'map', '--seed', seed],
-                 ['--inference', 'em', '--seed', seed],
-                 ['--inference', 'vem', '--seed', seed],
-                 ['--anneal', '--inference', 'gibbs', '--seed', seed],
-                 ['--anneal', '--inference', 'map', '--seed', seed],
-                 ['--anneal', '--inference', 'em', '--seed', seed],
-                 ['--anneal', '--inference', 'vem', '--seed', seed]]
+    pssh_opts = [['gibbs'],
+                 ['map'],
+                 ['em'],
+                 ['vem'],
+                 ['gibbs', '--anneal'],
+                 ['em', '--anneal'],
+                 ['vem', '--anneal'],
+                 ['map', '--random-restart'],
+                 ['em', '--random-restart'],
+                 ['vem', '--random-restart'],
+                 ['em', '--anneal', '--random-restart'],
+                 ['vem', '--anneal', '--random-restart']]
+    pssh_opts = [['--inference'] + opt + ['--seed', seed] for opt in pssh_opts]
 
     # so I can graph as data comes in from pssh
     node_num = int(os.environ['PSSH_NODENUM'])
@@ -87,9 +95,8 @@ def run(opts, corpus_func, clustering_func):
 
     while time.time() < end_time:
         time_left = end_time - time.time()
-        print 'TIME LEFT', time_left
         if opts.anneal:
-            run_time = time_left // 4
+            run_time = time_left / 4
 
             model.set_inference(opts.inference, 25)
             model.timed_inference(run_time)
@@ -106,4 +113,7 @@ def run(opts, corpus_func, clustering_func):
             model.set_inference(opts.inference)
             model.timed_inference(time_left)
 
-        model.random_restart()
+        if opts.random_restart:
+            model.random_restart()
+        else:
+            break
