@@ -7,13 +7,9 @@ import os
 import itertools
 import evilplot # not publicly released yet...this will soon change
 
-def median(values):
-    values = sorted(values)
-    index = len(values) // 2
-    return (values[index] + values[-index]) / 2
-
 
 def mean(values):
+    print len(values)
     return sum(values) / len(values)
 
 def long_zip(iters):
@@ -100,10 +96,10 @@ def parse_files(opts):
                 values = [value + [max_time] for value in values]
             values = long_zip(values)
 
-            if opts.use_mean:
-                all_data[param][key] = [mean(value) for value in values]
+            if opts.use_max and key != 'Time':
+                all_data[param][key] = [max(value) for value in values]
             else:
-                all_data[param][key] = [median(value) for value in values]
+                all_data[param][key] = [mean(value) for value in values]
 
     return all_data
 
@@ -132,7 +128,7 @@ def main():
     parser.add_argument('--yname', default='FM')
     parser.add_argument('--style', default='lines')
     parser.add_argument('--no-anneal', action='store_true', default=False)
-    parser.add_argument('--use-mean', action='store_true', default=False)
+    parser.add_argument('--use-max', action='store_true', default=False)
     opts = parser.parse_args()
 
     data = parse_files(opts)
