@@ -9,7 +9,6 @@ import evilplot # not publicly released yet...this will soon change
 
 
 def mean(values):
-    print len(values)
     return sum(values) / len(values)
 
 def long_zip(iters):
