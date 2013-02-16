@@ -74,23 +74,14 @@ def annealed_gibbs(model, temp):
     return _gibbs(model, temp, False)
 
 
-def map(model):
+def ecm(model):
     """
-    map(model): func
-    Returns an argmax version of the Gibbs sampler for Mixture of Multinomials
+    ecm(model): func
+    Returns an expectation conditional maximization algorithm for the Mixture
+    of Multinomials model
     """
 
     return _gibbs(model, 1, True)
-
-
-def annealed_map(model, temp):
-    """
-    map(model): func
-    Returns an argmax version of the annealed Gibbs sampler for the Mixture of
-    Multinomials model
-    """
-
-    return _gibbs(model, temp, True)
 
 
 def annealed_em(model, temp):
@@ -375,8 +366,7 @@ class MixtureMultinomial(TopicModel):
 
     algorithms = {'gibbs': gibbs,
                   'annealed gibbs': annealed_gibbs,
-                  'map': map,
-                  'annealed map': annealed_map,
+                  'ecm': ecm,
                   'em': em,
                   'annealed em': annealed_em,
                   'vem': vem,

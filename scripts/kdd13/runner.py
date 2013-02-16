@@ -56,13 +56,13 @@ def main(dataset_name, corpus_func, clustering_func):
 def pssh_main(dataset_name, corpus_func, clustering_func):
     seed = str(int(random.getrandbits(32)))
     pssh_opts = [['gibbs'],
-                 ['map'],
+                 ['ecm'],
                  ['em'],
                  ['vem'],
                  ['gibbs', '--anneal'],
                  ['em', '--anneal'],
                  ['vem', '--anneal'],
-                 ['map', '--random-restart'],
+                 ['ecm', '--random-restart'],
                  ['em', '--random-restart'],
                  ['vem', '--random-restart'],
                  ['em', '--anneal', '--random-restart'],
