@@ -83,7 +83,6 @@ def parse_files(opts):
     max_time = 0
     for param in all_data:
         max_time = max(max_time, max(all_data[param]['Time'], key=max)[-1])
-    print max_time
 
     for param in all_data:
         for key in all_data[param]:
