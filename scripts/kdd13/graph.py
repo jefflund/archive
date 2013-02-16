@@ -43,6 +43,8 @@ def parse_file(filename):
                     curr_iter = 0
                     curr_time = 0
                 param = line.split(None, 1)[1].strip()
+                if param == 'map':
+                    param = 'ecm'
             elif line[0].isdigit(): # read an iteration number
                 curr_iter, time = parse_value(line)
                 curr_iter = int(curr_iter)
