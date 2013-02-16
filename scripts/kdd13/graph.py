@@ -16,6 +16,10 @@ def mean(values):
     return sum(values) / len(values)
 
 
+def pad_run(values, n):
+    return values + [values[-1]] * (n - len(values))
+
+
 def parse_value(line):
     key, value = line.split()
     return key, float(value)
@@ -36,7 +40,7 @@ def parse_file(filename):
             if line.startswith('/usr/bin/xauth'):
                 continue
             elif line.startswith('inference'):
-                if param is not None:
+                if param is not None and len(data) > 0:
                     yield sort_data(param, data, keys)
                     data = {}
                     keys = {'Time'}
@@ -58,11 +62,8 @@ def parse_file(filename):
                 data[curr_iter][key] = value
                 keys.add(key)
 
-    try:
-        if param is not None:
-            yield sort_data(param, data, keys)
-    except:
-        pass
+    if param is not None and len(data) > 0:
+        yield sort_data(param, data, keys)
 
 
 def parse_files(opts):
@@ -81,16 +82,16 @@ def parse_files(opts):
 
     for param in all_data:
         for key in all_data[param]:
-            values = [x for x in all_data[param][key]]
-            lens = [len(x) for x in values]
-            max_len = max(lens)
-            values = [x for x in values if len(x) == max_len]
+            values = all_data[param][key]
+            if key != 'Time':
+                max_len = max(len(value) for value in values)
+                values = [pad_run(value, max_len) for value in values]
             values = zip(*values)
+
             if opts.use_mean:
-                values = [mean(value) for value in values]
+                all_data[param][key] = [mean(value) for value in values]
             else:
-                values = [median(value) for value in values]
-            all_data[param][key] = values
+                all_data[param][key] = [median(value) for value in values]
 
     return all_data
 
