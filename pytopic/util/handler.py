@@ -52,14 +52,30 @@ class ClusterMetrics(IterationHandler):
     def __init__(self, gold_clustering, iter_interval):
         self.gold_clustering = gold_clustering
         self.iter_interval = iter_interval
+        self.best_ari = float('-inf')
+        self.best_fm = float('-inf')
+        self.best_vi = float('inf')
 
     def handle(self, model):
         if model.num_iters % self.iter_interval == 0:
-            pred_clustering = Clustering.from_model(model)
-            contingency = Contingency(self.gold_clustering, pred_clustering)
-            print 'ARI {}'.format(ari(contingency))
-            print 'FM {}'.format(f_measure(contingency))
-            print 'VI {}'.format(variation_info(contingency))
+            contingency = self.get_contingency(model)
+            curr_ari = ari(contingency)
+            curr_fm = f_measure(contingency)
+            curr_vi = variation_info(contingency)
+
+            print 'ARI {}'.format(max(curr_ari, self.best_ari))
+            print 'FM {}'.format(max(curr_fm, self.best_fm))
+            print 'VI {}'.format(min(curr_vi, self.best_vi))
+
+    def restart(self, model):
+        contingency = self.get_contingency(model)
+        self.best_ari = max(self.best_ari, ari(contingency))
+        self.best_fm = max(self.best_fm, f_measure(contingency))
+        self.best_vi = min(self.best_vi, variation_info(contingency))
+
+    def get_contingency(self, model)
+        pred_clustering = Clustering.from_model(model)
+        return Contingency(self.gold_clustering, pred_clustering)
 
 
 class MalletOutput(IterationHandler):
