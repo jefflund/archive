@@ -56,8 +56,11 @@ def parse_file(filename):
                 data[curr_iter][key] = value
                 keys.add(key)
 
-    if param is not None:
-        yield sort_data(param, data, keys)
+    try:
+        if param is not None:
+            yield sort_data(param, data, keys)
+    except:
+        pass
 
 
 def parse_files(opts):
@@ -76,7 +79,11 @@ def parse_files(opts):
 
     for param in all_data:
         for key in all_data[param]:
-            values = zip(*all_data[param][key])
+            values = [x for x in all_data[param][key]]
+            lens = [len(x) for x in values]
+            max_len = max(lens)
+            values = [x for x in values if len(x) == max_len]
+            values = zip(*values)
             if opts.use_mean:
                 values = [mean(value) for value in values]
             else:
