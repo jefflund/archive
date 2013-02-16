@@ -2,6 +2,7 @@ import argparse
 import gc
 import os
 import random
+import time
 from pytopic.model.mixmulti import MixtureMultinomial
 from pytopic.pipeline.preprocess import split_corpus
 from pytopic.util.handler import (Timer, ClusterMetrics, Perplexity,
@@ -81,15 +82,28 @@ def run(opts, corpus_func, clustering_func):
 
     if opts.anneal:
         opts.inference = 'annealed {}'.format(opts.inference)
-        opts.run_time //= 4
-        model.set_inference(opts.inference, 25)
-        model.timed_inference(opts.run_time)
-        model.set_inference(opts.inference, 10)
-        model.timed_inference(opts.run_time)
-        model.set_inference(opts.inference, 5)
-        model.timed_inference(opts.run_time)
-        model.set_inference(opts.inference, 1)
-        model.timed_inference(opts.run_time)
-    else:
-        model.set_inference(opts.inference)
-        model.timed_inference(opts.run_time)
+
+    end_time = time.time() + opts.run_time
+
+    while time.time() < end_time:
+        time_left = end_time - time.time()
+        print 'TIME LEFT', time_left
+        if opts.anneal:
+            run_time = time_left // 4
+
+            model.set_inference(opts.inference, 25)
+            model.timed_inference(run_time)
+
+            model.set_inference(opts.inference, 10)
+            model.timed_inference(run_time)
+
+            model.set_inference(opts.inference, 5)
+            model.timed_inference(run_time)
+
+            model.set_inference(opts.inference, 1)
+            model.timed_inference(run_time)
+        else:
+            model.set_inference(opts.inference)
+            model.timed_inference(time_left)
+
+        model.random_restart()
