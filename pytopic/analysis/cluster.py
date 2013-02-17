@@ -95,6 +95,10 @@ class Contingency(object):
 
         gold_size = max(len(str(label)) for label in self.gold)
         pred_size = max(len(str(label)) for label in self.pred)
+        for gold_label in self.gold:
+            for pred_label in self.pred:
+                data_len = len(str(self[gold_label, pred_label]))
+                pred_size = max(pred_size, data_len)
 
         print ' ' * gold_size,
         for pred_label in self.pred:
