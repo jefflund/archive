@@ -7,11 +7,13 @@ from pytopic.util.data import pickle_cache
 from pytopic.analysis.cluster import Clustering
 from scripts.kdd13.runner import main
 
+ENRON_DATA = '../data/enron'
+ENRON_INDEX = '../data/enron/indices/ldc_splut/all'
+
 @pickle_cache('../pickle/enron-corpus.pickle')
 def get_enron():
     reader = CorpusReader(NewsTokenizer())
-    reader.add_index_dir('../data/enron/indices/ldc_split/all',
-                         '../data/enron')
+    reader.add_index_dir(ENRON_INDEX, ENRON_DATA)
     corpus = reader.read()
 
     stopwords = load_stopwords('../data/stopwords/english.txt')
@@ -20,8 +22,6 @@ def get_enron():
     return corpus
 
 def enron_clustering(corpus):
-    return Clustering.from_indices(corpus, 
-                                   '../data/enron/indices/ldc_split/all',
-                                   '../data/enron')
+    return Clustering.from_indices(corpus, ENRON_INDEX, ENRON_DATA)
 
 main('Enron', get_enron, enron_clustering)
