@@ -4,7 +4,7 @@ import os
 from pytopic.analysis.cluster import Clustering
 from pytopic.pipeline.corpus import CorpusReader
 from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
-from pytopic.pipeline.tokenizer import NewsTokenizer
+from pytopic.pipeline.tokenizer import HTMLTokenizer
 from pytopic.util.data import pickle_cache
 from scripts.kdd13.runner import main
 
@@ -44,7 +44,6 @@ WEBKB_CLUSTERS = ['course',
 def find_cluster(title):
     for cluster in WEBKB_CLUSTERS:
         if 'webkb' + os.sep + cluster in title:
-        if cluster in title:
             return cluster
 
 def webkb_clustering(corpus):

@@ -1,6 +1,5 @@
 #!/usr/bin/pypy
 
-from pytopic.analysis.cluster import Clustering
 from pytopic.pipeline.corpus import CorpusReader
 from pytopic.pipeline.tokenizer import NewsTokenizer
 from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords

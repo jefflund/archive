@@ -1,12 +1,9 @@
 #!/usr/bin/pypy
 
 import sgmllib
-from pytopic.analysis.cluster import Clustering
-from pytopic.pipeline.corpus import CorpusReader
-from pytopic.pipeline.tokenizer import NewsTokenizer
+from pytopic.pipeline.corpus import CorpusReader, Tokenizer
 from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
 from pytopic.util.data import pickle_cache
-from scripts.kdd13.runner import main
 
 
 class ReutersTokenizer(Tokenizer, sgmllib.SGMLParser):
