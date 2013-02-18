@@ -5,6 +5,7 @@ from pytopic.pipeline.corpus import CorpusReader, Tokenizer
 from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
 from pytopic.util.data import pickle_cache
 from pytopic.analysis.cluster import Clustering
+from scripts.kdd13.runner import main
 
 
 class ReutersTokenizer(Tokenizer, sgmllib.SGMLParser):
@@ -89,7 +90,7 @@ def cluster_reuters(corpus):
         fileid = str(fileid).rjust(3, '0')
         filename = '../data/reuters/reut2-{}.sgm'.format(fileid)
         for title, cluster in tokenizer.get_clusters(filename):
-            topics[title] = cluster
+            topics[title] = cluster.split()[0]
 
     data = [topics[corpus.titles[d]] for d in range(len(corpus))]
     labels = set(data)
@@ -108,3 +109,6 @@ def get_reuters():
     corpus = filter_stopwords(corpus, stopwords)
 
     return corpus
+
+
+main('Reuters', get_reuters, cluster_reuters)
