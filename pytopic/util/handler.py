@@ -49,12 +49,13 @@ class Checkpointer(IterationHandler):
 class ClusterMetrics(IterationHandler):
     """Evaluates a clustering model using three external metrics"""
 
-    def __init__(self, gold_clustering, iter_interval):
+    def __init__(self, gold_clustering, iter_interval, print_matrix=False):
         self.gold_clustering = gold_clustering
         self.iter_interval = iter_interval
         self.best_ari = float('-inf')
         self.best_fm = float('-inf')
         self.best_vi = float('inf')
+        self.print_matrix = print_matrix
 
     def handle(self, model):
         if model.num_iters % self.iter_interval == 0:
@@ -66,6 +67,10 @@ class ClusterMetrics(IterationHandler):
             print 'ARI {}'.format(max(curr_ari, self.best_ari))
             print 'FM {}'.format(max(curr_fm, self.best_fm))
             print 'VI {}'.format(min(curr_vi, self.best_vi))
+
+            if self.print_matrix:
+                contingency.sort_contingency()
+                contingency.print_contingency()
 
     def restart(self, model):
         contingency = self.get_contingency(model)

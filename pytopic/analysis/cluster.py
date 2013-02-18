@@ -3,6 +3,7 @@
 from __future__ import division
 
 import os
+import itertools
 import math
 from pytopic.util.compute import n_choose_2, lim_plogp, lim_xlogy
 
@@ -110,6 +111,27 @@ class Contingency(object):
             for pred_label in self.pred:
                 print str(self[gold_label, pred_label]).ljust(pred_size),
             print
+
+    def sort_contingency(self):
+        unused_gold = set(self.gold)
+        unused_pred = set(self.pred)
+        sorted_gold = []
+        sorted_pred = []
+
+        while len(unused_pred) > 0 and len(unused_gold) > 0:
+            prod = itertools.product(unused_gold, unused_pred)
+            max_gold, max_pred = max(prod, key=lambda x: self[x])
+
+            sorted_gold.append(max_gold)
+            unused_gold.remove(max_gold)
+            sorted_pred.append(max_pred)
+            unused_pred.remove(max_pred)
+
+        sorted_gold.extend(unused_gold)
+        self.gold = sorted_gold
+        sorted_pred.extend(unused_pred)
+        self.pred = sorted_pred
+
 
 def f_measure(contingency):
     """
