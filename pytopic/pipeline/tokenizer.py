@@ -7,7 +7,7 @@ from pytopic.pipeline.corpus import Tokenizer
 class NewsTokenizer(Tokenizer):
     """Tokenizer that skips newsgroups headers"""
 
-    def __init__(self, split_re='\s+', filter_re='[^a-zA-Z]'):
+    def __init__(self, split_re=None, filter_re=None):
         Tokenizer.__init__(self, split_re, filter_re)
 
     def tokenize(self, filename, buff):
@@ -20,7 +20,7 @@ class NewsTokenizer(Tokenizer):
 class BibleTokenizer(Tokenizer):
     """Tokenizer that treats each line as a title-document pair"""
 
-    def __init__(self, split_re='\s+', filter_re='[^a-zA-Z]'):
+    def __init__(self, split_re=None, filter_re=None):
         Tokenizer.__init__(self, split_re, filter_re)
 
     def tokenize(self, filename, buff):
@@ -40,7 +40,7 @@ class BibleTokenizer(Tokenizer):
 class HTMLTokenizer(Tokenizer):
     """Tokenizer that extracts text from html files using nltk"""
 
-    def __init__(self, split_re='\s+', filter_re='[^a-zA-Z]'):
+    def __init__(self, split_re=None, filter_re=None):
         Tokenizer.__init__(self, split_re, filter_re)
 
     def tokenize(self, filename, buff):

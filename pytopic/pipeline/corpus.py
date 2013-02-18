@@ -64,7 +64,11 @@ class CorpusReader(Reader):
 class Tokenizer(object):
     """Performs tokenization for a CorpusReader"""
 
-    def __init__(self, split_re='\s+', filter_re='[^a-zA-Z]'):
+    def __init__(self, split_re=None, filter_re=None):
+        if split_re is None:
+            split_re = '\s+'
+        if filter_re is None:
+            filter_re = '[^a-zA-Z]'
         self.split_re = re.compile(split_re)
         self.filter_re = re.compile(filter_re)
 

@@ -9,7 +9,7 @@ from pytopic.analysis.cluster import Clustering
 
 class ReutersTokenizer(Tokenizer, sgmllib.SGMLParser):
 
-    def __init__(self, split_re='\s+', filter_re='[^a-zA_Z]'):
+    def __init__(self, split_re=None, filter_re=None):
         Tokenizer.__init__(self, split_re, filter_re)
         sgmllib.SGMLParser.__init__(self)
 

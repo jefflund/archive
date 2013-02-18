@@ -11,7 +11,7 @@ from scripts.kdd13.runner import main
 
 class WebKBTokenizer(HTMLTokenizer):
 
-    def __init__(self, split_re='\s+', filter_re='[^a-zA-Z]'):
+    def __init__(self, split_re=None, filter_re=None):
         HTMLTokenizer.__init__(self, split_re, filter_re)
 
     def tokenize(self, filename, buff):
