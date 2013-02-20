@@ -16,3 +16,5 @@ pssh_runs = parser.parse_args().pssh_runs
 for i in range(pssh_runs):
     os.system(run.format('newsgroups', i))
     os.system(run.format('enron', i))
+    os.system(run.format('reuters', i))
+    os.system(run.format('webkb', i))
