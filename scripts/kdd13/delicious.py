@@ -20,4 +20,4 @@ def get_delicious():
     return corpus
 
 
-main('20 Newsgroups', get_newsgroups, Clustering.from_corpus)
+main('Delicious', get_delicious, Clustering.from_corpus)
