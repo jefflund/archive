@@ -1,5 +1,6 @@
 #!/usr/bin/pypy
 
+import collections
 import sgmllib
 from pytopic.pipeline.corpus import CorpusReader, Tokenizer
 from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
@@ -10,9 +11,12 @@ from scripts.kdd13.runner import main
 
 class ReutersTokenizer(Tokenizer, sgmllib.SGMLParser):
 
-    def __init__(self, split_re=None, filter_re=None):
+    def __init__(self, topic_min, split_re=None, filter_re=None):
         Tokenizer.__init__(self, split_re, filter_re)
         sgmllib.SGMLParser.__init__(self)
+
+
+        self.topic_min = topic_min
 
         self.reset_parse()
         self.output = []
@@ -20,11 +24,19 @@ class ReutersTokenizer(Tokenizer, sgmllib.SGMLParser):
     def tokenize(self, filename, buff):
         self.parse(buff)
 
-        for title, text, _ in self.output:
-            tokens = self.split_re.split(text)
-            tokens = [self.transform(token) for token in tokens]
-            tokens = [token for token in tokens if self.keep(token)]
-            yield title, tokens
+        counts = collections.Counter()
+        for _, _, topics in self.output:
+            counts.update(topics)
+        all_topics = {t for t, c in counts.iteritems() if c > self.topic_min}
+
+        for title, text, topics in self.output:
+            for topic in topics:
+                if topic in all_topics:
+                    tokens = self.split_re.split(text)
+                    tokens = [self.transform(token) for token in tokens]
+                    tokens = [token for token in tokens if self.keep(token)]
+                    yield title, tokens
+                    break
 
     def get_clusters(self, filename):
         self.parse(open(filename))
@@ -73,24 +85,27 @@ class ReutersTokenizer(Tokenizer, sgmllib.SGMLParser):
         self.reading_text = False
 
     def end_reuters(self):
-        if len(self.curr_topics) > 0:
+        if len(self.curr_topics) == 1:
             text = '\n'.join(self.curr_text)
-            topic = ' '.join(self.curr_topics)
-            output = self.curr_docid, text, topic
+            topics = tuple(self.curr_topics)
+            output = self.curr_docid, text, topics
             self.output.append(output)
 
         self.reset_parse()
 
 
+MIN_CLUSTER_SIZE = 20
+
+
 def cluster_reuters(corpus):
     topics = {}
 
-    tokenizer = ReutersTokenizer()
+    tokenizer = ReutersTokenizer(MIN_CLUSTER_SIZE)
     for fileid in range(22):
         fileid = str(fileid).rjust(3, '0')
         filename = '../data/reuters/reut2-{}.sgm'.format(fileid)
         for title, cluster in tokenizer.get_clusters(filename):
-            topics[title] = cluster.split()[0]
+            topics[title] = cluster[0]
 
     data = [topics[corpus.titles[d]] for d in range(len(corpus))]
     labels = set(data)
@@ -99,7 +114,7 @@ def cluster_reuters(corpus):
 
 #@pickle_cache('../pickle/reuters-corpus.pickle')
 def get_reuters():
-    reader = CorpusReader(ReutersTokenizer())
+    reader = CorpusReader(ReutersTokenizer(MIN_CLUSTER_SIZE))
     for fileid in range(22):
         fileid = str(fileid).rjust(3, '0')
         reader.add_file('../data/reuters/reut2-{}.sgm'.format(fileid))
