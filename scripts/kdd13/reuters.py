@@ -112,7 +112,7 @@ def cluster_reuters(corpus):
     return Clustering(labels, data)
 
 
-#@pickle_cache('../pickle/reuters-corpus.pickle')
+@pickle_cache('../pickle/reuters-corpus.pickle')
 def get_reuters():
     reader = CorpusReader(ReutersTokenizer(MIN_CLUSTER_SIZE))
     for fileid in range(22):
