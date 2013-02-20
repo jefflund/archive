@@ -387,7 +387,7 @@ class MixtureMultinomial(TopicModel):
 
         self.c_k_doc = init_counter(self.K)
         self.c_kv = init_counter(self.K, self.V)
-        self.c_dv = init_counter(self.M, self.V)
+        self.c_dv = [collections.Counter() for d in range(self.M)]
         self.c_k_token = init_counter(self.K)
 
         for d in range(self.M):

@@ -86,6 +86,7 @@ def run(opts, corpus_func, clustering_func):
 
     training, test = split_corpus(corpus_func(), opts.train_percent)
     clustering = clustering_func(training)
+    gc.collect()
     model = get_model(training, test, clustering, opts)
 
     if opts.anneal:
