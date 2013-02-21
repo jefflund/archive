@@ -10,12 +10,12 @@ potatoes = '/config/potatoes/all3'
 run = ' '.join([pssh, cmd, name, potatoes])
 
 parser = argparse.ArgumentParser()
-parser.add_argument('pssh_runs', type=int, default=4, nargs='?') # 4=>100 runs
+parser.add_argument('pssh_runs', type=int, default=1, nargs='?')
 pssh_runs = parser.parse_args().pssh_runs
 
 for i in range(pssh_runs):
-    #os.system(run.format('newsgroups', i))
-    #os.system(run.format('enron', i))
-    #os.system(run.format('reuters', i))
-    #os.system(run.format('webkb', i))
     os.system(run.format('delicious', i))
+    os.system(run.format('newsgroups', i))
+    os.system(run.format('enron', i))
+    os.system(run.format('reuters', i))
+    os.system(run.format('webkb', i))
