@@ -6,7 +6,7 @@ import argparse
 pssh = 'pssh-run'
 cmd = '"cd research/pytopic; pypy scripts/kdd13/{0}.py"'
 name = '{0}{1}'
-potatoes = '/config/potatoes/all'
+potatoes = '/config/potatoes/all3'
 run = ' '.join([pssh, cmd, name, potatoes])
 
 parser = argparse.ArgumentParser()

@@ -8,7 +8,7 @@ from pytopic.analysis.cluster import Clustering
 from scripts.kdd13.runner import main
 
 ENRON_DATA = '../data/enron'
-ENRON_INDEX = '../data/enron/indices/ldc_splut/all'
+ENRON_INDEX = '../data/enron/indices/ldc_split/all'
 
 @pickle_cache('../pickle/enron-corpus.pickle')
 def get_enron():
@@ -24,4 +24,5 @@ def get_enron():
 def enron_clustering(corpus):
     return Clustering.from_indices(corpus, ENRON_INDEX, ENRON_DATA)
 
-main('Enron', get_enron, enron_clustering)
+if __name__ == '__main__':
+    main('Enron', get_enron, enron_clustering)

@@ -20,4 +20,5 @@ def get_newsgroups():
     return corpus
 
 
-main('20 Newsgroups', get_newsgroups, Clustering.from_corpus)
+if __name__ == '__main__':
+    main('20 Newsgroups', get_newsgroups, Clustering.from_corpus)

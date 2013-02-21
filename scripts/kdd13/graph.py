@@ -61,8 +61,11 @@ def parse_file(filename):
                 data[curr_iter][key] = value
                 keys.add(key)
 
-    if param is not None and len(data) > 0:
-        yield sort_data(param, data, keys)
+    try:
+        if param is not None and len(data) > 0:
+            yield sort_data(param, data, keys)
+    except:
+        pass
 
 
 def parse_files(opts):
