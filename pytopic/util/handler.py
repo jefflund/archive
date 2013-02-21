@@ -67,6 +67,7 @@ class ClusterMetrics(IterationHandler):
             print 'ARI {}'.format(max(curr_ari, self.best_ari))
             print 'FM {}'.format(max(curr_fm, self.best_fm))
             print 'VI {}'.format(min(curr_vi, self.best_vi))
+            print 'Likelihood {}'.format(model.likelihood())
 
             if self.print_matrix:
                 contingency.sort_contingency()

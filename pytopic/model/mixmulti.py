@@ -399,7 +399,15 @@ class MixtureMultinomial(TopicModel):
                 self.c_kv[self.k[d]][w] += 1
                 self.c_dv[d][w] += 1
 
+        self.best_k = self.k
+        self.best_like = float('-inf')
+
     def reinitialize(self):
+        like = self.likelihood()
+        if self.like > self.best_like:
+            self.best_like = like
+            self.best_k = [k_d for k_d in self.k]
+
         for d in range(self.M):
             self.set_k(d, sample_uniform(self.K))
 
@@ -459,3 +467,20 @@ class MixtureMultinomial(TopicModel):
         p /= sum(len(doc) for doc in corpus)
 
         return math.exp(-p)
+
+    def likelihood(self):
+        K = range(self.K)
+        V = range(self.V)
+
+        lambda_ = [math.log(self.gamma + self.c_k_doc[k]) for k in K]
+        lnormalize(lambda_)
+
+        phi = [[math.log(self.beta + self.c_kv[k][v]) for v in V] for k in K]
+        for phi_k in phi:
+            lnormalize(phi_k)
+
+        like = 0
+        for d, k_d in enumerate(self.k):
+            like += lambda_[k_d]
+            like += sum(self.c_dv[d][v] * phi[k_d][v] for v in self.c_dv[d])
+        return like
