@@ -129,10 +129,15 @@ def main():
     parser.add_argument('--style', default='lines')
     parser.add_argument('--no-anneal', action='store_true', default=False)
     parser.add_argument('--use-max', action='store_true', default=False)
+    parser.add_argument('--save', action='store', default=None)
     opts = parser.parse_args()
 
     data = parse_files(opts)
-    create_plot(data, opts).show()
+    plot = create_plot(data, opts)
+    if opts.save is not None:
+        plot.write_pgf(opts.save)
+    else:
+        plot.show()
 
 if __name__ == '__main__':
     main()
