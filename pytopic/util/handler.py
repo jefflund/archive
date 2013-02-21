@@ -46,44 +46,6 @@ class Checkpointer(IterationHandler):
                 pickle.dump(model, outfile)
 
 
-class ClusterMetrics(IterationHandler):
-    """Evaluates a clustering model using three external metrics"""
-
-    def __init__(self, gold_clustering, iter_interval, print_matrix=False):
-        self.gold_clustering = gold_clustering
-        self.iter_interval = iter_interval
-        self.best_ari = float('-inf')
-        self.best_fm = float('-inf')
-        self.best_vi = float('inf')
-        self.print_matrix = print_matrix
-
-    def handle(self, model):
-        if model.num_iters % self.iter_interval == 0:
-            contingency = self.get_contingency(model)
-            curr_ari = ari(contingency)
-            curr_fm = f_measure(contingency)
-            curr_vi = variation_info(contingency)
-
-            print 'ARI {}'.format(max(curr_ari, self.best_ari))
-            print 'FM {}'.format(max(curr_fm, self.best_fm))
-            print 'VI {}'.format(min(curr_vi, self.best_vi))
-            print 'Likelihood {}'.format(model.likelihood())
-
-            if self.print_matrix:
-                contingency.sort_contingency()
-                contingency.print_contingency()
-
-    def restart(self, model):
-        contingency = self.get_contingency(model)
-        self.best_ari = max(self.best_ari, ari(contingency))
-        self.best_fm = max(self.best_fm, f_measure(contingency))
-        self.best_vi = min(self.best_vi, variation_info(contingency))
-
-    def get_contingency(self, model):
-        pred_clustering = Clustering.from_model(model)
-        return Contingency(self.gold_clustering, pred_clustering)
-
-
 class MalletOutput(IterationHandler):
     """Writes a model to file in Mallet output format"""
 
@@ -134,24 +96,6 @@ class MalletOutput(IterationHandler):
                 outfile.write('#{} {}\n'.format(attr, value))
 
 
-class Perplexity(IterationHandler):
-    """Calculates and prints the perplexity of a test dataset"""
-
-    def __init__(self, test_corpus, iter_interval):
-        self.test_corpus = test_corpus
-        self.iter_interval = iter_interval
-        self.best_perplex = float('inf')
-
-    def handle(self, model):
-        if model.num_iters % self.iter_interval == 0:
-            curr_perplex = model.perplexity(self.test_corpus)
-            print 'Perplexity {}'.format(min(curr_perplex, self.best_perplex))
-
-    def restart(self, model):
-        curr_perplex = model.perplexity(self.test_corpus)
-        self.best_perplex = min(curr_perplex, self.best_perplex)
-
-
 class ClusterConvergeceCheck(IterationHandler):
 
     def __init__(self, init_state):
@@ -165,3 +109,48 @@ class ClusterConvergeceCheck(IterationHandler):
                 changes += 1
         if changes == 0:
             raise StopIteration()
+
+
+class MetricPrinter(IterationHandler):
+    """Evaluates a clustering model using three external metrics"""
+
+    def __init__(self, gold_clustering, test_corpus, print_matrix=False):
+        self.gold_clustering = gold_clustering
+        self.test_corpus = test_corpus
+
+        self.like = float('-inf')
+        self.ari = float('-inf')
+        self.fm = float('-inf')
+        self.vi = float('inf')
+        self.perp = float('inf')
+
+        self.print_matrix = print_matrix
+
+    def handle(self, model):
+        contingency = None
+        curr_like = model.likelihood()
+
+        if curr_like > self.like:
+            self.like = curr_like
+
+            contingency = self.get_contingency(model)
+            self.ari = ari(contingency)
+            self.fm = f_measure(contingency)
+            self.vi = variation_info(contingency)
+            self.perp = model.perplexity(self.test_corpus)
+
+        print 'ARI', self.ari
+        print 'FM', self.fm
+        print 'VI', self.vi
+        print 'Likelihood', self.like
+        print 'Perplexity', self.perp
+
+        if self.print_matrix:
+            if contingency is None:
+                contingency = self.get_contingency()
+            contingency.sort_contingency()
+            contingency.print_contingency()
+
+    def get_contingency(self, model):
+        pred_clustering = Clustering.from_model(model)
+        return Contingency(self.gold_clustering, pred_clustering)

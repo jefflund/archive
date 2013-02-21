@@ -5,8 +5,7 @@ import random
 import time
 from pytopic.model.mixmulti import MixtureMultinomial
 from pytopic.pipeline.preprocess import split_corpus
-from pytopic.util.handler import (Timer, ClusterMetrics, Perplexity,
-                                  ClusterConvergeceCheck)
+from pytopic.util.handler import Timer, ClusterConvergeceCheck, MetricPrinter
 
 def get_opts(dataset_name, args=None):
     desc = 'Run mixture of multinomials on the {} dataset'.format(dataset_name)
@@ -27,8 +26,7 @@ def get_model(training, test, clustering, opts):
     model = MixtureMultinomial(training, K, 2, .001)
 
     model.register_handler(Timer())
-    model.register_handler(ClusterMetrics(clustering, opts.print_interval))
-    model.register_handler(Perplexity(test, opts.print_interval))
+    model.register_handler(MetricPrinter(clustering, test))
     model.register_handler(ClusterConvergeceCheck(model.k))
 
     return model

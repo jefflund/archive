@@ -62,11 +62,7 @@ class TopicModel(object):
             handler.handle(self)
 
     def random_restart(self, algorithm=None, *params):
-        for handler in self._handlers:
-            handler.restart(self)
-
         self.reinitialize()
-
         if algorithm is not None:
             self.set_inference(algorithm *params)
 
@@ -91,9 +87,6 @@ class TopicModel(object):
 
 class IterationHandler(object):
     """Base class for handlers run at each iteration of inference"""
-
-    def restart(self, model):
-        pass
 
     def handle(self, model):
         """Called at the conclusion of each iteration"""
