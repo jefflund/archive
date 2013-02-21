@@ -399,15 +399,7 @@ class MixtureMultinomial(TopicModel):
                 self.c_kv[self.k[d]][w] += 1
                 self.c_dv[d][w] += 1
 
-        self.best_k = self.k
-        self.best_like = float('-inf')
-
     def reinitialize(self):
-        like = self.likelihood()
-        if self.like > self.best_like:
-            self.best_like = like
-            self.best_k = [k_d for k_d in self.k]
-
         for d in range(self.M):
             self.set_k(d, sample_uniform(self.K))
 
