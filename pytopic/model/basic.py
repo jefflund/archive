@@ -73,7 +73,9 @@ class TopicModel(object):
         only valid algorithms are: gibbs.
         """
 
-        self._inference_algorithm = self.algorithms[algorithm](self, *params)
+        if algorithm in self.algorithms:
+            algorithm = self.algorithms[algorithm](self, *params)
+        self._inference_algorithm = algorithm
 
     def print_state(self, verbose=False):
         """
