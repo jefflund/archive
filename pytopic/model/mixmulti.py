@@ -14,7 +14,6 @@ from pytopic.util.data import init_counter
 def _gibbs(model, temp, use_argmax):
     N = model.N
     K = range(model.K)
-    doc_words = [set(doc) for doc in model.w]
     gamma = model.gamma
     beta = model.beta
     Vbeta = model.Vbeta
@@ -36,7 +35,7 @@ def _gibbs(model, temp, use_argmax):
 
     def compute_lprob_k(d, j):
         prob = math.log(gamma + c_k_doc[j] - 1)
-        for v in doc_words[d]:
+        for v in c_dv[d]:
             prob += math.lgamma(beta + c_kv[j][v])
             prob -= math.lgamma(beta + c_kv[j][v] - c_dv[d][v])
         prob += math.lgamma(Vbeta + c_k_token[j] - N[d])
