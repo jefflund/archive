@@ -2,26 +2,26 @@
 
 import re
 import StringIO
-from pytopic.pipeline.corpus import Tokenizer
+from pytopic.pipeline import corpus
 
-class NewsTokenizer(Tokenizer):
+class NewsTokenizer(corpus.Tokenizer):
     """Tokenizer that skips newsgroups headers"""
 
     def __init__(self, split_re=None, filter_re=None):
-        Tokenizer.__init__(self, split_re, filter_re)
+        corpus.Tokenizer.__init__(self, split_re, filter_re)
 
     def tokenize(self, filename, buff):
         line = buff.readline()
         while line.strip() != '':
             line = buff.readline()
-        return Tokenizer.tokenize(self, filename, buff)
+        return corpus.Tokenizer.tokenize(self, filename, buff)
 
 
-class BibleTokenizer(Tokenizer):
+class BibleTokenizer(corpus.Tokenizer):
     """Tokenizer that treats each line as a title-document pair"""
 
     def __init__(self, split_re=None, filter_re=None):
-        Tokenizer.__init__(self, split_re, filter_re)
+        corpus.Tokenizer.__init__(self, split_re, filter_re)
 
     def tokenize(self, filename, buff):
         for line in buff:
@@ -37,11 +37,11 @@ class BibleTokenizer(Tokenizer):
                 yield title, tokens
 
 
-class HTMLTokenizer(Tokenizer):
+class HTMLTokenizer(corpus.Tokenizer):
     """Tokenizer that extracts text from html files using nltk"""
 
     def __init__(self, split_re=None, filter_re=None):
-        Tokenizer.__init__(self, split_re, filter_re)
+        corpus.Tokenizer.__init__(self, split_re, filter_re)
 
     def tokenize(self, filename, buff):
         # borrowed from nltk.clean_html, which falls under Apache License 2.0
@@ -53,4 +53,5 @@ class HTMLTokenizer(Tokenizer):
         text = re.sub(r'  ', ' ', text)
         text = re.sub(r'  ', ' ', text)
         text = text.strip()
-        return Tokenizer.tokenize(self, filename, StringIO.StringIO(text))
+        buff = StringIO.StringIO(text) 
+        return corpus.Tokenizer.tokenize(self, filename, buff)

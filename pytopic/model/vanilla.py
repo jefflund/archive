@@ -1,6 +1,5 @@
-from pytopic.model.basic import TopicModel
-from pytopic.util.compute import sample_uniform, sample_counts, top_n
-from pytopic.util.data import init_counter
+from pytopic.model import basic
+from pytopic.util import compute, data
 
 def gibbs_vanilla(model):
     """
@@ -24,7 +23,7 @@ def gibbs_vanilla(model):
     def sample_z(d, n):
         model.unset_z(d, n)
         counts = [prob_z(d, n, j) for j in range(model.T)]
-        model.set_z(d, n, sample_counts(counts))
+        model.set_z(d, n, compute.sample_counts(counts))
 
     def prob_z(d, n, j):
         prob = alpha + c_dt[d][j]
@@ -35,7 +34,7 @@ def gibbs_vanilla(model):
     return sample_model
 
 
-class VanillaLDA(TopicModel):
+class VanillaLDA(basic.TopicModel):
     """Latent Dirichlet Allocation with a Gibbs sampler"""
 
     algorithms = {'gibbs': gibbs_vanilla}
@@ -50,13 +49,13 @@ class VanillaLDA(TopicModel):
 
         self.z = [[0 for _ in range(size)] for size in self.N]
 
-        self.c_t = init_counter(self.T)
-        self.c_dt = init_counter(self.M, self.T)
-        self.c_tv = init_counter(self.T, self.V)
+        self.c_t = data.init_counter(self.T)
+        self.c_dt = data.init_counter(self.M, self.T)
+        self.c_tv = data.init_counter(self.T, self.V)
 
         for d in range(self.M):
             for n in range(self.N[d]):
-                self.set_z(d, n, sample_uniform(self.T))
+                self.set_z(d, n, compute.sample_uniform(self.T))
 
     def set_z(self, d, n, z_dn):
         """
@@ -89,7 +88,7 @@ class VanillaLDA(TopicModel):
         Returns the top n words in topic t
         """
 
-        return top_n(self.c_tv[t], n)
+        return compute.top_n(self.c_tv[t], n)
 
     def doc_topics(self, d, n):
         """
@@ -97,7 +96,7 @@ class VanillaLDA(TopicModel):
         Returns the top n topics in document d
         """
 
-        return top_n(self.c_dt[d], n)
+        return compute.top_n(self.c_dt[d], n)
 
     def print_state(self, verbose=False):
         for t in range(self.T):

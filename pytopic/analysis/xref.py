@@ -1,6 +1,6 @@
 from __future__ import division
 
-from pytopic.util.data import Reader
+from pytopic.util import data
 
 class XRefSet(object):
     """A collection of cross references within a Corpus"""
@@ -29,11 +29,11 @@ class XRefSet(object):
         return len(self.refs)
 
 
-class XRefReader(Reader):
+class XRefReader(data.Reader):
     """Constructs an XRefSet from a set of files"""
 
     def __init__(self, corpus):
-        Reader.__init__(self)
+        data.Reader.__init__(self)
         self.corpus = corpus
 
     def read(self):
@@ -76,11 +76,11 @@ class Concordance(object):
         return len(self.index)
 
 
-def precision_recall(xrefs, model):
+def f_measure(xrefs, model):
     """
-    precision_recall(XRefSet, xrefmodel): return float, float
-    Calculates the precision and recall of a model with cross references with
-    respect to a base XRefSet
+    f_measure(XRefSet, xrefmodel): return float
+    Calculates the f-measure of a model with cross references with respect to a
+    base XRefSet
     """
 
     tp, fp, fn = 0, 0, 0
@@ -90,4 +90,4 @@ def precision_recall(xrefs, model):
         fn += len(gold - pred)
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
-    return precision, recall
+    return 2 * precision * recall / (precision + recall)

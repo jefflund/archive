@@ -63,7 +63,7 @@ def ladd(log_x, log_y):
     """
 
     if log_y > log_x:
-        log_x, log_y = log_y, log_x
+        log_x, log_y = log_y, log_x # log_x smaller gives more precision
     if math.isinf(log_x):
         return log_x
     return log_x + math.log(1 + math.exp(log_y - log_x))
@@ -117,8 +117,8 @@ def lnormalize(counts):
 def top_n(counts, n, only_positive=True):
     """
     top_n(list of int, int): return list of int
-    Returns the indices of the top n counts in the given list of counts, 
-    excluding any zero counts.
+    Returns the indices of the top n counts in the given list of counts.
+    If only_positive is True, then only counts greater than 0 are included.
     """
 
     keys = range(len(counts))
@@ -160,9 +160,16 @@ def lim_xlogy(x, y):
             raise
 
 # both the digamma and trigamma algorithms are ported from Apache Commons,
-# which is (duh) released under the Apache 2.0 license, just like PyTopic
+# which is released under the Apache 2.0 license, just like PyTopic
 
 def digamma(x):
+    """
+    digamma(float): float
+    Computes the digamma function, which is the first derivative of the log
+    gamma function. Note that this algorithm is inefficient for large negative
+    values of x.
+    """
+
     if 0 < x <= 1e-5:
         return -.577215664901532860606512090082 - 1 / x
     elif x >= 49:
@@ -174,6 +181,13 @@ def digamma(x):
 
 
 def trigamma(x):
+    """
+    trigamma(float): float
+    Computes the trigamma function, which is the second derivative of the log
+    gamma function. Note that this algorithm is inefficient for large negative
+    values of x.
+    """
+
     inv = 1 / (x * x)
     if 0 < x <= 1e-5:
         return inv

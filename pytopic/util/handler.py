@@ -1,11 +1,9 @@
 import time
 import pickle
-from pytopic.model.basic import IterationHandler
-from pytopic.analysis.cluster import (Clustering, Contingency,
-                                      f_measure, ari, variation_info)
+from pytopic.model import basic
+from pytopic.analysis import cluster
 
-
-class Printer(IterationHandler):
+class Printer(basic.IterationHandler):
     """Calls print_state on the model at a specified iteration interval"""
 
     def __init__(self, iter_interval, verbose=False):
@@ -17,7 +15,7 @@ class Printer(IterationHandler):
             model.print_state(self.verbose)
 
 
-class Timer(IterationHandler):
+class Timer(basic.IterationHandler):
     """Prints the timing of each iteration"""
 
     def __init__(self):
@@ -30,7 +28,7 @@ class Timer(IterationHandler):
         print '{0} {1}'.format(model.num_iters, iter_time)
 
 
-class Checkpointer(IterationHandler):
+class Checkpointer(basic.IterationHandler):
     """Pickles the model at the specified time interval"""
 
     def __init__(self, time_interval, filename):
@@ -46,7 +44,7 @@ class Checkpointer(IterationHandler):
                 pickle.dump(model, outfile)
 
 
-class MalletOutput(IterationHandler):
+class MalletOutput(basic.IterationHandler):
     """Writes a model to file in Mallet output format"""
 
     def __init__(self, iter_interval, filename):
@@ -96,7 +94,8 @@ class MalletOutput(IterationHandler):
                 outfile.write('#{} {}\n'.format(attr, value))
 
 
-class ClusterConvergeceCheck(IterationHandler):
+class ClusterConvergeceCheck(basic.IterationHandler):
+    """Raises a StopIteration exception if the clustering model converges"""
 
     def __init__(self, init_state):
         self.last_state = [k for k in init_state]
@@ -111,7 +110,7 @@ class ClusterConvergeceCheck(IterationHandler):
             raise StopIteration()
 
 
-class MetricPrinter(IterationHandler):
+class MetricPrinter(basic.IterationHandler):
     """Evaluates a clustering model using three external metrics"""
 
     def __init__(self, gold_clustering, test_corpus, print_matrix=False):
@@ -134,9 +133,9 @@ class MetricPrinter(IterationHandler):
             self.like = curr_like
 
             contingency = self.get_contingency(model)
-            self.ari = ari(contingency)
-            self.fm = f_measure(contingency)
-            self.vi = variation_info(contingency)
+            self.ari = cluster.ari(contingency)
+            self.fm = cluster.f_measure(contingency)
+            self.vi = cluster.variation_info(contingency)
             self.perp = model.perplexity(self.test_corpus)
 
         print 'ARI', self.ari
@@ -152,5 +151,5 @@ class MetricPrinter(IterationHandler):
             contingency.print_contingency()
 
     def get_contingency(self, model):
-        pred_clustering = Clustering.from_model(model)
-        return Contingency(self.gold_clustering, pred_clustering)
+        pred_clustering = cluster.Clustering.from_model(model)
+        return cluster.Contingency(self.gold_clustering, pred_clustering)

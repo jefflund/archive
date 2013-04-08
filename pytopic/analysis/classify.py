@@ -13,6 +13,7 @@ def normalize_and_log(counts):
         else:
             counts[label] = math.log(counts[label] / total)
 
+
 class NaiveBayes(object):
     """A simple Multinomial Naive Bayes classifier"""
 
@@ -66,6 +67,7 @@ class NaiveBayes(object):
                 correct += 1
         return correct / len(data)
 
+
 def partition(labels, data, n):
     """
     partition(list of object, list of iterable, int): yield tuple of iterable
@@ -80,6 +82,7 @@ def partition(labels, data, n):
         train_labels = sum(labels[:i] + labels[i + 1:], [])
         train_data = sum(data[:i] + data[i + 1:], [])
         yield (train_labels, train_data), (labels[i], data[i])
+
 
 def cross_fold_validation(labels, data, n=10):
     """

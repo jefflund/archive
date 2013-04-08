@@ -177,11 +177,14 @@ def ensure_dirs(path):
         if e.errno != errno.EEXIST:
             raise
 
+
 def pickle_cache(pickle_path):
     """
     pickle_cache(str): decorator
-    Creates a decorator which caches the results of a parameterless function
-    to the specified pickle file.
+    Creates a decorator which caches the results of a function
+    to the specified pickle file. If the function is called a second time, then
+    the cached result is returned. Note that this caching occurs even if the
+    arguments to the function are changed.
     """
 
     def cache(data_func):

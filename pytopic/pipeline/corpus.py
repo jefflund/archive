@@ -2,14 +2,14 @@
 
 import os
 import re
-from pytopic.util.data import Index, Reader
+from pytopic.util import data
 
 class Corpus(object):
     """A collection of text documents"""
 
     def __init__(self):
-        self.vocab = Index()
-        self.titles = Index()
+        self.vocab = data.Index()
+        self.titles = data.Index()
         self.data = {}
 
     def add_document(self, title, tokens):
@@ -41,11 +41,11 @@ class Corpus(object):
             yield self.data[i]
 
 
-class CorpusReader(Reader):
+class CorpusReader(data.Reader):
     """Facilitates the construction of text corpora from files"""
 
     def __init__(self, tokenizer=None):
-        Reader.__init__(self)
+        data.Reader.__init__(self)
         self.tokenizer = Tokenizer() if tokenizer is None else tokenizer
 
     def read(self):

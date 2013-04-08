@@ -1,7 +1,7 @@
 """Functions for preprocessing a corpus"""
 
-from pytopic.pipeline.corpus import Corpus
-from pytopic.util.compute import sample_order
+from pytopic.pipeline import corpus
+from pytopic.util import compute
 
 def filter_rarewords(corpus, threshold, retain_empty=False):
     """
@@ -25,7 +25,7 @@ def filter_stopwords(corpus, stopwords, retain_empty=False):
     the data.
     """
 
-    transformed = Corpus()
+    transformed = corpus.Corpus()
     for d in range(len(corpus)):
         tokens = [corpus.vocab[v] for v in corpus[d]]
         tokens = [v for v in tokens if v not in stopwords]
@@ -55,13 +55,13 @@ def split_corpus(corpus, training_proportion):
     before splitting, to ensure an even mix of document types.
     """
 
-    training = Corpus()
-    test = Corpus()
+    training = corpus.Corpus()
+    test = corpus.Corpus()
     training.vocab = corpus.vocab
     test.vocab = corpus.vocab
 
     break_point = int(len(corpus) * training_proportion)
-    doc_ids = sample_order(len(corpus))
+    doc_ids = compute.sample_order(len(corpus))
 
     for d in doc_ids[:break_point]:
         doc_index = training.titles.add_unique(corpus.titles[d])

@@ -5,7 +5,7 @@ from __future__ import division
 import os
 import itertools
 import math
-from pytopic.util.compute import n_choose_2, lim_plogp, lim_xlogy
+from pytopic.util import compute
 
 class Clustering(object):
     """Abstraction for clusterings, both labeled data and inferred clusters"""
@@ -161,22 +161,26 @@ def f_measure(contingency):
         result += best_f_measure * class_counts[c] / normalizer
     return 2 * result
 
+
 def ari(contingency):
     """
     ari(Contingency): float
     Computes the average rand index for the given contingency matrix
     """
 
-    a_part = sum(n_choose_2(sum(contingency[c, k] for k in contingency.pred))
-                 for c in contingency.gold)
-    b_part = sum(n_choose_2(sum(contingency[c, k] for c in contingency.gold))
-                 for k in contingency.pred)
-    index = sum(n_choose_2(contingency[c, k])
-            for c in contingency.gold
-            for k in contingency.pred)
-    expected = (a_part * b_part) / n_choose_2(len(contingency))
+    K = contingency.pred
+    C = contingency.gold
+
+    a_part = sum(compute.n_choose_2(sum(contingency[c, k] for k in K))
+                 for c in C)
+    b_part = sum(compute.n_choose_2(sum(contingency[c, k] for c in C))
+                 for k in K)
+    index = sum(compute.n_choose_2(contingency[c, k]) for c in C for k in K)
+
+    expected = (a_part * b_part) / compute.n_choose_2(len(contingency))
     maximum = (a_part + b_part) / 2
     return (index - expected) / (maximum - expected)
+
 
 def variation_info(contingency):
     """
@@ -193,12 +197,12 @@ def variation_info(contingency):
     entropy_gold = 0
     for c in contingency.gold:
         prob_c = gold_sums[c] / num_datums
-        entropy_gold -= lim_plogp(prob_c)
+        entropy_gold -= compute.lim_plogp(prob_c)
 
     entropy_pred = 0
     for k in contingency.pred:
         prob_k = pred_sums[k] / num_datums
-        entropy_pred -= lim_plogp(prob_k)
+        entropy_pred -= compute.lim_plogp(prob_k)
 
     mutual_information = 0
     for c in contingency.gold:
@@ -208,6 +212,6 @@ def variation_info(contingency):
             prob_k = pred_sums[k] / num_datums
             if prob_c != 0 and prob_k != 0:
                 mutual_prob = prob_ck / (prob_c * prob_k)
-                mutual_information += lim_xlogy(prob_ck, mutual_prob)
+                mutual_information += compute.lim_xlogy(prob_ck, mutual_prob)
 
     return entropy_gold + entropy_pred - 2 * mutual_information

@@ -5,11 +5,8 @@ from __future__ import division
 import collections
 import math
 import random
-from pytopic.model.basic import TopicModel
-from pytopic.util.compute import sample_uniform, sample_lcounts, top_n
-from pytopic.util.compute import lnormalize, ladd, lsum, digamma
-from pytopic.util.compute import normalize, argmax
-from pytopic.util.data import init_counter
+from pytopic.model import basic
+from pytopic.util import compute, data
 
 def _gibbs(model, temp, use_argmax):
     N = model.N
@@ -48,9 +45,9 @@ def _gibbs(model, temp, use_argmax):
         lprob_k = lambda d, j: compute_lprob_k(d, j) / temp
 
     if use_argmax:
-        sample = argmax
+        sample = compute.argmax
     else:
-        sample = sample_lcounts
+        sample = compute.sample_lcounts
 
     return sample_model
 
@@ -102,11 +99,11 @@ def annealed_em(model, temp):
 
     def init_posteriors():
         lambda_ = [math.log(1 + model.c_k_doc[k]) for k in K]
-        lnormalize(lambda_)
+        compute.lnormalize(lambda_)
 
         phi = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
         for k in K:
-            lnormalize(phi[k])
+            compute.lnormalize(phi[k])
 
         return update_posteriors(lambda_, phi)
 
@@ -114,14 +111,14 @@ def annealed_em(model, temp):
         def update_posteriors(lambda_, phi):
             posteriors = [calc_posterior(d, lambda_, phi) for d in M]
             for posterior in posteriors:
-                lnormalize(posterior)
+                compute.lnormalize(posterior)
             return posteriors
     else:
         def update_posteriors(lambda_, phi):
             posteriors = [calc_posterior(d, lambda_, phi) for d in M]
             for d in M:
                 posteriors[d] = [post / temp for post in posteriors[d]]
-                lnormalize(posteriors[d])
+                compute.lnormalize(posteriors[d])
             return posteriors
 
     def calc_posterior(d, lambda_, phi):
@@ -129,8 +126,8 @@ def annealed_em(model, temp):
         return [prior + like for prior, like in zip(lambda_, likes)]
 
     def calc_lambda():
-        lambda_ = [lsum(posteriors[d][k] for d in M) for k in K]
-        lnormalize(lambda_)
+        lambda_ = [compute.lsum(posteriors[d][k] for d in M) for k in K]
+        compute.lnormalize(lambda_)
         return lambda_
 
     def calc_phi():
@@ -139,8 +136,8 @@ def annealed_em(model, temp):
             for v in V:
                 for d in word_docs[v]:
                     pseudocount = posteriors[d][k] + math.log(w[d][v])
-                    phi[k][v] = ladd(phi[k][v], pseudocount)
-            lnormalize(phi[k])
+                    phi[k][v] = compute.ladd(phi[k][v], pseudocount)
+            compute.lnormalize(phi[k])
         return phi
 
     def update_model():
@@ -190,26 +187,27 @@ def annealed_vem(model, temp):
 
     def init_theta():
         lambda_ = [math.log(1 + model.c_k_doc[k]) for k in K]
-        lnormalize(lambda_)
+        compute.lnormalize(lambda_)
 
         phi = [[math.log(1 + model.c_kv[k][v]) for v in V] for k in K]
         for k in K:
-            lnormalize(phi[k])
+            compute.lnormalize(phi[k])
 
         theta = [[lambda_[k] for k in K] for d in M]
         for d in M:
             for k in K:
                 theta[d][k] += sum(w[d][v] * phi[k][v] for v in doc_words[d])
-            lnormalize(theta[d])
+            compute.lnormalize(theta[d])
 
         return theta
 
     def calc_theta(a, b):
-        dig_suma = digamma(sum(a))
-        dig_a = [digamma(a[k]) - dig_suma for k in K]
+        dig_suma = compute.digamma(sum(a))
+        dig_a = [compute.digamma(a[k]) - dig_suma for k in K]
 
-        dig_sumb = [digamma(sum(b[k])) for k in K]
-        dig_b = [[digamma(b[k][v]) - dig_sumb[k] for v in V] for k in K]
+        dig_sumb = [compute.digamma(sum(b[k])) for k in K]
+        dig_b = [[compute.digamma(b[k][v]) - dig_sumb[k] for v in V]
+                 for k in K]
 
         theta = [[dig_a[k] for k in K] for d in M]
         for d in M:
@@ -222,21 +220,21 @@ def annealed_vem(model, temp):
         def update_theta(a, b):
             theta = calc_theta(a, b)
             for d in M:
-                lnormalize(theta[d])
+                compute.lnormalize(theta[d])
             return theta
     else:
         def update_theta(a, b):
             theta = calc_theta(a, b)
             for d in M:
                 theta[d] = [t / temp for t in theta[d]]
-                lnormalize(theta[d])
+                compute.lnormalize(theta[d])
             return theta
 
     def calc_a():
         a = [gamma for k in K]
         for k in K:
-            a[k] += math.exp(lsum(theta[d][k] for d in M))
-        normalize(a)
+            a[k] += math.exp(compute.lsum(theta[d][k] for d in M))
+        compute.normalize(a)
         return a
 
     def calc_b():
@@ -245,7 +243,7 @@ def annealed_vem(model, temp):
             for v in V:
                 for d in word_docs[v]:
                     b[k][v] += math.exp(theta[d][k]) * w[d][v]
-            normalize(b[k])
+            compute.normalize(b[k])
         return b
 
     def update_model():
@@ -291,12 +289,12 @@ def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
         if index == 0:
             return [k for k in model.k]
         else:
-            return [sample_uniform(len(K)) for _ in M]
+            return [compute.sample_uniform(len(K)) for _ in M]
 
     def mutate(gene):
         for d in M:
             if random.random() < mutate_prob:
-                gene[d] = sample_uniform(len(K))
+                gene[d] = compute.sample_uniform(len(K))
 
     def cross_over(parent_a, parent_b):
         parents = zip(parent_a, parent_b)
@@ -323,11 +321,11 @@ def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
                 c_kv[gene[d]][v] += w[d][v]
 
         lambda_ = [math.log(gamma + c_k[k]) for k in K]
-        lnormalize(lambda_)
+        compute.lnormalize(lambda_)
 
         phi = [[math.log(beta + c_kv[k][v]) for v in V] for k in K]
         for phi_k in phi:
-            lnormalize(phi_k)
+            compute.lnormalize(phi_k)
 
         fitness = 0
         for d, k_d in enumerate(gene):
@@ -344,8 +342,8 @@ def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
 
     def generation():
         fitness = [evaluate(gene) for gene in population]
-        update_model(population[argmax(fitness)])
-        elite = top_n(fitness, elite_size, False)
+        update_model(population[compute.argmax(fitness)])
+        elite = compute.top_n(fitness, elite_size, False)
 
         new_population = [population[e] for e in elite] if keep_elite else []
         while len(new_population) < pop_size:
@@ -360,7 +358,7 @@ def default_ga(model):
     return ga(model, 100, .1, .01, False)
 
 
-class MixtureMultinomial(TopicModel):
+class MixtureMultinomial(basic.TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
     algorithms = {'gibbs': gibbs,
@@ -374,7 +372,7 @@ class MixtureMultinomial(TopicModel):
                   'custom ga': ga}
 
     def __init__(self, corpus, K, gamma, beta):
-        TopicModel.__init__(self, corpus)
+        basic.TopicModel.__init__(self, corpus)
 
         self.K = K
         self.gamma = gamma
@@ -384,23 +382,19 @@ class MixtureMultinomial(TopicModel):
 
         self.k = [0 for _ in range(self.M)]
 
-        self.c_k_doc = init_counter(self.K)
-        self.c_kv = init_counter(self.K, self.V)
+        self.c_k_doc = data.init_counter(self.K)
+        self.c_kv = data.init_counter(self.K, self.V)
         self.c_dv = [collections.Counter() for d in range(self.M)]
-        self.c_k_token = init_counter(self.K)
+        self.c_k_token = data.init_counter(self.K)
 
         for d in range(self.M):
-            self.k[d] = sample_uniform(self.K)
+            self.k[d] = compute.sample_uniform(self.K)
 
             self.c_k_doc[self.k[d]] += 1
             self.c_k_token[self.k[d]] += self.N[d]
             for w in self.w[d]:
                 self.c_kv[self.k[d]][w] += 1
                 self.c_dv[d][w] += 1
-
-    def reinitialize(self):
-        for d in range(self.M):
-            self.set_k(d, sample_uniform(self.K))
 
     def set_k(self, d, k_d):
         """
@@ -444,17 +438,18 @@ class MixtureMultinomial(TopicModel):
         K = range(self.K)
 
         lambda_ = [math.log(self.gamma + c) for c in self.c_k_doc]
-        lnormalize(lambda_)
+        compute.lnormalize(lambda_)
 
         phi = [[math.log(self.beta + c) for c in c_k] for c_k in self.c_kv]
         for phi_k in phi:
-            lnormalize(phi_k)
+            compute.lnormalize(phi_k)
 
         docs = [collections.Counter(doc) for doc in corpus]
 
         p = 0
         for w in docs:
-            p += lsum(lambda_[k] + sum(w[v] * phi[k][v] for v in w) for k in K)
+            posts = (lambda_[k] + sum(w[v] * phi[k][v] for v in w) for k in K)
+            p += compute.lsum(posts)
         p /= sum(len(doc) for doc in corpus)
 
         return math.exp(-p)
@@ -464,11 +459,11 @@ class MixtureMultinomial(TopicModel):
         V = range(self.V)
 
         lambda_ = [math.log(self.gamma + self.c_k_doc[k]) for k in K]
-        lnormalize(lambda_)
+        compute.lnormalize(lambda_)
 
         phi = [[math.log(self.beta + self.c_kv[k][v]) for v in V] for k in K]
         for phi_k in phi:
-            lnormalize(phi_k)
+            compute.lnormalize(phi_k)
 
         like = 0
         for d, k_d in enumerate(self.k):
