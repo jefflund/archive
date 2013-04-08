@@ -8,7 +8,7 @@ import random
 from pytopic.model import basic
 from pytopic.util import compute, data
 
-def _gibbs(model, temp, use_argmax):
+def _gibbs(model, temp, sample_func):
     N = model.N
     K = range(model.K)
     gamma = model.gamma
@@ -28,7 +28,7 @@ def _gibbs(model, temp, use_argmax):
         for j in K:
             model.set_k(d, j)
             lcounts.append(lprob_k(d, j))
-        model.set_k(d, sample(lcounts))
+        model.set_k(d, sample_func(lcounts))
 
     def compute_lprob_k(d, j):
         prob = math.log(gamma + c_k_doc[j] - 1)
@@ -44,11 +44,6 @@ def _gibbs(model, temp, use_argmax):
     else:
         lprob_k = lambda d, j: compute_lprob_k(d, j) / temp
 
-    if use_argmax:
-        sample = compute.argmax
-    else:
-        sample = compute.sample_lcounts
-
     return sample_model
 
 
@@ -58,7 +53,7 @@ def gibbs(model):
     Creates a Gibbs sampler for the mixture of multinomials model
     """
 
-    return _gibbs(model, 1, False)
+    return _gibbs(model, 1, compute.sample_lcounts)
 
 
 def annealed_gibbs(model, temp):
@@ -67,17 +62,17 @@ def annealed_gibbs(model, temp):
     Creates an annealed Gibbs sampler for the Mixture of Multinomials model
     """
 
-    return _gibbs(model, temp, False)
+    return _gibbs(model, temp, compute.sample_lcounts)
 
 
-def ecm(model):
+def ccm(model):
     """
-    ecm(model): func
-    Returns an expectation conditional maximization algorithm for the Mixture
+    ccm(model): func
+    Returns an complete conditional maximization algorithm for the Mixture
     of Multinomials model
     """
 
-    return _gibbs(model, 1, True)
+    return _gibbs(model, 1, compute.argmax)
 
 
 def annealed_em(model, temp):
@@ -270,106 +265,17 @@ def vem(model):
 
     return annealed_vem(model, 1)
 
-def ga(model, pop_size, eliteness, mutate_prob, keep_elite):
-    """
-    ga(MixtureMultinomial, int, float, float, bool): func
-    Creates a genetic algorithm inference algorithm for mixture of multinomials
-    """
-
-    gamma = model.gamma
-    beta = model.beta
-
-    K = range(model.K)
-    M = range(model.M)
-    V = range(model.V)
-    doc_words = [set(doc) for doc in model.w]
-    w = model.c_dv
-
-    def init_gene(index):
-        if index == 0:
-            return [k for k in model.k]
-        else:
-            return [compute.sample_uniform(len(K)) for _ in M]
-
-    def mutate(gene):
-        for d in M:
-            if random.random() < mutate_prob:
-                gene[d] = compute.sample_uniform(len(K))
-
-    def cross_over(parent_a, parent_b):
-        parents = zip(parent_a, parent_b)
-
-        select = [int(random.getrandbits(1)) for _ in M]
-        child_a = [p[i] for p, i in zip(parents, select)]
-
-        select = [(i - 1) * -1 for i in select]
-        child_b = [p[(i - 1)] for p, i in zip(parents, select)]
-
-        return child_a, child_b
-
-    def reproduce(parent_a, parent_b):
-        child_a, child_b = cross_over(parent_a, parent_b)
-        mutate(child_a)
-        mutate(child_b)
-        return child_a, child_b
-
-    def evaluate(gene):
-        c_k = collections.Counter(gene)
-        c_kv = [collections.Counter() for k in K]
-        for d in M:
-            for v in doc_words[d]:
-                c_kv[gene[d]][v] += w[d][v]
-
-        lambda_ = [math.log(gamma + c_k[k]) for k in K]
-        compute.lnormalize(lambda_)
-
-        phi = [[math.log(beta + c_kv[k][v]) for v in V] for k in K]
-        for phi_k in phi:
-            compute.lnormalize(phi_k)
-
-        fitness = 0
-        for d, k_d in enumerate(gene):
-            fitness += lambda_[k_d]
-            fitness += sum(w[d][v] * phi[k_d][v] for v in doc_words[d])
-        return fitness
-
-    def update_model(gene):
-        for d, k_d in enumerate(gene):
-            model.set_k(d, k_d)
-
-    population = [init_gene(i) for i in range(pop_size)]
-    elite_size = int(pop_size * eliteness)
-
-    def generation():
-        fitness = [evaluate(gene) for gene in population]
-        update_model(population[compute.argmax(fitness)])
-        elite = compute.top_n(fitness, elite_size, False)
-
-        new_population = [population[e] for e in elite] if keep_elite else []
-        while len(new_population) < pop_size:
-            parent_a = population[random.choice(elite)]
-            parent_b = population[random.choice(elite)]
-            new_population.extend(reproduce(parent_a, parent_b))
-        population[:] = new_population
-
-    return generation
-
-def default_ga(model):
-    return ga(model, 100, .1, .01, False)
-
 
 class MixtureMultinomial(basic.TopicModel):
     """Implementation of Mixture of Multinomials with a Gibbs sampler"""
 
     algorithms = {'gibbs': gibbs,
                   'annealed gibbs': annealed_gibbs,
-                  'ecm': ecm,
+                  'ccm': ccm,
                   'em': em,
                   'annealed em': annealed_em,
                   'vem': vem,
-                  'annealed vem': annealed_vem,
-                  'ga': default_ga,
-                  'custom ga': ga}
+                  'annealed vem': annealed_vem}
 
     def __init__(self, corpus, K, gamma, beta):
         basic.TopicModel.__init__(self, corpus)
@@ -435,6 +341,13 @@ class MixtureMultinomial(basic.TopicModel):
                 print '{0} - {1}'.format(self.titles[d], self.k[d])
 
     def perplexity(self, corpus):
+        """
+        MixtureMultinomial.perplexity(Corpus): float
+        Computes the held-out perplexity for the provided Corpus given this
+        model, which is defined as exp(p), where p is the entropy. This
+        measures how well the model predicts the provided Corpus.
+        """
+
         K = range(self.K)
 
         lambda_ = [math.log(self.gamma + c) for c in self.c_k_doc]
@@ -455,6 +368,12 @@ class MixtureMultinomial(basic.TopicModel):
         return math.exp(-p)
 
     def likelihood(self):
+        """
+        MixtureMultinomial.likelihood(): float
+        Computes the unnormalized log likelihood of the data, which gives an
+        indication as to how strongly the model represents the training data.
+        """
+
         K = range(self.K)
         V = range(self.V)
 
