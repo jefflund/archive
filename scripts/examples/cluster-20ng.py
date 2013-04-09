@@ -4,7 +4,7 @@ from pytopic.model import mixmulti
 from pytopic.analysis import cluster
 from pytopic.util import handler
 
-#@data.pickle_cache('../pickle/newsgroups-corpus.pickle')
+@data.pickle_cache('../pickle/newsgroups-corpus.pickle')
 def get_corpus():
     reader = dataset.CorpusReader(tokenizer.NewsTokenizer())
     reader.add_dir('../data/newsgroups/groups')
@@ -16,15 +16,15 @@ def get_corpus():
 
     return corpus
 
-#@data.pickle_cache('../pickle/newsgroups-clustering.pickle')
+@data.pickle_cache('../pickle/newsgroups-clustering.pickle')
 def get_clustering(corpus):
     return cluster.Clustering.from_corpus(corpus)
 
 def get_model(corpus, clustering):
     model = mixmulti.MixtureMultinomial(corpus, 20, 2, .001)
+    model.register_handler(handler.Timer())
     model.register_handler(handler.ClusterConvergeceCheck(model.k))
     model.register_handler(handler.MetricPrinter(5, clustering))
-    model.register_handler(handler.Timer())
     return model
 
 if __name__ == '__main__':
