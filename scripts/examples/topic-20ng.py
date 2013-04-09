@@ -1,26 +1,25 @@
-from pytopic.pipeline.corpus import CorpusReader
-from pytopic.pipeline.tokenizer import NewsTokenizer
-from pytopic.pipeline.preprocess import load_stopwords, filter_stopwords
+from pytopic.pipeline import dataset, tokenizer, preprocess
+from pytopic.model import vanilla
+
 from pytopic.util.data import pickle_cache
-from pytopic.model.vanilla import VanillaLDA
-from pytopic.util.handler import Printer, Timer
+from pytopic.util import handler
 
 @pickle_cache('../pickle/newsgroups-corpus.pickle')
 def get_corpus():
-    reader = CorpusReader(NewsTokenizer())
+    reader = dataset.CorpusReader(tokenizer.NewsTokenizer())
     reader.add_dir('../data/newsgroups/groups')
     corpus = reader.read()
 
-    stopwords = load_stopwords('../data/stopwords/english.txt',
-                               '../data/stopwords/newsgroups.txt')
-    corpus = filter_stopwords(corpus, stopwords)
+    stopwords = preprocess.load_stopwords('../data/stopwords/english.txt',
+                                          '../data/stopwords/newsgroups.txt')
+    corpus = preprocess.filter_stopwords(corpus, stopwords)
 
     return corpus
 
 def get_model(corpus):
-    lda = VanillaLDA(corpus, 20, .4, .01)
-    lda.register_handler(Timer())
-    lda.register_handler(Printer(10))
+    lda = vanilla.VanillaLDA(corpus, 20, .4, .01)
+    lda.register_handler(handler.Timer())
+    lda.register_handler(handler.Printer(10))
     return lda
 
 if __name__ == '__main__':

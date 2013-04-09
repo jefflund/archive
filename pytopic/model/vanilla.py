@@ -38,9 +38,10 @@ class VanillaLDA(basic.TopicModel):
     """Latent Dirichlet Allocation with a Gibbs sampler"""
 
     algorithms = {'gibbs': gibbs_vanilla}
+    default_algorithm = 'gibbs'
 
     def __init__(self, corpus, T, alpha, beta):
-        TopicModel.__init__(self, corpus)
+        basic.TopicModel.__init__(self, corpus)
 
         self.T = T
         self.alpha = alpha
