@@ -44,56 +44,6 @@ class Checkpointer(basic.IterationHandler):
                 pickle.dump(model, outfile)
 
 
-class MalletOutput(basic.IterationHandler):
-    """Writes a model to file in Mallet output format"""
-
-    def __init__(self, iter_interval, filename):
-        self.iter_interval = iter_interval
-        self.filename = filename
-
-    def handle(self, model):
-        if model.num_iters % self.iter_interval == 0:
-            with open(self.filename, 'w') as outfile:
-                self.write_mallet(outfile, model)
-
-    def write_mallet(self, outfile, model):
-        """
-        MalletOutput.write_mallet(file, model): return None
-        Writes a model to the given file in Mallet output format
-        """
-
-        self.write_params(outfile, model)
-        self.write_header(outfile)
-
-        for d in range(model.M):
-            title = model.titles[d]
-            for n in range(model.N[d]):
-                w = model.w[d][n]
-                word = model.vocab[w]
-                z = model.z[d][n]
-                line = '{} {} {} {} {}\n'.format(d, title, n, w, word, z)
-                outfile.write(line)
-
-    def write_header(self, outfile):
-        """
-        MalletOutput.write_header(file): return None
-        Writes a comment describing the Mallet output format
-        """
-
-        outfile.write('#doc source pos typeindex type topic\n')
-
-    def write_params(self, outfile, model):
-        """
-        MalletOutput.write_params(file, model): return None
-        Writes all int and float attributes with their value in comments
-        """
-
-        for attr in dir(model):
-            value = getattr(model, attr)
-            if type(value) is int or type(value) is float:
-                outfile.write('#{} {}\n'.format(attr, value))
-
-
 class ClusterConvergeceCheck(basic.IterationHandler):
     """Raises a StopIteration exception if the clustering model converges"""
 
@@ -101,55 +51,28 @@ class ClusterConvergeceCheck(basic.IterationHandler):
         self.last_state = [k for k in init_state]
 
     def handle(self, model):
-        changes = 0
+        model_changed = False
         for d, k_d in enumerate(model.k):
             if self.last_state[d] != k_d:
                 self.last_state[d] = k_d
-                changes += 1
-        if changes == 0:
+                model_changed = True
+        if not model_changed:
             raise StopIteration()
 
 
 class MetricPrinter(basic.IterationHandler):
     """Evaluates a clustering model using three external metrics"""
 
-    def __init__(self, gold_clustering, test_corpus, print_matrix=False):
+    def __init__(self, iter_interval, gold_clustering):
+        self.iter_interval = iter_interval
         self.gold_clustering = gold_clustering
-        self.test_corpus = test_corpus
-
-        self.like = float('-inf')
-        self.ari = float('-inf')
-        self.fm = float('-inf')
-        self.vi = float('inf')
-        self.perp = float('inf')
-
-        self.print_matrix = print_matrix
 
     def handle(self, model):
-        contingency = None
-        curr_like = model.likelihood()
+        if model.num_iters % self.iter_interval == 0:
+            pred = cluster.Clustering.from_model(model)
+            contingency = cluster.Contingency(self.gold_clustering, pred)
 
-        if curr_like > self.like:
-            self.like = curr_like
-
-            contingency = self.get_contingency(model)
-            self.ari = cluster.ari(contingency)
-            self.fm = cluster.f_measure(contingency)
-            self.vi = cluster.variation_info(contingency)
-            self.perp = model.perplexity(self.test_corpus)
-
-        print 'ARI', self.ari
-        print 'FM', self.fm
-        print 'VI', self.vi
-        print 'Likelihood', self.like
-        print 'Perplexity', self.perp
-
-        if self.print_matrix:
-            if contingency is None:
-                contingency = self.get_contingency()
-            contingency.sort_contingency()
-            contingency.print_contingency()
-
-    def get_contingency(self, model):
-        pred_clustering = cluster.Clustering.from_model(model)
-        return cluster.Contingency(self.gold_clustering, pred_clustering)
+            print 'ARI', cluster.ari(contingency)
+            print 'FM', cluster.f_measure(contingency)
+            print 'VI', cluster.variation_info(contingency)
+            print 'Likelihood', model.likelihood()
