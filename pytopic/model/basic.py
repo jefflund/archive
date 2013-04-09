@@ -56,6 +56,21 @@ class TopicModel(object):
             except StopIteration:
                 break
 
+    def unlimited_inference(self):
+        """
+        TopicModel.unlimited_inference(int): return None
+        Performs inference on the model indefinatly, or until a StopIteration
+        exception is raised (perhaps by a handler)
+        """
+
+        self._ensure_inference_set()
+
+        while True:
+            try:
+                self.iteration()
+            except StopIteration:
+                break
+
     def iteration(self):
         self._inference_algorithm()
         self.num_iters += 1
