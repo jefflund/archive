@@ -267,7 +267,7 @@ def vem(model):
 
 
 class MixtureMultinomial(basic.TopicModel):
-    """Implementation of Mixture of Multinomials with a Gibbs sampler"""
+    """Implementation of Mixture of Multinomials model"""
 
     algorithms = {'gibbs': gibbs,
                   'annealed gibbs': annealed_gibbs,
@@ -276,6 +276,7 @@ class MixtureMultinomial(basic.TopicModel):
                   'annealed em': annealed_em,
                   'vem': vem,
                   'annealed vem': annealed_vem}
+    default_algorithm = 'ccm'
 
     def __init__(self, corpus, K, gamma, beta):
         basic.TopicModel.__init__(self, corpus)

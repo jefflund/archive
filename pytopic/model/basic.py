@@ -32,6 +32,8 @@ class TopicModel(object):
         Performs inference on the model for the given number of iterations
         """
 
+        self._ensure_inference_set()
+
         for _ in range(iterations):
             try:
                 self.iteration()
@@ -43,6 +45,8 @@ class TopicModel(object):
         TopicModel.timed_inference(int): return None
         Performs inference on the model for the given number of seconds
         """
+
+        self._ensure_inference_set()
 
         end_time = time.time() + seconds
 
@@ -65,15 +69,19 @@ class TopicModel(object):
         only valid algorithms are: gibbs.
         """
 
-        if algorithm in self.algorithms:
-            algorithm = self.algorithms[algorithm](self, *params)
-        self._inference_algorithm = algorithm
+        self._inference_algorithm = self.algorithms[algorithm](self, *params)
+
+    def _ensure_inference_set(self):
+        if self._inference_algorithm is None:
+            self.set_inference(self.default_algorithm)
 
     def print_state(self, verbose=False):
         """
         TopicModel.print_state(bool): return None
         Prints a summary of the current state of the sampled model
         """
+
+        raise NotImplementedError()
 
     def register_handler(self, handler):
         self._handlers.append(handler)
