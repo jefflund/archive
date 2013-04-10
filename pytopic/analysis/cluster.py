@@ -62,6 +62,17 @@ class Clustering(object):
         data = [data[corpus.titles[d]] for d in range(len(corpus))]
         return Clustering(labels, data)
 
+    @classmethod
+    def from_repr(cls, state):
+        """
+        Clustering.from_repr(str): Clustering
+        Returns a Clustering using the repr of a clustering assignment. This
+        uses eval so make sure you trust the source of the data!
+        """
+
+        data = eval(state)
+        return Clustering(set(data), data)
+
     def __len__(self):
         return len(self.data)
 

@@ -76,3 +76,15 @@ class MetricPrinter(basic.IterationHandler):
             print 'FM', cluster.f_measure(contingency)
             print 'VI', cluster.variation_info(contingency)
             print 'Likelihood', model.likelihood()
+
+
+class StatePrinter(basic.IterationHandler):
+    """Prints the string representation of a state variable"""
+
+    def __init__(self, iter_interval, state):
+        self.iter_interval = iter_interval
+        self.state = state
+
+    def handle(self, model):
+        if model.num_iters % self.iter_interval == 0:
+            print repr(self.state)
