@@ -1,13 +1,13 @@
 from pytopic.pipeline import dataset, tokenizer, preprocess
 from pytopic.model import vanilla
-
-from pytopic.util.data import pickle_cache
 from pytopic.util import handler
+from pytopic.util.data import pickle_cache
 
-@pickle_cache('../pickle/newsgroups-corpus.pickle')
+@pickle_cache('../pickle/newsgroups-corpus-reduced.pickle')
 def get_corpus():
     reader = dataset.CorpusReader(tokenizer.NewsTokenizer())
-    reader.add_dir('../data/newsgroups/groups')
+    reader.add_index_dir('../data/newsgroups/indices/reduced_set/all',
+                         '../data/newsgroups')
     corpus = reader.read()
 
     stopwords = preprocess.load_stopwords('../data/stopwords/english.txt',
