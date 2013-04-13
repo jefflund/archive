@@ -23,8 +23,3 @@ def get_xrefs(corpus):
 @data.pickle_cache('../pickle/bible-concord.pickle')
 def get_concordance(corpus):
     return xref.Concordance(corpus)
-
-if __name__ == '__main__':
-    corpus = get_corpus()
-    xrefs = get_xrefs(corpus)
-    concord = get_concordance(corpus)
