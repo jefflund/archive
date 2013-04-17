@@ -14,11 +14,13 @@ def get_corpus():
 
     return corpus
 
+
 @data.pickle_cache('../pickle/bible-xrefs.pickle')
 def get_xrefs(corpus):
     reader = xref.XRefReader(corpus)
     reader.add_file('../data/bible/xref.txt')
     return reader.read()
+
 
 @data.pickle_cache('../pickle/bible-concord.pickle')
 def get_concordance(corpus):

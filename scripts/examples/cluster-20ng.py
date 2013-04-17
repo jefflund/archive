@@ -9,6 +9,7 @@ def get_model(corpus, clustering):
     model.register_handler(handler.MetricPrinter(5, clustering))
     return model
 
+
 if __name__ == '__main__':
     corpus = newsgroups.get_corpus()
     clustering = newsgroups.get_clustering(corpus)

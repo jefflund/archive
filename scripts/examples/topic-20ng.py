@@ -8,6 +8,7 @@ def get_model(corpus):
     lda.register_handler(handler.Printer(10))
     return lda
 
+
 if __name__ == '__main__':
     corpus = newsgroups.get_corpus()
     lda = get_model(corpus)

@@ -14,6 +14,7 @@ def get_corpus():
 
     return corpus
 
+
 @data.pickle_cache('../pickle/newsgroups-corpus.pickle')
 def get_clustering(corpus):
     return cluster.Clustering.from_corpus(corpus)
