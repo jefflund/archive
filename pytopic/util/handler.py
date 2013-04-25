@@ -88,3 +88,14 @@ class StatePrinter(basic.IterationHandler):
     def handle(self, model):
         if model.num_iters % self.iter_interval == 0:
             print repr(self.state)
+
+
+class StateTimePrinter(basic.IterationHandler):
+
+    def __init__(self, state):
+        self.state = state
+        self.start_time = time.time()
+
+    def handle(self, model):
+        print time.time() - self.start_time, repr(self.state)
+
