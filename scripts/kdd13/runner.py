@@ -8,11 +8,17 @@ def get_model(corpus, clustering):
     model.register_handler(handler.StateTimePrinter(model.k))
     return model
 
+def run(corpus, clustering, inference):
+    model = get_model(corpus, clustering)
+    print 'params', inference
+    model.set_inference(inference)
+    model.timed_inference(1200)
+
 
 if __name__ == '__main__':
     corpus = newsgroups.get_corpus()
     clustering = newsgroups.get_clustering(corpus)
-    model = get_model(corpus, clustering)
-
     print 'gold', repr(clustering.data)
-    model.unlimited_inference()
+
+    run(corpus, clustering, 'ccm')
+    run(corpus, clustering, 'em')
