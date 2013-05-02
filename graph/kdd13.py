@@ -24,11 +24,12 @@ for line in open(args.outfile):
         pred = cluster.Clustering.from_repr(data)
         contingency = cluster.Contingency(gold, pred)
 
-        plots['f-measure'].append_data(param, cluster.f_measure(contingency))
-        plots['ari'].append_data(param, cluster.ari(contingency))
-        plots['vi'].append_data(param, cluster.variation_info(contingency))
+        fm = cluster.f_measure(contingency)
+        ari = cluster.ari(contingency)
+        vi = cluster.variation_info(contingency)
 
-        for plot in plots.values():
-            plot.append_data('time', float(time))
+        plots['f-measure'].append_data(param, time, fm)
+        plots['ari'].append_data(param, time, ari)
+        plots['vi'].append_data(param, time, vi)
 
-plots['f-measure'].show('time')
+plots['f-measure'].show()
