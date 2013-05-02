@@ -21,7 +21,11 @@ class Plotter(object):
         if key not in self.data:
             self.data[key] = []
 
-    def append_data(self, key, value):
+    def append_data(self, key, xval, yval=None):
+        if yval is None:
+            value = xval
+        else:
+            value = xval, yval
         self._ensure_key(key)
         self.data[key].append(value)
 
@@ -44,20 +48,19 @@ class Plotter(object):
             aggregate_plotter.extend_data(key, values)
         return aggregate_plotter
 
-    def _get_ykeys(self, xkey, opts):
+    def _get_keys(self, opts):
         if 'ykey' in opts:
             return [opts['ykey']]
         elif 'ykeys' in opts:
             return opts['ykeys']
         else:
-            return [key for key in self.data if key != xkey]
+            return list(self.data)
 
-    def show(self, xkey, **opts):
-        xdata = self.data[xkey]
-        ykeys = self._get_ykeys(xkey, opts)
+    def show(self, **opts):
+        ykeys = self._get_keys(opts)
 
         for ykey in ykeys:
-            ydata = self.data[ykey]
+            xdata, ydata = zip(*self.data[ykey])
             pylab.plot(xdata, ydata, linewidth=1, label=ykey)
 
         pylab.show()
