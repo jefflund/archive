@@ -1,12 +1,9 @@
+from __future__ import division
+
 from pytopic.model import basic
 from pytopic.util import compute, data
 
-def gibbs_vanilla(model):
-    """
-    gibbs_vanilla(VanillaLDA): func
-    Gibbs sampling algorithm for LDA
-    """
-
+def _gibbs(model, temp, sample_func):
     alpha = model.alpha
     beta = model.beta
     Vbeta = model.beta
@@ -23,22 +20,42 @@ def gibbs_vanilla(model):
     def sample_z(d, n):
         model.unset_z(d, n)
         counts = [prob_z(d, n, j) for j in range(model.T)]
-        model.set_z(d, n, compute.sample_counts(counts))
+        model.set_z(d, n, sample_func(counts))
 
-    def prob_z(d, n, j):
+    def compute_prob_z(d, n, j):
         prob = alpha + c_dt[d][j]
         prob *= beta + c_tv[j][w[d][n]]
         prob /= Vbeta + c_t[j]
         return prob
 
+    if temp == 1:
+        prob_z = compute_prob_z
+    else:
+        exponent = 1 / temp
+        prob_z = lambda d, n, j: compute_prob_z(d, n, j) ** exponent
+
     return sample_model
+
+
+def gibbs(model):
+    return _gibbs(model, 1, compute.sample_counts)
+
+
+def annealed_gibbs(model, temp):
+    return _gibbs(model, temp, compute.sample_counts)
+
+
+def ccm(model):
+    return _gibbs(model, 1, compute.argmax)
 
 
 class VanillaLDA(basic.TopicModel):
     """Latent Dirichlet Allocation with a Gibbs sampler"""
 
-    algorithms = {'gibbs': gibbs_vanilla}
-    default_algorithm = 'gibbs'
+    algorithms = {'gibbs': gibbs,
+                  'annealed gibbs': annealed_gibbs,
+                  'ccm': ccm}
+    default_algorithm = 'ccm'
 
     def __init__(self, corpus, T, alpha, beta):
         basic.TopicModel.__init__(self, corpus)
