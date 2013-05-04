@@ -59,9 +59,12 @@ class Plotter(object):
     def show(self, **opts):
         ykeys = self._get_keys(opts)
 
+        legend = []
         for ykey in ykeys:
             xdata, ydata = zip(*self.data[ykey])
             pylab.plot(xdata, ydata, linewidth=1, label=ykey)
+            legend.append(ykey)
+        pylab.legend(legend)
 
         pylab.show()
 

@@ -20,16 +20,14 @@ def get_model(corpus, clustering):
 def run(corpus, clustering, inference):
     model = get_model(corpus, clustering)
     print 'params', inference
-    model.set_inference(inference)
-    model.timed_inference(RUN_TIME)
 
-def annealed_run(corpus, clustering, inference):
-    model = get_model(corpus, clustering)
-    print 'params', 'annealed', inference
-
-    for temp in ANNEAL_SCHEDULE:
-        model.set_inference(inference, 25)
-        model.timed_inference(RUN_TIME / len(ANNEAL_SCHEDULE))
+    if inference.startswith('annealed'):
+        for temp in ANNEAL_SCHEDULE:
+            model.set_inference(inference, temp)
+            model.timed_inference(RUN_TIME / len(ANNEAL_SCHEDULE))
+    else:
+        model.set_inference(inference)
+        model.timed_inference(RUN_TIME)
 
 if __name__ == '__main__':
     corpus = newsgroups.get_corpus()
@@ -40,7 +38,7 @@ if __name__ == '__main__':
     run(corpus, clustering, 'em')
     run(corpus, clustering, 'vem')
     run(corpus, clustering, 'gibbs')
-    
-    annealed_run(corpus, clustering, 'annealed gibbs')
-    annealed_run(corpus, clustering, 'annealed em')
-    annealed_run(corpus, clustering, 'annealed vem')
+
+    run(corpus, clustering, 'annealed gibbs')
+    run(corpus, clustering, 'annealed em')
+    run(corpus, clustering, 'annealed vem')
