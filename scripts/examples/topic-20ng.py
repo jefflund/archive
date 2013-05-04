@@ -12,4 +12,6 @@ def get_model(corpus):
 if __name__ == '__main__':
     corpus = newsgroups.get_corpus()
     lda = get_model(corpus)
+    lda.register_handler(handler.TopicConvergenceCheck(lda.z))
+    lda.set_inference('ccm')
     lda.inference(100)

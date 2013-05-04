@@ -64,7 +64,7 @@ class Plotter(object):
             xdata, ydata = zip(*self.data[ykey])
             pylab.plot(xdata, ydata, linewidth=1, label=ykey)
             legend.append(ykey)
-        pylab.legend(legend)
+        pylab.legend(legend, loc='lower right')
 
         pylab.show()
 

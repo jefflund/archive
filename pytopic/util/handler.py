@@ -60,6 +60,29 @@ class ClusterConvergeceCheck(basic.IterationHandler):
             raise StopIteration()
 
 
+class TopicConvergenceCheck(basic.IterationHandler):
+    """Raises a StopIteration exception if the topic model converges"""
+
+    def __init__(self, init_state):
+        self.last_state = [[z for z in doc_state] for doc_state in init_state]
+
+    def handle(self, model):
+        model_changed = False
+        changes = set()
+        for d, z_d in enumerate(model.z):
+            for n, z_dn in enumerate(z_d):
+                if self.last_state[d][n] != z_dn:
+                    self.last_state[d][n] = z_dn
+                    model_changed = True
+                    changes.add((d, n))
+        if len(changes) < 50:
+            print changes
+        else:
+            print len(changes)
+        if not model_changed:
+            raise StopIteration()
+
+
 class MetricPrinter(basic.IterationHandler):
     """Evaluates a clustering model using three external metrics"""
 
