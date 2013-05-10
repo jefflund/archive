@@ -110,7 +110,7 @@ class StatePrinter(basic.IterationHandler):
 
     def handle(self, model):
         if model.num_iters % self.iter_interval == 0:
-            print repr(self.state)
+            print repr(self.state).replace(' ', '')
 
 
 class StateTimePrinter(basic.IterationHandler):
@@ -120,5 +120,5 @@ class StateTimePrinter(basic.IterationHandler):
         self.start_time = time.time()
 
     def handle(self, model):
-        print time.time() - self.start_time, repr(self.state)
+        print time.time() - self.start_time, repr(self.state).replace(' ', '')
 
