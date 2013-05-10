@@ -47,7 +47,8 @@ class NaiveBayes(object):
     def _log_likelihood(self, label, data):
         log_likelihood = 0
         for word in data:
-            log_likelihood += self.word_counts[label][word]
+            # get defaults to 0 so we ignore totally unobserved words
+            log_likelihood += self.word_counts[label].get(word, 0)
         return log_likelihood
 
     def _log_posterior(self, label, data):
