@@ -68,17 +68,11 @@ class TopicConvergenceCheck(basic.IterationHandler):
 
     def handle(self, model):
         model_changed = False
-        changes = set()
         for d, z_d in enumerate(model.z):
             for n, z_dn in enumerate(z_d):
                 if self.last_state[d][n] != z_dn:
                     self.last_state[d][n] = z_dn
                     model_changed = True
-                    changes.add((d, n))
-        if len(changes) < 50:
-            print changes
-        else:
-            print len(changes)
         if not model_changed:
             raise StopIteration()
 
