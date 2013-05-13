@@ -25,6 +25,8 @@ def run(corpus, inference):
 
 if __name__ == '__main__':
     corpus = newsgroups.get_corpus()
+    clustering = newsgroups.get_clustering(corpus)
+    print 'gold', repr(clustering.data)
 
     run(corpus, 'ccm')
     run(corpus, 'gibbs')
