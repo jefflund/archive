@@ -1,5 +1,5 @@
 import argparse
-from pytopic.analysis import classify
+from pytopic.analysis import classify, cluster
 from graph import plot
 
 parser = argparse.ArgumentParser()

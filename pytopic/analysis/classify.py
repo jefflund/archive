@@ -1,5 +1,7 @@
 from __future__ import division
 
+import math
+
 def normalize_and_log(counts):
     """
     normalize_and_log(dict): None
