@@ -67,12 +67,16 @@ class Plot(object):
 
         self._show_opt('xlabel')
         self._show_opt('ylabel')
-        self._show_opt('legend')
+        self._show_opt('legend', 'loc')
         self._show_opt('title')
 
         pylab.show()
 
-    def _show_opt(self, opt_name):
+    def _show_opt(self, opt_name, kwname=None):
         opt_val = getattr(self, opt_name)
         if opt_val:
-            getattr(pylab, opt_name)(opt_val)
+            opt_call = getattr(pylab, opt_name)
+            if kwname:
+                opt_call(**{kwname: opt_val})
+            else:
+                opt_call(opt_val)
