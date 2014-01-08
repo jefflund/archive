@@ -35,6 +35,12 @@ class AggLine(object):
         x, y = zip(*self)
         pylab.plot(x, y, style, **kwargs)
 
+    def end_error(self, **kwargs):
+        x, y = zip(*(l[-1] for l in self.lines))
+        errx, erry = pylab.std(x), pylab.std(y)
+        mux, muy = pylab.mean(x), pylab.mean(y)
+        pylab.errorbar(mux, muy, erry, errx, **kwargs)
+
 
 class Plot(object):
 
@@ -60,11 +66,15 @@ class Plot(object):
     def add_from_column(self, name, columns, col_x, col_y):
         self[name].add_from_column(columns, col_x, col_y)
 
-    def show(self):
+    def show(self, end_error=False):
         get_color = itertools.cycle(self.color_cycle).next
         get_style = itertools.cycle(self.style_cycle).next
         for name, line in self.lines.iteritems():
-            line.plot(label=name, color=get_color(), linestyle=get_style())
+            color = get_color()
+            style = get_style()
+            line.plot(label=name, color=color, linestyle=style)
+            if end_error:
+                line.end_error(ecolor=color, label='_nolegend_')
 
         self._show_opt('xlabel')
         self._show_opt('ylabel')
