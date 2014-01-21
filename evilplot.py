@@ -53,7 +53,7 @@ class Plot(object):
         self.title = kwargs.get('title')
 
         self.color_cycle = ['#00305E', '#007722', '#990011']
-        self.style_cycle = ['solid', 'dashed', 'dotted', 'dash-dot']
+        self.style_cycle = ['-', '--', ':', '-.']
 
     def __getitem__(self, name):
         if name not in self.lines:

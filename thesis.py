@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 
 import evilplot
@@ -18,3 +20,12 @@ def show_fmeasure_plot(results_dir, dataset_name):
                                                xlabel='Time (seconds)',
                                                ylabel='F-Measure')
     plot.show(end_error=True)
+
+
+if __name__ == '__main__':
+    import sys
+    name = sys.argv[1]
+    if 'en' in name:
+        show_fmeasure_plot(name, 'Enron')
+    else:
+        show_fmeasure_plot(name, '20 Newsgroups')
