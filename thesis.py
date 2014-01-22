@@ -22,10 +22,24 @@ def show_fmeasure_plot(results_dir, dataset_name):
     plot.show(end_error=True)
 
 
+def show_accuracy_plot(results_dir, dataset_name):
+    title = 'Interactive Topic Model on {}'.format(dataset_name)
+    plot = time_metric_plot(results_dir, 0, 1, title=title,
+                                               xlabel='Time (seconds)',
+                                               ylabel='Accuracy')
+    plot.show(point_errors=True)
+
+
 if __name__ == '__main__':
     import sys
     name = sys.argv[1]
-    if 'en' in name:
-        show_fmeasure_plot(name, 'Enron')
-    else:
-        show_fmeasure_plot(name, '20 Newsgroups')
+    if 'mm' in name:
+        if 'en' in name:
+            show_fmeasure_plot(name, 'Enron')
+        elif 'ng' in name:
+            show_fmeasure_plot(name, '20 Newsgroups')
+    elif 'itm' in name:
+        if 'en' in name:
+            show_accuracy_plot(name, 'Enron')
+        elif 'ng' in name:
+            show_accuracy_plot(name, '20 Newsgroups')
