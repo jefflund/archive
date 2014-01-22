@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import os
-import sys
+import argparse
 
 import evilplot
+
 
 def time_metric_plot(results_dir, time_col, metric_col, **kwargs):
     plot = evilplot.Plot(**kwargs)
@@ -43,15 +44,22 @@ def show_accuracy_plot(results_dir, dataset_name):
     plot.show(point_errors=True)
 
 
+_METRIC_MAPPING = {'fm': show_fmeasure_plot,
+                   'vi': show_varinfo_plot,
+                   'ari': show_ari_plot}
+
+
+def main():
+    parser = argparse.ArgumentParser('Make plots for my thesis')
+    parser.add_argument('result_dir')
+    parser.add_argument('-m', '--metric', default='fm')
+    args = parser.parse_args()
+
+    dataset_name = 'Enron' if 'en' in args.result_dir else '20 Newsgroups'
+    if 'mm' in args.result_dir:
+        _METRIC_MAPPING[args.metric](args.result_dir, dataset_name)
+    elif 'itm' in args.result_dir:
+        show_accuracy_plot(args.result_dir, dataset_name)
+
 if __name__ == '__main__':
-    name = sys.argv[1]
-    if 'mm' in name:
-        if 'en' in name:
-            show_fmeasure_plot(name, 'Enron')
-        elif 'ng' in name:
-            show_ari_plot(name, '20 Newsgroups')
-    elif 'itm' in name:
-        if 'en' in name:
-            show_accuracy_plot(name, 'Enron')
-        elif 'ng' in name:
-            show_accuracy_plot(name, '20 Newsgroups')
+    main()
