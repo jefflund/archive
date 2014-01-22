@@ -15,6 +15,13 @@ class AggLine(object):
     def add_from_column(self, columns, col_x, col_y):
         xys = []
         for line in columns:
+            comment = line.find('#')
+            if comment >= 0:
+                line = line[:comment]
+            line = line.strip()
+            if not line:
+                continue
+
             line = line.split()
             xy = float(line[col_x]), float(line[col_y])
             xys.append(xy)
