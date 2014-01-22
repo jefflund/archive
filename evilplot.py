@@ -48,6 +48,16 @@ class AggLine(object):
         mux, muy = pylab.mean(x), pylab.mean(y)
         pylab.errorbar(mux, muy, erry, errx, **kwargs)
 
+    def point_errors(self, **kwargs):
+        xs, ys, errxs, errys = [], [], [], []
+        for i in xrange(len(self)):
+            x, y = zip(*(l[i if len(l) > i else -1] for l in self.lines))
+            xs.append(pylab.mean(x))
+            ys.append(pylab.mean(y))
+            errxs.append(pylab.std(x))
+            errys.append(pylab.std(y))
+        pylab.errorbar(xs, ys, errys, errxs, **kwargs)
+
 
 class Plot(object):
 
@@ -73,14 +83,16 @@ class Plot(object):
     def add_from_column(self, name, columns, col_x, col_y):
         self[name].add_from_column(columns, col_x, col_y)
 
-    def show(self, end_error=False):
+    def show(self, end_error=False, point_errors=False):
         get_color = itertools.cycle(self.color_cycle).next
         get_style = itertools.cycle(self.style_cycle).next
         for name, line in self.lines.iteritems():
             color = get_color()
             style = get_style()
             line.plot(label=name, color=color, linestyle=style)
-            if end_error:
+            if point_errors:
+                line.point_errors(ecolor=color, label='_nolegend_')
+            elif end_error:
                 line.end_error(ecolor=color, label='_nolegend_')
 
         self._show_opt('xlabel')
