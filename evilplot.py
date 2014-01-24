@@ -83,7 +83,7 @@ class Plot(object):
     def add_from_column(self, name, columns, col_x, col_y):
         self[name].add_from_column(columns, col_x, col_y)
 
-    def show(self, end_error=False, point_errors=False):
+    def _plot(self, end_error, point_errors):
         get_color = itertools.cycle(self.color_cycle).next
         get_style = itertools.cycle(self.style_cycle).next
         for name, line in self.lines.iteritems():
@@ -100,7 +100,14 @@ class Plot(object):
         self._show_opt('legend', 'loc')
         self._show_opt('title')
 
+
+    def show(self, end_error=False, point_errors=False):
+        self._plot(end_error, point_errors)
         pylab.show()
+
+    def save(self, filename, end_error=False, point_errors=False):
+        self._plot(end_error, point_errors)
+        pylab.savefig(filename)
 
     def _show_opt(self, opt_name, kwname=None):
         opt_val = getattr(self, opt_name)
