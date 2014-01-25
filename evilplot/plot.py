@@ -97,9 +97,9 @@ class Plot(object):
 
         self._show_opt('xlabel')
         self._show_opt('ylabel')
-        self._show_opt('legend', 'loc')
         self._show_opt('title')
-
+        if len(self.lines) > 1:
+            self._show_opt('legend', 'loc')
 
     def show(self, end_error=False, point_errors=False):
         self._plot(end_error, point_errors)
