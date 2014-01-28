@@ -1,1 +1,1 @@
-from .plot import Plot
+from .line import LinePlot

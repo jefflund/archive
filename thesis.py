@@ -7,7 +7,7 @@ import evilplot
 
 
 def time_metric_plot(results_dir, time_col, metric_col, **kwargs):
-    plot = evilplot.Plot(**kwargs)
+    plot = evilplot.LinePlot(**kwargs)
     for root, _, filenames in os.walk(results_dir):
         linename = os.path.basename(root)
         for filename in filenames:

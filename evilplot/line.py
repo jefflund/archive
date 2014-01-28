@@ -59,7 +59,7 @@ class AggLine(object):
         pylab.errorbar(xs, ys, errys, errxs, **kwargs)
 
 
-class Plot(object):
+class LinePlot(object):
 
     def __init__(self, **kwargs):
         self.lines = {}
