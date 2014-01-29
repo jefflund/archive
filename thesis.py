@@ -20,8 +20,9 @@ def _mm_metric_plot(results_dir, dataset_name, col, metric):
     title = 'Mixture of Multinomials on {}'.format(dataset_name)
     plot = time_metric_plot(results_dir, 0, col, title=title,
                                                  xlabel='Time (seconds)',
-                                                 ylabel=metric)
-    plot.show(end_error=True)
+                                                 ylabel=metric,
+                                                 end_error=True)
+    plot.show()
 
 
 def show_fmeasure_plot(results_dir, dataset_name):
@@ -40,8 +41,9 @@ def show_accuracy_plot(results_dir, dataset_name):
     title = 'Interactive Topic Model on {}'.format(dataset_name)
     plot = time_metric_plot(results_dir, 0, 1, title=title,
                                                xlabel='Time (seconds)',
-                                               ylabel='Accuracy')
-    plot.show(point_errors=True)
+                                               ylabel='Accuracy',
+                                               point_errors=True)
+    plot.show()
 
 
 _METRIC_MAPPING = {'fm': show_fmeasure_plot,

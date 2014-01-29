@@ -1,7 +1,8 @@
+"""Provides Plot, as a base for other plots"""
+
 from __future__ import division
 
 import pylab
-import itertools
 
 
 class PlotData(object):
@@ -88,3 +89,11 @@ class Plot(object):
         if name not in self.data:
             self.data[name] = PlotData()
         return self.data[name]
+
+    def default_opts(self):
+        """Sets the default plot options"""
+        self._show_opt('xlabel')
+        self._show_opt('ylabel')
+        self._show_opt('title')
+        if len(self.data) > 1:
+            self._show_opt('legend', 'loc')
