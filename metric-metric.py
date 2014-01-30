@@ -18,7 +18,7 @@ args = parser.parse_args()
 plot = evilplot.ScatterPlot(title=args.title,
                             xlabel=args.x_name,
                             ylabel=args.y_name,
-                            use_end = args.use_end)
+                            use_end=args.use_end)
 
 evilplot.crawl_results(plot, args.data, args.x_col, args.y_col)
 
