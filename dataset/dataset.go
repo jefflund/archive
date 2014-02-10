@@ -7,8 +7,22 @@ import (
 
 type ImportSpec struct {
 	Path      string
-	Tokenizer *pipeline.Tokenizer
+	Tokenizer pipeline.Tokenizer
 	Stopwords []string
+}
+
+type Importer struct {
+	spec     ImportSpec
+	importer func(ImportSpec) *pipeline.Corpus
+	labeler  func(*pipeline.Corpus, ImportSpec) *eval.Clustering
+}
+
+func (i Importer) Import() *pipeline.Corpus {
+	return i.importer(i.spec)
+}
+
+func (i Importer) Label(c *pipeline.Corpus) *eval.Clustering {
+	return i.labeler(c, i.spec)
 }
 
 func ImportDir(s ImportSpec) *pipeline.Corpus {
@@ -31,7 +45,7 @@ func ImportDirClustering(c *pipeline.Corpus, _ ImportSpec) *eval.Clustering {
 	return eval.NewClusteringTitle(c)
 }
 
-func ImportIndex(s ImportSpec) {
+func ImportIndex(s ImportSpec) *pipeline.Corpus {
 	corpus := pipeline.NewCorpus()
 
 	err := pipeline.UpdateCorpusIndex(s.Path, s.Tokenizer, corpus)
@@ -48,5 +62,5 @@ func ImportIndex(s ImportSpec) {
 }
 
 func ImportIndexClustering(c *pipeline.Corpus, s ImportSpec) *eval.Clustering {
-	return eval.NewClusteringIndex(s.Path, c)
+	return eval.NewClusteringIndexRef(s.Path, c)
 }
