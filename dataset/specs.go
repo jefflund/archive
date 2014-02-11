@@ -14,7 +14,7 @@ var (
 			[]string{
 				"data/stopwords/newsgroups.txt",
 				"data/stopwords/english.txt"},
-			false},
+			false, 0},
 		ImportDir,
 		ImportDirClustering}
 
@@ -23,7 +23,7 @@ var (
 			"data/enron/annotation.tab",
 			pipeline.NewsTokenizer,
 			[]string{"data/stopwords/english.txt"},
-			false},
+			false, 0},
 		ImportIndex,
 		ImportIndexClustering}
 
@@ -31,17 +31,22 @@ var (
 	Moresque = createMoresqueImporters()
 )
 
+func createQueryImporter(filename string) Importer {
+	return Importer{
+		ImportSpec{
+			filename,
+			pipeline.BasicTokenizer,
+			[]string{"data/stopwords/english.txt"},
+			true, .9},
+		ImportDir,
+		ImportDirClustering}
+}
+
 func createAmbiantImporters() []Importer {
 	importers := make([]Importer, 44)
 	for i := 0; i < 44; i++ {
-		importers[i] = Importer{
-			ImportSpec{
-				fmt.Sprintf("data/ambiant/data/%d", i+1),
-				pipeline.BasicTokenizer,
-				[]string{"data/stopwords/english.txt"},
-				true},
-			ImportDir,
-			ImportDirClustering}
+		filename := fmt.Sprintf("data/ambiant/data/%d", i+1)
+		importers[i] = createQueryImporter(filename)
 	}
 	return importers
 }
@@ -49,14 +54,8 @@ func createAmbiantImporters() []Importer {
 func createMoresqueImporters() []Importer {
 	importers := make([]Importer, 114)
 	for i := 0; i < 114; i++ {
-		importers[i] = Importer{
-			ImportSpec{
-				fmt.Sprintf("data/moresque/data/%d", i+45),
-				pipeline.BasicTokenizer,
-				[]string{"data/stopwords/english.txt"},
-				true},
-			ImportDir,
-			ImportDirClustering}
+		filename := fmt.Sprintf("data/moresque/data/%d", i+45)
+		importers[i] = createQueryImporter(filename)
 	}
 	return importers
 }
