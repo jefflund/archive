@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 
 	"github.com/jlund3/modelt/eval"
 	"github.com/jlund3/modelt/topic/cluster"
@@ -10,29 +12,54 @@ import (
 )
 
 func main() {
-	total := 0.0
-	samples := 0
+	rand.Seed(time.Now().UnixNano())
 
-	for i := 0; i < 100; i++ {
-		for topic := 0; topic < 44; i++ {
-			corpus := dataset.Ambiant[topic].Import()
-			mm := cluster.NewMM(corpus, 5, .1, .01)
-			inferencer := cluster.NewMMCCM(mm)
-			checker := cluster.NewMMConvergenceChecker(mm)
-			converged := false
-			for !converged {
-				inferencer.Inference()
-				converged = checker.Check() == 0
-			}
+	ambmean := &meancalc{}
+	mormean := &meancalc{}
+	allmean := &meancalc{}
 
-			gold := dataset.Ambiant[topic].Label(corpus)
-			pred := eval.NewClusteringMM(mm)
-			contingency := eval.NewContingency(gold, pred)
-
-			rand := contingency.Rand()
-			total += rand
-			samples += 1
-			fmt.Println(total / float64(samples))
+	for {
+		for topic := 0; topic < 44; topic++ {
+			rand := run(dataset.Ambiant[topic])
+			ambmean.observe(rand)
+			allmean.observe(rand)
+			fmt.Println(allmean.n, ambmean.mean(), mormean.mean(), allmean.mean())
+		}
+		for topic := 0; topic < 114; topic++ {
+			rand := run(dataset.Moresque[topic])
+			mormean.observe(rand)
+			allmean.observe(rand)
+			fmt.Println(allmean.n, ambmean.mean(), mormean.mean(), allmean.mean())
 		}
 	}
+}
+
+func run(i dataset.Importer) (rand float64) {
+	corpus := i.Import()
+	mm := cluster.NewMM(corpus, 20, 1, .01)
+	inferencer := cluster.NewMMCCM(mm)
+	checker := cluster.NewMMConvergenceChecker(mm)
+	converged := false
+	for !converged {
+		inferencer.Inference()
+		converged = checker.Check() == 0
+	}
+	gold := i.Label(corpus)
+	pred := eval.NewClusteringMM(mm)
+	contingency := eval.NewContingency(gold, pred)
+	return contingency.Rand()
+}
+
+type meancalc struct {
+	sum float64
+	n   int
+}
+
+func (m *meancalc) observe(x float64) {
+	m.sum += x
+	m.n += 1
+}
+
+func (m *meancalc) mean() float64 {
+	return m.sum / float64(m.n)
 }
