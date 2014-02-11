@@ -1,6 +1,8 @@
 package dataset
 
 import (
+	"fmt"
+
 	"github.com/jlund3/modelt/pipeline"
 )
 
@@ -22,4 +24,20 @@ var (
 			[]string{"data/stopwords/english.txt"}},
 		ImportIndex,
 		ImportIndexClustering}
+
+	Ambiant = createAmbiantImporters()
 )
+
+func createAmbiantImporters() []Importer {
+	importers := make([]Importer, 44)
+	for i := 0; i < 44; i++ {
+		importers[i] = Importer{
+			ImportSpec{
+				fmt.Sprintf("data/ambiant/data/%d", i+1),
+				pipeline.BasicTokenizer,
+				[]string{"data/stopwords/newsgroups.txt"}},
+			ImportDir,
+			ImportDirClustering}
+	}
+	return importers
+}
