@@ -10,21 +10,29 @@ import (
 )
 
 func main() {
-	corpus := dataset.Ambiant[0].Import()
-	mm := cluster.NewMM(corpus, 5, .1, .01)
-	inferencer := cluster.NewMMCCM(mm)
-	checker := cluster.NewMMConvergenceChecker(mm)
-	converged := false
-	for !converged {
-		inferencer.Inference()
-		converged = checker.Check() == 0
+	total := 0.0
+	samples := 0
+
+	for i := 0; i < 100; i++ {
+		for topic := 0; topic < 44; i++ {
+			corpus := dataset.Ambiant[topic].Import()
+			mm := cluster.NewMM(corpus, 5, .1, .01)
+			inferencer := cluster.NewMMCCM(mm)
+			checker := cluster.NewMMConvergenceChecker(mm)
+			converged := false
+			for !converged {
+				inferencer.Inference()
+				converged = checker.Check() == 0
+			}
+
+			gold := dataset.Ambiant[topic].Label(corpus)
+			pred := eval.NewClusteringMM(mm)
+			contingency := eval.NewContingency(gold, pred)
+
+			rand := contingency.Rand()
+			total += rand
+			samples += 1
+			fmt.Println(total / float64(samples))
+		}
 	}
-
-	gold := dataset.Ambiant[0].Label(corpus)
-	pred := eval.NewClusteringMM(mm)
-	contingency := eval.NewContingency(gold, pred)
-
-	fmt.Println("FM", contingency.FMeasure())
-	fmt.Println("ARI", contingency.ARI())
-	fmt.Println("VI", contingency.VI())
 }
