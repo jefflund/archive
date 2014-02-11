@@ -9,6 +9,7 @@ type ImportSpec struct {
 	Path      string
 	Tokenizer pipeline.Tokenizer
 	Stopwords []string
+	Stem      bool
 }
 
 type Importer struct {
@@ -38,6 +39,13 @@ func ImportDir(s ImportSpec) *pipeline.Corpus {
 		panic(err)
 	}
 
+	if s.Stem {
+		corpus, err = pipeline.ApplyStemming(corpus)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	return corpus
 }
 
@@ -56,6 +64,13 @@ func ImportIndex(s ImportSpec) *pipeline.Corpus {
 	corpus, err = pipeline.FilterStopwords(corpus, s.Stopwords...)
 	if err != nil {
 		panic(err)
+	}
+
+	if s.Stem {
+		corpus, err = pipeline.ApplyStemming(corpus)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	return corpus

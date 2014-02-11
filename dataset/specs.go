@@ -13,7 +13,8 @@ var (
 			pipeline.NewsTokenizer,
 			[]string{
 				"data/stopwords/newsgroups.txt",
-				"data/stopwords/english.txt"}},
+				"data/stopwords/english.txt"},
+			false},
 		ImportDir,
 		ImportDirClustering}
 
@@ -21,7 +22,8 @@ var (
 		ImportSpec{
 			"data/enron/annotation.tab",
 			pipeline.NewsTokenizer,
-			[]string{"data/stopwords/english.txt"}},
+			[]string{"data/stopwords/english.txt"},
+			false},
 		ImportIndex,
 		ImportIndexClustering}
 
@@ -35,7 +37,8 @@ func createAmbiantImporters() []Importer {
 			ImportSpec{
 				fmt.Sprintf("data/ambiant/data/%d", i+1),
 				pipeline.BasicTokenizer,
-				[]string{"data/stopwords/newsgroups.txt"}},
+				[]string{"data/stopwords/newsgroups.txt"},
+				true},
 			ImportDir,
 			ImportDirClustering}
 	}
