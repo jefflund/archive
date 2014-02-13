@@ -8,7 +8,7 @@ import (
 	"github.com/jlund3/modelt/eval"
 	"github.com/jlund3/modelt/topic/cluster"
 
-	"ford/dataset"
+	"ford/load"
 )
 
 func main() {
@@ -20,13 +20,13 @@ func main() {
 
 	for {
 		for topic := 0; topic < 44; topic++ {
-			rand := run(dataset.Ambiant[topic])
+			rand := run(load.Ambiant[topic])
 			ambmean.observe(rand)
 			allmean.observe(rand)
 			fmt.Println(allmean.n, ambmean.mean(), mormean.mean(), allmean.mean())
 		}
 		for topic := 0; topic < 114; topic++ {
-			rand := run(dataset.Moresque[topic])
+			rand := run(load.Moresque[topic])
 			mormean.observe(rand)
 			allmean.observe(rand)
 			fmt.Println(allmean.n, ambmean.mean(), mormean.mean(), allmean.mean())
@@ -34,7 +34,7 @@ func main() {
 	}
 }
 
-func run(i dataset.Importer) (rand float64) {
+func run(i load.Importer) (rand float64) {
 	corpus := i.Import()
 	mm := cluster.NewMM(corpus, 20, 1, .01)
 	inferencer := cluster.NewMMCCM(mm)

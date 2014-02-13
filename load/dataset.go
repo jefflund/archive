@@ -1,4 +1,4 @@
-package dataset
+package load
 
 import (
 	"github.com/jlund3/modelt/eval"
