@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/jlund3/modelt/eval"
-	"github.com/jlund3/modelt/topic/cluster"
+	"github.com/jlund3/modelt/topic/crpcluster"
 
 	"ford/load"
 )
@@ -36,16 +36,16 @@ func main() {
 
 func run(i load.Importer) (rand float64) {
 	corpus := i.Import()
-	mm := cluster.NewMM(corpus, 20, 1, .01)
-	inferencer := cluster.NewMMCCM(mm)
-	checker := cluster.NewMMConvergenceChecker(mm)
+	mm := crpcluster.NewCRPMM(corpus, 50, 20, 1, .01)
+	inferencer := crpcluster.NewCRPMMCCM(mm)
+	checker := crpcluster.NewCRPMMConvergenceChecker(mm)
 	converged := false
 	for !converged {
 		inferencer.Inference()
 		converged = checker.Check() == 0
 	}
 	gold := i.Label(corpus)
-	pred := eval.NewClusteringMM(mm)
+	pred := eval.NewClusteringCRPMM(mm)
 	contingency := eval.NewContingency(gold, pred)
 	return contingency.Rand()
 }
