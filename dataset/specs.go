@@ -37,7 +37,7 @@ func createQueryImporter(filename string) Importer {
 			filename,
 			pipeline.BasicTokenizer,
 			[]string{"data/stopwords/english.txt"},
-			true, .9},
+			true, .8},
 		ImportDir,
 		ImportDirClustering}
 }
