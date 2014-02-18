@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/jlund3/modelt/eval"
+	"github.com/jlund3/modelt/pipeline"
 	"github.com/jlund3/modelt/topic/cluster"
 	"github.com/jlund3/modelt/topic/crpcluster"
 
@@ -15,42 +16,45 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	mmrandmean := &meancalc{}
-	crprandmean := &meancalc{}
+	mmmean := &meancalc{}
+	crpmean := &meancalc{}
 	tmean := &meancalc{}
 
 	for {
 		for topic := 0; topic < 44; topic++ {
-			mmrand, crprand, nclusters := run(load.Ambiant[topic])
-			mmrandmean.observe(mmrand)
-			crprandmean.observe(crprand)
-			tmean.observe(float64(nclusters))
+			importer := load.Ambiant[topic]
+			corpus := importer.Import()
+			gold := importer.Label(corpus)
+
+			mmmean.observe(runMM(corpus, gold))
+			r, t := runCRP(corpus, gold)
+			crpmean.observe(r)
+			tmean.observe(float64(t))
+
 			fmt.Printf("MM:%.3f CRP:%.3f (%.3f)\n",
-				mmrandmean.mean(), crprandmean.mean(), tmean.mean())
+				mmmean.mean(), crpmean.mean(), tmean.mean())
 		}
 	}
 }
 
-func run(i load.Importer) (mmrand, crprand float64, nclusters int) {
-	corpus := i.Import()
-	gold := i.Label(corpus)
+func runMM(c *pipeline.Corpus, g *eval.Clustering) (rand float64) {
+	mm := cluster.NewMM(c, 20, 1, .01)
+	inferencer := cluster.NewMMCCM(mm)
+	inferencer.Inference()
+	inferencer.Inference()
+	pred := eval.NewClusteringMM(mm)
+	contingency := eval.NewContingency(g, pred)
+	return contingency.Rand()
+}
 
-	mm := cluster.NewMM(corpus, 20, 1, .01)
-	mminferencer := cluster.NewMMCCM(mm)
-	mminferencer.Inference()
-	mminferencer.Inference()
-	mmpred := eval.NewClusteringMM(mm)
-	mmrand = eval.NewContingency(gold, mmpred).Rand()
-
-	crpmm := crpcluster.NewCRPMM(corpus, 50, 5, .01, .1)
-	crpinferencer := crpcluster.NewCRPMMCCM(crpmm)
-	crpinferencer.Inference()
-	crpinferencer.Inference()
-	crppred := eval.NewClusteringCRPMM(crpmm)
-	crprand = eval.NewContingency(gold, crppred).Rand()
-	nclusters = crpmm.T
-
-	return
+func runCRP(c *pipeline.Corpus, g *eval.Clustering) (rand float64, T int) {
+	crpmm := crpcluster.NewCRPMM(c, 50, 5, .01, .1)
+	inferencer := crpcluster.NewCRPMMCCM(crpmm)
+	inferencer.Inference()
+	inferencer.Inference()
+	pred := eval.NewClusteringCRPMM(crpmm)
+	contingency := eval.NewContingency(g, pred)
+	return contingency.Rand(), crpmm.T
 }
 
 type meancalc struct {
