@@ -20,6 +20,9 @@ func main() {
 	crpmean := &meancalc{}
 	tmean := &meancalc{}
 
+	commonmean := &meancalc{}
+	commontmean := &meancalc{}
+
 	for {
 		for topic := 0; topic < 44; topic++ {
 			importer := load.Ambiant[topic]
@@ -31,30 +34,70 @@ func main() {
 			crpmean.observe(r)
 			tmean.observe(float64(t))
 
-			fmt.Printf("MM:%.3f CRP:%.3f (%.3f)\n",
-				mmmean.mean(), crpmean.mean(), tmean.mean())
+			common := filterCommon(corpus, gold)
+			commonGold := importer.Label(common)
+			r, t = runCRP(common, commonGold)
+			commonmean.observe(r)
+			commontmean.observe(float64(t))
+
+			fmt.Printf("MM:%.3f CRP:%.3f (%.3f) Common:%.3f (%.3f)\n",
+				mmmean.mean(), crpmean.mean(), tmean.mean(),
+				commonmean.mean(), commontmean.mean())
 		}
+		fmt.Println("***")
 	}
 }
 
 func runMM(c *pipeline.Corpus, g *eval.Clustering) (rand float64) {
 	mm := cluster.NewMM(c, 20, 1, .01)
 	inferencer := cluster.NewMMCCM(mm)
-	inferencer.Inference()
-	inferencer.Inference()
+	for i := 0; i < 2; i++ {
+		inferencer.Inference()
+	}
 	pred := eval.NewClusteringMM(mm)
 	contingency := eval.NewContingency(g, pred)
 	return contingency.Rand()
 }
 
 func runCRP(c *pipeline.Corpus, g *eval.Clustering) (rand float64, T int) {
-	crpmm := crpcluster.NewCRPMM(c, 50, 5, .01, .1)
+	crpmm := crpcluster.NewCRPMM(c, 50, 1, .001, .1)
+	//inferencer := crpcluster.NewCRPMMGibbs(crpmm)
 	inferencer := crpcluster.NewCRPMMCCM(crpmm)
-	inferencer.Inference()
-	inferencer.Inference()
+	for i := 0; i < 2; i++ {
+		inferencer.Inference()
+	}
 	pred := eval.NewClusteringCRPMM(crpmm)
 	contingency := eval.NewContingency(g, pred)
-	return contingency.Rand(), crpmm.T
+	return contingency.Rand(), crpmm.T - len(g.Labels)
+}
+
+func mostCommon(g *eval.Clustering) interface{} {
+	maxCount := -1
+	maxLabel := g.Data[0]
+	counts := make(map[interface{}]int)
+	for _, label := range g.Data {
+		counts[label]++
+		if counts[label] > maxCount {
+			maxCount = counts[label]
+			maxLabel = label
+		}
+	}
+	return maxLabel
+}
+
+func filterCommon(c *pipeline.Corpus, g *eval.Clustering) *pipeline.Corpus {
+	common := mostCommon(g)
+	filtered := pipeline.NewCorpus()
+	for d, label := range g.Data {
+		if label == common {
+			tokens := make([]string, c.N[d])
+			for n, v := range c.W[d] {
+				tokens[n] = c.Vocab.Tokens[v]
+			}
+			filtered.AddDocument(c.Titles[d], tokens)
+		}
+	}
+	return filtered
 }
 
 type meancalc struct {
