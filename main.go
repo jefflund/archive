@@ -16,44 +16,43 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	mmmean := &meancalc{}
-	crpmean := &meancalc{}
-	tmean := &meancalc{}
+	randtotal := 0.0
+	terrtotal := 0.0
 
-	commonmean := &meancalc{}
-	commontmean := &meancalc{}
+	fmt.Println("Moresque")
+	rand, terr := run(load.Moresque)
+	randtotal += rand
+	terrtotal += terr
 
-	for {
-		for topic := 0; topic < 44; topic++ {
-			importer := load.Ambiant[topic]
-			corpus := importer.Import()
-			gold := importer.Label(corpus)
+	fmt.Println("Ambiant")
+	rand, terr = run(load.Ambiant)
+	randtotal += rand
+	terrtotal += terr
 
-			mmmean.observe(runMM(corpus, gold))
-			r, t := runCRP(corpus, gold)
-			crpmean.observe(r)
-			tmean.observe(float64(t))
-
-			common := filterCommon(corpus, gold)
-			commonGold := importer.Label(common)
-			r, t = runCRP(common, commonGold)
-			commonmean.observe(r)
-			commontmean.observe(float64(t))
-
-			fmt.Printf("MM:%.3f CRP:%s (%.3f) Common:%s (%.3f)\n",
-				mmmean.mean(), color(crpmean.mean()), tmean.mean(),
-				color(commonmean.mean()), commontmean.mean())
-		}
-		fmt.Println("***")
-	}
+	fmt.Println("All")
+	fmt.Printf("%.3f %.3f", randtotal/2, terrtotal/2)
 }
 
-func color(x float64) string {
-	return fmt.Sprintf("\x1b[38;5;192m%.3f\x1b[0m", x)
+func run(importers []load.Importer) (rand, terr float64) {
+	randmean := &meancalc{}
+	terrmean := &meancalc{}
+
+	for _, importer := range importers {
+		corpus := importer.Import()
+		gold := importer.Label(corpus)
+
+		rand, terr := runCRP(corpus, gold)
+		randmean.observe(rand)
+		terrmean.observe(float64(terr))
+
+		fmt.Printf("%.3f %.3f\n", randmean.mean(), terrmean.mean())
+	}
+
+	return randmean.mean(), terrmean.mean()
 }
 
 func runMM(c *pipeline.Corpus, g *eval.Clustering) (rand float64) {
-	mm := cluster.NewMM(c, 20, 1, .01)
+	mm := cluster.NewMM(c, 8, 1, .01)
 	inferencer := cluster.NewMMCCM(mm)
 	for i := 0; i < 2; i++ {
 		inferencer.Inference()
@@ -65,7 +64,6 @@ func runMM(c *pipeline.Corpus, g *eval.Clustering) (rand float64) {
 
 func runCRP(c *pipeline.Corpus, g *eval.Clustering) (rand float64, T int) {
 	crpmm := crpcluster.NewCRPMM(c, 50, 1, .001, .1)
-	//inferencer := crpcluster.NewCRPMMGibbs(crpmm)
 	inferencer := crpcluster.NewCRPMMCCM(crpmm)
 	for i := 0; i < 2; i++ {
 		inferencer.Inference()
@@ -73,35 +71,6 @@ func runCRP(c *pipeline.Corpus, g *eval.Clustering) (rand float64, T int) {
 	pred := eval.NewClusteringCRPMM(crpmm)
 	contingency := eval.NewContingency(g, pred)
 	return contingency.Rand(), crpmm.T - len(g.Labels)
-}
-
-func mostCommon(g *eval.Clustering) interface{} {
-	maxCount := -1
-	maxLabel := g.Data[0]
-	counts := make(map[interface{}]int)
-	for _, label := range g.Data {
-		counts[label]++
-		if counts[label] > maxCount {
-			maxCount = counts[label]
-			maxLabel = label
-		}
-	}
-	return maxLabel
-}
-
-func filterCommon(c *pipeline.Corpus, g *eval.Clustering) *pipeline.Corpus {
-	common := mostCommon(g)
-	filtered := pipeline.NewCorpus()
-	for d, label := range g.Data {
-		if label == common {
-			tokens := make([]string, c.N[d])
-			for n, v := range c.W[d] {
-				tokens[n] = c.Vocab.Tokens[v]
-			}
-			filtered.AddDocument(c.Titles[d], tokens)
-		}
-	}
-	return filtered
 }
 
 type meancalc struct {
