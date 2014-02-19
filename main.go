@@ -40,12 +40,16 @@ func main() {
 			commonmean.observe(r)
 			commontmean.observe(float64(t))
 
-			fmt.Printf("MM:%.3f CRP:%.3f (%.3f) Common:%.3f (%.3f)\n",
-				mmmean.mean(), crpmean.mean(), tmean.mean(),
-				commonmean.mean(), commontmean.mean())
+			fmt.Printf("MM:%.3f CRP:%s (%.3f) Common:%s (%.3f)\n",
+				mmmean.mean(), color(crpmean.mean()), tmean.mean(),
+				color(commonmean.mean()), commontmean.mean())
 		}
 		fmt.Println("***")
 	}
+}
+
+func color(x float64) string {
+	return fmt.Sprintf("\x1b[38;5;192m%.3f\x1b[0m", x)
 }
 
 func runMM(c *pipeline.Corpus, g *eval.Clustering) (rand float64) {
