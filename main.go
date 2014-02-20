@@ -6,6 +6,10 @@ import (
 	"math/rand"
 	"time"
 
+	"path/filepath"
+	"sort"
+	"strconv"
+
 	"github.com/jlund3/modelt/eval"
 	"github.com/jlund3/modelt/topic/crpcluster"
 
@@ -15,31 +19,18 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	var rand, terr, absterr float64
-	var randtotal, terrtotal, absterrtotal float64
+	ambmean := run(load.Ambiant)
+	fmt.Println("Ambiant", ambmean.means())
 
-	fmt.Printf("Algorithm Rand  Terr  AbsTerr\n")
+	mormean := run(load.Moresque)
+	fmt.Println("Moresque", mormean.means())
 
-	rand, terr, absterr = runImporters(load.Ambiant)
-	fmt.Printf("Ambiant   %.3f %.3f %.3f\n", rand, terr, absterr)
-	randtotal += rand
-	terrtotal += terr
-	absterrtotal += absterr
-
-	rand, terr, absterr = runImporters(load.Moresque)
-	fmt.Printf("Moresque  %.3f %.3f %.3f\n", rand, terr, absterr)
-	randtotal += rand
-	terrtotal += terr
-	absterrtotal += absterr
-
-	fmt.Printf("All       %.3f %.3f %.3f\n\n",
-		randtotal/2, terrtotal/2, absterrtotal/2)
+	allmean := Combine(ambmean, mormean)
+	fmt.Println("All", allmean.means())
 }
 
-func runImporters(importers []load.Importer) (rand, terr, absterr float64) {
-	randmean := new(meancalc)
-	terrmean := new(meancalc)
-	absterrmean := new(meancalc)
+func run(importers []load.Importer) *meancalcs {
+	result := NewMeanCalcs(8)
 
 	for _, importer := range importers {
 		corpus := importer.Import()
@@ -56,24 +47,151 @@ func runImporters(importers []load.Importer) (rand, terr, absterr float64) {
 		rand := contingency.Rand()
 		terr := float64(crpmm.T - len(gold.Labels))
 
-		randmean.observe(rand)
-		terrmean.observe(terr)
-		absterrmean.observe(math.Abs(terr))
+		reranked := rerank(crpmm)
+
+		result.observe(rand, terr, math.Abs(terr),
+			srecallat(3, reranked, gold),
+			srecallat(5, reranked, gold),
+			srecallat(10, reranked, gold),
+			srecallat(15, reranked, gold),
+			srecallat(20, reranked, gold))
 	}
 
-	return randmean.mean(), terrmean.mean(), absterrmean.mean()
+	return result
 }
 
-type meancalc struct {
-	sum float64
-	n   int
+func srecallat(k int, ranking []int, g *eval.Clustering) float64 {
+	if k >= len(ranking) {
+		return 1
+	}
+
+	found := make(map[interface{}]bool)
+	for _, d := range ranking[:k] {
+		found[g.Data[d]] = true
+	}
+	return float64(len(found)) / float64(len(g.Labels))
 }
 
-func (m *meancalc) observe(x float64) {
-	m.sum += x
+func rerank(crpmm *crpcluster.CRPMM) []int {
+	topics := make([]int, crpmm.T)
+	i := 0
+	for z, used := range crpmm.Used {
+		if used {
+			topics[i] = z
+			i++
+		}
+	}
+	sorter := &topicsort{crpmm, topics}
+	sort.Sort(sorter)
+
+	clusters := make([][]int, crpmm.T)
+	for i, z := range topics {
+		clusters[i] = make([]int, crpmm.Topics[z])
+		j := 0
+		for d := 0; d < crpmm.M; d++ {
+			if crpmm.Z[d] == z {
+				clusters[i][j] = d
+				j++
+			}
+		}
+		sorter := &clustersort{crpmm, clusters[i]}
+		sort.Sort(sorter)
+	}
+
+	reranked := make([]int, crpmm.M)
+	r := 0
+	k := 0
+	for r < crpmm.M {
+		for _, cluster := range clusters {
+			if k < len(cluster) {
+				reranked[r] = cluster[k]
+				r++
+			}
+		}
+		k++
+	}
+
+	return reranked
+}
+
+type clustersort struct {
+	crpmm   *crpcluster.CRPMM
+	cluster []int
+}
+
+func (c *clustersort) Len() int {
+	return len(c.cluster)
+}
+
+func (c *clustersort) Less(i, j int) bool {
+	ri := rank(c.crpmm.Titles[c.cluster[i]])
+	rj := rank(c.crpmm.Titles[c.cluster[j]])
+	return ri < rj
+}
+
+func rank(title string) int {
+	base := filepath.Base(title)
+	i, err := strconv.Atoi(base)
+	if err != nil {
+		panic(err)
+	}
+	return i
+}
+
+func (c *clustersort) Swap(i, j int) {
+	c.cluster[i], c.cluster[j] = c.cluster[j], c.cluster[i]
+}
+
+type topicsort struct {
+	crpmm  *crpcluster.CRPMM
+	topics []int
+}
+
+func (t *topicsort) Len() int {
+	return len(t.topics)
+}
+
+func (t *topicsort) Less(i, j int) bool {
+	ci := t.crpmm.Topics[t.topics[i]]
+	cj := t.crpmm.Topics[t.topics[j]]
+	return ci > cj
+}
+
+func (t *topicsort) Swap(i, j int) {
+	t.topics[i], t.topics[j] = t.topics[j], t.topics[i]
+}
+
+type meancalcs struct {
+	sums []float64
+	n    int
+}
+
+func NewMeanCalcs(k int) *meancalcs {
+	return &meancalcs{make([]float64, k), 0}
+}
+
+func Combine(ms ...*meancalcs) *meancalcs {
+	combined := NewMeanCalcs(len(ms[0].sums))
+	for _, m := range ms {
+		for i, x := range m.sums {
+			combined.sums[i] += x
+		}
+		combined.n += m.n
+	}
+	return combined
+}
+
+func (m *meancalcs) observe(xs ...float64) {
+	for i, x := range xs {
+		m.sums[i] += x
+	}
 	m.n += 1
 }
 
-func (m *meancalc) mean() float64 {
-	return m.sum / float64(m.n)
+func (m *meancalcs) means() []float64 {
+	ms := make([]float64, len(m.sums))
+	for i, sum := range m.sums {
+		ms[i] = sum / float64(m.n)
+	}
+	return ms
 }
