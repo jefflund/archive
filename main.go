@@ -7,7 +7,6 @@ import (
 
 	"github.com/jlund3/modelt/eval"
 	"github.com/jlund3/modelt/pipeline"
-	"github.com/jlund3/modelt/topic/cluster"
 	"github.com/jlund3/modelt/topic/crpcluster"
 
 	"ford/load"
@@ -18,24 +17,29 @@ func main() {
 
 	randtotal := 0.0
 	terrtotal := 0.0
+	absterrtotal := 0.0
 
-	fmt.Println("Moresque")
-	rand, terr := run(load.Moresque)
+	fmt.Printf("Algorithm Rand  Terr  AbsTerr\n")
+
+	rand, terr, absterr := runImporters(load.Ambiant)
+	fmt.Printf("Ambiant   %.3f %.3f %.3f\n", rand, terr, absterr)
 	randtotal += rand
 	terrtotal += terr
+	absterrtotal += absterr
 
-	fmt.Println("Ambiant")
-	rand, terr = run(load.Ambiant)
+	rand, terr, absterr = runImporters(load.Moresque)
+	fmt.Printf("Moresque  %.3f %.3f %.3f\n", rand, terr, absterr)
 	randtotal += rand
 	terrtotal += terr
+	absterrtotal += absterr
 
-	fmt.Println("All")
-	fmt.Printf("%.3f %.3f", randtotal/2, terrtotal/2)
+	fmt.Printf("All       %.3f %.3f %.3f\n", randtotal/2, terrtotal/2, absterrtotal/2)
 }
 
-func run(importers []load.Importer) (rand, terr float64) {
+func runImporters(importers []load.Importer) (rand, terr, absterr float64) {
 	randmean := &meancalc{}
 	terrmean := &meancalc{}
+	absterrmean := &meancalc{}
 
 	for _, importer := range importers {
 		corpus := importer.Import()
@@ -44,22 +48,10 @@ func run(importers []load.Importer) (rand, terr float64) {
 		rand, terr := runCRP(corpus, gold)
 		randmean.observe(rand)
 		terrmean.observe(float64(terr))
-
-		fmt.Printf("%.3f %.3f\n", randmean.mean(), terrmean.mean())
+		absterrmean.observe(float64(abs(terr)))
 	}
 
-	return randmean.mean(), terrmean.mean()
-}
-
-func runMM(c *pipeline.Corpus, g *eval.Clustering) (rand float64) {
-	mm := cluster.NewMM(c, 8, 1, .01)
-	inferencer := cluster.NewMMCCM(mm)
-	for i := 0; i < 2; i++ {
-		inferencer.Inference()
-	}
-	pred := eval.NewClusteringMM(mm)
-	contingency := eval.NewContingency(g, pred)
-	return contingency.Rand()
+	return randmean.mean(), terrmean.mean(), absterrmean.mean()
 }
 
 func runCRP(c *pipeline.Corpus, g *eval.Clustering) (rand float64, T int) {
@@ -71,6 +63,13 @@ func runCRP(c *pipeline.Corpus, g *eval.Clustering) (rand float64, T int) {
 	pred := eval.NewClusteringCRPMM(crpmm)
 	contingency := eval.NewContingency(g, pred)
 	return contingency.Rand(), crpmm.T - len(g.Labels)
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
 
 type meancalc struct {
