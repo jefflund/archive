@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/jlund3/modelt/eval"
-	"github.com/jlund3/modelt/pipeline"
 	"github.com/jlund3/modelt/topic/crpcluster"
 
 	"ford/load"
@@ -45,7 +44,17 @@ func runImporters(importers []load.Importer) (rand, terr, absterr float64) {
 	for _, importer := range importers {
 		corpus := importer.Import()
 		gold := importer.Label(corpus)
-		rand, terr := runCRP(corpus, gold)
+
+		crpmm := crpcluster.NewCRPMM(corpus, 50, 1, .1, .4)
+		inferencer := crpcluster.NewCRPMMCCM(crpmm)
+		for i := 0; i < 2; i++ {
+			inferencer.Inference()
+		}
+
+		pred := eval.NewClusteringCRPMM(crpmm)
+		contingency := eval.NewContingency(gold, pred)
+		rand := contingency.Rand()
+		terr := float64(crpmm.T - len(gold.Labels))
 
 		randmean.observe(rand)
 		terrmean.observe(terr)
@@ -53,17 +62,6 @@ func runImporters(importers []load.Importer) (rand, terr, absterr float64) {
 	}
 
 	return randmean.mean(), terrmean.mean(), absterrmean.mean()
-}
-
-func runCRP(c *pipeline.Corpus, g *eval.Clustering) (rand, terr float64) {
-	crpmm := crpcluster.NewCRPMM(c, 50, 1, .1, .4)
-	inferencer := crpcluster.NewCRPMMCCM(crpmm)
-	for i := 0; i < 2; i++ {
-		inferencer.Inference()
-	}
-	pred := eval.NewClusteringCRPMM(crpmm)
-	contingency := eval.NewContingency(g, pred)
-	return contingency.Rand(), float64(crpmm.T - len(g.Labels))
 }
 
 type meancalc struct {
