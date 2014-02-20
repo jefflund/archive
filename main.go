@@ -16,31 +16,28 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	alpha := .1
-	beta := .4
-
 	var rand, terr, absterr float64
 	var randtotal, terrtotal, absterrtotal float64
 
-	fmt.Printf("Alpha: %f\tBeta: %f\n", alpha, beta)
 	fmt.Printf("Algorithm Rand  Terr  AbsTerr\n")
 
-	rand, terr, absterr = runImporters(load.Ambiant, alpha, beta)
+	rand, terr, absterr = runImporters(load.Ambiant)
 	fmt.Printf("Ambiant   %.3f %.3f %.3f\n", rand, terr, absterr)
 	randtotal += rand
 	terrtotal += terr
 	absterrtotal += absterr
 
-	rand, terr, absterr = runImporters(load.Moresque, alpha, beta)
+	rand, terr, absterr = runImporters(load.Moresque)
 	fmt.Printf("Moresque  %.3f %.3f %.3f\n", rand, terr, absterr)
 	randtotal += rand
 	terrtotal += terr
 	absterrtotal += absterr
 
-	fmt.Printf("All       %.3f %.3f %.3f\n\n", randtotal/2, terrtotal/2, absterrtotal/2)
+	fmt.Printf("All       %.3f %.3f %.3f\n\n",
+		randtotal/2, terrtotal/2, absterrtotal/2)
 }
 
-func runImporters(importers []load.Importer, alpha, beta float64) (rand, terr, absterr float64) {
+func runImporters(importers []load.Importer) (rand, terr, absterr float64) {
 	randmean := new(meancalc)
 	terrmean := new(meancalc)
 	absterrmean := new(meancalc)
@@ -48,7 +45,7 @@ func runImporters(importers []load.Importer, alpha, beta float64) (rand, terr, a
 	for _, importer := range importers {
 		corpus := importer.Import()
 		gold := importer.Label(corpus)
-		rand, terr := runCRP(corpus, gold, alpha, beta)
+		rand, terr := runCRP(corpus, gold)
 
 		randmean.observe(rand)
 		terrmean.observe(terr)
@@ -58,8 +55,8 @@ func runImporters(importers []load.Importer, alpha, beta float64) (rand, terr, a
 	return randmean.mean(), terrmean.mean(), absterrmean.mean()
 }
 
-func runCRP(c *pipeline.Corpus, g *eval.Clustering, alpha, beta float64) (rand, terr float64) {
-	crpmm := crpcluster.NewCRPMM(c, 50, 1, alpha, beta)
+func runCRP(c *pipeline.Corpus, g *eval.Clustering) (rand, terr float64) {
+	crpmm := crpcluster.NewCRPMM(c, 50, 1, .1, .4)
 	inferencer := crpcluster.NewCRPMMCCM(crpmm)
 	for i := 0; i < 2; i++ {
 		inferencer.Inference()
