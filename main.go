@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"time"
 
@@ -40,24 +41,24 @@ func main() {
 }
 
 func runImporters(importers []load.Importer, alpha, beta float64) (rand, terr, absterr float64) {
-	randmean := &meancalc{}
-	terrmean := &meancalc{}
-	absterrmean := &meancalc{}
+	randmean := new(meancalc)
+	terrmean := new(meancalc)
+	absterrmean := new(meancalc)
 
 	for _, importer := range importers {
 		corpus := importer.Import()
 		gold := importer.Label(corpus)
-
 		rand, terr := runCRP(corpus, gold, alpha, beta)
+
 		randmean.observe(rand)
-		terrmean.observe(float64(terr))
-		absterrmean.observe(float64(abs(terr)))
+		terrmean.observe(terr)
+		absterrmean.observe(math.Abs(terr))
 	}
 
 	return randmean.mean(), terrmean.mean(), absterrmean.mean()
 }
 
-func runCRP(c *pipeline.Corpus, g *eval.Clustering, alpha, beta float64) (rand float64, T int) {
+func runCRP(c *pipeline.Corpus, g *eval.Clustering, alpha, beta float64) (rand, terr float64) {
 	crpmm := crpcluster.NewCRPMM(c, 50, 1, alpha, beta)
 	inferencer := crpcluster.NewCRPMMCCM(crpmm)
 	for i := 0; i < 2; i++ {
@@ -65,14 +66,7 @@ func runCRP(c *pipeline.Corpus, g *eval.Clustering, alpha, beta float64) (rand f
 	}
 	pred := eval.NewClusteringCRPMM(crpmm)
 	contingency := eval.NewContingency(g, pred)
-	return contingency.Rand(), crpmm.T - len(g.Labels)
-}
-
-func abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
+	return contingency.Rand(), float64(crpmm.T - len(g.Labels))
 }
 
 type meancalc struct {
@@ -87,16 +81,4 @@ func (m *meancalc) observe(x float64) {
 
 func (m *meancalc) mean() float64 {
 	return m.sum / float64(m.n)
-}
-
-type bestparam struct {
-	alpha, beta, rand float64
-}
-
-func (p *bestparam) update(a, b, r float64) {
-	if r > p.rand {
-		p.alpha = a
-		p.beta = b
-		p.rand = r
-	}
 }
