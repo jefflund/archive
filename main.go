@@ -15,28 +15,53 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	var rand, terr, absterr float64
-	var randtotal, terrtotal, absterrtotal float64
+	grid := make([]float64, 0)
+	for i := 1; i < 10; i++ {
+		grid = append(grid, float64(i)/1000)
+	}
+	for i := 1; i < 10; i++ {
+		grid = append(grid, float64(i)/100)
+	}
+	for i := 1; i <= 10; i++ {
+		grid = append(grid, float64(i)/10)
+	}
+	grid = append(grid, 2)
+	grid = append(grid, 3)
 
-	alpha := .001
-	beta := .1
+	bestamb := &bestparam{}
+	bestmor := &bestparam{}
+	bestall := &bestparam{}
 
-	fmt.Printf("Alpha: %f\tBeta: %f\n", alpha, beta)
-	fmt.Printf("Algorithm Rand  Terr  AbsTerr\n")
+	for _, alpha := range grid {
+		for _, beta := range grid {
+			var rand, terr, absterr float64
+			var randtotal, terrtotal, absterrtotal float64
 
-	rand, terr, absterr = runImporters(load.Ambiant, alpha, beta)
-	fmt.Printf("Ambiant   %.3f %.3f %.3f\n", rand, terr, absterr)
-	randtotal += rand
-	terrtotal += terr
-	absterrtotal += absterr
+			fmt.Printf("Alpha: %f\tBeta: %f\n", alpha, beta)
+			fmt.Printf("Algorithm Rand  Terr  AbsTerr\n")
 
-	rand, terr, absterr = runImporters(load.Moresque, alpha, beta)
-	fmt.Printf("Moresque  %.3f %.3f %.3f\n", rand, terr, absterr)
-	randtotal += rand
-	terrtotal += terr
-	absterrtotal += absterr
+			rand, terr, absterr = runImporters(load.Ambiant, alpha, beta)
+			fmt.Printf("Ambiant   %.3f %.3f %.3f\n", rand, terr, absterr)
+			randtotal += rand
+			terrtotal += terr
+			absterrtotal += absterr
+			bestamb.update(alpha, beta, rand)
 
-	fmt.Printf("All       %.3f %.3f %.3f\n", randtotal/2, terrtotal/2, absterrtotal/2)
+			rand, terr, absterr = runImporters(load.Moresque, alpha, beta)
+			fmt.Printf("Moresque  %.3f %.3f %.3f\n", rand, terr, absterr)
+			randtotal += rand
+			terrtotal += terr
+			absterrtotal += absterr
+			bestmor.update(alpha, beta, rand)
+
+			fmt.Printf("All       %.3f %.3f %.3f\n\n", randtotal/2, terrtotal/2, absterrtotal/2)
+			bestall.update(alpha, beta, randtotal/2)
+		}
+	}
+
+	fmt.Println("Best Amb:", bestamb.alpha, bestamb.beta)
+	fmt.Println("Best Mor:", bestmor.alpha, bestmor.beta)
+	fmt.Println("Best All:", bestall.alpha, bestmor.beta)
 }
 
 func runImporters(importers []load.Importer, alpha, beta float64) (rand, terr, absterr float64) {
@@ -87,4 +112,16 @@ func (m *meancalc) observe(x float64) {
 
 func (m *meancalc) mean() float64 {
 	return m.sum / float64(m.n)
+}
+
+type bestparam struct {
+	alpha, beta, rand float64
+}
+
+func (p *bestparam) update(a, b, r float64) {
+	if r > p.rand {
+		p.alpha = a
+		p.beta = b
+		p.rand = r
+	}
 }
