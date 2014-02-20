@@ -15,19 +15,22 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	randtotal := 0.0
-	terrtotal := 0.0
-	absterrtotal := 0.0
+	var rand, terr, absterr float64
+	var randtotal, terrtotal, absterrtotal float64
 
+	alpha := .001
+	beta := .1
+
+	fmt.Printf("Alpha: %f\tBeta: %f\n", alpha, beta)
 	fmt.Printf("Algorithm Rand  Terr  AbsTerr\n")
 
-	rand, terr, absterr := runImporters(load.Ambiant)
+	rand, terr, absterr = runImporters(load.Ambiant, alpha, beta)
 	fmt.Printf("Ambiant   %.3f %.3f %.3f\n", rand, terr, absterr)
 	randtotal += rand
 	terrtotal += terr
 	absterrtotal += absterr
 
-	rand, terr, absterr = runImporters(load.Moresque)
+	rand, terr, absterr = runImporters(load.Moresque, alpha, beta)
 	fmt.Printf("Moresque  %.3f %.3f %.3f\n", rand, terr, absterr)
 	randtotal += rand
 	terrtotal += terr
@@ -36,7 +39,7 @@ func main() {
 	fmt.Printf("All       %.3f %.3f %.3f\n", randtotal/2, terrtotal/2, absterrtotal/2)
 }
 
-func runImporters(importers []load.Importer) (rand, terr, absterr float64) {
+func runImporters(importers []load.Importer, alpha, beta float64) (rand, terr, absterr float64) {
 	randmean := &meancalc{}
 	terrmean := &meancalc{}
 	absterrmean := &meancalc{}
@@ -45,7 +48,7 @@ func runImporters(importers []load.Importer) (rand, terr, absterr float64) {
 		corpus := importer.Import()
 		gold := importer.Label(corpus)
 
-		rand, terr := runCRP(corpus, gold)
+		rand, terr := runCRP(corpus, gold, alpha, beta)
 		randmean.observe(rand)
 		terrmean.observe(float64(terr))
 		absterrmean.observe(float64(abs(terr)))
@@ -54,8 +57,8 @@ func runImporters(importers []load.Importer) (rand, terr, absterr float64) {
 	return randmean.mean(), terrmean.mean(), absterrmean.mean()
 }
 
-func runCRP(c *pipeline.Corpus, g *eval.Clustering) (rand float64, T int) {
-	crpmm := crpcluster.NewCRPMM(c, 50, 1, .001, .1)
+func runCRP(c *pipeline.Corpus, g *eval.Clustering, alpha, beta float64) (rand float64, T int) {
+	crpmm := crpcluster.NewCRPMM(c, 50, 1, alpha, beta)
 	inferencer := crpcluster.NewCRPMMCCM(crpmm)
 	for i := 0; i < 2; i++ {
 		inferencer.Inference()
