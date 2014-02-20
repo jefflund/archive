@@ -15,53 +15,28 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	grid := make([]float64, 0)
-	for i := 1; i < 10; i++ {
-		grid = append(grid, float64(i)/1000)
-	}
-	for i := 1; i < 10; i++ {
-		grid = append(grid, float64(i)/100)
-	}
-	for i := 1; i <= 10; i++ {
-		grid = append(grid, float64(i)/10)
-	}
-	grid = append(grid, 2)
-	grid = append(grid, 3)
+	alpha := .1
+	beta := .4
 
-	bestamb := &bestparam{}
-	bestmor := &bestparam{}
-	bestall := &bestparam{}
+	var rand, terr, absterr float64
+	var randtotal, terrtotal, absterrtotal float64
 
-	for _, alpha := range grid {
-		for _, beta := range grid {
-			var rand, terr, absterr float64
-			var randtotal, terrtotal, absterrtotal float64
+	fmt.Printf("Alpha: %f\tBeta: %f\n", alpha, beta)
+	fmt.Printf("Algorithm Rand  Terr  AbsTerr\n")
 
-			fmt.Printf("Alpha: %f\tBeta: %f\n", alpha, beta)
-			fmt.Printf("Algorithm Rand  Terr  AbsTerr\n")
+	rand, terr, absterr = runImporters(load.Ambiant, alpha, beta)
+	fmt.Printf("Ambiant   %.3f %.3f %.3f\n", rand, terr, absterr)
+	randtotal += rand
+	terrtotal += terr
+	absterrtotal += absterr
 
-			rand, terr, absterr = runImporters(load.Ambiant, alpha, beta)
-			fmt.Printf("Ambiant   %.3f %.3f %.3f\n", rand, terr, absterr)
-			randtotal += rand
-			terrtotal += terr
-			absterrtotal += absterr
-			bestamb.update(alpha, beta, rand)
+	rand, terr, absterr = runImporters(load.Moresque, alpha, beta)
+	fmt.Printf("Moresque  %.3f %.3f %.3f\n", rand, terr, absterr)
+	randtotal += rand
+	terrtotal += terr
+	absterrtotal += absterr
 
-			rand, terr, absterr = runImporters(load.Moresque, alpha, beta)
-			fmt.Printf("Moresque  %.3f %.3f %.3f\n", rand, terr, absterr)
-			randtotal += rand
-			terrtotal += terr
-			absterrtotal += absterr
-			bestmor.update(alpha, beta, rand)
-
-			fmt.Printf("All       %.3f %.3f %.3f\n\n", randtotal/2, terrtotal/2, absterrtotal/2)
-			bestall.update(alpha, beta, randtotal/2)
-		}
-	}
-
-	fmt.Println("Best Amb:", bestamb.alpha, bestamb.beta)
-	fmt.Println("Best Mor:", bestmor.alpha, bestmor.beta)
-	fmt.Println("Best All:", bestall.alpha, bestmor.beta)
+	fmt.Printf("All       %.3f %.3f %.3f\n\n", randtotal/2, terrtotal/2, absterrtotal/2)
 }
 
 func runImporters(importers []load.Importer, alpha, beta float64) (rand, terr, absterr float64) {
