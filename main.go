@@ -32,29 +32,39 @@ func main() {
 func run(importers []load.Importer) *meancalcs {
 	result := NewMeanCalcs(8)
 
+	grid := make([]float64, 0)
+	for i := 1; i <= 10; i++ {
+		grid = append(grid, float64(i)/10.)
+	}
+
 	for _, importer := range importers {
 		corpus := importer.Import()
 		gold := importer.Label(corpus)
 
-		crpmm := crpcluster.NewCRPMM(corpus, 50, 1, .1, .4)
-		inferencer := crpcluster.NewCRPMMCCM(crpmm)
-		for i := 0; i < 2; i++ {
-			inferencer.Inference()
+		for _, alpha := range grid {
+			for _, beta := range grid {
+
+				crpmm := crpcluster.NewCRPMM(corpus, 50, 1, alpha, beta)
+				inferencer := crpcluster.NewCRPMMGibbs(crpmm)
+				for i := 0; i < 2; i++ {
+					inferencer.Inference()
+				}
+
+				pred := eval.NewClusteringCRPMM(crpmm)
+				contingency := eval.NewContingency(gold, pred)
+				rand := contingency.Rand()
+				terr := float64(crpmm.T - len(gold.Labels))
+
+				reranked := rerank(crpmm)
+
+				result.observe(rand, terr, math.Abs(terr),
+					srecallat(3, reranked, gold),
+					srecallat(5, reranked, gold),
+					srecallat(10, reranked, gold),
+					srecallat(15, reranked, gold),
+					srecallat(20, reranked, gold))
+			}
 		}
-
-		pred := eval.NewClusteringCRPMM(crpmm)
-		contingency := eval.NewContingency(gold, pred)
-		rand := contingency.Rand()
-		terr := float64(crpmm.T - len(gold.Labels))
-
-		reranked := rerank(crpmm)
-
-		result.observe(rand, terr, math.Abs(terr),
-			srecallat(3, reranked, gold),
-			srecallat(5, reranked, gold),
-			srecallat(10, reranked, gold),
-			srecallat(15, reranked, gold),
-			srecallat(20, reranked, gold))
 	}
 
 	return result
