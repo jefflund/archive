@@ -189,17 +189,19 @@ def los(grid, origin, target):
 
 def flood_fov(grid, origin):
     """Uses a flood fill algorithm to compute field of view"""
-    fov = set()
+    closed = set()
     stack = [origin]
+
+    fov = {origin + (x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)}
 
     while stack:
         pos = stack.pop()
-        if pos in fov or not grid[pos]:
+        if grid[pos]:
+            fov.update(pos + (x, y) for x in (-1, 0, 1) for y in (-1, 0, 1))
+
+        if pos in closed or not grid[pos]:
             continue
-        fov.add(pos)
-        stack.append(pos + (1, 0))
-        stack.append(pos + (-1, 0))
-        stack.append(pos + (0, 1))
-        stack.append(pos + (0, -1))
+        closed.add(pos)
+        stack.extend(pos + (x, y) for x in (-1, 0, 1) for y in (-1, 0, 1))
 
     return fov
