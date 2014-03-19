@@ -185,3 +185,21 @@ def trace(grid, origin, target):
 def los(grid, origin, target):
     """Uses a pre-computed table to compute line of sight"""
     return trace(grid, origin, target)[-1] == target
+
+
+def flood_fov(grid, origin):
+    """Uses a flood fill algorithm to compute field of view"""
+    fov = set()
+    stack = [origin]
+
+    while stack:
+        pos = stack.pop()
+        if pos in fov or not grid[pos]:
+            continue
+        fov.add(pos)
+        stack.append(pos + (1, 0))
+        stack.append(pos + (-1, 0))
+        stack.append(pos + (0, 1))
+        stack.append(pos + (0, -1))
+
+    return fov
