@@ -155,35 +155,41 @@ def _room_connect_source(room):
         return room[0]
 
 
-def _connect_rooms(start, goal, grid):
+def _connect_rooms(start, goal, grid, value):
     x1, y1 = _room_connect_source(start)
     x2, y2 = _room_connect_source(goal)
     step_x = 1 if x1 < x2 else -1
     step_y = 1 if y1 < y2 else -1
 
     while x1 != x2:
-        grid[x1, y1] = True
+        grid[x1, y1] = value
         x1 += step_x
     while y1 != y2:
-        grid[x1, y1] = True
+        grid[x1, y1] = value
         y1 += step_y
 
 
-def medieval(grid, room_chance=.9):
+def medieval(grid, room_chance=.9, write_values=None):
     """Creates a traditional dungeon map with rooms and corridors"""
     maze_dim = min(grid.cols, grid.rows) // 7
     room_dim = grid.cols // maze_dim, grid.rows // maze_dim
     maze = _abstract_half_braid(maze_dim, maze_dim)
     rooms = _create_rooms(maze, room_dim, room_chance)
 
-    fill(grid, False)
+    if not write_values:
+        room_value, hall_value, wall_value = True, True, False
+    else:
+        room_value, hall_value, wall_value = write_values
 
+    fill(grid, wall_value)
     for node, edges in maze.iteritems():
         for edge in edges:
-            _connect_rooms(rooms[node], rooms[edge], grid)
-
+            _connect_rooms(rooms[node], rooms[edge], grid, hall_value)
     for room in rooms.itervalues():
-        _fill_room(grid, room, True)
+        if room[1] - room[0] == (1, 1):
+            _fill_room(grid, room, hall_value)
+        else:
+            _fill_room(grid, room, room_value)
 
 
 
