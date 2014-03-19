@@ -173,17 +173,18 @@ def medieval(grid, room_chance=.9):
     """Creates a traditional dungeon map with rooms and corridors"""
     maze_dim = min(grid.cols, grid.rows) // 7
     room_dim = grid.cols // maze_dim, grid.rows // maze_dim
-    print (grid.cols, grid.rows), maze_dim, room_dim
     maze = _abstract_half_braid(maze_dim, maze_dim)
     rooms = _create_rooms(maze, room_dim, room_chance)
 
     fill(grid, False)
-    for room in rooms.itervalues():
-        _fill_room(grid, room, True)
 
     for node, edges in maze.iteritems():
         for edge in edges:
             _connect_rooms(rooms[node], rooms[edge], grid)
+
+    for room in rooms.itervalues():
+        _fill_room(grid, room, True)
+
 
 
 # Caverns
