@@ -155,26 +155,27 @@ def _room_connect_source(room):
         return room[0]
 
 
-def _connect_rooms(start, goal, grid, hall):
+def _near_room(room, x, y):
+    return (room[0][0] - 1 <= x < room[1][0] + 1  and
+            room[0][1] - 1 <= y < room[1][1] + 1)
+
+
+def _near_rooms(room1, room2, x, y):
+    return _near_room(room1, x, y) or _near_room(room2, x, y)
+
+
+def _connect_rooms(start, goal, grid, hall, door):
     x1, y1 = _room_connect_source(start)
     x2, y2 = _room_connect_source(goal)
     step_x = 1 if x1 < x2 else -1
     step_y = 1 if y1 < y2 else -1
 
     while x1 != x2:
-        grid[x1, y1] = hall
+        grid[x1, y1] = door if _near_rooms(start, goal, x1, y1) else hall
         x1 += step_x
     while y1 != y2:
-        grid[x1, y1] = hall
+        grid[x1, y1] = door if _near_rooms(start, goal, x1, y1) else hall
         y1 += step_y
-
-
-def _abstract_medieval(grid, room_chance):
-    maze_dim = min(grid.cols, grid.rows) // 7
-    room_dim = grid.cols // maze_dim, grid.rows // maze_dim
-    maze = _abstract_half_braid(maze_dim, maze_dim)
-    rooms = _create_rooms(maze, room_dim, room_chance)
-    return maze, rooms
 
 
 def medieval(grid, room_chance=.9):
@@ -182,19 +183,25 @@ def medieval(grid, room_chance=.9):
     medieval_complete(grid, True, False, True, True, room_chance)
 
 
-def medieval_complete(grid, room, wall, hall, room_chance=.9):
+def medieval_complete(grid, room, wall, hall, door, room_chance=.9):
     """Creates a dungeon map with rooms, walls, doors, and corridors"""
-    maze, rooms = _abstract_medieval(grid, room_chance)
+    maze_dim = min(grid.cols, grid.rows) // 7
+    room_dim = grid.cols // maze_dim, grid.rows // maze_dim
+    maze = _abstract_half_braid(maze_dim, maze_dim)
+    rooms = _create_rooms(maze, room_dim, room_chance)
 
     fill(grid, wall)
+
     for node, edges in maze.iteritems():
         for edge in edges:
-            _connect_rooms(rooms[node], rooms[edge], grid, hall)
+            _connect_rooms(rooms[node], rooms[edge], grid, hall, door)
+
     for room_dim in rooms.itervalues():
         if room_dim[1] - room_dim[0] == (1, 1):
             _fill_room(grid, room_dim, hall)
         else:
             _fill_room(grid, room_dim, room)
+
 
 
 # Caverns
