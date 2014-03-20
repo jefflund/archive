@@ -208,7 +208,6 @@ def medieval_complete(grid, room, wall, hall, door, room_chance=.9):
             _fill_room(grid, room_dim, hall)
 
 
-
 # Caverns
 
 class _Automata(object):
