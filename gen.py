@@ -156,12 +156,17 @@ def _room_connect_source(room):
 
 
 def _near_room(room, x, y):
-    return (room[0][0] - 1 <= x < room[1][0] + 1  and
+    return (_real_room(room) and
+            room[0][0] - 1 <= x < room[1][0] + 1  and
             room[0][1] - 1 <= y < room[1][1] + 1)
 
 
 def _near_rooms(room1, room2, x, y):
     return _near_room(room1, x, y) or _near_room(room2, x, y)
+
+
+def _real_room(room):
+    return room[1] - room[0] != (1, 1)
 
 
 def _connect_rooms(start, goal, grid, hall, door):
@@ -197,10 +202,10 @@ def medieval_complete(grid, room, wall, hall, door, room_chance=.9):
             _connect_rooms(rooms[node], rooms[edge], grid, hall, door)
 
     for room_dim in rooms.itervalues():
-        if room_dim[1] - room_dim[0] == (1, 1):
-            _fill_room(grid, room_dim, hall)
-        else:
+        if _real_room(room_dim):
             _fill_room(grid, room_dim, room)
+        else:
+            _fill_room(grid, room_dim, hall)
 
 
 
