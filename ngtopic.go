@@ -14,14 +14,21 @@ func main() {
 	fmt.Println("Loaded")
 
 	model := vanilla.NewLDA(corpus, 20, .1, .01)
-	inferencer := vanilla.NewLDACCM(model)
+	ccmInferencer := vanilla.NewLDACCM(model)
+	pbccmInferencer := vanilla.NewLDAPBlockCCM(model)
 
-	start := time.Now()
+	runner(model, ccmInferencer)
+	runner(model, pbccmInferencer)
+	runner(model, ccmInferencer)
+}
+
+func runner(model *vanilla.LDA, inferencer vanilla.LDAInfrencer) {
 	for iter := 0; iter < 10; iter++ {
+		start := time.Now()
 		inferencer.Inference()
-		fmt.Println(iter, time.Now().Sub(start).Seconds())
+		end := time.Now()
+		fmt.Println(iter, end.Sub(start).Seconds())
 	}
-
 	for z := 0; z < model.T; z++ {
 		fmt.Println(z, model.TopicSummaryString(z, 10))
 	}
