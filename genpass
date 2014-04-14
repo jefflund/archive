@@ -19,7 +19,8 @@ def get_words(word_file, min_length, max_length):
 
 def get_passwords(sites_file, generator):
     """Returns a dict of passwords from the given sites"""
-    return {site.strip(): generator() for site in open(sites_file)}
+    sites = [site.strip() for site in open(sites_file)]
+    return {site: generator(site) for site in sites}
 
 
 def print_stats(words, phrase_length):
@@ -53,14 +54,29 @@ def format_time(seconds):
     return '{} {}'.format(time, unit)
 
 
-def gen_pass(words, phrase_length, separator):
+def gen_pass(words, phrase_length):
     """Generates a passphrase from a set of words"""
-    return separator.join(random.sample(words, phrase_length))
+    return ''.join(random.sample(words, phrase_length))
 
 
-def make_generator(words, phrase_length, separator):
+def gen_pass_constrained(generator, site):
+    if '#' not in site:
+        return generator()
+    else:
+        site, max_size = site.split('#')
+        postfix = site[0].upper() + max_size
+        phrase_size = int(max_size) - len(postfix)
+        return generator()[:phrase_size] + postfix
+
+
+def make_generator(words, phrase_length):
     """Creates a passphrase generator function"""
-    return functools.partial(gen_pass, words, phrase_length, separator)
+    return functools.partial(gen_pass, words, phrase_length)
+
+
+def make_constrained_generator(generator):
+    """Creates a constrained generator function from an unconstrained one"""
+    return functools.partial(gen_pass_constrained, generator)
 
 
 def get_args():
@@ -74,8 +90,6 @@ def get_args():
                         help='Maximum length of words in the passphrases')
     parser.add_argument('--word-file', type=str, default='words.txt',
                         help='List of words to use in the passphrases')
-    parser.add_argument('--separator', '-s', type=str, default='',
-                        help='Separator between words in the passphrase')
     parser.add_argument('--entropy', '-e', action='store_true', default=False,
                         help='Print entropy statistics')
     parser.add_argument('sites', nargs='?', type=str, default=None,
@@ -97,13 +111,15 @@ def main():
     if args.entropy:
         print_stats(words, args.phrase_length)
 
+    generator = make_generator(words, args.phrase_length)
+
     if args.sites:
-        generator = make_generator(words, args.phrase_length, args.separator)
+        generator = make_constrained_generator(generator)
         passwords = get_passwords(args.sites, generator)
         for site, password in passwords.iteritems():
             print '{}: {}'.format(site, password)
     else:
-        print gen_pass(words, args.phrase_length, args.separator)
+        print generator()
 
 
 if __name__ == '__main__':
