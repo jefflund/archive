@@ -68,9 +68,9 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--phrase-length', '-p', type=int, default=4,
                         help='Number of words in the passphrases')
-    parser.add_argument('--min-word-length', '-w', type=int, default=5,
+    parser.add_argument('--min-word-length', '-w', type=int, default=3,
                         help='Minimum length of words in the passphrases')
-    parser.add_argument('--max-word-length', '-W', type=int, default=8,
+    parser.add_argument('--max-word-length', '-W', type=int, default=6,
                         help='Maximum length of words in the passphrases')
     parser.add_argument('--word-file', type=str, default='words.txt',
                         help='List of words to use in the passphrases')
