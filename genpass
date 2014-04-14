@@ -4,6 +4,7 @@ import argparse
 import math
 import random
 import datetime
+import functools
 
 
 def get_words(word_file, min_length, max_length):
@@ -21,11 +22,6 @@ def print_stats(words, phrase_length):
     time = format_time(2 ** entropy / 1000)
     print '~{} bits of entropy'.format(int(round(entropy)))
     print '~{} at 1000 guesses/sec'.format(time)
-
-
-def gen_pass(words, phrase_len, separator):
-    """Generates a passphrase from a set of words"""
-    return separator.join(random.sample(words, phrase_len))
 
 
 def format_time(seconds):
@@ -49,6 +45,16 @@ def format_time(seconds):
         unit += 's'
 
     return '{} {}'.format(time, unit)
+
+
+def gen_pass(words, phrase_length, separator):
+    """Generates a passphrase from a set of words"""
+    return separator.join(random.sample(words, phrase_length))
+
+
+def make_generator(words, phrase_length, separator):
+    """Creates a passphrase generator function"""
+    return functools.partial(gen_pass, words, phrase_length, separator)
 
 
 def get_args():
@@ -77,7 +83,8 @@ def main():
                       args.max_word_length)
     if args.entropy:
         print_stats(words, args.phrase_length)
-    print gen_pass(words, args.phrase_length, args.separator)
+    generator = make_generator(words, args.phrase_length, args.separator)
+    print generator()
 
 
 if __name__ == '__main__':
