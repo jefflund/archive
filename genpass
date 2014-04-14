@@ -1,13 +1,36 @@
 #!/usr/bin/env python
 
 import argparse
+import math
 import random
+import datetime
 
 def get_words(words, min_len):
     return {w.lower() for w in (w.strip() for w in words) if len(w) >= min_len}
 
 def gen_pass(words, phrase_len):
     return ''.join(random.sample(words, phrase_len))
+
+def format_time(seconds):
+    delta = datetime.timedelta(seconds=seconds)
+    if delta.days >= 365:
+        time, unit = delta.days / 365, 'year'
+    elif delta.days >= 7:
+        time, unit = delta.days / 7, 'week'
+    elif delta.days > 0:
+        time, unit = delta.days, 'day'
+    elif delta.seconds >= 3600:
+        time, unit = delta.seconds / 3600, 'hour'
+    elif delta.seconds >= 60:
+        time, unit = delta.seconds / 60, 'minute'
+    else:
+        time, unit = delta.seconds, 'second'
+
+    time = int(round(time))
+    if time != 1:
+        unit += 's'
+
+    return time, unit
 
 def main():
     parser = argparse.ArgumentParser()
@@ -23,12 +46,20 @@ def main():
                         help='List of words to use in the passphrases')
     parser.add_argument('--separator', '-s', type=str, default='',
                         help='Separator between words in the passphrase')
+    parser.add_argument('--entropy', '-e', action='store_true', default=False,
+                        help='Print entropy statistics')
     args = parser.parse_args()
 
     words = open(args.word_file)
     words = {word.strip().lower() for word in words}
     words = {word for word in words if len(word) >= args.min_word_length}
     words = {word for word in words if len(word) <= args.max_word_length}
+
+    if args.entropy:
+        entropy = math.log(len(words), 2) * args.phrase_length
+        time, unit = format_time(2 ** entropy / 1000)
+        print '~{} bits of entropy'.format(int(round(entropy)))
+        print '~{} {} at 1000 guesses/sec'.format(time, unit)
 
     for _ in xrange(args.num_passphrases):
         print args.separator.join(random.sample(words, args.phrase_length))
