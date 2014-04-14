@@ -5,8 +5,8 @@ XKCD style passphrase generator. See http://xkcd.com/936/ for the original inspi
 
 Usage
 =====
-
-genpass [--phrase-length PHRASE_LENGTH]
+```
+./genpass [--phrase-length PHRASE_LENGTH]
         [--min-word-length MIN_WORD_LENGTH]
         [--max-word-length MAX_WORD_LENGTH]
         [--num-passphrases NUM_PASSPHRASES]
@@ -30,27 +30,28 @@ optional arguments:
                         Separator between words in the passphrase
   --entropy, -e         Print entropy statistics
 
-
+```
 Examples
 ========
-
+```
 ./genpass
->> smartthumbradiationadministrative
-
+smartthumbradiationadministrative
+```
+```
 ./genpass -n 5
->> satisfactioncentralscareconceive
->> opportunityfeministphysicsstair
->> wholeblankreasonabledramatic
->> biologicalbesidesundermineheadquarters
->> badlysafelystrangerclear
-
+satisfactioncentralscareconceive
+opportunityfeministphysicsstair
+wholeblankreasonabledramatic
+biologicalbesidesundermineheadquarters
+badlysafelystrangerclear
+```
+```
 ./genpass -e -w 5 -W 6 -n 5 -s " "
->> ~42 bits of entropy
->> ~113 years at 1000 guesses/sec
->> amount remove almost budget
->> legal virus drama verbal
->> basis cancer tumor vanish
->> formal stick magic league
->> safety drawer and/or upset
-
-
+~42 bits of entropy
+~113 years at 1000 guesses/sec
+amount remove almost budget
+legal virus drama verbal
+basis cancer tumor vanish
+formal stick magic league
+safety drawer and/or upset
+```
