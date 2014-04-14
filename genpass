@@ -11,6 +11,7 @@ def get_words(word_file, min_length, max_length):
     """Returns a set of usable words from the given file"""
     words = open(word_file)
     words = {word.strip().lower() for word in words}
+    words = {word for word in words if word.isalpha()}
     words = {word for word in words if len(word) >= min_length}
     words = {word for word in words if len(word) <= max_length}
     return words
@@ -18,7 +19,7 @@ def get_words(word_file, min_length, max_length):
 
 def get_passwords(sites_file, generator):
     """Returns a dict of passwords from the given sites"""
-    return {site.strip(): generator() for site in sorted(open(sites_file))}
+    return {site.strip(): generator() for site in open(sites_file)}
 
 
 def print_stats(words, phrase_length):
@@ -79,6 +80,8 @@ def get_args():
                         help='Print entropy statistics')
     parser.add_argument('--sites', type=str, default=None,
                         help='List of passwords to generate')
+    parser.add_argument('--seed', type=int, default=None,
+                        help='Seed for the random number generator')
     return parser.parse_args()
 
 
@@ -88,6 +91,9 @@ def main():
     words = get_words(args.word_file,
                       args.min_word_length,
                       args.max_word_length)
+    if args.seed:
+        random.seed(args.seed)
+
     if args.entropy:
         print_stats(words, args.phrase_length)
 
