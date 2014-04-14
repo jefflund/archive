@@ -78,9 +78,9 @@ def get_args():
                         help='Separator between words in the passphrase')
     parser.add_argument('--entropy', '-e', action='store_true', default=False,
                         help='Print entropy statistics')
-    parser.add_argument('--sites', type=str, default=None,
+    parser.add_argument('sites', nargs='?', type=str, default=None,
                         help='List of passwords to generate')
-    parser.add_argument('--seed', type=int, default=None,
+    parser.add_argument('seed', nargs='?', type=int, default=None,
                         help='Seed for the random number generator')
     return parser.parse_args()
 
@@ -88,6 +88,7 @@ def get_args():
 def main():
     """Runs the passphrase generator"""
     args = get_args()
+    print args
     words = get_words(args.word_file,
                       args.min_word_length,
                       args.max_word_length)
