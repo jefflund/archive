@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import argparse
+import random
+
+def get_words(words, min_len):
+    return {w.lower() for w in (w.strip() for w in words) if len(w) >= min_len}
+
+def gen_pass(words, phrase_len):
+    return ''.join(random.sample(words, phrase_len))
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--phrase-length', '-p', type=int, default=4,
+                        help='Number of words in the passphrase')
+    parser.add_argument('--min-word-length', '-w', type=int, default=5,
+                        help='Minimum length of words in the passphrase')
+    parser.add_argument('--num-passphrases', '-n', type=int, default=1,
+                        help='Number of passphrases to generate')
+    parser.add_argument('--word-file', type=str, default='words.txt',
+                        help='List of words to use in the passphrases')
+    args = parser.parse_args()
+
+    words = (word.strip() for word in open(args.word_file))
+    words = {word for word in words if len(word) >= args.min_word_length}
+
+    for _ in xrange(args.num_passphrases):
+        print ''.join(random.sample(words, args.phrase_length))
+
+if __name__ == '__main__':
+    main()
