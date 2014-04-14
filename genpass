@@ -88,7 +88,6 @@ def get_args():
 def main():
     """Runs the passphrase generator"""
     args = get_args()
-    print args
     words = get_words(args.word_file,
                       args.min_word_length,
                       args.max_word_length)
