@@ -19,13 +19,15 @@ def main():
                         help='Number of passphrases to generate')
     parser.add_argument('--word-file', type=str, default='words.txt',
                         help='List of words to use in the passphrases')
+    parser.add_argument('--separator', '-s', type=str, default='',
+                        help='Separator between words in the passphrase')
     args = parser.parse_args()
 
-    words = (word.strip() for word in open(args.word_file))
+    words = (word.strip().lower() for word in open(args.word_file))
     words = {word for word in words if len(word) >= args.min_word_length}
 
     for _ in xrange(args.num_passphrases):
-        print ''.join(random.sample(words, args.phrase_length))
+        print args.separator.join(random.sample(words, args.phrase_length))
 
 if __name__ == '__main__':
     main()
