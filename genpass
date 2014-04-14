@@ -12,9 +12,11 @@ def gen_pass(words, phrase_len):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--phrase-length', '-p', type=int, default=4,
-                        help='Number of words in the passphrase')
+                        help='Number of words in the passphrases')
     parser.add_argument('--min-word-length', '-w', type=int, default=5,
-                        help='Minimum length of words in the passphrase')
+                        help='Minimum length of words in the passphrases')
+    parser.add_argument('--max-word-length', '-W', type=int, default=16,
+                        help='Maximum length of words in the passphrases')
     parser.add_argument('--num-passphrases', '-n', type=int, default=1,
                         help='Number of passphrases to generate')
     parser.add_argument('--word-file', type=str, default='words.txt',
@@ -23,8 +25,10 @@ def main():
                         help='Separator between words in the passphrase')
     args = parser.parse_args()
 
-    words = (word.strip().lower() for word in open(args.word_file))
+    words = open(args.word_file)
+    words = {word.strip().lower() for word in words}
     words = {word for word in words if len(word) >= args.min_word_length}
+    words = {word for word in words if len(word) <= args.max_word_length}
 
     for _ in xrange(args.num_passphrases):
         print args.separator.join(random.sample(words, args.phrase_length))
