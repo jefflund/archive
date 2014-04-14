@@ -64,7 +64,7 @@ def gen_pass_constrained(generator, site):
         return generator()
     else:
         site, max_size = site.split('#')
-        postfix = site[0].upper() + max_size
+        postfix = site[0].upper() + str(len(site))
         phrase_size = int(max_size) - len(postfix)
         return generator()[:phrase_size] + postfix
 
@@ -117,7 +117,7 @@ def main():
         generator = make_constrained_generator(generator)
         passwords = get_passwords(args.sites, generator)
         for site, password in passwords.iteritems():
-            print '{}: {}'.format(site, password)
+            print '{}: {}'.format(site.split('#')[0], password)
     else:
         print generator()
 
