@@ -16,6 +16,11 @@ def get_words(word_file, min_length, max_length):
     return words
 
 
+def get_passwords(sites_file, generator):
+    """Returns a dict of passwords from the given sites"""
+    return {site.strip(): generator() for site in sorted(open(sites_file))}
+
+
 def print_stats(words, phrase_length):
     """Prints the rough amount of entropy and time to guess a passphrass"""
     entropy = math.log(len(words), 2) * phrase_length
@@ -64,7 +69,7 @@ def get_args():
                         help='Number of words in the passphrases')
     parser.add_argument('--min-word-length', '-w', type=int, default=5,
                         help='Minimum length of words in the passphrases')
-    parser.add_argument('--max-word-length', '-W', type=int, default=16,
+    parser.add_argument('--max-word-length', '-W', type=int, default=8,
                         help='Maximum length of words in the passphrases')
     parser.add_argument('--word-file', type=str, default='words.txt',
                         help='List of words to use in the passphrases')
@@ -72,6 +77,8 @@ def get_args():
                         help='Separator between words in the passphrase')
     parser.add_argument('--entropy', '-e', action='store_true', default=False,
                         help='Print entropy statistics')
+    parser.add_argument('--sites', type=str, default=None,
+                        help='List of passwords to generate')
     return parser.parse_args()
 
 
@@ -83,8 +90,14 @@ def main():
                       args.max_word_length)
     if args.entropy:
         print_stats(words, args.phrase_length)
-    generator = make_generator(words, args.phrase_length, args.separator)
-    print generator()
+
+    if args.sites:
+        generator = make_generator(words, args.phrase_length, args.separator)
+        passwords = get_passwords(args.sites, generator)
+        for site, password in passwords.iteritems():
+            print '{}: {}'.format(site, password)
+    else:
+        print gen_pass(words, args.phrase_length, args.separator)
 
 
 if __name__ == '__main__':
