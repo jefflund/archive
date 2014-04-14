@@ -22,8 +22,6 @@ optional arguments:
                         Minimum length of words in the passphrases
   --max-word-length MAX_WORD_LENGTH, -W MAX_WORD_LENGTH
                         Maximum length of words in the passphrases
-  --num-passphrases NUM_PASSPHRASES, -n NUM_PASSPHRASES
-                        Number of passphrases to generate
   --word-file WORD_FILE
                         List of words to use in the passphrases
   --separator SEPARATOR, -s SEPARATOR
@@ -38,20 +36,8 @@ Examples
 smartthumbradiationadministrative
 ```
 ```
-./genpass -n 5
-satisfactioncentralscareconceive
-opportunityfeministphysicsstair
-wholeblankreasonabledramatic
-biologicalbesidesundermineheadquarters
-badlysafelystrangerclear
-```
-```
-./genpass -e -w 5 -W 6 -n 5 -s " "
+./genpass -e -w 5 -W 6 -s " "
 ~42 bits of entropy
 ~113 years at 1000 guesses/sec
 amount remove almost budget
-legal virus drama verbal
-basis cancer tumor vanish
-formal stick magic league
-safety drawer and/or upset
 ```
