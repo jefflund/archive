@@ -60,8 +60,6 @@ def get_args():
                         help='Minimum length of words in the passphrases')
     parser.add_argument('--max-word-length', '-W', type=int, default=16,
                         help='Maximum length of words in the passphrases')
-    parser.add_argument('--num-passphrases', '-n', type=int, default=1,
-                        help='Number of passphrases to generate')
     parser.add_argument('--word-file', type=str, default='words.txt',
                         help='List of words to use in the passphrases')
     parser.add_argument('--separator', '-s', type=str, default='',
@@ -79,8 +77,7 @@ def main():
                       args.max_word_length)
     if args.entropy:
         print_stats(words, args.phrase_length)
-    for _ in xrange(args.num_passphrases):
-        print gen_pass(words, args.phrase_length, args.separator)
+    print gen_pass(words, args.phrase_length, args.separator)
 
 
 if __name__ == '__main__':
