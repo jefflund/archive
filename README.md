@@ -68,4 +68,5 @@ a number. For example, the site name `byu#` results in a password of the form
 `designreststupiddrawB3`. Adding a number after the pound indicates that the
 site is also constrained in length. For example, the name `wellsfargo#14`
 indicates that the password should be truncated to be no longer than 14
-characters.
+characters. It will still have the postfix, so a password for the above site
+would have the form `dosesellyieW10`.
