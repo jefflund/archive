@@ -7,7 +7,12 @@ It generates passwords for each site you care about given a particular seed.
 seed
 ====
 If you use this for generating passwords you actually use, make sure to keep your seed
-a secret, as it can be used to generate all your other passwords.
+a secret, as it can be used to generate all your other passwords. Choose a seed which
+cannot be guessed easily (e.g. your birthday or low numbers are probably not good
+choices). You might also want to keep your genpass usage out of your bash history.
+Granted, if someone else has access to your bash history, they are root and you are
+already screwed, but if you are paranoid about your coworkers/sysadmins, consider
+adding `*genpass*` to your `HISTIGNORE`.
 
 usage
 =====
