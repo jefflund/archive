@@ -65,7 +65,7 @@ def gen_pass_constrained(generator, site):
     else:
         site, max_size = site.split('#')
         postfix = site[0].upper() + str(len(site))
-        phrase_size = int(max_size) - len(postfix)
+        phrase_size = int(max_size if max_size else 100) - len(postfix)
         return generator()[:phrase_size] + postfix
 
 
