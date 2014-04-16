@@ -2,7 +2,10 @@ genpass
 =======
 
 XKCD style passphrase generator. See http://xkcd.com/936/ for the original inspiration.
-It generates passwords for each site you care about given a particular seed.
+It generates passwords for each site you care about given a particular seed. You may
+wonder why I don't just use something like the excellent LastPass service. The answer
+is that I hope to have these passphrases memorized, but do not want to have to rely
+exclusively upon my own memory.
 
 seed
 ====
