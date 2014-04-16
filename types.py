@@ -265,7 +265,7 @@ def _by_cube(red, green, blue):
 class Glyph(tuple):
     """Represents a character-color pair as a tuple of chr and int"""
 
-    def __new__(cls, char, color=Color.White, bg_color=None, sprite_id=None):
+    def __new__(cls, char, color=Color.White, bg_color=None, _=None):
         return tuple.__new__(cls, (char, color, bg_color))
 
     def __init__(self, char, color=Color.White, bg_color=None, sprite_id=None):

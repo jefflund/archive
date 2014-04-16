@@ -30,7 +30,7 @@ def _popup_text_draw(term, text, just, dim, border):
     y_max = y_min + len(text)
 
     if border:
-        for y in xrange(y_min - 1 , y_max + 1):
+        for y in xrange(y_min - 1, y_max + 1):
             term.buffer_char((x_min - 1, y), types.Glyph('|'))
             term.buffer_char((x_max, y), types.Glyph('|'))
         for x in xrange(x_min - 1, x_max + 1):
@@ -197,13 +197,13 @@ def animate_trace(camera, trace, tile, beam=False):
     camera.viewport.term.refresh()
 
 
-def animate_fov(camera, center, fov, tile):
+def animate_fov(camera, center, field, tile):
     """Animates a fov radiating from the center"""
     camera.viewport.term.save()
     center = types.Coordinate.from_tuple(center)
 
     dist_map = {}
-    for pos in fov.difference({center}):
+    for pos in field.difference({center}):
         if pos in camera.fov:
             dist = center.euclidean_distance(pos)
             if dist not in dist_map:
@@ -291,7 +291,8 @@ class ScreenInfoDB(data.InfoDB):
     def buffer_screen(self, term):
         """Buffers the named background screen onto the given Terminal"""
         term.clear()
-        for y, line in enumerate(self.screen.split('\n')):
+        lines = self.screen.split('\n') # pylint: disable=E1101
+        for y, line in enumerate(lines):
             for x, char in enumerate(line):
                 if char in self.rewrites:
                     char = self.rewrites[char]
@@ -301,6 +302,7 @@ class ScreenInfoDB(data.InfoDB):
 
     @data.entryattr
     def run_menu(self, term):
+        """Runs the menu on the given Terminal"""
         term.save()
 
         curr = 0

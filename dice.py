@@ -68,9 +68,9 @@ def skill_roll(skill, rating):
     return _opposed_roll(skill, rating, 10)
 
 
-def damage_roll(damage, protects):
+def damage_roll(damage, armor):
     """Returns the result of an opposed xdy roll, with a minimum of 0"""
-    return max(roll_xdy(damage) - sum_xdys(protects), 0)
+    return max(roll_xdy(damage) - sum(roll_xdy(piece) for piece in armor), 0)
 
 
 def sample_poisson(rate):

@@ -183,17 +183,17 @@ def _connect_rooms(start, goal, grid, hall, door):
         y1 += step_y
 
 
-def medieval(grid, room_chance=.9):
+def medieval(grid):
     """Creates a traditional dungeon map on a boolean grid"""
-    medieval_complete(grid, True, False, True, True, room_chance)
+    medieval_complete(grid, True, False, True, True)
 
 
-def medieval_complete(grid, room, wall, hall, door, room_chance=.9):
+def medieval_complete(grid, room, wall, hall, door):
     """Creates a dungeon map with rooms, walls, doors, and corridors"""
     maze_dim = min(grid.cols, grid.rows) // 7
     room_dim = grid.cols // maze_dim, grid.rows // maze_dim
     maze = _abstract_half_braid(maze_dim, maze_dim)
-    rooms = _create_rooms(maze, room_dim, room_chance)
+    rooms = _create_rooms(maze, room_dim, .9)
 
     fill(grid, wall)
 

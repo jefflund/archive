@@ -100,6 +100,7 @@ class GridView(object):
 
     @classmethod
     def door(cls, grid):
+        """Creates a basic GridView which can places doors"""
         return cls(grid.cols, grid.rows, grid.passable_at, grid.add_door)
 
     def __setitem__(self, pos, val):
@@ -332,22 +333,27 @@ class DoorMixin(object):
             self.set_tile(pos, self._closed_door, False)
 
     def add_door(self, pos, door_open=False):
+        """Adds a door at the given position"""
         self._doors[pos] = door_open
         self._set_door_tile(pos, door_open)
 
     def door_open_at(self, pos):
+        """Returns True if there is an open door at the given position"""
         return pos in self._doors and self._doors[pos]
 
     def door_closed_at(self, pos):
+        """Returns True if there is a closed door at the given position"""
         return pos in self._doors and not self._doors[pos]
 
     def open_door(self, pos):
+        """Opens the closed door at the given position"""
         assert self.door_closed_at(pos)
 
         self._doors[pos] = True
         self._set_door_tile(pos, True)
 
     def close_door(self, pos):
+        """Closes the open door at the given position"""
         assert self.door_open_at(pos)
 
         self._doors[pos] = False

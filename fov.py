@@ -125,6 +125,7 @@ def _inside_cone(origin, pos, direction, angle=_CONE_ANGLE):
 
 
 def fix_directional(fov, origin, direction):
+    """Restricts a field of view to a cone in the given direction"""
     inside = {pos for pos in fov if _inside_cone(origin, pos, direction)}
     fov.intersection_update(inside)
 
