@@ -318,3 +318,17 @@ class Glyph(tuple):
     def lighter(self, amount=1):
         """Returns a Glyph with the same chr but lighter color"""
         return self._modify_color(lambda x: x + amount)
+
+
+class Keys(object):
+    """A collection of special keys"""
+
+    Escape = '\x1b'
+    Newline = '\x0a'
+    Carriage = '\x0d'
+    Backspace = '\x08'
+
+    @staticmethod
+    def is_newline(char):
+        """Returns True if the given char is a newline or carriage return"""
+        return char == Keys.Newline or char == Keys.Carriage
