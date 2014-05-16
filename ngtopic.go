@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/jlund3/modelt/topic"
 	"github.com/jlund3/modelt/topic/vanilla"
 
 	"ford/load"
@@ -11,10 +12,12 @@ import (
 func main() {
 	corpus := load.Newsgroups.Import()
 	lda := vanilla.NewLDA(corpus, 20, .1, .01)
-	inference := vanilla.Gibbs(lda)
+	inference := vanilla.CCM(lda)
+	checker := topic.NewWordConvergenceChecker(lda.Z)
 
-	for iter := 0; iter < 20; iter++ {
+	for changes := -1; changes != 0; changes = checker.Check() {
 		inference()
+		fmt.Println(changes)
 	}
 
 	for z := 0; z < lda.T; z++ {
