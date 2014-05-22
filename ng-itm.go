@@ -31,7 +31,18 @@ func run(itm *interactive.ITM, inference topic.Inferencer, iters int) {
 	evaluate(itm)
 }
 
+func PresetThreshSample(thresh float64) func(*interactive.ITM) topic.Inferencer {
+	return func(i *interactive.ITM) topic.Inferencer {
+		return interactive.ThreshSample(i, thresh)
+	}
+}
+
 var (
+	inferencers = map[string]func(*interactive.ITM) topic.Inferencer{
+		"thresh=.3": PresetThreshSample(.3),
+		"thresh=.4": PresetThreshSample(.4),
+		"gibbs":     interactive.Gibbs,
+		"ccm":       interactive.CCM}
 	firstStep = map[string]interactive.Abolator{
 		"noop": interactive.AbolateNoOp,
 		"term": interactive.AbolateTerm,
@@ -42,13 +53,13 @@ var (
 		"gibbs": interactive.AbolateTermGibbs}
 )
 
-func experiment(c *pipeline.Corpus, u [][]string, first, second string, seed int64) {
+func experiment(c *pipeline.Corpus, u [][]string, inf, first, second string, seed int64) {
 	rand.Seed(seed)
-	fmt.Printf("**** %s %s ****", first, second)
+	fmt.Printf("**** %s - %s %s ****", inf, first, second)
 
 	itm := interactive.NewITM(c, 20, .1, .01, 100)
 	itm.Abolate = interactive.ComposeAbolation(firstStep[first], secondStep[second])
-	inference := interactive.Gibbs(itm)
+	inference := inferencers[inf](itm)
 
 	run(itm, inference, 100)
 	evaluate(itm)
@@ -67,9 +78,11 @@ func main() {
 	corpus := load.Newsgroups.Import()
 	constraints := load.GetConstraints("data/constraints/newsgroups.txt")
 
-	for first := range firstStep {
-		for second := range secondStep {
-			experiment(corpus, constraints, first, second, seed)
+	for inf := range inferencers {
+		for first := range firstStep {
+			for second := range secondStep {
+				experiment(corpus, constraints, inf, first, second, seed)
+			}
 		}
 	}
 }
