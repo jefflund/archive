@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/jlund3/modelt/eval"
 	"github.com/jlund3/modelt/topic/vanilla"
@@ -11,7 +12,7 @@ import (
 )
 
 func main() {
-	rand.Seed(123456789)
+	rand.Seed(time.Now().UnixNano())
 
 	corpus := load.Newsgroups.Import()
 	lda := vanilla.NewLDA(corpus, 20, .1, .01)
