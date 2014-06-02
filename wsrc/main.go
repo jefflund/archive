@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	//"math/rand"
 	//"time"
 
@@ -13,6 +14,9 @@ import (
 )
 
 const (
+	terrKey     = "terr"
+	absterrKey  = "absterr"
+	itersKey    = "iters"
 	randKey     = "rand"
 	recall3Key  = "recall3"
 	recall5Key  = "recall5"
@@ -26,39 +30,86 @@ var (
 )
 
 func main() {
-	ambMeans := runAll(load.Ambiant)
-	morMeans := runAll(load.Moresque)
+	runRunner("Gibbs", func(m *crpcluster.CRPMM) {
+		inference := crpcluster.Gibbs(m)
+		for i := 0; i < 10; i++ {
+			inference()
+		}
+	})
+	runRunner("SUGS", func(m *crpcluster.CRPMM) {
+		m.AbolateAll()
+		inference := crpcluster.CCM(m)
+		inference()
+	})
+	runRunner("SUGS+CCM", func(m *crpcluster.CRPMM) {
+		m.AbolateAll()
+		inference := crpcluster.CCM(m)
+		checker := topic.NewDocConvergenceChecker(m.Z)
+		converged := false
+		for !converged {
+			inference()
+			converged = checker.Check() == 0
+		}
+	})
+	runRunner("CCM-2", func(m *crpcluster.CRPMM) {
+		inference := crpcluster.CCM(m)
+		inference()
+		inference()
+	})
+	runRunner("CCM", func(m *crpcluster.CRPMM) {
+		inference := crpcluster.CCM(m)
+		checker := topic.NewDocConvergenceChecker(m.Z)
+		converged := false
+		for !converged {
+			inference()
+			converged = checker.Check() == 0
+		}
+	})
+}
 
+func runRunner(name string, r Runner) {
+	ambMeans := r.RunAll(load.Ambiant)
+	morMeans := r.RunAll(load.Moresque)
+
+	fmt.Println(name)
 	fmt.Println("AMB", ambMeans.Means())
 	fmt.Println("MOR", morMeans.Means())
 	fmt.Println("ALL", eval.MeanCalcsCombine(ambMeans, morMeans).Means())
 }
 
-func runAll(data []load.Importer) *eval.MeanCalcs {
+type Runner func(*crpcluster.CRPMM)
+
+func (r Runner) RunAll(data []load.Importer) *eval.MeanCalcs {
 	means := eval.NewMeanCalcs()
 	for _, importer := range data {
 		for _, alpha := range grid {
 			for _, beta := range grid {
-				run(alpha, beta, importer, means)
+				r.Run(alpha, beta, importer, means)
 			}
 		}
 	}
 	return means
 }
 
-func run(alpha, beta float64, i load.Importer, m *eval.MeanCalcs) {
+func (r Runner) Run(alpha, beta float64, i load.Importer, m *eval.MeanCalcs) {
 	corpus := i.Import()
 	gold := i.Label(corpus)
 
 	crpmm := crpcluster.NewCRPMM(corpus, 50, 1, alpha, beta)
+	r(crpmm)
+
 	crpmm.AbolateAll()
 	inference := crpcluster.CCM(crpmm)
 	checker := topic.NewDocConvergenceChecker(crpmm.Z)
 	converged := false
 	for !converged {
 		inference()
-		converged = checker.Check() == 0 || true
+		converged = checker.Check() == 0
 	}
+
+	terr := float64(crpmm.T - len(gold.Labels))
+	m.Observe(terrKey, terr)
+	m.Observe(absterrKey, math.Abs(terr))
 
 	pred := eval.NewClusteringState(crpmm.Z)
 	cont := eval.NewContingency(gold, pred)
