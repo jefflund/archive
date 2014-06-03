@@ -98,15 +98,6 @@ func (r Runner) Run(alpha, beta float64, i load.Importer, m *eval.MeanCalcs) {
 	crpmm := crpcluster.NewCRPMM(corpus, 50, 1, alpha, beta)
 	r(crpmm)
 
-	crpmm.AbolateAll()
-	inference := crpcluster.CCM(crpmm)
-	checker := topic.NewDocConvergenceChecker(crpmm.Z)
-	converged := false
-	for !converged {
-		inference()
-		converged = checker.Check() == 0
-	}
-
 	terr := float64(crpmm.T - len(gold.Labels))
 	m.Observe(terrKey, terr)
 	m.Observe(absterrKey, math.Abs(terr))
