@@ -12,13 +12,11 @@ parser.add_argument('-y', '--y-col', type=int, default=1)
 parser.add_argument('-yn', '--y-name')
 parser.add_argument('-T', '--title')
 parser.add_argument('-o', '--output')
-parser.add_argument('-e', '--use-end', type=bool, default=False)
 args = parser.parse_args()
 
 plot = evilplot.ScatterPlot(title=args.title,
                             xlabel=args.x_name,
-                            ylabel=args.y_name,
-                            use_end=args.use_end)
+                            ylabel=args.y_name)
 
 evilplot.crawl_results(plot, args.data, args.x_col, args.y_col)
 
