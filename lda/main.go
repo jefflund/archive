@@ -2,63 +2,95 @@ package main
 
 import (
 	"fmt"
-	"math"
+	"math/rand"
+	"time"
 
 	"github.com/jlund3/modelt/eval"
-	"github.com/jlund3/modelt/topic/vanilla"
+	"github.com/jlund3/modelt/topic"
+	"github.com/jlund3/modelt/topic/interactive"
 
 	"github.com/jlund3/ford/load"
 )
 
-type RandomRestart struct {
-	bestState  [][]int
-	bestMetric float64
-}
-
-func NewRandomRestart() *RandomRestart {
-	return &RandomRestart{nil, math.Inf(-1)}
-}
-
-func Sugs(l *vanilla.LDA) {
-	l.AbolateAll()
-	vanilla.Gibbs(l)()
-}
-
-func SaveState(l *vanilla.LDA) [][]int {
-	state := make([][]int, l.M)
-	for d, zd := range l.Z {
-		state[d] = make([]int, len(zd))
-		copy(state[d], l.Z[d])
-	}
-	return state
-}
-
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	corpus := load.Newsgroups.Import()
-	lda := vanilla.NewLDA(corpus, 20, .1, .01)
+	rounds, constraints := load.GetConstraints("data/constraints/newsgroups.txt")
 
-	restart := NewRandomRestart()
-	for i := 0; i < 25; i++ {
-		Sugs(lda)
-		post := lda.Posterior()
-		if post > restart.bestMetric {
-			restart.bestState = SaveState(lda)
-			restart.bestMetric = post
+	model := interactive.NewITM(corpus, 20, .1, .01, 100)
+
+	evaluate := func(name string, round int) {
+		labeled := eval.NewLabeledCorpusModel(model)
+		train, test := labeled.SplitRand(.9)
+		naive := eval.NewNaiveBayes(train)
+		fmt.Println(name, round, ":", naive.Validate(test))
+	}
+
+	inference := interactive.Gibbs(model)
+	for i := 0; i < 100; i++ {
+		inference()
+	}
+	base := model.CopyState()
+	evaluate("Base", 0)
+
+	newModel := func() *interactive.ITM {
+		i := interactive.NewITM(corpus, 20, .1, .01, 100)
+		i.SetState(base)
+		return i
+	}
+
+	model = newModel()
+	inference = interactive.Gibbs(model)
+	for round := 1; round < rounds; round++ {
+		for _, constraint := range constraints {
+			model.AddConstraintString(constraint[:round])
 		}
-	}
-
-	for d, zd := range restart.bestState {
-		for n, zdn := range zd {
-			lda.SetZ(d, n, zdn)
+		for i := 0; i < 10; i++ {
+			inference()
 		}
+		evaluate("Gibbs", round)
 	}
 
-	for z := 0; z < lda.T; z++ {
-		fmt.Printf("%d (%d) - %s\n", z, lda.Topics[z], lda.TopicSummary(z, 10))
+	model = newModel()
+	inference = interactive.CMM(model)
+	for round := 1; round < rounds; round++ {
+		for _, constraint := range constraints {
+			model.AddConstraintString(constraint[:round])
+		}
+		converged := false
+		checker := topic.NewWordConvergenceChecker(model.Z)
+		for !converged {
+			inference()
+			converged = checker.Check() == 0
+		}
+		evaluate("CCM", round)
 	}
 
-	labeled := eval.NewLabeledCorpusModel(lda)
-	train, test := labeled.SplitRand(.9)
-	naive := eval.NewNaiveBayes(train)
-	fmt.Println("Accuracy:", naive.Validate(test))
+	model = newModel()
+	inference = interactive.CMM(model)
+	for round := 1; round < rounds; round++ {
+		for _, constraint := range constraints {
+			model.AddConstraintString(constraint[:round])
+		}
+		interactive.AbolateAll(model, nil)
+		inference()
+		evaluate("SUGS", round)
+	}
+
+	model = newModel()
+	inference = interactive.CMM(model)
+	for round := 1; round < rounds; round++ {
+		for _, constraint := range constraints {
+			model.AddConstraintString(constraint[:round])
+		}
+		interactive.AbolateAll(model, nil)
+		converged := false
+		checker := topic.NewWordConvergenceChecker(model.Z)
+		for !converged {
+			inference()
+			converged = checker.Check() == 0
+		}
+		evaluate("SUGS-CCM", round)
+	}
 }
