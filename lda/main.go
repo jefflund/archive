@@ -1,6 +1,8 @@
 package main
 
 import (
+	"runtime"
+
 	"fmt"
 	"math/rand"
 	"time"
@@ -12,10 +14,11 @@ import (
 )
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	rand.Seed(time.Now().UnixNano())
 
 	corpus := load.Newsgroups.Import()
-	model := vanilla.NewLDA(corpus, 4, .1, .01)
+	model := vanilla.NewLDA(corpus, 20, .1, .01)
 
 	inference := vanilla.NBTrain(model, .975)
 
