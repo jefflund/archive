@@ -4,7 +4,7 @@ import argparse
 
 import evilplot
 
-parser = argparse.ArgumentParser('Plot a metric versus time')
+parser = argparse.ArgumentParser('Plot a metric versus metric')
 parser.add_argument('data')
 parser.add_argument('-x', '--x-col', type=int, default=0)
 parser.add_argument('-xn', '--x-name')
