@@ -19,8 +19,9 @@ func main() {
 
 	corpus := load.Newsgroups.Import()
 	model := vanilla.NewLDA(corpus, 20, .1, .01)
+	vanilla.CCM(model)()
 
-	inference := vanilla.NBTrain(model, .975)
+	inference := vanilla.NBTrain(model, .97)
 
 	for i := 0; i < 100; i++ {
 		start := time.Now()
