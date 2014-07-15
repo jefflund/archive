@@ -49,7 +49,7 @@ class LinePlot(Plot):
     def plot(self):
         get_color = itertools.cycle(self.color_cycle).next
         get_style = itertools.cycle(self.style_cycle).next
-        for name, line in self.data.iteritems():
+        for name, line in self.iter_data():
             color, style = get_color(), get_style()
             plot_line(line, name, color, style)
 

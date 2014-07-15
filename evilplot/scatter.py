@@ -22,7 +22,7 @@ class ScatterPlot(Plot):
     def plot(self):
         get_color = itertools.cycle(self.color_cycle).next
         get_marker = itertools.cycle(self.marker_cycle).next
-        for name, scatter in self.data.iteritems():
+        for name, scatter in self.iter_data():
             color, marker = get_color(), get_marker()
             if self.use_ends:
                 scatter = [run[-1] for run in scatter.data]

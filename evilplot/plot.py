@@ -97,3 +97,8 @@ class Plot(object):
         self._show_opt('title')
         if len(self.data) > 1:
             self._show_opt('legend', 'loc')
+
+    def iter_data(self):
+        """Iterates through the plot data ordered by name"""
+        for name in sorted(self.data):
+            yield name, self[name]
