@@ -39,8 +39,13 @@ func main() {
 	// Create model
 	corpus := load.Newsgroups.Import()
 	lda := vanilla.NewLDA(corpus, 20, .1, .01)
-	//inference := vanilla.CCM(lda)
-	inference := vanilla.TopN(lda, 3)
+	inference := vanilla.Gibbs(lda)
+
+	for i := 1; i <= 100; i++ {
+		inference()
+	}
+
+	inference = vanilla.CCM(lda)
 
 	// Run inference
 	start := time.Now()
