@@ -46,7 +46,7 @@ func main() {
 		inference()
 	}
 
-	inference = interactive.CMM(itm)
+	inference = interactive.CCM(itm)
 
 	var duration time.Duration
 	for round := 1; round < rounds; round++ {
