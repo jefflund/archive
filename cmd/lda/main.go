@@ -39,18 +39,18 @@ func main() {
 	// Create model
 	corpus := load.Newsgroups.Import()
 	lda := vanilla.NewLDA(corpus, 20, .1, .01)
-	inference := vanilla.Gibbs(lda)
 
-	for i := 1; i <= 100; i++ {
-		inference()
-	}
-
-	inference = vanilla.CCM(lda)
+	ccm := vanilla.CCM(lda)
+	gibbs := vanilla.Gibbs(lda)
 
 	// Run inference
 	start := time.Now()
 	for i := 1; i <= 100; i++ {
-		inference()
+		if i%2 == 0 {
+			ccm()
+		} else {
+			gibbs()
+		}
 
 		if i%10 == 0 {
 			labeled := eval.NewLabeledCorpusModel(lda)
