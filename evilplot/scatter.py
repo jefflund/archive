@@ -14,8 +14,8 @@ class ScatterPlot(Plot):
     def __init__(self, **kwargs):
         Plot.__init__(self, **kwargs)
 
-        self.color_cycle = ['#00305E', '#007722', '#990011']
-        self.marker_cycle = ['o', '^', 'v', 's', 'p', '+', 'x', '*']
+        self.color_cycle = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3']
+        self.marker_cycle = ['o', 's', 'D', 'v', '^', '>', '<', 'x', '+']
 
         self.use_ends = kwargs.get('use_ends', False)
 

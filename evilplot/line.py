@@ -40,7 +40,7 @@ class LinePlot(Plot):
     def __init__(self, **kwargs):
         Plot.__init__(self, **kwargs)
 
-        self.color_cycle = ['#00305E', '#007722', '#990011']
+        self.color_cycle = ['#e41a1c', '#377eb8', '#4daf4a']
         self.style_cycle = ['-', '--', ':', '-.']
 
         self.end_error = kwargs.get('end_error', False)
