@@ -12,6 +12,7 @@ import (
 
 	"github.com/jlund3/ford/load"
 	"github.com/jlund3/modelt/eval"
+	//"github.com/jlund3/modelt/topic"
 	"github.com/jlund3/modelt/topic/vanilla"
 )
 
@@ -40,19 +41,25 @@ func main() {
 	corpus := load.Newsgroups.Import()
 	lda := vanilla.NewLDA(corpus, 20, .1, .01)
 
-	ccm := vanilla.CCM(lda)
-	gibbs := vanilla.Gibbs(lda)
+	//ccm := vanilla.CCM(lda)
+	//gibbs := vanilla.Gibbs(lda)
+	//angibbs := []topic.Inferencer{
+	//vanilla.AnnealedGibbs(lda, 3),
+	//vanilla.AnnealedGibbs(lda, 2.5),
+	//vanilla.AnnealedGibbs(lda, 2),
+	//vanilla.AnnealedGibbs(lda, 1.5),
+	//vanilla.AnnealedGibbs(lda, 1)}
+	//sel := vanilla.GreedySelect(lda)
+	softccm := vanilla.SoftWordCCM(lda, 5)
 
 	// Run inference
+	iters := 1000
+	pinter := iters / 10
 	start := time.Now()
-	for i := 1; i <= 100; i++ {
-		if i%2 == 0 {
-			ccm()
-		} else {
-			gibbs()
-		}
+	for i := 1; i <= iters; i++ {
+		softccm()
 
-		if i%10 == 0 {
+		if i%pinter == 0 {
 			labeled := eval.NewLabeledCorpusModel(lda)
 			train, test := labeled.SplitRand(.8)
 			naive := eval.NewNaiveBayes(train)
@@ -65,4 +72,5 @@ func main() {
 			fmt.Fprintln(out, strings.Join(stats, " "))
 		}
 	}
+
 }
