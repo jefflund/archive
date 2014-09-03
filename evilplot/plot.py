@@ -15,8 +15,7 @@ class PlotData(object):
         """Adds a list of xy tuples to the data"""
         self.data.append(xys)
 
-    def add_from_column(self, columns, col_x, col_y):
-        """Adds a list of xy tuples from the column data"""
+    def _get_xys_from_column(self, columns, col_x, col_y):
         xys = []
         for line in columns:
             comment = line.find('#')
@@ -29,7 +28,17 @@ class PlotData(object):
             line = line.split()
             xy = float(line[col_x]), float(line[col_y])
             xys.append(xy)
+        return xys
+
+    def add_from_column(self, columns, col_x, col_y):
+        """Adds a list of xy tuples from the column data"""
+        xys = self._get_xys_from_column(columns, col_x, col_y)
         self.add_xys(xys)
+
+    def add_last_from_column(self, columns, col_x, col_y):
+        """Adds the last points from xy tuples from the column data"""
+        xys = self._get_xys_from_column(columns, col_x, col_y)
+        self.add_xys(xys[-1:])
 
     def __getitem__(self, index):
         x, y = zip(*(l[index if len(l) > index else -1] for l in self.data))
@@ -61,6 +70,10 @@ class Plot(object):
     def add_from_column(self, name, columns, col_x, col_y):
         """Adds a list of xy tuples from the column data for the given name"""
         self[name].add_from_column(columns, col_x, col_y)
+
+    def add_last_from_column(self, name, columns, col_x, col_y):
+        """Adds the last points from column data for the given name"""
+        self[name].add_last_from_column(columns, col_x, col_y)
 
     def plot(self):
         """Generates the plot for show or save"""

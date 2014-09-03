@@ -14,6 +14,7 @@ parser.add_argument('-yn', '--y-name')
 parser.add_argument('-T', '--title')
 parser.add_argument('-o', '--output')
 parser.add_argument('--extra')
+parser.add_argument('--use-last', action='store_true', default=False)
 args = parser.parse_args()
 
 plot = evilplot.ScatterPlot(title=args.title,
@@ -21,7 +22,7 @@ plot = evilplot.ScatterPlot(title=args.title,
                             ylabel=args.y_name)
 util.add_extra_opts(plot, args.extra)
 
-evilplot.crawl_results(plot, args.data, args.x_col, args.y_col)
+evilplot.crawl_results(plot, args.data, args.x_col, args.y_col, args.use_last)
 
 if args.output:
     plot.save(args.output)
