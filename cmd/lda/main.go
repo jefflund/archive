@@ -54,15 +54,13 @@ func main() {
 	//softccm := vanilla.SoftWordCCM(lda, 5)
 
 	// Run inference
-	iters := 1000
+	iters := 30
 	var dur time.Duration
 	for i := 1; i <= iters; i++ {
 		start := time.Now()
 		gibbs()
 		end := time.Now()
 		dur += end.Sub(start)
-
-		checker.Check()
 
 		labeled := eval.NewLabeledCorpusModel(lda)
 		train, test := labeled.SplitRand(.8)
@@ -76,7 +74,9 @@ func main() {
 
 		checker.Check()
 		start = time.Now()
-		ccm()
+		for j := i; j < iters; j++ {
+			ccm()
+		}
 		end = time.Now()
 
 		labeled = eval.NewLabeledCorpusModel(lda)
