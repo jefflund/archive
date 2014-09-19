@@ -39,6 +39,7 @@ func main() {
 	// Create model
 	corpus := load.Newsgroups.Import()
 	itm := interactive.NewITM(corpus, 20, .1, .01, 100)
+	itm.Ablate = interactive.AblateDoc
 	gibbs := interactive.Gibbs(itm)
 	for i := 0; i < 100; i++ {
 		gibbs()
