@@ -12,7 +12,6 @@ import (
 
 	"github.com/jlund3/ford/load"
 	"github.com/jlund3/modelt/eval"
-	"github.com/jlund3/modelt/topic"
 	"github.com/jlund3/modelt/topic/interactive"
 )
 
@@ -35,40 +34,48 @@ func main() {
 		panic(err)
 	}
 	defer out.Close()
-	fmt.Fprintln(out, "#time acc")
+	fmt.Fprintln(out, "#iter secs post accur")
 
 	// Create model
 	corpus := load.Newsgroups.Import()
-	rounds, constraints := load.GetConstraints("data/constraints/newsgroups.txt")
 	itm := interactive.NewITM(corpus, 20, .1, .01, 100)
-	inference := interactive.Gibbs(itm)
+	gibbs := interactive.Gibbs(itm)
 	for i := 0; i < 100; i++ {
-		inference()
+		gibbs()
 	}
 
-	inference = interactive.CCM(itm)
-
-	var duration time.Duration
-	for round := 1; round < rounds; round++ {
-		for _, constraint := range constraints {
-			itm.AddConstraintString(constraint[:round])
-		}
-
-		checker := topic.NewWordConvergenceChecker(itm.Z)
-		start := time.Now()
-		for iter := 0; iter < 30 && checker.Check() > 1000; iter++ {
-			inference()
-		}
-		end := time.Now()
-		duration += end.Sub(start)
-
+	// Create eval
+	eval := func(iter int, duration time.Duration) {
 		labeled := eval.NewLabeledCorpusModel(itm)
 		train, test := labeled.SplitRand(.8)
 		naive := eval.NewNaiveBayes(train)
 
 		stats := []string{
+			fmt.Sprintf("%d", iter),
 			fmt.Sprintf("%f", duration.Seconds()),
+			fmt.Sprintf("%f", itm.Posterior()),
 			fmt.Sprintf("%f", naive.Validate(test))}
 		fmt.Fprintln(out, strings.Join(stats, " "))
+	}
+
+	// Add constraints
+	eval(0, 0)
+	_, constraints := load.GetConstraints("data/constraints/newsgroups.txt")
+	for _, constraint := range constraints {
+		itm.AddConstraintString(constraint)
+	}
+
+	// Setup inference
+	inference := interactive.Gibbs(itm)
+	var duration time.Duration
+
+	// Run inference
+	for iter := 1; iter <= 30; iter++ {
+		start := time.Now()
+		inference()
+		end := time.Now()
+		duration += end.Sub(start)
+
+		eval(iter, duration)
 	}
 }
