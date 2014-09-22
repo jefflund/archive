@@ -78,7 +78,7 @@ func main() {
 	}
 
 	// Setup inference
-	inference := interactive.CCM(itm)
+	inference := interactive.Gibbs(itm)
 	var duration time.Duration
 
 	// Run inference
