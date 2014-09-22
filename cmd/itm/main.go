@@ -19,6 +19,13 @@ var (
 	outdir = flag.String("outdir", "", "output directory")
 )
 
+func RunWithSeed(run func(), seed int64) {
+	reset := rand.Int63()
+	rand.Seed(seed)
+	run()
+	rand.Seed(reset)
+}
+
 func main() {
 	// Setup
 	flag.Parse()
@@ -46,28 +53,32 @@ func main() {
 	}
 
 	// Create eval
-	eval := func(iter int, duration time.Duration) {
-		labeled := eval.NewLabeledCorpusModel(itm)
-		train, test := labeled.SplitRand(.8)
-		naive := eval.NewNaiveBayes(train)
+	evaluateSeed := rand.Int63()
+	evaluate := func(iter int, duration time.Duration) {
+		run := func() {
+			labeled := eval.NewLabeledCorpusModel(itm)
+			train, test := labeled.SplitRand(.8)
+			naive := eval.NewNaiveBayes(train)
 
-		stats := []string{
-			fmt.Sprintf("%d", iter),
-			fmt.Sprintf("%f", duration.Seconds()),
-			fmt.Sprintf("%f", itm.Posterior()),
-			fmt.Sprintf("%f", naive.Validate(test))}
-		fmt.Fprintln(out, strings.Join(stats, " "))
+			stats := []string{
+				fmt.Sprintf("%d", iter),
+				fmt.Sprintf("%f", duration.Seconds()),
+				fmt.Sprintf("%f", itm.Posterior()),
+				fmt.Sprintf("%f", naive.Validate(test))}
+			fmt.Fprintln(out, strings.Join(stats, " "))
+		}
+		RunWithSeed(run, evaluateSeed)
 	}
 
 	// Add constraints
-	eval(0, 0)
+	evaluate(0, 0)
 	_, constraints := load.GetConstraints("data/constraints/newsgroups.txt")
 	for _, constraint := range constraints {
 		itm.AddConstraintString(constraint)
 	}
 
 	// Setup inference
-	inference := interactive.Gibbs(itm)
+	inference := interactive.CCM(itm)
 	var duration time.Duration
 
 	// Run inference
@@ -77,6 +88,6 @@ func main() {
 		end := time.Now()
 		duration += end.Sub(start)
 
-		eval(iter, duration)
+		evaluate(iter, duration)
 	}
 }
