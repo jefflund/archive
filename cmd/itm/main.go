@@ -29,7 +29,17 @@ func RunWithSeed(run func(), seed int64) {
 func main() {
 	// Setup
 	flag.Parse()
-	rand.Seed(time.Now().UnixNano())
+	if nodename := os.Getenv("PSSH_NODENUM"); nodename != "" {
+		var nodenum int
+		fmt.Sscanf(nodename, "%d", &nodenum)
+		for i := 0; i < nodenum; i++ {
+			rand.Int63()
+		}
+		rand.Seed(rand.Int63())
+	} else {
+		//rand.Seed(time.Now().UnixNano())
+		panic("WTF?!")
+	}
 
 	// Create out file
 	dirpath := filepath.Join("scratch", "output", *outdir)
