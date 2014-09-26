@@ -38,8 +38,16 @@ func main() {
 		}
 		rand.Seed(rand.Int63())
 	} else {
-		//rand.Seed(time.Now().UnixNano())
-		panic("WTF?!")
+		rand.Seed(time.Now().UnixNano())
+	}
+
+	// Create model
+	corpus := load.Newsgroups.Import()
+	itm := interactive.NewITM(corpus, 20, .1, .01, 100)
+	itm.Ablate = interactive.AblateDoc
+	gibbs := interactive.Gibbs(itm)
+	for i := 0; i < 100; i++ {
+		gibbs()
 	}
 
 	// Create out file
@@ -53,15 +61,6 @@ func main() {
 	}
 	defer out.Close()
 	fmt.Fprintln(out, "#iter secs post accur")
-
-	// Create model
-	corpus := load.Newsgroups.Import()
-	itm := interactive.NewITM(corpus, 20, .1, .01, 100)
-	itm.Ablate = interactive.AblateDoc
-	gibbs := interactive.Gibbs(itm)
-	for i := 0; i < 100; i++ {
-		gibbs()
-	}
 
 	// Create eval
 	evaluateSeed := rand.Int63()
@@ -89,7 +88,7 @@ func main() {
 	}
 
 	// Setup inference
-	inference := interactive.AnnealedGibbs(itm, 5)
+	inference := interactive.AnnealedGibbs(itm, 3)
 	var duration time.Duration
 
 	// Run inference
@@ -102,13 +101,9 @@ func main() {
 		evaluate(iter, duration)
 
 		switch iter {
-		case 5:
-			inference = interactive.AnnealedGibbs(itm, 4)
 		case 10:
-			inference = interactive.AnnealedGibbs(itm, 3)
-		case 15:
 			inference = interactive.AnnealedGibbs(itm, 2)
-		case 20:
+		case 15:
 			inference = interactive.AnnealedGibbs(itm, 1)
 		case 25:
 			inference = interactive.CCM(itm)
