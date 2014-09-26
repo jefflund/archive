@@ -17,6 +17,7 @@ import (
 
 var (
 	outdir = flag.String("outdir", "", "output directory")
+	offset = flag.Int("offset", 0, "seed offset")
 )
 
 func RunWithSeed(run func(), seed int64) {
@@ -32,7 +33,7 @@ func main() {
 	if nodename := os.Getenv("PSSH_NODENUM"); nodename != "" {
 		var nodenum int
 		fmt.Sscanf(nodename, "%d", &nodenum)
-		for i := 0; i < nodenum; i++ {
+		for i := 0; i < nodenum+*offset; i++ {
 			rand.Int63()
 		}
 		rand.Seed(rand.Int63())
@@ -88,7 +89,7 @@ func main() {
 	}
 
 	// Setup inference
-	inference := interactive.CCM(itm)
+	inference := interactive.AnnealedGibbs(itm, 5)
 	var duration time.Duration
 
 	// Run inference
@@ -99,5 +100,18 @@ func main() {
 		duration += end.Sub(start)
 
 		evaluate(iter, duration)
+
+		switch iter {
+		case 5:
+			inference = interactive.AnnealedGibbs(itm, 4)
+		case 10:
+			inference = interactive.AnnealedGibbs(itm, 3)
+		case 15:
+			inference = interactive.AnnealedGibbs(itm, 2)
+		case 20:
+			inference = interactive.AnnealedGibbs(itm, 1)
+		case 25:
+			inference = interactive.CCM(itm)
+		}
 	}
 }
