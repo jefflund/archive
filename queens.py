@@ -3,7 +3,7 @@
 from __future__ import division
 
 import random
-import numpy
+
 
 def init_pop(n):
     return [[random.randrange(8) for _ in xrange(8)] for _ in xrange(n)]
@@ -56,19 +56,25 @@ def print_state(state):
         print ''.join(row)
 
 
-def main(pop_size, mut_rate, num_gens=100):
+def main(pop_size, mut_rate, num_gens=float('inf')):
     pop = init_pop(pop_size)
+    solutions = set()
 
-    for _ in xrange(num_gens):
+    gen = 0
+    while gen <= num_gens:
+        gen += 1
         fit_pop = evaluate_pop(pop)
 
-        best = max(fit_pop, key=fit_pop.get)
+        best = max(fit_pop.itervalues())
         mean = sum(fit_pop.itervalues()) / len(fit_pop)
-        print 'Best:', fitness(best), 'Mean:', mean
-        print best
-        print_state(best)
+        print 'Gen:', gen, 'Max:', best, 'Mean:', mean, 'Found:', len(solutions)
 
-        pop = []
+        for state, fit in fit_pop.iteritems():
+            if fit == 28 and state not in solutions:
+                print_state(state)
+                solutions.add(state)
+
+        pop = [state for state, fit in fit_pop.iteritems() if fit == 28]
         while len(pop) < pop_size:
             a, b = sample_pop(fit_pop), sample_pop(fit_pop)
             a, b = crossover(a, b)
@@ -76,4 +82,4 @@ def main(pop_size, mut_rate, num_gens=100):
             pop += [a, b]
 
 if __name__ == '__main__':
-    main(1000, .001)
+    main(1000, .01)
