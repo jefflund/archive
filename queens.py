@@ -7,7 +7,7 @@ import random
 import ga
 
 def queens_init():
-    return [random.randrange(8) for _ in xrange(8)]
+    return tuple(random.randrange(8) for _ in xrange(8))
 
 
 def queens_fitness(ind):
