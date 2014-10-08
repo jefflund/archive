@@ -20,5 +20,5 @@ def two_point(ind_a, ind_b):
 def uniform(ind_a, ind_b):
     """Performs uniform crossover"""
     flips = [random.random() < .5 for _ in xrange(len(ind_a))]
-    return ([a if flip else b for a, b, flip in zip(ind_a, ind_b, flips)],
-            [b if flip else a for a, b, flip in zip(ind_a, ind_b, flips)])
+    return (tuple(a if flip else b for a, b, flip in zip(ind_a, ind_b, flips)),
+            tuple(b if flip else a for a, b, flip in zip(ind_a, ind_b, flips)))

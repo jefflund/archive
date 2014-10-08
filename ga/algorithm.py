@@ -16,7 +16,7 @@ def create_ga(init, fitness, select=selection.fitness_proportionate,
         elite_size = int(pop_size * eliteness)
 
         for _ in xrange(max_gens):
-            pop_fit = {tuple(ind): fitness(ind) for ind in pop}
+            pop_fit = {ind: fitness(ind) for ind in pop}
 
             if goal and any(goal(ind, fit) for ind, fit in pop_fit.iteritems()):
                 break

@@ -10,7 +10,7 @@ def _flip(mutate_chance):
 
 def simple(ind, mutate_chance, init):
     """Replaces random values with ones from a randomly initialized gene"""
-    return [m if _flip(mutate_chance) else x for x, m in zip(ind, init())]
+    return tuple(m if _flip(mutate_chance) else x for x, m in zip(ind, init()))
 
 
 def create_simple(init):
@@ -20,7 +20,7 @@ def create_simple(init):
 
 def gauss(ind, mutate_chance, sigma=1):
     """Perturbs mutated values with Gaussian noise"""
-    return [random.gauss(x, sigma) if _flip(mutate_chance) else x for x in ind]
+    return tuple(random.gauss(x, sigma) if _flip(mutate_chance) else x for x in ind)
 
 
 def create_gauss(sigma):
