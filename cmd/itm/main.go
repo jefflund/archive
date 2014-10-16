@@ -66,15 +66,15 @@ func main() {
 	evaluateSeed := rand.Int63()
 	evaluate := func(iter int, duration time.Duration) {
 		run := func() {
-			labeled := eval.NewLabeledCorpusModel(itm)
+			labeled := eval.NewWordLabelCorpus(itm)
 			train, test := labeled.SplitRand(.8)
-			naive := eval.NewNaiveBayes(train)
 
 			stats := []string{
 				fmt.Sprintf("%d", iter),
 				fmt.Sprintf("%f", duration.Seconds()),
 				fmt.Sprintf("%f", itm.Posterior()),
-				fmt.Sprintf("%f", naive.Validate(test))}
+				fmt.Sprintf("%f", eval.NewNaiveBayes(train).Validate(test))}
+			//fmt.Sprintf("%f", eval.Wabbit(train, test))}
 			fmt.Fprintln(out, strings.Join(stats, " "))
 		}
 		RunWithSeed(run, evaluateSeed)
@@ -88,7 +88,7 @@ func main() {
 	}
 
 	// Setup inference
-	inference := interactive.AnnealedGibbs(itm, 3)
+	inference := interactive.Gibbs(itm)
 	var duration time.Duration
 
 	// Run inference
@@ -99,14 +99,5 @@ func main() {
 		duration += end.Sub(start)
 
 		evaluate(iter, duration)
-
-		switch iter {
-		case 10:
-			inference = interactive.AnnealedGibbs(itm, 2)
-		case 15:
-			inference = interactive.AnnealedGibbs(itm, 1)
-		case 25:
-			inference = interactive.CCM(itm)
-		}
 	}
 }
