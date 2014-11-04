@@ -3,6 +3,7 @@
 import os
 import argparse
 
+import pylab
 import evilplot
 from evilplot import util
 
@@ -27,6 +28,15 @@ elif args.error == 'point':
     plot.point_errors = True
 
 evilplot.crawl_results(plot, args.data, args.time_col, args.metric_col)
+
+old_plot = plot.plot
+def new_plot():
+    old_plot()
+    pylab.scatter([12.81], [.7905], 40, ['#e41a1c'], 'x')
+    print 'foo'
+plot.plot = new_plot
+
+plot.xlim = (0, 100)
 
 if args.output:
     plot.save(args.output)

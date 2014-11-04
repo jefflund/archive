@@ -90,7 +90,7 @@ class Plot(object):
         pylab.savefig(filename)
 
     def _show_opt(self, opt_name, kwname=None):
-        opt_val = getattr(self, opt_name)
+        opt_val = getattr(self, opt_name, None)
         if opt_val:
             opt_call = getattr(pylab, opt_name)
             if kwname:
@@ -105,6 +105,8 @@ class Plot(object):
 
     def default_opts(self):
         """Sets the default plot options"""
+        self._show_opt('xlim')
+        self._show_opt('ylim')
         self._show_opt('xlabel')
         self._show_opt('ylabel')
         self._show_opt('title')
