@@ -59,3 +59,11 @@ class LinePlot(Plot):
                 plot_end_error(line, color)
 
         self.default_opts()
+
+    def _plot_pgf(self, tex, filename, legend, data):
+        print >> tex, r'\addplot +[mark=none] table[x index=0,y index=1]{%s};' % filename
+        print >> tex, r'\addlegendentry{\small %s}' % legend
+        with open(filename, 'w') as dat:
+            for x, y in data:
+                print >> dat, x, y
+

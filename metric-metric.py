@@ -25,6 +25,9 @@ util.add_extra_opts(plot, args.extra)
 evilplot.crawl_results(plot, args.data, args.x_col, args.y_col, args.use_last)
 
 if args.output:
-    plot.save(args.output)
+    if output.endswith('.tex'):
+        plot.write_pgf(args.output[:-4])
+    else:
+        plot.save(args.output)
 else:
     plot.show()

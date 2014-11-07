@@ -91,7 +91,7 @@ class Plot(object):
 
     def write_pgf(self, prefix):
         """Writes a pgf plot"""
-        with open(prefix + '.tex') as tex:
+        with open(prefix + '.tex', 'w') as tex:
             print >> tex, r'\begin{tikzpicture}'
             print >> tex, r'\begin{axis}['
             print >> tex, r'    xlabel={\small %s},' % self.xlabel

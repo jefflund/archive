@@ -39,6 +39,9 @@ plot.plot = new_plot
 plot.xlim = (0, 100)
 
 if args.output:
-    plot.save(args.output)
+    if args.output.endswith('.tex'):
+        plot.write_pgf(args.output[:-4])
+    else:
+        plot.save(args.output)
 else:
     plot.show()
