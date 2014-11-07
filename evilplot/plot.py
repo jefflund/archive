@@ -89,6 +89,54 @@ class Plot(object):
         self.plot()
         pylab.savefig(filename)
 
+    def write_pgf(self, prefix):
+        """Writes a pgf plot"""
+        with open(prefix + '.tex') as tex:
+            print >> tex, r'\begin{tikzpicture}'
+            print >> tex, r'\begin{axis}['
+            print >> tex, r'    xlabel={\small %s},' % self.xlabel
+            print >> tex, r'    ylabel={\small %s},' % self.ylabel
+
+            # TODO Fix these ranges
+            print >> tex, r'    xmin=0,'
+            print >> tex, r'    xmax=1,'
+            print >> tex, r'    ymin=0,'
+            print >> tex, r'    ymax=1,'
+
+            # TODO Add named color list options mapping tex and pyplot
+            print >> tex, r'    cycle list name=linestyles,' # black and white?
+
+            # TODO Translate pylab legend pos (only if legend has 2+ items)
+            print >> tex, r'    legend pos=%s,' % 'upper left'
+            print >> tex, r'    legend cell align=left,'
+
+            # TODO Optionally add xtick options
+            #print >> tex, r'    xticks=?,'
+            #print >> tex, r'    yticks=?,'
+
+            print >> tex, r'    xlabel near ticks,'
+            print >> tex, r'    ylabel near ticks,'
+
+            # TODO Optionally add xlog and ylog options
+            # print >> tex, r'    xmode=log,'
+            # print >> tex, r'    log basis x=10,'
+            # print >> tex, r'    ymode=log,'
+            # print >> tex, r'    log basis y=10,'
+
+            print >> tex, r']'
+            print >> tex
+
+            for i, item in enumerate(self.iter_data()):
+                legend, data = item
+                self._plot_pgf(tex, prefix + ('_%d.dat' % i), legend, data)
+
+            print >> tex, r'\end{axis}'
+            print >> tex, r'\end{tikzpicture}'
+
+    def _plot_pgf(self, tex, filename, legend, data):
+        """Adds PlotData to a pgf plot"""
+        raise NotImplementedError()
+
     def _show_opt(self, opt_name, kwname=None):
         opt_val = getattr(self, opt_name, None)
         if opt_val:
