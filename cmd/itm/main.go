@@ -12,6 +12,7 @@ import (
 
 	"github.com/jlund3/ford/load"
 	"github.com/jlund3/modelt/eval"
+	"github.com/jlund3/modelt/topic"
 	"github.com/jlund3/modelt/topic/interactive"
 )
 
@@ -60,11 +61,11 @@ func main() {
 		panic(err)
 	}
 	defer out.Close()
-	fmt.Fprintln(out, "#iter secs post accur")
+	fmt.Fprintln(out, "#iter secs post accur changes")
 
 	// Create eval
 	evaluateSeed := rand.Int63()
-	evaluate := func(iter int, duration time.Duration) {
+	evaluate := func(iter int, duration time.Duration, changes int) {
 		run := func() {
 			labeled := eval.NewWordLabelCorpus(itm)
 			train, test := labeled.SplitRand(.8)
@@ -73,31 +74,33 @@ func main() {
 				fmt.Sprintf("%d", iter),
 				fmt.Sprintf("%f", duration.Seconds()),
 				fmt.Sprintf("%f", itm.Posterior()),
-				fmt.Sprintf("%f", eval.NewNaiveBayes(train).Validate(test))}
-			//fmt.Sprintf("%f", eval.Wabbit(train, test))}
+				//fmt.Sprintf("%f", eval.NewNaiveBayes(train).Validate(test))}
+				fmt.Sprintf("%f", eval.Wabbit(train, test)),
+				fmt.Sprintf("%d", changes)}
 			fmt.Fprintln(out, strings.Join(stats, " "))
 		}
 		RunWithSeed(run, evaluateSeed)
 	}
 
 	// Add constraints
-	evaluate(0, 0)
+	evaluate(0, 0, 0)
 	_, constraints := load.GetConstraints("data/constraints/newsgroups.txt")
 	for _, constraint := range constraints {
 		itm.AddConstraintString(constraint)
 	}
 
 	// Setup inference
-	inference := interactive.Gibbs(itm)
+	inference := interactive.CCM(itm)
+	checker := topic.NewWordConvergenceChecker(itm.Z)
 	var duration time.Duration
 
 	// Run inference
-	for iter := 1; iter <= 30; iter++ {
+	for iter := 1; iter <= 100; iter++ {
 		start := time.Now()
 		inference()
 		end := time.Now()
 		duration += end.Sub(start)
 
-		evaluate(iter, duration)
+		evaluate(iter, duration, checker.Check())
 	}
 }
