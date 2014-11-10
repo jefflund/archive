@@ -3,7 +3,6 @@
 from __future__ import division
 
 import pylab
-import itertools
 
 from evilplot.plot import Plot
 
@@ -17,5 +16,4 @@ class LinePlot(Plot):
     def pylab_plot(self):
         for name, line in self.iter_data():
             x, y = zip(*line)
-            plot_line(line, name, color, style)
             pylab.plot(x, y, label=name)

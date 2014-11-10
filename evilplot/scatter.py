@@ -3,7 +3,6 @@
 from __future__ import division
 
 import pylab
-import itertools
 
 from evilplot.plot import Plot
 
@@ -17,4 +16,4 @@ class ScatterPlot(Plot):
     def pylab_plot(self):
         for name, scatter in self.iter_data():
             x, y = zip(*scatter)
-            pylab.scatter(x, y, c=color, marker=marker, label=name)
+            pylab.scatter(x, y, label=name)
