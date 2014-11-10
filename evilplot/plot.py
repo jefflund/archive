@@ -58,13 +58,13 @@ class Plot(object):
     def __init__(self, **kwargs):
         self.data = {}
 
-        self._xmin = kwargs.get('xmin', None)
-        self._xmax = kwargs.get('xmax', None)
-        self._ymin = kwargs.get('ymin', None)
-        self._ymax = kwargs.get('ymax', None)
+        self.xmin = kwargs.get('xmin')
+        self.xmax = kwargs.get('xmax')
+        self.ymin = kwargs.get('ymin')
+        self.ymax = kwargs.get('ymax')
 
-        self.xlabel = kwargs.get('xlabel', 'X')
-        self.ylabel = kwargs.get('ylabel', 'Y')
+        self.xlabel = kwargs.get('xlabel')
+        self.ylabel = kwargs.get('ylabel')
 
         self.legend = kwargs.get('legend')
 
@@ -82,26 +82,34 @@ class Plot(object):
 
     def show(self):
         """Uses pylab to show the plot"""
-        self._pylab_opts()
         self.pylab_plot()
+        self._pylab_opts()
         pylab.show()
 
     def save(self, filename):
         """Uses pylab to save the plot"""
-        self._pylab_opts()
         self.pylab_plot()
+        self._pylab_opts()
         pylab.savefig(filename)
 
     def _pylab_opts(self):
         """Sets the plot options for pylab"""
-        pylab.xlabel(self.xlabel)
-        pylab.ylabel(self.ylabel)
+        if self.xlabel:
+            pylab.xlabel(self.xlabel)
+        if self.ylabel:
+            pylab.ylabel(self.ylabel)
 
-        pylab.xlim(self.xmin, self.xmax)
-        pylab.ylim(self.ymin, self.ymax)
+        if self.xmax:
+            pylab.xlim(xmax=int(self.xmax))
+        if self.xmin:
+            pylab.xlim(xmin=int(self.xmin))
+        if self.ymax:
+            pylab.ylim(ymax=int(self.ymax))
+        if self.ymin:
+            pylab.ylim(ymin=int(self.ymin))
 
         if self._need_legend():
-            pylab.legend(loc=self.legend)
+            pylab.legend(loc=_LEGEND_PYPLOT.get(self.legend, 'best'))
 
     def pylab_plot(self):
         """Plots the data using pylab"""
@@ -115,19 +123,27 @@ class Plot(object):
 
     def _write_pgf_opts(self, texfile, prefix):
         print >> texfile, r'\begin{tikzpicture}'
-        print >> texfile, r'\begin{axis}{'
+        print >> texfile, r'\begin{axis}['
 
-        print >> texfile, r'    xlabel={\small %s},' % self.xlabel
-        print >> texfile, r'    ylabel={\small %s},' % self.ylabel
+        if self.xlabel:
+            print >> texfile, r'    xlabel={\small %s},' % self.xlabel
+        if self.ylabel:
+            print >> texfile, r'    ylabel={\small %s},' % self.ylabel
 
-        print >> texfile, r'    xmin=%d,' % self.xmin
-        print >> texfile, r'    xmax=%d,' % self.xmax
-        print >> texfile, r'    ymin=%d,' % self.ymin
-        print >> texfile, r'    ymax=%d,' % self.ymax
+        if self.xmin:
+            print >> texfile, r'    xmin=%d,' % int(self.xmin)
+        if self.xmax:
+            print >> texfile, r'    xmax=%d,' % int(self.xmax)
+        if self.ymin:
+            print >> texfile, r'    ymin=%d,' % int(self.ymin)
+        if self.ymax:
+            print >> texfile, r'    ymax=%d,' % int(self.ymax)
 
         if self._need_legend():
-            print >> texfile, r'    legend pos=%s' % self.legend
-            print >> texfile, r'    legend cell align=left,',
+            legend_pos = _LEGEND_PGF.get(self.legend)
+            if legend_pos:
+                print >> texfile, r'    legend pos=%s,' % legend_pos
+            print >> texfile, r'    legend cell align=left,'
 
         print >> texfile, r'    xlabel near ticks,'
         print >> texfile, r'    ylabel near ticks,'
@@ -165,51 +181,15 @@ class Plot(object):
     def _need_legend(self):
         return self.legend and len(self.data) > 1
 
-    def __iter__(self):
-        return self.data.itervalues()
-
-    def _lim(self, default, index, opr):
-        if default is None:
-            return opr(opr(p[index] for p in pts) for pts in self)
-        else:
-            return int(default)
-
-    @property
-    def xmin(self):
-        """Gets or computes the xmin"""
-        return self._lim(self._xmin, 0, min)
-
-    @xmin.setter
-    def xmin(self, val):
-        """Sets the default xmin"""
-        self._xmin = val
-
-    @property
-    def xmax(self):
-        """Gets or computes the xmax"""
-        return self._lim(self._xmax, 0, max)
-
-    @xmax.setter
-    def xmax(self, val):
-        """Sets the default xmax"""
-        self._xmax = val
-
-    @property
-    def ymin(self):
-        """Gets or computes the ymin"""
-        return self._lim(self._ymin, 1, min)
-
-    @ymin.setter
-    def ymin(self, val):
-        """Sets the default ymin"""
-        self._ymin = val
-
-    @property
-    def ymax(self):
-        """Gets or computes the ymax"""
-        return self._lim(self._ymax, 1, max)
-
-    @ymax.setter
-    def ymax(self, val):
-        """Sets the default ymax"""
-        self._ymax = val
+_LEGEND_PGF = {
+        'ur': 'north east',
+        'ul': 'north west',
+        'll': 'south west',
+        'lr': 'south east',
+        }
+_LEGEND_PYPLOT = {
+        'ur': 1,
+        'ul': 2,
+        'll': 3,
+        'lr': 4,
+        }
