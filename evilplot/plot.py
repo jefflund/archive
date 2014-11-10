@@ -58,13 +58,13 @@ class Plot(object):
     def __init__(self, **kwargs):
         self.data = {}
 
+        self._xmin = kwargs.get('xmin', None)
+        self._xmax = kwargs.get('xmax', None)
+        self._ymin = kwargs.get('ymin', None)
+        self._ymax = kwargs.get('ymax', None)
+
         self.xlabel = kwargs.get('xlabel', 'X')
         self.ylabel = kwargs.get('ylabel', 'Y')
-
-        self._xmin = kwargs.get('xmin')
-        self._xmax = kwargs.get('xmax')
-        self._ymin = kwargs.get('ymin')
-        self._ymax = kwargs.get('ymax')
 
         self.legend = kwargs.get('legend')
 
@@ -144,50 +144,54 @@ class Plot(object):
         for name in sorted(self.data):
             yield name, self[name]
 
-    def _lim(self, default, mop, index):
+    def _need_legend(self):
+        return self.legend and len(self.data) > 1
+
+    def __iter__(self):
+        return self.data.itervalues()
+
+    def _lim(self, default, index, opr):
         if default is None:
-            return mop(mop(p[index] for p in pts) for _, pts in self)
-        return default
+            return opr(opr(p[index] for p in pts) for pts in self)
+        else:
+            return int(default)
 
     @property
     def xmin(self):
-        """Gets the default or calculated xmin"""
-        return self._lim(self._xmin, min, 0)
+        """Gets or computes the xmin"""
+        return self._lim(self._xmin, 0, min)
 
     @xmin.setter
     def xmin(self, val):
-        """Sets the xmin value manually"""
+        """Sets the default xmin"""
         self._xmin = val
 
     @property
     def xmax(self):
-        """Gets the default or calculated xmax"""
-        return self._lim(self._xmax, max, 0)
+        """Gets or computes the xmax"""
+        return self._lim(self._xmax, 0, max)
 
     @xmax.setter
     def xmax(self, val):
-        """Sets the xmax value manually"""
+        """Sets the default xmax"""
         self._xmax = val
 
     @property
     def ymin(self):
-        """Gets the default or calculated ymin"""
-        return self._lim(self._ymin, min, 0)
+        """Gets or computes the ymin"""
+        return self._lim(self._ymin, 1, min)
 
     @ymin.setter
     def ymin(self, val):
-        """Sets the ymin value manually"""
+        """Sets the default ymin"""
         self._ymin = val
 
     @property
     def ymax(self):
-        """Gets the default or calculated ymax"""
-        return self._lim(self._ymax, max, 0)
+        """Gets or computes the ymax"""
+        return self._lim(self._ymax, 1, max)
 
     @ymax.setter
     def ymax(self, val):
-        """Sets the ymax value manually"""
+        """Sets the default ymax"""
         self._ymax = val
-
-    def _need_legend(self):
-        return self.legend and len(self.data) > 1
