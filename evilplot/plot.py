@@ -15,7 +15,8 @@ class PlotData(object):
         """Adds a list of xy tuples to the data"""
         self.data.append(xys)
 
-    def _get_xys_from_column(self, columns, col_x, col_y):
+    @staticmethod
+    def _get_xys_from_column(columns, col_x, col_y):
         xys = []
         for line in columns:
             comment = line.find('#')
@@ -26,8 +27,7 @@ class PlotData(object):
                 continue
 
             line = line.split()
-            xy = float(line[col_x]), float(line[col_y])
-            xys.append(xy)
+            xys.append((float(line[col_x]), float(line[col_y])))
         return xys
 
     def add_from_column(self, columns, col_x, col_y):
@@ -42,7 +42,7 @@ class PlotData(object):
 
     def __getitem__(self, index):
         x, y = zip(*(l[index if len(l) > index else -1] for l in self.data))
-        return pylab.mean(x), pylab.mean(y)
+        return sum(x) / len(x), sum(y) / len(y)
 
     def __len__(self):
         return max(len(line) for line in self.data)
@@ -110,9 +110,10 @@ class Plot(object):
     def write(self, prefix):
         """Uses pgf plots to Write the plot as a tikzpicture"""
         with open(prefix + '.tex', 'w') as texfile:
-            self._write_pgf_opts(texfile)
+            self._write_pgf_opts(texfile, prefix)
+            self.pgf_plot(prefix)
 
-    def _write_pgf_opts(self, texfile):
+    def _write_pgf_opts(self, texfile, prefix):
         print >> texfile, r'\begin{tikzpicture}'
         print >> texfile, r'\begin{axis}{'
 
@@ -133,6 +134,23 @@ class Plot(object):
 
         print >> texfile, r']'
         print >> texfile
+
+        for name, _ in self.iter_data():
+            plot = r'\addplot +[mark=none] table[x index=0,y index=1] {%s};'
+            print >> texfile, plot % self._pgf_datname(prefix, name)
+            if self._need_legend():
+                print >> texfile, r'\addlegendentry{\small %s}' % name
+
+        print >> texfile, r'\end{axis}'
+        print >> texfile, r'\end{tikzpicture}'
+
+    @staticmethod
+    def _pgf_datname(prefix, name):
+        return prefix + '-' + name + '.dat'
+
+    def pgf_plot(self, prefix):
+        """Writes the plot data to a texfile and dat files"""
+        raise NotImplementedError()
 
     def __getitem__(self, name):
         if name not in self.data:

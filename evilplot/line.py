@@ -17,3 +17,9 @@ class LinePlot(Plot):
         for name, line in self.iter_data():
             x, y = zip(*line)
             pylab.plot(x, y, label=name)
+
+    def pgf_plot(self, prefix):
+        for name, line in self.iter_data():
+            with open(self._pgf_datname(prefix, name), 'w') as datfile:
+                for x, y in line:
+                    print >> datfile, x, y
