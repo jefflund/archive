@@ -8,7 +8,7 @@ import (
 
 	"github.com/jlund3/ford/load"
 	"github.com/jlund3/modelt/eval"
-	"github.com/jlund3/modelt/topic/cluster"
+	"github.com/jlund3/modelt/graphical/cluster"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 	var dur time.Duration
 	var iter int
 
-	fmt.Println("iter\ttime\t\tchanges\tf-measure")
+	fmt.Println("iter\ttime\tchanges\tf-measure")
 
 	for !converged {
 		start := time.Now()
@@ -40,9 +40,9 @@ func main() {
 
 		line := []string{
 			fmt.Sprintf("%d", iter),
-			fmt.Sprintf("%f", dur.Seconds()),
+			fmt.Sprintf("%.3f", dur.Seconds()),
 			fmt.Sprintf("%d", changes),
-			fmt.Sprintf("%f", cont.FMeasure())}
+			fmt.Sprintf("%.3f", cont.FMeasure())}
 		fmt.Println(strings.Join(line, "\t"))
 
 		converged = changes == 0

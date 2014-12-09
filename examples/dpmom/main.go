@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jlund3/modelt/eval"
-	"github.com/jlund3/modelt/topic/cluster"
+	"github.com/jlund3/modelt/graphical/cluster"
 
 	"github.com/jlund3/ford/load"
 )
