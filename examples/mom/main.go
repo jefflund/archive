@@ -24,7 +24,7 @@ func main() {
 	var dur time.Duration
 	var iter int
 
-	fmt.Println("iter\ttime\tchanges\tf-measure")
+	fmt.Println("iter\ttime\tchanges\tf-measure\tARI\tVI")
 
 	for !converged {
 		start := time.Now()
@@ -42,7 +42,9 @@ func main() {
 			fmt.Sprintf("%d", iter),
 			fmt.Sprintf("%.3f", dur.Seconds()),
 			fmt.Sprintf("%d", changes),
-			fmt.Sprintf("%.3f", cont.FMeasure())}
+			fmt.Sprintf("%.3f", cont.FMeasure()),
+			fmt.Sprintf("%.3f", cont.ARI()),
+			fmt.Sprintf("%.3f", cont.VI())}
 		fmt.Println(strings.Join(line, "\t"))
 
 		converged = changes == 0
