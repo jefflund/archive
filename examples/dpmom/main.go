@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jlund3/modelt/eval"
+	"github.com/jlund3/modelt/graphical"
 	"github.com/jlund3/modelt/graphical/cluster"
 
 	"github.com/jlund3/ford/load"
@@ -19,9 +20,7 @@ func main() {
 		corpus := importer.Import()
 
 		dpmom := cluster.NewDPMoM(corpus, 1, 20, .2, .2)
-		for i := 0; i < 10; i++ {
-			dpmom.CCM()
-		}
+		graphical.RunCCM(dpmom, cluster.NewConvergenceCheck(dpmom.Z), 0)
 
 		gold := importer.Label(corpus)
 		pred := eval.NewClusteringState(dpmom.Z)

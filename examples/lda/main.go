@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jlund3/modelt/eval"
+	"github.com/jlund3/modelt/graphical"
 	"github.com/jlund3/modelt/graphical/topic"
 	"github.com/jlund3/modelt/util"
 
@@ -15,9 +16,7 @@ func main() {
 
 	corpus := load.Newsgroups.Import()
 	lda := topic.NewLDA(corpus, 20, .1, .01)
-	for i := 0; i < 100; i++ {
-		lda.Gibbs()
-	}
+	graphical.RunGibbs(lda, 100)
 
 	labels := eval.NewLabelCorpusWordFeature(corpus, lda.Z)
 	fmt.Println("Accuracty:", eval.Naive(labels.SplitRand(.8)))
