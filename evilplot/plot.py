@@ -67,6 +67,7 @@ class Plot(object):
         self.ylabel = kwargs.get('ylabel')
 
         self.legend = kwargs.get('legend')
+        self.title = kwargs.get('title')
 
     def add_xys(self, name, xys):
         """Adds a list of xy tuples to the data for the given name"""
@@ -111,6 +112,9 @@ class Plot(object):
         if self._need_legend():
             pylab.legend(loc=_LEGEND_PYPLOT.get(self.legend, 'best'))
 
+        if self.title:
+            pylab.title(self.title)
+
     def pylab_plot(self):
         """Plots the data using pylab"""
         raise NotImplementedError()
@@ -122,6 +126,7 @@ class Plot(object):
             self.pgf_plot(prefix)
 
     def _write_pgf_opts(self, texfile, prefix):
+        # TODO title for pgfplots
         print >> texfile, r'\begin{tikzpicture}'
         print >> texfile, r'\begin{axis}['
 
