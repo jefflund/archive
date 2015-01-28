@@ -41,7 +41,7 @@ class PlotData(object):
         self.add_xys(xys[-1:])
 
     def __getitem__(self, index):
-        x, y = zip(*(l[index if len(l) > index else -1] for l in self.data))
+        x, y = zip(*(l[index if len(l) > index else -1] for l in self.data if l))
         return sum(x) / len(x), sum(y) / len(y)
 
     def __len__(self):
