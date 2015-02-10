@@ -187,14 +187,14 @@ class Plot(object):
         return self.legend and len(self.data) > 1
 
 _LEGEND_PGF = {
-        'ur': 'north east',
-        'ul': 'north west',
-        'll': 'south west',
-        'lr': 'south east',
-        }
+    'ur': 'north east',
+    'ul': 'north west',
+    'll': 'south west',
+    'lr': 'south east',
+}
 _LEGEND_PYPLOT = {
-        'ur': 1,
-        'ul': 2,
-        'll': 3,
-        'lr': 4,
-        }
+    'ur': 1,
+    'ul': 2,
+    'll': 3,
+    'lr': 4,
+}
