@@ -1,10 +1,17 @@
 #!/usr/bin/env python
 """XKCD style passphrase generator"""
+from __future__ import division
 
 import argparse
 import math
 import random
 import datetime
+
+DAYS_PER_YEAR = 365
+SECS_PER_YEAR = 3.15569e7
+YEARS_PER_CENT = 100
+YEARS_PER_MILLEN = 1000
+MICRO_PER_SEC = 1e6
 
 
 def get_words(word_file, min_length, max_length):
@@ -19,7 +26,13 @@ def get_words(word_file, min_length, max_length):
 
 def print_stats(words, phrase_length):
     """Prints the rough amount of entropy and time to guess a passphrass"""
-    entropy = math.log(len(words), 2) * phrase_length
+    try:
+        entropy = math.log(len(words), 2) * phrase_length
+    except ValueError:
+        if not words:
+          entropy = 0
+        else:
+          raise
     time = format_time(2 ** entropy / 1000)
     print '~{} bits of entropy'.format(int(round(entropy)))
     print '~{} at 1000 guesses/sec'.format(time)
@@ -27,23 +40,43 @@ def print_stats(words, phrase_length):
 
 def format_time(seconds):
     """Formats a seconds into a rough time estimate"""
-    delta = datetime.timedelta(seconds=seconds)
-    if delta.days >= 365:
-        time, unit = delta.days / 365, 'year'
-    elif delta.days >= 7:
-        time, unit = delta.days / 7, 'week'
-    elif delta.days > 0:
-        time, unit = delta.days, 'day'
-    elif delta.seconds >= 3600:
-        time, unit = delta.seconds / 3600, 'hour'
-    elif delta.seconds >= 60:
-        time, unit = delta.seconds / 60, 'minute'
-    else:
-        time, unit = delta.seconds, 'second'
+    try:
+        delta = datetime.timedelta(seconds=seconds)
+        if delta.days > DAYS_PER_YEAR * YEARS_PER_MILLEN:
+          time, unit = delta.days / (DAYS_PER_YEAR  * YEARS_PER_MILLEN), 'millennium'
+        elif delta.days > DAYS_PER_YEAR * YEARS_PER_CENT:
+          time, unit = delta.days / (DAYS_PER_YEAR  * YEARS_PER_CENT), 'century'
+        elif delta.days >= 365:
+            time, unit = delta.days / 365, 'year'
+        elif delta.days >= 7:
+            time, unit = delta.days / 7, 'week'
+        elif delta.days > 0:
+            time, unit = delta.days, 'day'
+        elif delta.seconds >= 3600:
+            time, unit = delta.seconds / 3600, 'hour'
+        elif delta.seconds >= 60:
+            time, unit = delta.seconds / 60, 'minute'
+        elif delta.seconds >= 1:
+            time, unit = delta.seconds, 'second'
+        elif delta.microseconds >= 1000:
+            time, unit = delta.microseconds / MICRO_PER_SEC, 'foosecond'
+        else:
+            time, unit = delta.microseconds, 'microsecond'
+    except OverflowError:
+        time, unit = seconds / (SECS_PER_YEAR * YEARS_PER_MILLEN), 'millennium'
 
-    time = int(round(time))
+    if time > 1:
+        time = int(round(time))
+    else:
+        time = round(time, 4)
+
     if time != 1:
-        unit += 's'
+        if unit == 'millennium':
+            unit = 'millennia'
+        elif unit == 'century':
+            unit = 'centuries'
+        else:
+            unit += 's'
 
     return '{} {}'.format(time, unit)
 
@@ -79,8 +112,11 @@ def main():
     words = get_words(args.word_file,
                       args.min_word_length,
                       args.max_word_length)
-    for _ in xrange(args.num_phrases):
-        print gen_pass(words, args.phrase_length, args.separator)
+    if args.entropy:
+      print_stats(words, args.phrase_length)
+    else:
+      for _ in xrange(args.num_phrases):
+          print gen_pass(words, args.phrase_length, args.separator)
 
 
 if __name__ == '__main__':
