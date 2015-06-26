@@ -17,6 +17,9 @@ Most programmers do programming not because they expect to get paid or get
 adulation by the public, but because it is fun to program.
 -Linus Torvalds
 
+Learning to code is useful no matter what your career ambitions are.
+-Arianna Huffington
+
 People think that computer science is the art of geniuses but the actual
 reality is the opposite, just many people doing things that build on each
 other, like a wall of mini stones.
