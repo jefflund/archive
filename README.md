@@ -7,3 +7,4 @@ included so far:
 * hello - a simple hello world program
 * escape - demonstrates escape sequences to format output (lab 1 essentially)
 * vending - uses remainder to compute change from vending machine (similar to lab 2)
+* fizzbuzz - solved the famous interview question to introduce loops
