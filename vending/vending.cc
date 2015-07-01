@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 using namespace std;
 
 const int VALUE_OF_QUARTER_IN_PENNIES = 25;
@@ -31,9 +32,7 @@ int main() {
   // Compute and print change, while converting change to pennies;
   double change = amount_paid - item_price;
   cout << "Change recieved: " << change << endl;
-  double change_in_pennies = change * PENNIES_IN_DOLLAR;
-  cout << setprecision(100);
-  cout << change_in_pennies << endl;
+  int change_in_pennies = round(change * PENNIES_IN_DOLLAR);
 
   // Compute the number of quarters
   int quarters = change_in_pennies / VALUE_OF_QUARTER_IN_PENNIES;
@@ -41,18 +40,29 @@ int main() {
 
   // Update the remaining change after dispension quarters
   if (quarters != 0) {
-    change_in_pennies = change_in_pennies - (quarters * VALUE_OF_QUARTER_IN_PENNIES);
-    //change_in_pennies = change_in_pennies % VALUE_OF_QUARTER_IN_PENNIES;
+    change_in_pennies = change_in_pennies % VALUE_OF_QUARTER_IN_PENNIES;
   }
-  cout << change_in_pennies << endl;
 
-  //int dimes = change_in_pennies / VALUE_OF_DIMES_IN_PENNIES;
-  //cout << "Dimes: " << dimes << endl;
+  // Compute the number of dimes
+  int dimes = change_in_pennies / VALUE_OF_DIMES_IN_PENNIES;
+  cout << "Dimes: " << dimes << endl;
 
-  //if (dimes != 0) {
-    //change_in_pennies = change_in_pennies % dimes;
-  //}
-  //cout << change_in_pennies;
+  // Update the remaining change after dispension of dimes
+  if (dimes != 0) {
+    change_in_pennies = change_in_pennies % dimes;
+  }
+
+  // Compute the number of nickles
+  int nickles = change_in_pennies / VALUE_OF_NICKLES_IN_PENNIES;
+  cout << "Nickles: " << nickles << endl;
+
+  // Update the remaining change after dispension of nickles
+  if (nickles != 0) {
+    change_in_pennies = change_in_pennies % VALUE_OF_NICKLES_IN_PENNIES;
+  }
+
+  // Print number of pennies
+  cout << "Pennies: " << change_in_pennies << endl;
 
   return 0;
 }
