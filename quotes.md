@@ -13,10 +13,6 @@ Everybody in this country should learn how to program a computer because it
 teaches you how to think.
 -Steve Jobs
 
-Most programmers do programming not because they expect to get paid or get
-adulation by the public, but because it is fun to program.
--Linus Torvalds
-
 Learning to code is useful no matter what your career ambitions are.
 -Arianna Huffington
 
@@ -28,3 +24,16 @@ other, like a wall of mini stones.
 Computer science education cannot make anybody an expert programmer any more
 than studying brushes and pigment can make somebody an expert painter.
 -Eric S. Raymond
+
+For most people on Earth, the digital revolution hasn't even started yet. Within
+the next 10 years, all that will change. Let's get the whole world coding!
+-Eric Schmidt
+
+Learning to write programs stretches your mind, and helps you think better,
+creates a way of thinking about things that I think is helpful in all domains.
+-Bill Gates
+
+Most programmers do programming not because they expect to get paid or get
+adulation by the public, but because it is fun to program.
+-Linus Torvalds
+
