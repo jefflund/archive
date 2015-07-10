@@ -139,7 +139,7 @@ void getRollStats() {
   for (int k = 1; k <= numRolls; k++) {
     int roll = simulateRoll(x, y);
 
-    // This update allows us to compute the mean and variance in places. See
+    // This update allows us to compute the mean and variance in place. See
     // https://en.wikipedia.org/wiki/Standard_deviation#Rapid_calculation_methods
     double newMean = runningMean + (roll - runningMean) / k;
     runningVariance += (roll - runningMean) * (roll - newMean);
