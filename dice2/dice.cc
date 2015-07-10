@@ -34,7 +34,6 @@ int rootMenu() {
       // clean up cin so the next menu doesn't fail too
       cin.clear();
       cin.ignore(1000, '\n');
-
       return OPTION_ILLEGAL;
   }
 }
@@ -51,7 +50,7 @@ bool getUserRollXdY(int& outx, int& outy) {
   // split rollXdY at the character d to find the x and y parts of the roll
   int split = input.find("d");
   if (split < 0) {
-    return false; // indicates failure in the input
+    return false; // -1 result from find means there was no d so we fail
   }
   string xpart = input.substr(0, split);
   string ypart = input.substr(split + 1); // + 1 to skip the 'd'
@@ -77,8 +76,8 @@ bool getUserRollXdY(int& outx, int& outy) {
   return true;
 }
 
-// getUserNumRolls prompts the user to specify the number of rolls they want and 
-// places the result in the output reference. It returns true upon success and 
+// getUserNumRolls prompts the user to specify the number of rolls they want and
+// places the result in the output reference. It returns true upon success and
 // false upon failure.
 bool getUserNumRolls(int& outNum) {
   cout << "Enter the number of dice rolls: ";
