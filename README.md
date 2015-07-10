@@ -10,3 +10,4 @@ included so far:
 * fizzbuzz - solved the famous interview question to introduce loops
 * pi - monte carlo computation of pi (shows use of rand)
 * dice - uses loops, has menus, input validation (similar to lab 4)
+* dice2 - same as dice2, but with functions (similar to lab 5)
