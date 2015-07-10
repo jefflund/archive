@@ -8,7 +8,7 @@ deps = $(objs:.o=.d)
 
 -include $(deps)
 
-%.o: %.cc
+%.o: %.cpp
 	g++ -c -Wall -MMD -o $@ $<
 
 all: $(bin)
