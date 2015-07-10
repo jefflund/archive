@@ -9,3 +9,4 @@ included so far:
 * vending - uses remainder to compute change from vending machine (similar to lab 2)
 * fizzbuzz - solved the famous interview question to introduce loops
 * pi - monte carlo computation of pi (shows use of rand)
+* dice - uses loops, has menus, input validation (similar to lab 4)
