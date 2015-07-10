@@ -150,41 +150,41 @@ int main() {
         continue;
       }
 
-      // we need these for standard devation calculation
-      int sumRolls = 0;
-      int sumSquareRolls = 0;
+      // we need these stats for the output
+      int minRoll = INT_MAX;
+      int maxRoll = INT_MIN;
+      double runningMean = 0;
+      double runningVariance = 0;
 
-      // keep track of min and max
-      int min = INT_MAX;
-      int max = INT_MIN;
-
-      for (int i = 0; i < rolls; i++) {
+      for (int k = 1; k <= rolls; k++) {
         // make the dice roll - we roll a y-sided die x times
         int roll = 0;
-        for (int j = 0; j < x; j++) {
+        for (int i = 0; i < x; i++) {
           roll += rand() % y + 1; // add 1 so range is [1, y], not [0, y - 1]
         }
 
         // update min based on this roll
-        if (roll < min) {
-          min = roll;
+        if (roll < minRoll) {
+          minRoll = roll;
         }
 
         // update max based on this roll
-        if (roll > max) {
-          max = roll;
+        if (roll > maxRoll) {
+          maxRoll = roll;
         }
 
-        // increment counts based on roll
-        sumRolls += roll;
-        sumSquareRolls += roll * roll;
+        // This update allows us to compute the mean and variance in places. See
+        // https://en.wikipedia.org/wiki/Standard_deviation#Rapid_calculation_methods
+        double newMean = runningMean + (roll - runningMean) / k;
+        runningVariance += (roll - runningMean) * (roll - newMean);
+        runningMean = newMean;
       }
 
       // Output statistics
-      cout << "Mean: " << (double)sumRolls / rolls << endl;
-      cout << "Deviation : " << sqrt((double)(rolls * sumRolls - sumSquareRolls) / (rolls * (rolls - 1))) << endl;
-      cout << "Max: " << max << endl;
-      cout << "Min: " << min << endl << endl;
+      cout << "Mean: " << runningMean << endl;
+      cout << "Deviation : " << sqrt(runningVariance / (rolls - 1)) << endl;
+      cout << "Max: " << maxRoll << endl;
+      cout << "Min: " << minRoll << endl << endl;
     }
 
     // User quits, return 0 to indicate success

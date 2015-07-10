@@ -31,8 +31,10 @@ int rootMenu() {
     case OPTION_QUIT:
       return option;
     default:
+      // clean up cin so the next menu doesn't fail too
       cin.clear();
       cin.ignore(1000, '\n');
+
       return OPTION_ILLEGAL;
   }
 }
@@ -49,7 +51,7 @@ bool getUserRollXdY(int& outx, int& outy) {
   // split rollXdY at the character d to find the x and y parts of the roll
   int split = input.find("d");
   if (split < 0) {
-    return false;
+    return false; // indicates failure in the input
   }
   string xpart = input.substr(0, split);
   string ypart = input.substr(split + 1); // + 1 to skip the 'd'
@@ -57,13 +59,13 @@ bool getUserRollXdY(int& outx, int& outy) {
   // ensure that the xpart is valid (contains only digits)
   for (unsigned int i = 0; i < xpart.length(); i++) {
     if (!isdigit(xpart[i])) {
-      return false;
+      return false; // indicates failure in the input
     }
   }
-  // sure that the ypart is valid (contains only digits)
+  // ensure that the ypart is valid (contains only digits)
   for (unsigned int i = 0; i < ypart.length(); i++) {
     if (!isdigit(ypart[i])) {
-      return false;
+      return false; // indicates failure in the input
     }
   }
 
@@ -79,10 +81,19 @@ bool getUserRollXdY(int& outx, int& outy) {
 // places the result in the output reference. It returns true upon success and 
 // false upon failure.
 bool getUserNumRolls(int& outNum) {
-  // allow user to specify how many times the user should make the dice roll
   cout << "Enter the number of dice rolls: ";
   cin >> outNum;
-  return outNum > 0;
+
+  // if outNum is invalid, including 0 for alphabetic input, clear cin and
+  // return false to indicate an input error
+  if (outNum <= 0) {
+    cin.clear();
+    cin.ignore(1000, '\n');
+    return false;
+  }
+
+  // indicates successful input
+  return true;
 }
 
 // simulateRoll makes an xdy dice roll, where x die with y sides are used.
@@ -104,27 +115,6 @@ void performUserRoll() {
   }
 }
 
-// min returns the smaller of the two inputs
-int min(int a, int b) {
-  return a < b ? a : b;
-}
-
-// max returns the larger of the two inputs
-int max(int a, int b) {
-  return a > b ? a : b;
-}
-
-// mean computes the mean from a sum and the number of samples
-double mean(double sum, double numSamples) {
-  return sum / numSamples;
-}
-
-// stddev computes the standard deviation from the sum, sum of the squares, and
-// number of samples.
-double stddev(double sum, double sumSquares, double numSamples) {
-  return sqrt((numSamples * sum - sumSquares) / (numSamples * (numSamples - 1)));
-}
-
 // getRollStats prompts the user to enter an xdy roll and the number of times
 // to simulate that roll, then displays stats about the results of the rolls
 void getRollStats() {
@@ -140,23 +130,29 @@ void getRollStats() {
   }
 
   // we need these stats for the output
-  int sumRolls = 0;
-  int sumSquareRolls = 0;
+  double runningMean = 0;
+  double runningVariance = 0;
   int minRoll = INT_MAX;
   int maxRoll = INT_MIN;
 
   // simulate all of the rolls while accumulating the stats
-  for (int i = 0; i < numRolls; i++) {
+  for (int k = 1; k <= numRolls; k++) {
     int roll = simulateRoll(x, y);
-    minRoll = min(roll, minRoll);
-    maxRoll = max(roll, maxRoll);
-    sumRolls += roll;
-    sumSquareRolls += roll * roll;
+
+    // This update allows us to compute the mean and variance in places. See
+    // https://en.wikipedia.org/wiki/Standard_deviation#Rapid_calculation_methods
+    double newMean = runningMean + (roll - runningMean) / k;
+    runningVariance += (roll - runningMean) * (roll - newMean);
+    runningMean = newMean;
+
+    // Update the min and max rolls
+    minRoll = minRoll < roll ? minRoll : roll;
+    maxRoll = maxRoll > roll ? maxRoll : roll;
   }
 
   // Output statistics
-  cout << "Mean: " << mean(sumRolls, numRolls) << endl;
-  cout << "Deviation : " << stddev(sumRolls, sumSquareRolls, numRolls) << endl;
+  cout << "Mean: " << runningMean << endl;
+  cout << "Deviation : " << sqrt(runningVariance / (numRolls - 1)) << endl;
   cout << "Max: " << maxRoll << endl;
   cout << "Min: " << minRoll << endl << endl;
 }
