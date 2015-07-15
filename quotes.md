@@ -37,3 +37,7 @@ Most programmers do programming not because they expect to get paid or get
 adulation by the public, but because it is fun to program.
 -Linus Torvalds
 
+Our policy at Facebook is literally to hire as many talented engineers as we
+can find. There just aren't enough people who are trained and have these skills
+today.
+-Mark Zuckerberg
