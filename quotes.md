@@ -41,3 +41,8 @@ Our policy at Facebook is literally to hire as many talented engineers as we
 can find. There just aren't enough people who are trained and have these skills
 today.
 -Mark Zuckerberg
+
+Debugging is twice as hard as writing the code in the first place. Therefore,
+if you write the code as cleverly as possible, you are, by definition, not
+smart enough to debug it.
+- Brian Kernighan
