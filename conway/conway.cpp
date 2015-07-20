@@ -6,8 +6,8 @@
 using namespace std;
 
 const int MICROS_PER_SEC = 1e6;
-const int BOARD_COLS = 200;
-const int BOARD_ROWS = 50;
+const int BOARD_COLS = 100;
+const int BOARD_ROWS = 30;
 const int NUM_GENS = 100;
 
 // init board randomly initializes the board, with each cell being alive with
