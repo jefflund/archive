@@ -12,3 +12,4 @@ included so far:
 * dice - uses loops, has menus, input validation (similar to lab 4)
 * dice2 - same as dice2, but with functions (similar to lab 5)
 * conway - demonstrates 2d arrays, but only runs in unix (similar to lab 6)
+* cards - illustrates a shuffle (useful for lab 7)
