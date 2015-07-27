@@ -14,3 +14,4 @@ included so far:
 * conway - demonstrates 2d arrays, but only runs in unix (similar to lab 6)
 * cards - illustrates a shuffle (useful for lab 7)
 * lisp - silly example illustrating something you could not do without pointers
+* greeter - overdone hello world to demo basics of classes
