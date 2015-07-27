@@ -57,3 +57,7 @@ millions of dollars of capitalization. You need enough pizza and Diet Coke to
 stick in your refrigerator, a cheap PC to work on, and the dedication to go
 through with it.
 -John Carmack
+
+If you cannot grok the overall structure of a program while taking a shower, you
+are not ready to code it.
+-Richard Pattis
