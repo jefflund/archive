@@ -13,7 +13,7 @@ class Greeter {
   Greeter();
   Greeter(string greeting);
 
-  void greet(Student* student);
+  void greet(Student student);
   void setGreeting(string greeting);
 };
 
