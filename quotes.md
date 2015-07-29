@@ -61,3 +61,11 @@ through with it.
 If you cannot grok the overall structure of a program while taking a shower, you
 are not ready to code it.
 -Richard Pattis
+
+The first 90 percent of code accounts for the first 90 percent of development
+time. The remaining 10 percent of the code accounts for the other 90 percent of
+the development time.
+-Tom Cargill
+
+Hofstadter's Law: It always takes longer than you expect, even when you take
+into account Hofstader's Law.
