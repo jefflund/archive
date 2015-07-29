@@ -15,3 +15,4 @@ included so far:
 * cards - illustrates a shuffle (useful for lab 7)
 * lisp - silly example illustrating something you could not do without pointers
 * greeter - overdone hello world to demo basics of classes
+* input - shows how both ifstream and cin are just istream's
