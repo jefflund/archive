@@ -17,3 +17,4 @@ included so far:
 * greeter - overdone hello world to demo basics of classes
 * input - shows how both ifstream and cin are just istream's
 * register - classes in cash register example (similar to lab 8)
+* shapes - demonstrates inheritance and virtual methods
