@@ -70,7 +70,6 @@ the development time.
 Hofstadter's Law: It always takes longer than you expect, even when you take
 into account Hofstader's Law.
 
-The object-oriented model makes it easy to build up programs by accretion. What
-this often means, in practice, is that is provides a structured way to write
-spaghetti code.
+Object-oriented programming offers a sustainable way to write spaghetti code.
+It lets you accrete programs as a series of patches.
 -Paul Graham

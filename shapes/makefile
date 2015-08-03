@@ -1,5 +1,5 @@
 bin = main
-objs = main.o draw.o
+objs = main.o draw.o shapes.o
 
 $(bin): $(objs)
 	g++ -Wall -o $@ $(objs)
