@@ -20,6 +20,14 @@ class Square : public Shape {
   virtual void draw();
 };
 
+class Rectangle : public Square {
+ private:
+  int width_;
+ public:
+  Rectangle(int x, int y, int height, int width, char brush, int color);
+  virtual void draw();
+};
+
 class Circle : public Shape {
  public:
   Circle(int x, int y, int size, char brush, int color);

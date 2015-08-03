@@ -22,6 +22,19 @@ void Square::draw() {
   }
 }
 
+Rectangle::Rectangle(int x, int y, int height, int width, char brush, int color)
+  : Square(x, y, height, brush, color) {
+    width_ = width;
+}
+
+void Rectangle::draw() {
+  for (int x = x_; x < x_ + width_; x++) {
+    for (int y = y_; y < y_ + size_; y++) {
+      draw_at(x, y, brush_, color_);
+    }
+  }
+}
+
 Circle::Circle(int x, int y, int size, char brush, int color)
   : Shape(x, y, size, brush, color) {}
 
