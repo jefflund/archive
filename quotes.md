@@ -73,3 +73,15 @@ into account Hofstader's Law.
 Object-oriented programming offers a sustainable way to write spaghetti code.
 It lets you accrete programs as a series of patches.
 -Paul Graham
+
+Without requirements or design, programming is the art of adding bugs to an
+empty text file.
+-Louis Srygley
+
+A good programmer is someone who always looks both ways before crossing a
+one-way street.
+-Doug Linder
+
+Programming can be fun, so can cryptography; however they should not be
+combined.
+-Kritzberg and Shneiderman
