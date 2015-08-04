@@ -1,6 +1,7 @@
 #include "draw.h"
 #include "shapes.h"
 
+// Sets all the fields from the given parameters.
 Shape::Shape(int x, int y, int width, int height, char brush, int color) {
   x_ = x;
   y_ = y;
@@ -10,8 +11,10 @@ Shape::Shape(int x, int y, int width, int height, char brush, int color) {
   color_ = color;
 }
 
+// We have no dynamically allocated data, so destructor is a no-op.
 Shape::~Shape() {}
 
+// Loop over the entire bounding box, and draw each tile if inside the Shape.
 void Shape::draw() {
   for (int x = x_; x < x_ + width_; x++) {
     for (int y = y_; y < y_ + height_; y++) {
@@ -22,6 +25,7 @@ void Shape::draw() {
   }
 }
 
+// Pass all the parameters to the Shape constructor.
 Rectangle::Rectangle(int x, int y, int width, int height, char brush, int color)
   : Shape(x, y, width, height, brush, color) {}
 
@@ -29,12 +33,18 @@ bool Rectangle::inside(int x, int y) {
   return true;
 }
 
+// Pass all the parameters to the Rectangle constructor, with size passed as
+// both the width and the height.
 Square::Square(int x, int y, int size, char brush, int color)
   : Rectangle(x, y, size, size, brush, color) {}
 
+// Pass all the parameters to the Shape constructor.
 Ellipse::Ellipse(int x, int y, int width, int height, char brush, int color)
   : Shape(x, y, width, height, brush, color) {}
 
+// Translates the Ellipse to 0,0 by calculating the distance of x, y from the
+// center of this Ellipse, and then uses the equation of an ellipse to determine
+// if x, y is inside the Ellipse.
 bool Ellipse::inside(int x, int y) {
   double rad_x = width_ / 2.0; // radius in x axis is half width
   double rad_y = height_ / 2.0; // radius in y axis is half height
@@ -42,9 +52,12 @@ bool Ellipse::inside(int x, int y) {
   double dx = x - (x_ + rad_x); // dist in x axis is x - center in x
   double dy = y - (y_ + rad_y); // dist in y axis is y - center in y
 
-  // Use equation of an ellipse to calculate if (dx, dy) inside the bounds
+  // Use equation of an ellipse to calculate if (dx, dy) inside the bounds of
+  // the ellipse centered at (0, 0).
   return (dx * dx) / (rad_x * rad_x) + (dy * dy) / (rad_y * rad_y) <= 1;
 }
 
+// Pass all the parameters to the Circle constructor, with size passed as
+// both the width and the height.
 Circle::Circle(int x, int y, int size, char brush, int color)
   : Ellipse(x, y, size, size, brush, color) {}

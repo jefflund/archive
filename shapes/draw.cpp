@@ -3,6 +3,8 @@
 #include "draw.h"
 using namespace std;
 
+// These constants give names to various ANSI 256 color codes.
+// See http://conemu.github.io/en/AnsiEscapeCodes.html for more information.
 const int Aqua = 51;
 const int Beige = 230;
 const int Black = 16;
@@ -68,14 +70,18 @@ const int White = 231;
 const int Whitesmoke = 255;
 const int Yellow = 226;
 
+// Uses a system call to make the cursor invisible.
 void hide_cursor() {
   system("tput civis");
 }
 
+// Uses a system call to make the cursor visible.
 void show_cursor() {
   system("tput cnorm");
 }
 
+// Uses an ANSI escape sequence to clear the screen.
+// See http://conemu.github.io/en/AnsiEscapeCodes.html for more information.
 void clear() {
   cout << "\033[2J";
 }

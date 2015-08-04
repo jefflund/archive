@@ -4,6 +4,7 @@
 #include <iostream>
 using namespace std;
 
+// These constants define various colors used with draw_at.
 extern const int Aqua;
 extern const int Beige;
 extern const int Black;
@@ -69,16 +70,22 @@ extern const int White;
 extern const int Whitesmoke;
 extern const int Yellow;
 
+// Makes the cursor invisible.
 void hide_cursor();
+
+// Makes the cursor visible.
 void show_cursor();
 
+// Clears the screen.
 void clear();
 
+// Draws the given data at x, y using ANSI escape sequences.
 template<typename T> void draw_at(int x, int y, T data) {
   cout << "\033[" << y << ";" << x << "H";
   cout << data;
 }
 
+// Draws the given data with the given color at x, y using ANSI escape sequences.
 template<typename T> void draw_at(int x, int y, T data, int color) {
   cout << "\033[" << y << ";" << x << "H";
   cout << "\033[38;5;" << color << "m";
