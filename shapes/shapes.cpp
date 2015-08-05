@@ -1,14 +1,27 @@
 #include "draw.h"
 #include "shapes.h"
 
+// We have no dynamically allocated data, so destructor is a no-op.
+Brush::~Brush() {}
+
+// Sets all the fields with the given parameters.
+SimpleBrush::SimpleBrush(char brush, int color) {
+  brush_ = brush;
+  color_ = color;
+}
+
+// Paint at the given location using the brush and color.
+void SimpleBrush::paint(int x, int y) {
+  draw_at(x, y, brush_, color_);
+}
+
 // Sets all the fields from the given parameters.
-Shape::Shape(int x, int y, int width, int height, char brush, int color) {
+Shape::Shape(int x, int y, int width, int height, Brush* brush) {
   x_ = x;
   y_ = y;
   width_ = width;
   height_ = height;
   brush_ = brush;
-  color_ = color;
 }
 
 // We have no dynamically allocated data, so destructor is a no-op.
@@ -19,15 +32,15 @@ void Shape::draw() {
   for (int x = x_; x < x_ + width_; x++) {
     for (int y = y_; y < y_ + height_; y++) {
       if (inside(x, y)) {
-        draw_at(x, y, brush_, color_);
+        brush_->paint(x, y);
       }
     }
   }
 }
 
 // Pass all the parameters to the Shape constructor.
-Rectangle::Rectangle(int x, int y, int width, int height, char brush, int color)
-  : Shape(x, y, width, height, brush, color) {}
+Rectangle::Rectangle(int x, int y, int width, int height, Brush* brush)
+  : Shape(x, y, width, height, brush) {}
 
 bool Rectangle::inside(int x, int y) {
   return true;
@@ -35,12 +48,12 @@ bool Rectangle::inside(int x, int y) {
 
 // Pass all the parameters to the Rectangle constructor, with size passed as
 // both the width and the height.
-Square::Square(int x, int y, int size, char brush, int color)
-  : Rectangle(x, y, size, size, brush, color) {}
+Square::Square(int x, int y, int size, Brush* brush)
+  : Rectangle(x, y, size, size, brush) {}
 
 // Pass all the parameters to the Shape constructor.
-Ellipse::Ellipse(int x, int y, int width, int height, char brush, int color)
-  : Shape(x, y, width, height, brush, color) {}
+Ellipse::Ellipse(int x, int y, int width, int height, Brush* brush)
+  : Shape(x, y, width, height, brush) {}
 
 // Translates the Ellipse to 0,0 by calculating the distance of x, y from the
 // center of this Ellipse, and then uses the equation of an ellipse to determine
@@ -59,5 +72,5 @@ bool Ellipse::inside(int x, int y) {
 
 // Pass all the parameters to the Circle constructor, with size passed as
 // both the width and the height.
-Circle::Circle(int x, int y, int size, char brush, int color)
-  : Ellipse(x, y, size, size, brush, color) {}
+Circle::Circle(int x, int y, int size, Brush* brush)
+  : Ellipse(x, y, size, size, brush) {}

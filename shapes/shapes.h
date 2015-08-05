@@ -1,19 +1,36 @@
 #ifndef SHAPES_H
 #define SHAPES_H
 
+// Base class for things which know how to paint at location.
+class Brush {
+ public:
+  virtual ~Brush();
+  virtual void paint(int x, int y) = 0;
+};
+
+// Paints with a single brush type and color.
+class SimpleBrush : public Brush {
+ private:
+  char brush_;
+  int color_;
+ public:
+  SimpleBrush(char brush, int color);
+  virtual void paint(int x, int y);
+};
+
 // Abstract base class for drawabled shapes. Stores its own location and a size.
 // To draw simply call shape->draw() and the shape will draw itself.
+// The shape does *not* own the brush, and will not delete it.
 class Shape {
  protected:
   int x_;
   int y_;
   int width_;
   int height_;
-  char brush_;
-  int color_;
+  Brush* brush_;
  public:
   // Constructs the shape with the given dimensions and draw properties.
-  Shape(int x, int y, int width, int height, char brush, int color);
+  Shape(int x, int y, int width, int height, Brush* brush);
   // Virtual destructor just in case a subclass needs it.
   virtual ~Shape();
   // Draws the shape on the screen.
@@ -28,7 +45,7 @@ class Shape {
 class Rectangle : public Shape {
  public:
   // Constructs a new Rectangle with the given Shape properties.
-  Rectangle(int x, int y, int width, int height, char brush, int color);
+  Rectangle(int x, int y, int width, int height, Brush* brush);
  protected:
   // Returns true, since the Rectangle fills its entire bounding box.
   virtual bool inside(int x, int y);
@@ -39,14 +56,14 @@ class Square : public Rectangle {
  public:
   // Constructs a Square with the given dimensions. Size is both the width and
   // the height of the Square.
-  Square(int x, int y, int size, char brush, int color);
+  Square(int x, int y, int size, Brush* brush);
 };
 
 // Ellipse is a curve on a plane surrounding two focal points.
 class Ellipse : public Shape {
  public:
   // Constructs an Ellipse with the given Shape properties.
-  Ellipse(int x, int y, int width, int height, char brush, int color);
+  Ellipse(int x, int y, int width, int height, Brush* brush);
  protected:
   // Returns true if the point is inside the Ellipse.
   virtual bool inside(int x, int y);
@@ -57,7 +74,7 @@ class Circle : public Ellipse {
  public:
   // Constructs a Circle with the given properties. Size is both the width and
   // height of the Circle.
-  Circle(int x, int y, int size, char brush, int color);
+  Circle(int x, int y, int size, Brush* brush);
 };
 
 #endif // SHAPES_H
