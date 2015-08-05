@@ -30,7 +30,6 @@ class StripedBrush : public Brush {
   virtual void paint(int x, int y);
 };
 
-
 // Abstract base class for drawabled shapes. Stores its own location and a size.
 // To draw simply call shape->draw() and the shape will draw itself.
 // We use composition (has-a) with the brush so that we can extend the painting
