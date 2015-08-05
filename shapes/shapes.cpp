@@ -15,6 +15,16 @@ void SimpleBrush::paint(int x, int y) {
   draw_at(x, y, brush_, color_);
 }
 
+// Copy the vector of Brush* over.
+StripedBrush::StripedBrush(vector<Brush*> brushes) {
+  brushes_ = brushes;
+}
+
+// Selects the correct brush and then paints with it.
+void StripedBrush::paint(int x, int y) {
+  brushes_[x % brushes_.size()]->paint(x, y);
+}
+
 // Sets all the fields from the given parameters.
 Shape::Shape(int x, int y, int width, int height, Brush* brush) {
   x_ = x;

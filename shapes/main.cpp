@@ -6,10 +6,16 @@ using namespace std;
 
 int main() {
   // Create some brushes
-  Brush* skin = new SimpleBrush('O', Yellow);
+  Brush* skin1 = new SimpleBrush('O', Yellow);
+  Brush* skin2 = new SimpleBrush('O', Salmon);
   Brush* empty = new SimpleBrush(' ', Black);
   Brush* eye = new SimpleBrush('.', White);
   Brush* iris = new SimpleBrush('#', Aqua);
+
+  vector<Brush*> strips;
+  strips.push_back(skin1);
+  strips.push_back(skin2);
+  Brush* skin = new StripedBrush(strips);
 
   // Set up the scene.
   vector<Shape*> v;
@@ -43,10 +49,12 @@ int main() {
   }
 
   // Delete the brushes.
-  delete skin;
+  delete skin1;
+  delete skin2;
   delete empty;
   delete eye;
   delete iris;
+  delete skin;
 
   return 0;
 }

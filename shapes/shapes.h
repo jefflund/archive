@@ -1,6 +1,9 @@
 #ifndef SHAPES_H
 #define SHAPES_H
 
+#include <vector>
+using namespace std;
+
 // Base class for things which know how to paint at location.
 class Brush {
  public:
@@ -18,9 +21,21 @@ class SimpleBrush : public Brush {
   virtual void paint(int x, int y);
 };
 
+// Paints vertical stripes with a vector of other brushes as the stripes.
+class StripedBrush : public Brush {
+ private:
+  vector<Brush*> brushes_;
+ public:
+  StripedBrush(vector<Brush*> brushes);
+  virtual void paint(int x, int y);
+};
+
+
 // Abstract base class for drawabled shapes. Stores its own location and a size.
 // To draw simply call shape->draw() and the shape will draw itself.
-// The shape does *not* own the brush, and will not delete it.
+// We use composition (has-a) with the brush so that we can extend the painting
+// behavior of shape without modifying shape itself.
+// Note that the shape does *not* own the brush, and will not delete it.
 class Shape {
  protected:
   int x_;
