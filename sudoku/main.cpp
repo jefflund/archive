@@ -4,6 +4,9 @@
 #include "sudoku.h"
 using namespace std;
 
+const int SUCCESS = 0;
+const int ERROR = 1;
+
 int main() {
   Sudoku s;
 
@@ -16,14 +19,17 @@ int main() {
 
   if (!s.valid()) {
     cout << "Invalid puzzle!" << endl;
-    return 1;
+    return ERROR;
   }
 
   cout << "Puzzle: " << endl << s << endl;
 
-  cout << "Solution:" << endl;
-  s.solve();
-  cout << s << endl;
+  if (!s.solve()) {
+    cout << "Could not solve puzzle!" << endl;
+    return ERROR;
+  } else {
+    cout << "Solution: " << endl << s << endl;
+  }
 
-  return 0;
+  return SUCCESS;
 }
