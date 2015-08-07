@@ -19,3 +19,4 @@ included so far:
 * register - classes in cash register example (similar to lab 8)
 * shapes - demonstrates inheritance and virtual methods
 * vector - demonstrates operator overloading with a (mathematical) vector class
+* sudoko - solves sudoku to demonstrate recursion
