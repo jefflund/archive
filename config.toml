@@ -1,3 +1,8 @@
 baseurl = "http://myblag.com/"
 languageCode = "en-us"
-title = "Blag Trip"
+title = "Travel Blag"
+
+[params]
+heroimg = "img/hero.jpg"
+herotxt = "Hero Text Here!"
+herosubtxt = "Hero Subtext Here!"
