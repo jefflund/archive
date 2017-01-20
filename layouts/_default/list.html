@@ -2,7 +2,7 @@
 {{ partial "navbar.html" . }}
 {{ range .Data.Pages }}
 <section>
-<p>{{ .Title}}</p>
+<a href="{{ .Permalink }}">{{ .Title }}</a>
 <p>{{ .Summary }}</p>
 </section>
 {{ end }}
