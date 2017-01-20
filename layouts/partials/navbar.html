@@ -10,10 +10,9 @@
       </div>
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="nav navbar-nav navbar-right">
-          <li><a class="page-scroll" href="">Home</a></li>
-          <li><a class="page-scroll" href="">About</a></li>
-          <li><a class="page-scroll" href="">Blog</a></li>
-          <li><a class="page-scroll" href="">Destinations</a></li>
+          {{ range .Site.Menus.nav }}
+          <li><a href="{{ .URL | absURL }}">{{ .Name }}</a></li>
+          {{ end }}
         </ul>
       </div>
     </div>

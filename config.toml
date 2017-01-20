@@ -6,3 +6,18 @@ title = "Travel Blag"
 heroimg = "img/hero.jpg"
 herotxt = "Hero Text Here!"
 herosubtxt = "Hero Subtext Here!"
+
+[[menu.nav]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.nav]]
+name = "About"
+url = "/about"
+weight = 2
+
+[[menu.nav]]
+name = "Blog"
+url = "/blog"
+weight = 3
