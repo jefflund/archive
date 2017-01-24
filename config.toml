@@ -1,6 +1,6 @@
 baseurl = "http://myblag.com/"
 languageCode = "en-us"
-title = "Travel Blag"
+title = "Blag"
 
 [params]
 heroimg = "img/hero.jpg"
