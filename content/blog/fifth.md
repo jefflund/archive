@@ -1,7 +1,8 @@
 +++
 date = "2017-01-20T22:10:43Z"
 description = "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,consectetur, adipisci velit..."
-title = "fifth"
+title = "This is a long title that should hopefully wrap"
+banner = "img/hero.jpg"
 
 +++
 

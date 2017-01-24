@@ -38,3 +38,12 @@ body {
         font-size: 3em;
     }
 }
+
+.recent-feature .col-lg-4 {
+    text-align: center;
+}
+
+.recent-feature .feature-img {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    border: 10px solid #fff;
+}
