@@ -1,6 +1,5 @@
 <div class="container recent-feature-outer">
   <h1>Recent Posts</h1>
-  <hr/>
   <div class="container recent-feature">
     <div class="row">
       {{ range first 3 (where .Data.Pages "Section" (.Scratch.Get "feature-section")) }}

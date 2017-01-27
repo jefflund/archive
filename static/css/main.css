@@ -34,7 +34,7 @@ body {
         padding-bottom: 10%;
     }
 
-    .hero-text > h1 {
+    .hero-text h1 {
         font-size: 3em;
     }
 }
@@ -45,6 +45,11 @@ body {
     text-align: center;
 }
 
+.recent-feature-outer h1 {
+    font-size: 3em;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+}
+
 .recent-feature {
     padding-top: 20px;
     text-align: center;
@@ -53,6 +58,12 @@ body {
 
 .recent-feature .col-lg-4 {
     text-align: center;
+}
+
+@media(max-width: 1200px) {
+    .col-lg-4:not(:first-child) {
+        margin-top: 40px;
+    }
 }
 
 .recent-feature .feature-img {
