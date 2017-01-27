@@ -39,6 +39,18 @@ body {
     }
 }
 
+.recent-feature-outer {
+    padding-top: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.recent-feature {
+    padding-top: 20px;
+    text-align: center;
+    width: 100%;
+}
+
 .recent-feature .col-lg-4 {
     text-align: center;
 }
@@ -46,4 +58,6 @@ body {
 .recent-feature .feature-img {
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
     border: 10px solid #fff;
+    display: block;
+    margin: auto;
 }

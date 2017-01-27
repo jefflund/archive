@@ -2,6 +2,7 @@
 date = "2017-01-20T22:10:40Z"
 description = "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,consectetur, adipisci velit..."
 title = "fourth"
+banner = "img/stock.jpg"
 
 +++
 
