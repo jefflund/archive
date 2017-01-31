@@ -1,4 +1,20 @@
 {{ partial "header.html" . }}
 {{ partial "navbar.html" . }}
-404 page not found
+{{ if .Site.Params.notfoundimg }}
+  <div class="hero" style="background-image: url({{ .Site.Params.notfoundimg | absURL }})">
+      <div class="hero-text">
+        {{ if .Site.Params.notfoundtxt }}
+          <h1>{{ .Site.Params.notfoundtxt }}</h1>
+        {{ end }}
+      </div>
+  </div>
+{{ else }}
+  <div class="hero-txt">
+    {{ if .Site.Params.notfoundtxt }}
+      <center><h1>{{ .Site.Params.notfoundtxt }}</h1></center>
+    {{ else}}
+      <center><h1>404 page not found</h1></center>
+    {{ end }}
+  </div>
+{{ end }}
 {{ partial "footer.html" . }}

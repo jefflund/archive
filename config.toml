@@ -8,6 +8,9 @@ heroimg = "img/hero.jpg"
 herotxt = "Hero Text Here!"
 herosubtxt = "Hero Subtext Here!"
 
+notfoundimg = "img/hero.jpg"
+notfoundtxt = "404"
+
 [[menu.nav]]
 name = "Home"
 url = "/"
