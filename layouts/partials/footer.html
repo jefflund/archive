@@ -1,3 +1,10 @@
+  <footer class="footer">
+    <p>Social media buttons go here</p>
+    {{ if .Site.Copyright }}
+      <p>{{ .Site.Copyright | safeHTML }}</p>
+    {{ end }}
+    <p>Powered by Hugo goes here</p>
+  </footer>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>

@@ -1,6 +1,7 @@
 baseurl = "http://myblag.com/"
 languageCode = "en-us"
 title = "Blag"
+copyright = "&copy; 2017 John Doe"
 
 [params]
 heroimg = "img/hero.jpg"

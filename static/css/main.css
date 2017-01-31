@@ -72,3 +72,10 @@ body {
     display: block;
     margin: auto;
 }
+
+.footer {
+    padding: 2.5rem 0;
+    color: #999;
+    text-align: center;
+    background-color: #f9f9f9;
+}
