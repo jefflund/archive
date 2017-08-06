@@ -3,6 +3,7 @@ package corpus
 import (
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 
@@ -19,10 +20,18 @@ func getPath(name string) string {
 
 // BaseURL is the base URL from which data should be downloaded. Override this
 // before calling any corpus functions to customize this location.
-var BaseURL = "https://github.com/jefflund/data/raw/data2"
+var BaseURL = "https://github.com/jefflund/data/raw/data2/"
 
 func getURL(name string) string {
-	return filepath.Join(BaseURL, name)
+	u, err := url.Parse(BaseURL)
+	if err != nil {
+		panic(err)
+	}
+	u, err = u.Parse(name)
+	if err != nil {
+		panic(err)
+	}
+	return u.String()
 }
 
 func ensureDownload(url, path string) {

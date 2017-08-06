@@ -19,7 +19,7 @@ func Bible() *pipeline.Corpus {
 func Newsgroups() *pipeline.Corpus {
 	p := pipeline.Pipeline{
 		DownloadInputer("newsgroups/newsgroups.tar.gz"),
-		pipeline.SkipExtractor("\n\n"),
+		pipeline.TarGzipExtractor(pipeline.SkipExtractor("\n\n")),
 		pipeline.DefaultTokenizer(),
 		pipeline.CompositeLabeler(
 			pipeline.TitleLabeler("title"),
