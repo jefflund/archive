@@ -1,9 +1,15 @@
 package pipeline
 
 import (
+	"archive/tar"
 	"bufio"
+	"compress/gzip"
+	"io"
 	"io/ioutil"
+	"regexp"
 	"strings"
+
+	"golang.org/x/net/html"
 )
 
 // ExtractorFunc is an adaptor to allow a function with the appropriate
@@ -75,4 +81,95 @@ func LineExtractor(delim string) Extractor {
 		}()
 		return texts
 	})
+}
+
+// HTMLExtractor is an Extractor which extracts a single Text from the HTML
+// contents of the NameReader.
+func HTMLExtractor() Extractor {
+	newline := regexp.MustCompile(`\n\n+`)
+	return ExtractorFunc(func(r NameReader) chan Text {
+		texts := make(chan Text)
+		go func() {
+			var buf []string
+			z := html.NewTokenizer(r)
+
+			for {
+				tt := z.Next()
+				if tt == html.ErrorToken {
+					if err := z.Err(); err != io.EOF {
+						panic(err)
+					}
+					break
+				}
+				if tt == html.TextToken {
+					buf = append(buf, strings.TrimSpace(string(z.Text())))
+				}
+			}
+
+			data := strings.Join(buf, "\n")
+			data = newline.ReplaceAllLiteralString(data, "\n")
+			data = strings.TrimSpace(data)
+			texts <- Text{r.Name(), data}
+			close(texts)
+		}()
+		return texts
+	})
+}
+
+type wrappedReader struct {
+	name string
+	io.Reader
+}
+
+func (r *wrappedReader) Name() string { return r.name }
+
+// WrapNameReader wraps a Reader to create a NameReader with the given name.
+func WrapNameReader(n string, r io.Reader) NameReader {
+	return &wrappedReader{n, r}
+}
+
+// TarExtractor is an Extractor which wraps another Extractor to read Text from
+// a tar archive. Each file in the archive is given to the wrapped Extractor,
+// and the results are aggregated.
+func TarExtractor(e Extractor) Extractor {
+	return ExtractorFunc(func(r NameReader) chan Text {
+		texts := make(chan Text)
+		go func() {
+			tr := tar.NewReader(r)
+			for {
+				hdr, err := tr.Next()
+				if err == io.EOF {
+					break
+				}
+				if err != nil {
+					panic(err)
+				}
+				if hdr.Typeflag == tar.TypeReg || hdr.Typeflag == tar.TypeRegA {
+					for text := range e.Extract(WrapNameReader(hdr.Name, tr)) {
+						texts <- text
+					}
+				}
+			}
+			close(texts)
+		}()
+		return texts
+	})
+}
+
+// GzipExtractor is an Extractor which wraps another Extractor to read Text
+// from a gzipped file.
+func GzipExtractor(e Extractor) Extractor {
+	return ExtractorFunc(func(r NameReader) chan Text {
+		zr, err := gzip.NewReader(r)
+		if err != nil {
+			panic(err)
+		}
+		return e.Extract(WrapNameReader(r.Name(), zr))
+	})
+}
+
+// TarGzipExtractor uses TarExtractor and GzipExtractor to wrap another
+// Extractor to read from a gzipped tar archive.
+func TarGzipExtractor(e Extractor) Extractor {
+	return GzipExtractor(TarExtractor(e))
 }
