@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
 )
@@ -84,4 +85,41 @@ func RemovePunctTokenizer(base Tokenizer) Tokenizer {
 // removed.
 func DefaultTokenizer() Tokenizer {
 	return RemovePunctTokenizer(ToLowerTokenizer(FieldsTokenizer()))
+}
+
+// RegexpReplaceTokenizer is a Tokenizer which transforms the output of a base
+// Tokenizer by replacing all tokens which match a regular expression. Note
+// that the entire token is replaced if any part of it matches the regular
+// expression pattern, so it may be desirable to use ^ and $ anchors to match
+// the entire token.
+func RegexpReplaceTokenizer(base Tokenizer, pattern string, replace string) Tokenizer {
+	r := regexp.MustCompile(pattern)
+	return TokenizerFunc(func(d string) []TokenLoc {
+		tokens := base.Tokenize(d)
+		for i, tl := range tokens {
+			if r.MatchString(tl.Token) {
+				tokens[i].Token = replace
+			}
+		}
+		return tokens
+	})
+}
+
+// RegexpRemoveTokenizer is a Tokenzer which transforms the output of a base
+// Tokenizer by removing all tokens which match a regular expression. Note that
+// the entire token is replace if any part of it matches the regular expression
+// pattern, so it may be desireable to use ^ and $ anchors to match the entire
+// pattern.
+func RegexpRemoveTokenizer(base Tokenizer, pattern string) Tokenizer {
+	r := regexp.MustCompile(pattern)
+	return TokenizerFunc(func(d string) []TokenLoc {
+		tokens := base.Tokenize(d)
+		filtered := tokens[:0] // Reuse backing array of tokens.
+		for _, tl := range tokens {
+			if !r.MatchString(tl.Token) {
+				filtered = append(filtered, tl)
+			}
+		}
+		return filtered
+	})
 }

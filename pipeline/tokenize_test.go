@@ -46,3 +46,56 @@ func TestDefaultTokenizer(t *testing.T) {
 		}
 	}
 }
+
+func TestRegexpReplaceTokenizer(t *testing.T) {
+	cases := []struct {
+		input    string
+		pattern  string
+		replace  string
+		expected []TokenLoc
+	}{
+		{ // 0123456789012345678901234567890
+			"Lorem Ipsum $100 token weird$69",
+			`^\$\d+$`,
+			"<money>",
+			[]TokenLoc{{"Lorem", 0}, {"Ipsum", 6}, {"<money>", 12}, {"token", 17}, {"weird$69", 23}},
+		},
+		{ // 0123456789012345678901234567890
+			"Lorem Ipsum $100 token weird$69",
+			`\$\d+`,
+			"<money>",
+			[]TokenLoc{{"Lorem", 0}, {"Ipsum", 6}, {"<money>", 12}, {"token", 17}, {"<money>", 23}},
+		},
+	}
+	for _, c := range cases {
+		actual := RegexpReplaceTokenizer(FieldsTokenizer(), c.pattern, c.replace).Tokenize(c.input)
+		if !reflect.DeepEqual(actual, c.expected) {
+			t.Error("RegexpReplaceTokenizer incorrect tokens")
+		}
+	}
+}
+
+func TestRegexpRemoveTokenizer(t *testing.T) {
+	cases := []struct {
+		input    string
+		pattern  string
+		expected []TokenLoc
+	}{
+		{ // 0123456789012345678901234567890
+			"Lorem Ipsum $100 token weird$69",
+			`^\$\d+$`,
+			[]TokenLoc{{"Lorem", 0}, {"Ipsum", 6}, {"token", 17}, {"weird$69", 23}},
+		},
+		{ // 0123456789012345678901234567890
+			"Lorem Ipsum $100 token weird$69",
+			`\$\d+`,
+			[]TokenLoc{{"Lorem", 0}, {"Ipsum", 6}, {"token", 17}},
+		},
+	}
+	for _, c := range cases {
+		actual := RegexpRemoveTokenizer(FieldsTokenizer(), c.pattern).Tokenize(c.input)
+		if !reflect.DeepEqual(actual, c.expected) {
+			t.Error("RegexpRemoveTokenizer incorrect tokens")
+		}
+	}
+}
