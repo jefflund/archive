@@ -187,3 +187,45 @@ func CombineTokenizer(base Tokenizer, combine []string, replace string) Tokenize
 		return tokens
 	})
 }
+
+func FrequencyTokenizer(p Pipeline, rare, common int) Tokenizer {
+	// System independent min and max for int type.
+	const (
+		MaxInt = int(^uint(0) >> 1)
+		MinInt = ^MaxInt
+	)
+
+	// Adjust boundaries if any are turned off using negative bounds.
+	if rare < 0 && common < 0 {
+		return p.Tokenizer // No filtering done for this case.
+	} else if common < 0 {
+		common = MaxInt // No common filtering since no word is this common.
+	} else if rare < 0 {
+		rare = MinInt // No rare word filtering since no word is this rare.
+	}
+
+	// Count per-document occurances of each token type.
+	counts := make(map[string]int)
+	for reader := range p.Input() {
+		for text := range p.Extract(reader) {
+			// Get the set of words which occur in this Text.
+			doc := make(map[string]struct{})
+			for _, tl := range p.Tokenize(text.Data) {
+				doc[tl.Token] = struct{}{}
+			}
+			// Increment the count (once) for each word which occurs.
+			for t := range doc {
+				counts[t]++
+			}
+		}
+	}
+
+	// Create and use a StopwordTokenizer based on the counts.
+	var stopwords []string
+	for token, count := range counts {
+		if count < rare || count > common {
+			stopwords = append(stopwords, token)
+		}
+	}
+	return StopwordTokenizer(p.Tokenizer, stopwords)
+}

@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"io"
 	"reflect"
 	"strings"
 	"testing"
@@ -121,5 +122,89 @@ func TestCombineTokenizer(t *testing.T) {
 	actual := CombineTokenizer(DefaultTokenizer(), names, replace).Tokenize(input)
 	if !reflect.DeepEqual(actual, expected) {
 		t.Error("CombineTokenizer incorrect tokens")
+	}
+}
+
+type MockNameReader struct {
+	name string
+	io.Reader
+}
+
+func (r MockNameReader) Name() string { return r.name }
+
+func TestFrequencyTokenizer(t *testing.T) {
+	disk := []Text{
+		//     012345678901234567
+		{"1", "rare normal common"},
+		{"2", "normal common"},
+		{"3", "normal common"},
+		{"4", "normal common"},
+		{"5", "common"},
+		{"6", "common"},
+	}
+	inputer := InputerFunc(func() chan NameReader {
+		input := make(chan NameReader)
+		go func() {
+			for _, text := range disk {
+				input <- MockNameReader{text.Name, strings.NewReader(text.Data)}
+			}
+			close(input)
+		}()
+
+		return input
+	})
+
+	cases := []struct {
+		rare     int
+		common   int
+		expected [][]TokenLoc
+	}{
+		{
+			2, 5,
+			[][]TokenLoc{
+				{{"normal", 5}},
+				{{"normal", 0}},
+				{{"normal", 0}},
+				{{"normal", 0}},
+				{},
+				{},
+			},
+		}, {
+			2, -1,
+			[][]TokenLoc{
+				{{"normal", 5}, {"common", 12}},
+				{{"normal", 0}, {"common", 7}},
+				{{"normal", 0}, {"common", 7}},
+				{{"normal", 0}, {"common", 7}},
+				{{"common", 0}},
+				{{"common", 0}},
+			},
+		}, {
+			-1, 5,
+			[][]TokenLoc{
+				{{"rare", 0}, {"normal", 5}},
+				{{"normal", 0}},
+				{{"normal", 0}},
+				{{"normal", 0}},
+				{},
+				{},
+			},
+		},
+	}
+	for _, c := range cases {
+		pipeline := Pipeline{
+			inputer,
+			WholeExtractor(),
+			FieldsTokenizer(),
+			NoopLabeler(),
+			KeepFilterer(),
+		}
+		pipeline.Tokenizer = FrequencyTokenizer(pipeline, c.rare, c.common)
+		for i := 0; i < len(c.expected); i++ {
+			actual := pipeline.Tokenize(disk[i].Data)
+			if !reflect.DeepEqual(actual, c.expected[i]) {
+				t.Error("FrequencyTokenizer incorrect tokens", actual, c.expected[i])
+			}
+		}
 	}
 }
