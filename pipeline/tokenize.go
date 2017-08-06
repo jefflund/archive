@@ -1,6 +1,8 @@
 package pipeline
 
 import (
+	"bufio"
+	"io"
 	"regexp"
 	"strings"
 	"unicode"
@@ -121,5 +123,67 @@ func RegexpRemoveTokenizer(base Tokenizer, pattern string) Tokenizer {
 			}
 		}
 		return filtered
+	})
+}
+
+// ReadWordlist is a helper function for reading a list of words from one more
+// more Reader. Each line should contain a single string to be appended to the
+// list. ReadWordlist is primarily intended to be used in conjunction with
+// StopwordTokenizer and CombineTokenizer.
+func ReadWordlist(rs ...io.Reader) []string {
+	var list []string
+	for _, r := range rs {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			list = append(list, scanner.Text())
+		}
+		if err := scanner.Err(); err != nil {
+			panic(err)
+		}
+	}
+	return list
+}
+
+func containCheck(list []string) func(string) bool {
+	set := make(map[string]struct{})
+	for _, s := range list {
+		set[s] = struct{}{}
+	}
+	return func(s string) bool {
+		_, ok := set[s]
+		return ok
+	}
+}
+
+// StopwordTokenizer is a Tokenizer which transforms the output of a base
+// Tokenizer by removing tokens which appear in a stopword list. The stopword
+// list is usually read from a File using ReadWordlist.
+func StopwordTokenizer(base Tokenizer, stopwords []string) Tokenizer {
+	isStopword := containCheck(stopwords)
+	return TokenizerFunc(func(d string) []TokenLoc {
+		tokens := base.Tokenize(d)
+		filtered := tokens[:0] // Reuse backing array of tokens.
+		for _, tl := range tokens {
+			if !isStopword(tl.Token) {
+				filtered = append(filtered, tl)
+			}
+		}
+		return filtered
+	})
+}
+
+// CombineTokenizer is a Tokenizer which transforms the output of a base
+// Tokenizer by replacing all tokens which appear in a combine list. The
+// combine list is usually read from a File using ReadWordlist.
+func CombineTokenizer(base Tokenizer, combine []string, replace string) Tokenizer {
+	isCombine := containCheck(combine)
+	return TokenizerFunc(func(d string) []TokenLoc {
+		tokens := base.Tokenize(d)
+		for i, tl := range tokens {
+			if isCombine(tl.Token) {
+				tokens[i].Token = replace
+			}
+		}
+		return tokens
 	})
 }

@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -97,5 +98,28 @@ func TestRegexpRemoveTokenizer(t *testing.T) {
 		if !reflect.DeepEqual(actual, c.expected) {
 			t.Error("RegexpRemoveTokenizer incorrect tokens")
 		}
+	}
+}
+
+func TestStopwordTokenizer(t *testing.T) {
+	//        012345678901234567890123
+	input := "What is the point?"
+	stopwords := ReadWordlist(strings.NewReader("is\nthe\nof\n"))
+	expected := []TokenLoc{{"what", 0}, {"point", 12}}
+	actual := StopwordTokenizer(DefaultTokenizer(), stopwords).Tokenize(input)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Error("StopwordTokenizer incorrect tokens")
+	}
+}
+
+func TestCombineTokenizer(t *testing.T) {
+	//        012345678901234567890123
+	input := "Lorem Ipsum fred bob set"
+	names := ReadWordlist(strings.NewReader("bob\nfred\ngeorge\n"))
+	replace := "<name>"
+	expected := []TokenLoc{{"lorem", 0}, {"ipsum", 6}, {"<name>", 12}, {"<name>", 17}, {"set", 21}}
+	actual := CombineTokenizer(DefaultTokenizer(), names, replace).Tokenize(input)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Error("CombineTokenizer incorrect tokens")
 	}
 }
