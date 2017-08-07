@@ -47,6 +47,8 @@ func Newsgroups() *pipeline.Corpus {
 	return p.Run()
 }
 
+// Amazon gets a Corpus consisting of roughly 40,000 Amazon product reviews
+// with associated star ratings.
 func Amazon() *pipeline.Corpus {
 	p := pipeline.Pipeline{
 		DownloadInputer("amazon/amazon.txt"),
@@ -57,7 +59,13 @@ func Amazon() *pipeline.Corpus {
 		),
 		pipeline.CompositeLabeler(
 			pipeline.TitleLabeler("id"),
-			// TODO stars
+			pipeline.MapLabeler(
+				"stars",
+				pipeline.ReadFloatLabels(
+					OpenDownload("amazon/amazon.stars"),
+					"\t",
+				),
+			),
 		),
 		pipeline.EmptyFilterer(),
 	}
