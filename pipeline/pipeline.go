@@ -4,6 +4,12 @@ import (
 	"io"
 )
 
+// System independent min and max for int type.
+const (
+	MaxInt = int(^uint(0) >> 1)
+	MinInt = ^MaxInt
+)
+
 // NameReader is a basic Reader with a string name. Note that File implements
 // the NameReader interface. NameReader are typically generated using an
 // Inputer.
