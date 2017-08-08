@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -63,6 +64,60 @@ func TestCompositeLabeler(t *testing.T) {
 		if !called[i] {
 			t.Error("CompositeLabeler failed to call sub-Labeler")
 			break
+		}
+	}
+}
+
+func TestReadStringLabeler(t *testing.T) {
+	name := "lorem"
+	value := "foobar"
+	attr := "class"
+	delim := ":"
+	r := strings.NewReader("asdf:foo\nlorem:foobar\nipsum:baz")
+	expected := map[string]interface{}{attr: value}
+	actual := ReadStringLabeler(attr, r, delim).Label(name)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Error("ReadStringLabeler giave incorrect labels")
+	}
+}
+
+func TestReadFloatLabeler(t *testing.T) {
+	name := "lorem"
+	value := 3.14
+	attr := "rating"
+	delim := ":"
+	r := strings.NewReader("asdf:69\nlorem:3.14\nipsum:5.43")
+	expected := map[string]interface{}{attr: value}
+	actual := ReadFloatLabeler(attr, r, delim).Label(name)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Error("ReadFloatLabeler giave incorrect labels")
+	}
+}
+
+func TestReadSliceLabeler(t *testing.T) {
+	cases := []struct {
+		name             string
+		attr, delim, sep string
+		value            []string
+		input            string
+	}{
+		{
+			"lorem", "xref", ":", ",",
+			[]string{"asdf", "qwer"},
+			"lorem:asdf,qwer\nipsum:foo,baz",
+		},
+		{
+			"lorem", "xref", ":", ",",
+			nil,
+			"lorem:\nipsum:foo,baz",
+		},
+	}
+	for _, c := range cases {
+		r := strings.NewReader(c.input)
+		expected := map[string]interface{}{c.attr: c.value}
+		actual := ReadSliceLabeler(c.attr, r, c.delim, c.sep).Label(c.name)
+		if !reflect.DeepEqual(actual, expected) {
+			t.Error("ReadSliceLabeler gave incorrect labels")
 		}
 	}
 }

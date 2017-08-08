@@ -18,7 +18,11 @@ func Bible() *pipeline.Corpus {
 		),
 		pipeline.CompositeLabeler(
 			pipeline.TitleLabeler("verse"),
-			// TODO xrefs
+			pipeline.ReadSliceLabeler(
+				"xrefs",
+				OpenDownload("bible/xrefs.txt"),
+				"\t", ",",
+			),
 		),
 		pipeline.KeepFilterer(),
 	}
@@ -59,16 +63,14 @@ func Amazon() *pipeline.Corpus {
 		),
 		pipeline.CompositeLabeler(
 			pipeline.TitleLabeler("id"),
-			pipeline.MapLabeler(
+			pipeline.ReadFloatLabeler(
 				"stars",
-				pipeline.ReadFloatLabels(
-					OpenDownload("amazon/amazon.stars"),
-					"\t",
-				),
+				OpenDownload("amazon/amazon.stars"),
+				"\t",
 			),
 		),
 		pipeline.EmptyFilterer(),
 	}
-	//p.Tokenizer = pipeline.FrequencyTokenizer(p, 50, -1)
+	p.Tokenizer = pipeline.FrequencyTokenizer(p, 50, -1)
 	return p.RunGob(getPath("amazon.gob"))
 }

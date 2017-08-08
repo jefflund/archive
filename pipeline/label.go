@@ -48,52 +48,127 @@ func CompositeLabeler(ls ...Labeler) Labeler {
 	})
 }
 
-// MapLabeler is a Labeler which associates the metadata attribute for each
-// each name with a value using the given label mapping.
-func MapLabeler(attr string, labels map[string]interface{}) Labeler {
-	return LabelerFunc(func(n string) map[string]interface{} {
-		value, ok := labels[n]
-		if !ok {
-			panic("MapLabeler missing label")
-		}
-		return map[string]interface{}{attr: value}
-	})
+// Label stores a single labeling mapping a name (not the metadata attribute,
+// but the name of the thing being labeled) to a metadata value.
+type Label struct {
+	Name  string
+	Value interface{}
 }
 
-// ReadStringLabels is a helper function for reading key/value pairs from a
-// file for use with MapLabeler. Each line should contain a string name and
-// string value separated by a delimiter.
-func ReadStringLabels(r io.Reader, delim string) map[string]interface{} {
-	mapping := make(map[string]interface{})
-	scanner := bufio.NewScanner(r)
-	for scanner.Scan() {
-		line := scanner.Text()
-		index := strings.Index(line, delim)
-		if index == -1 {
-			panic("ReadStringLabels missing delim")
-		}
-		mapping[line[:index]] = line[index+len(delim):]
+// ChanLabeler is a Labeler which is backed by a channel which produces labels.
+// Assuming that the channel generates labels in the same order they are
+// requested, ChanLabeler will use no extra memory. If this assumption is
+// violated, ChanLabeler will cache generated labels as needed.
+type ChanLabeler struct {
+	attr   string
+	labels chan Label
+	cache  map[string]interface{}
+}
+
+// NewChanLabeler creates a new Labeler using the given channel and metadata
+// attribute name.
+func NewChanLabeler(attr string, c chan Label) *ChanLabeler {
+	return &ChanLabeler{attr, c, make(map[string]interface{})}
+}
+
+// Label generates Label from the backing channel until the requested name and
+// associated value is found.
+func (c *ChanLabeler) Label(n string) map[string]interface{} {
+	if value, ok := c.cache[n]; ok {
+		delete(c.cache, n)
+		return map[string]interface{}{c.attr: value}
 	}
-	return mapping
+
+	for l := range c.labels {
+		if l.Name == n {
+			return map[string]interface{}{c.attr: l.Value}
+		} else {
+			c.cache[l.Name] = l.Value
+		}
+	}
+
+	panic("ChanLabeler missing label")
 }
 
-// ReadFloatLabels is a helper function for reading key/value pairs from a
-// file for use with MapLabeler. Each line should contain a string name and
-// float64 value separated by a delimiter.
-func ReadFloatLabels(r io.Reader, delim string) map[string]interface{} {
-	mapping := make(map[string]interface{})
-	scanner := bufio.NewScanner(r)
-	for scanner.Scan() {
-		line := scanner.Text()
-		index := strings.Index(line, delim)
-		if index == -1 {
-			panic("ReadStringLabels missing delim")
+// ReadStringLabeler creates a new Labeler which generates labels by reading
+// lines from a Reader. Each line should contain one name and value, separated
+// by a delimiter. The the labels are requested in the order they are read, no
+// extra memory is required by the Labeler. Otherwise, labels are cached as
+// needed.
+func ReadStringLabeler(attr string, r io.Reader, delim string) Labeler {
+	c := make(chan Label)
+	go func() {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			line := scanner.Text()
+			index := strings.Index(line, delim)
+			if index == -1 {
+				panic("ReadStringLabeler missing delim")
+			}
+			c <- Label{line[:index], line[index+len(delim):]}
 		}
-		value, err := strconv.ParseFloat(line[index+len(delim):], 64)
-		if err != nil {
+		if err := scanner.Err(); err != nil {
 			panic(err)
 		}
-		mapping[line[:index]] = value
-	}
-	return mapping
+		close(c)
+	}()
+	return NewChanLabeler(attr, c)
+}
+
+// ReadFloatLabeler creates a new Labeler which generates labels by reading
+// lines from a Reader. Each line should contain one name and value, separated
+// by a delimiter. The value should be a string representation of a flaot64.
+// The the labels are requested in the order they are read, no extra memory is
+// required by the Labeler. Otherwise, labels are cached as needed.
+func ReadFloatLabeler(attr string, r io.Reader, delim string) Labeler {
+	c := make(chan Label)
+	go func() {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			line := scanner.Text()
+			index := strings.Index(line, delim)
+			if index == -1 {
+				panic("ReadFloatLabeler missing delim")
+			}
+			value, err := strconv.ParseFloat(line[index+len(delim):], 64)
+			if err != nil {
+				panic(err)
+			}
+			c <- Label{line[:index], value}
+		}
+		if err := scanner.Err(); err != nil {
+			panic(err)
+		}
+	}()
+	return NewChanLabeler(attr, c)
+}
+
+// ReadSliceLabeler creates a new Labeler which generates labels by reading
+// lines from a Reader. Each line should contain one name and value, separated
+// by a delimiter. The value should be a slice of string, represented by the
+// output of strings.Join(slice, sep). The the labels are requested in the
+// order they are read, no extra memory is required by the Labeler. Otherwise,
+// labels are cached as needed.
+func ReadSliceLabeler(attr string, r io.Reader, delim, sep string) Labeler {
+	c := make(chan Label)
+	go func() {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			line := scanner.Text()
+			index := strings.Index(line, delim)
+			if index == -1 {
+				panic("ReadStringLabeler missing delim")
+			}
+			var value []string
+			if s := line[index+len(delim):]; len(s) > 0 {
+				value = strings.Split(s, sep)
+			}
+			c <- Label{line[:index], value}
+		}
+		if err := scanner.Err(); err != nil {
+			panic(err)
+		}
+		close(c)
+	}()
+	return NewChanLabeler(attr, c)
 }
