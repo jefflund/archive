@@ -1,7 +1,9 @@
 package pipeline
 
 import (
+	"encoding/gob"
 	"io"
+	"os"
 )
 
 // System independent min and max for int type.
@@ -136,4 +138,32 @@ func (p *Pipeline) Run() *Corpus {
 		}
 	}
 	return &Corpus{documents, vocab.tokens}
+}
+
+// RunGob reads a gob encoded Corpus from disk, or constructs a new Corpus
+// using the Pipeline and writes the gob encoded Corpus to disk.
+func (p *Pipeline) RunGob(filename string) *Corpus {
+	c := new(Corpus)
+
+	file, err := os.Open(filename)
+	if err == nil {
+		if err := gob.NewDecoder(file).Decode(c); err != nil {
+			panic(err)
+		}
+		return c
+	}
+
+	if !os.IsNotExist(err) {
+		panic(err)
+	}
+
+	c = p.Run()
+	file, err = os.Create(filename)
+	if err != nil {
+		panic(err)
+	}
+	if err := gob.NewEncoder(file).Encode(c); err != nil {
+		panic(err)
+	}
+	return c
 }

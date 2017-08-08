@@ -69,6 +69,6 @@ func Amazon() *pipeline.Corpus {
 		),
 		pipeline.EmptyFilterer(),
 	}
-	p.Tokenizer = pipeline.FrequencyTokenizer(p, 50, -1)
-	return p.Run()
+	//p.Tokenizer = pipeline.FrequencyTokenizer(p, 50, -1)
+	return p.RunGob(getPath("amazon.gob"))
 }
