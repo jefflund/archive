@@ -27,7 +27,7 @@ func Bible() *pipeline.Corpus {
 		pipeline.KeepFilterer(),
 	}
 	p.Tokenizer = pipeline.FrequencyTokenizer(p, 2, -1)
-	return p.Run()
+	return p.RunGob(getPath("bible.gob"))
 }
 
 func Newsgroups() *pipeline.Corpus {
@@ -48,7 +48,7 @@ func Newsgroups() *pipeline.Corpus {
 		pipeline.EmptyFilterer(),
 	}
 	p.Tokenizer = pipeline.FrequencyTokenizer(p, 50, 2000)
-	return p.Run()
+	return p.RunGob(getPath("newsgroups.gob"))
 }
 
 // Amazon gets a Corpus consisting of roughly 40,000 Amazon product reviews

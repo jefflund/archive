@@ -197,39 +197,54 @@ func CombineTokenizer(base Tokenizer, combine []string, replace string) Tokenize
 // Note that in order to determine how many documents each token appears in,
 // much of the Pipeline must be run to create the FrequencyTokenzier.
 // Consequently, the construction may take a significant amount of time.
+// However, the FrequecyTokenizer is lazily instantiated, meaning that simply
+// the construction cost is incurred when the first call to Tokenize is made
+// instead of when the Tokenizer is added to a Pipeline.
 func FrequencyTokenizer(p Pipeline, rare, common int) Tokenizer {
-	// Adjust boundaries if any are turned off using negative bounds.
-	if rare < 0 && common < 0 {
-		return p.Tokenizer // No filtering done for this case.
-	} else if common < 0 {
-		common = MaxInt // No common filtering since no word is this common.
-	} else if rare < 0 {
-		rare = MinInt // No rare word filtering since no word is this rare.
-	}
+	// Runs the pipeline to construct the a StopwordTokenizer based on
+	// document-word frequencies.
+	instantiate := func() Tokenizer {
+		// Adjust boundaries if any are turned off using negative bounds.
+		if rare < 0 && common < 0 {
+			return p.Tokenizer // No filtering done for this case.
+		} else if common < 0 {
+			common = MaxInt // No common filtering since no word is this common.
+		} else if rare < 0 {
+			rare = MinInt // No rare word filtering since no word is this rare.
+		}
 
-	// Count per-document occurances of each token type.
-	counts := make(map[string]int)
-	for reader := range p.Input() {
-		for text := range p.Extract(reader) {
-			// Get the set of words which occur in this Text.
-			doc := make(map[string]struct{})
-			for _, tl := range p.Tokenize(text.Data) {
-				doc[tl.Token] = struct{}{}
-			}
-			// Increment the count (once) for each word which occurs.
-			for t := range doc {
-				counts[t]++
+		// Count per-document occurances of each token type.
+		counts := make(map[string]int)
+		for reader := range p.Input() {
+			for text := range p.Extract(reader) {
+				// Get the set of words which occur in this Text.
+				doc := make(map[string]struct{})
+				for _, tl := range p.Tokenize(text.Data) {
+					doc[tl.Token] = struct{}{}
+				}
+				// Increment the count (once) for each word which occurs.
+				for t := range doc {
+					counts[t]++
+				}
 			}
 		}
+
+		// Create and use a StopwordTokenizer based on the counts.
+		var stopwords []string
+		for token, count := range counts {
+			if count < rare || count > common {
+				stopwords = append(stopwords, token)
+			}
+		}
+		return StopwordTokenizer(p.Tokenizer, stopwords)
 	}
 
-	// Create and use a StopwordTokenizer based on the counts.
-	var stopwords []string
-	for token, count := range counts {
-		if count < rare || count > common {
-			stopwords = append(stopwords, token)
+	// Lazily instantiated Tokenizer.
+	var t Tokenizer
+	return TokenizerFunc(func(d string) []TokenLoc {
+		if t == nil {
+			t = instantiate()
 		}
-	}
-	return StopwordTokenizer(p.Tokenizer, stopwords)
-	// TODO Lazily instantiate FrequencyTokenizer.
+		return t.Tokenize(d)
+	})
 }
