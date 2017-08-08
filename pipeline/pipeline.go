@@ -74,6 +74,7 @@ func (v *VocabBuilder) Type(t string) int {
 	if !ok {
 		id = len(v.tokens)
 		v.types[t] = id
+		v.tokens = append(v.tokens, t)
 	}
 	return id
 }
