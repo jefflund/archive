@@ -20,7 +20,7 @@ func Bible() *pipeline.Corpus {
 			pipeline.TitleLabeler("verse"),
 			pipeline.ReadSliceLabeler(
 				"xrefs",
-				OpenDownload("bible/xrefs.txt"),
+				OpenDownload("bible/xref.txt"),
 				"\t", ",",
 			),
 		),

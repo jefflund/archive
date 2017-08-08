@@ -231,4 +231,5 @@ func FrequencyTokenizer(p Pipeline, rare, common int) Tokenizer {
 		}
 	}
 	return StopwordTokenizer(p.Tokenizer, stopwords)
+	// TODO Lazily instantiate FrequencyTokenizer.
 }
