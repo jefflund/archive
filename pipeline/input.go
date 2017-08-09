@@ -38,3 +38,27 @@ func GlobInputer(pattern string) Inputer {
 	}
 	return FileInputer(matches...)
 }
+
+// DownloadInputer is an Inputer which gets NameReader for each of the given
+// names, downloading the data from BaseURL to DataDir using OpenDownload.
+// With the default BaseURL the available names are:
+//	* amazon/amazon.stars
+//	* amazon/amazon.txt
+//	* bible/bible.txt
+//	* bible/xref.txt
+//	* newsgroups/newsgroups.tar.gz
+//	* stateunion/stateunion.tar.gz
+//	* stopwords/english.txt
+//	* stopwords/jacobean.txt
+func DownloadInputer(names ...string) Inputer {
+	return InputerFunc(func() chan NameReader {
+		input := make(chan NameReader)
+		go func() {
+			for _, name := range names {
+				input <- OpenDownload(name)
+			}
+			close(input)
+		}()
+		return input
+	})
+}

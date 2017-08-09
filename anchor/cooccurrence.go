@@ -9,11 +9,11 @@ import (
 // BuildCooccurrence follows supplementary 4.1 of Arora et al. 2012 to
 // generate a cooccurrence matrix from Corpus data with the proper
 // expectations.
-func BuildCooccurrence(c *pipeline.Corpus) *mat.Dense {
-	D, V := len(c.Documents), len(c.Vocabulary) // Avoids bounds checks of Dense.Set
-	Qdata := make([]float64, V*V)
+func BuildCooccurrence(c pipeline.Corpus) *mat.Dense {
+	D, V := c.Size()
+	Qdata := make([]float64, V*V) // Avoids bound checks of Dense.Set.
 
-	for _, doc := range c.Documents {
+	for doc := range c.Documents() {
 		n_d := len(doc.Tokens)
 		if n_d <= 1 {
 			continue
