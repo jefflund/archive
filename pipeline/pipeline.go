@@ -1,8 +1,6 @@
 package pipeline
 
 import (
-	"bytes"
-	"encoding/gob"
 	"io"
 )
 
@@ -115,59 +113,6 @@ type Corpus interface {
 	Vocabulary() []string
 }
 
-// SliceCorpus is a collection a Corpus backed by a slice of Document.
-type SliceCorpus struct {
-	docs  []Document
-	vocab []string
-}
-
-// Size gets the number of documents and vocabulary size for the SliceCorpus.
-func (s *SliceCorpus) Size() (M, V int) {
-	return len(s.docs), len(s.vocab)
-}
-
-// Documents creates a channel and sequentially sends the Document in the
-// backing slice to the channel.
-func (s *SliceCorpus) Documents() chan Document {
-	c := make(chan Document)
-	go func() {
-		for _, d := range s.docs {
-			c <- d
-		}
-		close(c)
-	}()
-	return c
-}
-
-func (s *SliceCorpus) GobDecode(data []byte) error {
-	buf := bytes.NewBuffer(data)
-	decoder := gob.NewDecoder(buf)
-	if err := decoder.Decode(&s.docs); err != nil {
-		return err
-	}
-	if err := decoder.Decode(&s.vocab); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *SliceCorpus) GobEncode() ([]byte, error) {
-	var buf bytes.Buffer
-	encoder := gob.NewEncoder(&buf)
-	if err := encoder.Encode(s.docs); err != nil {
-		return nil, err
-	}
-	if err := encoder.Encode(s.vocab); err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-// Vocabulary gets the vocabulary for the SliceCorpus.
-func (s *SliceCorpus) Vocabulary() []string {
-	return s.vocab
-}
-
 // Pipeline describes the process of constructing a new Corpus.
 type Pipeline struct {
 	Inputer
@@ -177,8 +122,14 @@ type Pipeline struct {
 	Filterer
 }
 
+// SliceCorpus is a collection a Corpus backed by a slice of Document.
+type SliceCorpus struct {
+	Docs  []Document
+	Vocab []string
+}
+
 // RunSlice constructs a SliceCorpus backed by a slice of Document.
-func (p *Pipeline) RunSlice() *SliceCorpus {
+func (p *Pipeline) RunSlice() Corpus {
 	var documents []Document
 	vocab := NewVocabBuilder()
 	for reader := range p.Input() {
@@ -193,4 +144,27 @@ func (p *Pipeline) RunSlice() *SliceCorpus {
 		}
 	}
 	return &SliceCorpus{documents, vocab.tokens}
+}
+
+// Size gets the number of documents and vocabulary size for the SliceCorpus.
+func (s *SliceCorpus) Size() (M, V int) {
+	return len(s.Docs), len(s.Vocab)
+}
+
+// Documents creates a channel and sequentially sends the Document in the
+// backing slice to the channel.
+func (s *SliceCorpus) Documents() chan Document {
+	c := make(chan Document)
+	go func() {
+		for _, d := range s.Docs {
+			c <- d
+		}
+		close(c)
+	}()
+	return c
+}
+
+// Vocabulary gets the vocabulary for the SliceCorpus.
+func (s *SliceCorpus) Vocabulary() []string {
+	return s.Vocab
 }

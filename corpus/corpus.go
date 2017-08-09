@@ -10,30 +10,33 @@ import (
 // getCorpus reads a gob encoded Corpus from disk, or constructs a new
 // SliceCorpus using the Pipeline and writes the gob encoded result to disk.
 func getCorpus(p pipeline.Pipeline, name string) pipeline.Corpus {
+	gob.Register(&pipeline.SliceCorpus{})
 	path := getPath(name)
-	c := new(pipeline.SliceCorpus)
+	var c pipeline.Corpus
 
+	// Try to simply read the Corpus from disk.
 	file, err := os.Open(path)
 	if err == nil {
-		if err := gob.NewDecoder(file).Decode(c); err != nil {
+		if err := gob.NewDecoder(file).Decode(&c); err != nil {
 			panic(err)
 		}
 		return c
 	}
 
+	// Fail if gob file exists, but we still errored.
 	if !os.IsNotExist(err) {
 		panic(err)
 	}
 
+	// File does not exist, so we must run Pipeline and save Corpus.
 	c = p.RunSlice()
 	file, err = os.Create(path)
 	if err != nil {
 		panic(err)
 	}
-	if err := gob.NewEncoder(file).Encode(c); err != nil {
+	if err := gob.NewEncoder(file).Encode(&c); err != nil {
 		panic(err)
 	}
-
 	return c
 }
 
