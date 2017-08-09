@@ -83,6 +83,7 @@ func OpenDownload(name string) NameReader {
 	if err != nil {
 		panic(err)
 	}
+	// No file.Close() as caller needs it open. GC will close on collect.
 	return file
 }
 
@@ -99,6 +100,7 @@ func getCorpus(p Pipeline, name string) Corpus {
 		if err := gob.NewDecoder(file).Decode(&c); err != nil {
 			panic(err)
 		}
+		file.Close()
 		return c
 	}
 
@@ -116,6 +118,7 @@ func getCorpus(p Pipeline, name string) Corpus {
 	if err := gob.NewEncoder(file).Encode(&c); err != nil {
 		panic(err)
 	}
+	file.Close()
 	return c
 }
 

@@ -124,6 +124,26 @@ type Pipeline struct {
 	Filterer
 }
 
+// Run uses the Pipeline to generate Document, which are passed to the given
+// function, and an associated vocabulary which is returned as a slice of
+// string once the entire Pipeline has completed. Typically Run is used in the
+// construction of Corpus.
+func (p Pipeline) Run(fn func(Document)) []string {
+	vocab := NewVocabBuilder()
+	for reader := range p.Input() {
+		for text := range p.Extract(reader) {
+			tokens := p.Tokenize(text.Data)
+			types := vocab.Convert(tokens)
+			metadata := p.Label(text.Name)
+			document := Document{text.Data, types, metadata}
+			if p.Filter(document) {
+				fn(document)
+			}
+		}
+	}
+	return vocab.tokens
+}
+
 // SliceCorpus is a Corpus backed by a slice of Document.
 type SliceCorpus struct {
 	Docs  []Document
@@ -133,19 +153,10 @@ type SliceCorpus struct {
 // RunSlice constructs a SliceCorpus backed by a slice of Document.
 func NewSliceCorpus(p Pipeline) Corpus {
 	var documents []Document
-	vocab := NewVocabBuilder()
-	for reader := range p.Input() {
-		for text := range p.Extract(reader) {
-			tokens := p.Tokenize(text.Data)
-			types := vocab.Convert(tokens)
-			metadata := p.Label(text.Name)
-			document := Document{text.Data, types, metadata}
-			if p.Filter(document) {
-				documents = append(documents, document)
-			}
-		}
-	}
-	return &SliceCorpus{documents, vocab.tokens}
+	vocab := p.Run(func(d Document) {
+		documents = append(documents, d)
+	})
+	return &SliceCorpus{documents, vocab}
 }
 
 // Size gets the number of documents and vocabulary size for the SliceCorpus.
@@ -178,6 +189,26 @@ type GobCorpus struct {
 	Vocab       []string
 }
 
+// NewGobCorpus constructs a Corpus backed by a file containing gob encoded
+// Document.
+func NewGobCorpus(p Pipeline, gobfilename string) Corpus {
+	file, err := os.Create(gobfilename)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	encoder := gob.NewEncoder(file)
+	numdocs := 0
+	vocab := p.Run(func(d Document) {
+		if err := encoder.Encode(d); err != nil {
+			panic(err)
+		}
+		numdocs++
+	})
+	return &GobCorpus{numdocs, gobfilename, vocab}
+}
+
 // Size gets the number of documents and vocabulary size for the GobCorpus.
 func (c *GobCorpus) Size() (D, V int) {
 	return c.NumDocs, len(c.Vocab)
@@ -192,6 +223,8 @@ func (c *GobCorpus) Documents() chan Document {
 		if err != nil {
 			panic(err)
 		}
+		defer file.Close()
+
 		decoder := gob.NewDecoder(file)
 		var doc Document
 		for i := 0; i < c.NumDocs; i++ {

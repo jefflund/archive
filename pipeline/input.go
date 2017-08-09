@@ -22,6 +22,7 @@ func FileInputer(filenames ...string) Inputer {
 				if err != nil {
 					panic(err)
 				}
+				// No file.Close() as caller needs it open. GC will handle.
 				input <- file
 			}
 			close(input)
