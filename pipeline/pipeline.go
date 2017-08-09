@@ -1,7 +1,9 @@
 package pipeline
 
 import (
+	"encoding/gob"
 	"io"
+	"os"
 )
 
 // System independent min and max for int type.
@@ -108,12 +110,12 @@ type Document struct {
 
 // Corpus describes a collection of Document with an associated vocabulary.
 type Corpus interface {
-	Size() (M, V int)
+	Size() (D, V int)
 	Documents() chan Document
 	Vocabulary() []string
 }
 
-// Pipeline describes the process of constructing a new Corpus.
+// Pipeline describes the process of reading a Corpus.
 type Pipeline struct {
 	Inputer
 	Extractor
@@ -122,7 +124,7 @@ type Pipeline struct {
 	Filterer
 }
 
-// SliceCorpus is a collection a Corpus backed by a slice of Document.
+// SliceCorpus is a Corpus backed by a slice of Document.
 type SliceCorpus struct {
 	Docs  []Document
 	Vocab []string
@@ -147,24 +149,62 @@ func NewSliceCorpus(p Pipeline) Corpus {
 }
 
 // Size gets the number of documents and vocabulary size for the SliceCorpus.
-func (s *SliceCorpus) Size() (M, V int) {
-	return len(s.Docs), len(s.Vocab)
+func (c *SliceCorpus) Size() (D, V int) {
+	return len(c.Docs), len(c.Vocab)
 }
 
 // Documents creates a channel and sequentially sends the Document in the
 // backing slice to the channel.
-func (s *SliceCorpus) Documents() chan Document {
-	c := make(chan Document)
+func (c *SliceCorpus) Documents() chan Document {
+	docs := make(chan Document)
 	go func() {
-		for _, d := range s.Docs {
-			c <- d
+		for _, doc := range c.Docs {
+			docs <- doc
 		}
-		close(c)
+		close(docs)
 	}()
-	return c
+	return docs
 }
 
 // Vocabulary gets the vocabulary for the SliceCorpus.
-func (s *SliceCorpus) Vocabulary() []string {
-	return s.Vocab
+func (c *SliceCorpus) Vocabulary() []string {
+	return c.Vocab
+}
+
+// GobCorpus is a Corpus backed by a file containing gob encoded Document.
+type GobCorpus struct {
+	NumDocs     int
+	GobFilename string
+	Vocab       []string
+}
+
+// Size gets the number of documents and vocabulary size for the GobCorpus.
+func (c *GobCorpus) Size() (D, V int) {
+	return c.NumDocs, len(c.Vocab)
+}
+
+// Documents creates a channel and sequentially send the gob encoded Document
+// from the backing file.
+func (c *GobCorpus) Documents() chan Document {
+	docs := make(chan Document)
+	go func() {
+		file, err := os.Open(c.GobFilename)
+		if err != nil {
+			panic(err)
+		}
+		decoder := gob.NewDecoder(file)
+		var doc Document
+		for i := 0; i < c.NumDocs; i++ {
+			if err := decoder.Decode(&doc); err != nil {
+				panic(err)
+			}
+			docs <- doc
+		}
+	}()
+	return docs
+}
+
+// Vocabulary gets the vocabulary for the GobCorpus.
+func (c *GobCorpus) Vocabulary() []string {
+	return c.Vocab
 }
