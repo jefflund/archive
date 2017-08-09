@@ -10,7 +10,7 @@ import (
 // generate a cooccurrence matrix from Corpus data with the proper
 // expectations.
 func BuildCooccurrence(c *pipeline.Corpus) *mat.Dense {
-	D, V := len(c.Documents), len(c.Vocabulary)
+	D, V := len(c.Documents), len(c.Vocabulary) // Avoids bounds checks of Dense.Set
 	Qdata := make([]float64, V*V)
 
 	for _, doc := range c.Documents {

@@ -1,11 +1,45 @@
 package corpus
 
 import (
+	"encoding/gob"
+	"os"
+
 	"github.com/jefflund/modelt/pipeline"
 )
 
-// Bible gets a Corpus containing the King James version of the Bible.
-func Bible() *pipeline.Corpus {
+// getCorpus reads a gob encoded Corpus from disk, or constructs a new
+// SliceCorpus using the Pipeline and writes the gob encoded result to disk.
+func getCorpus(p pipeline.Pipeline, name string) pipeline.Corpus {
+	path := getPath(name)
+	c := new(pipeline.SliceCorpus)
+
+	file, err := os.Open(path)
+	if err == nil {
+		if err := gob.NewDecoder(file).Decode(c); err != nil {
+			panic(err)
+		}
+		return c
+	}
+
+	if !os.IsNotExist(err) {
+		panic(err)
+	}
+
+	c = p.RunSlice()
+	file, err = os.Create(path)
+	if err != nil {
+		panic(err)
+	}
+	if err := gob.NewEncoder(file).Encode(c); err != nil {
+		panic(err)
+	}
+
+	return c
+}
+
+// Bible gets a Corpus containing the King James version of the Bible. Each
+// Document is labeled with a verse and xrefs.
+func Bible() pipeline.Corpus {
 	p := pipeline.Pipeline{
 		DownloadInputer("bible/bible.txt"),
 		pipeline.LineExtractor(" "),
@@ -27,10 +61,13 @@ func Bible() *pipeline.Corpus {
 		pipeline.KeepFilterer(),
 	}
 	p.Tokenizer = pipeline.FrequencyTokenizer(p, 2, -1)
-	return p.RunGob(getPath("bible.gob"))
+	return getCorpus(p, "bible.gob")
 }
 
-func Newsgroups() *pipeline.Corpus {
+// Newsgroups gets a Corpus consisting of roughly 20,000 usenet postings from
+// 20 different newgroups in the early 1990s. Each Document is labeled with a
+// filename and newsgroup.
+func Newsgroups() pipeline.Corpus {
 	p := pipeline.Pipeline{
 		DownloadInputer("newsgroups/newsgroups.tar.gz"),
 		pipeline.TarGzipExtractor(pipeline.SkipExtractor("\n\n")),
@@ -48,12 +85,12 @@ func Newsgroups() *pipeline.Corpus {
 		pipeline.EmptyFilterer(),
 	}
 	p.Tokenizer = pipeline.FrequencyTokenizer(p, 50, 2000)
-	return p.RunGob(getPath("newsgroups.gob"))
+	return getCorpus(p, "newsgroups.gob")
 }
 
 // Amazon gets a Corpus consisting of roughly 40,000 Amazon product reviews
-// with associated star ratings.
-func Amazon() *pipeline.Corpus {
+// with associated star ratings. Each Document is labeled with an id and stars.
+func Amazon() pipeline.Corpus {
 	p := pipeline.Pipeline{
 		DownloadInputer("amazon/amazon.txt"),
 		pipeline.LineExtractor("\t"),
@@ -72,5 +109,5 @@ func Amazon() *pipeline.Corpus {
 		pipeline.EmptyFilterer(),
 	}
 	p.Tokenizer = pipeline.FrequencyTokenizer(p, 50, -1)
-	return p.RunGob(getPath("amazon.gob"))
+	return getCorpus(p, "amazon.gob")
 }

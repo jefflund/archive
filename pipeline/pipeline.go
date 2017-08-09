@@ -1,9 +1,9 @@
 package pipeline
 
 import (
+	"bytes"
 	"encoding/gob"
 	"io"
-	"os"
 )
 
 // System independent min and max for int type.
@@ -108,10 +108,64 @@ type Document struct {
 	Metadata map[string]interface{}
 }
 
-// Corpus is a collection of Document, with an associated vocabulary.
-type Corpus struct {
-	Documents  []Document
-	Vocabulary []string
+// Corpus describes a collection of Document with an associated vocabulary.
+type Corpus interface {
+	Size() (M, V int)
+	Documents() chan Document
+	Vocabulary() []string
+}
+
+// SliceCorpus is a collection a Corpus backed by a slice of Document.
+type SliceCorpus struct {
+	docs  []Document
+	vocab []string
+}
+
+// Size gets the number of documents and vocabulary size for the SliceCorpus.
+func (s *SliceCorpus) Size() (M, V int) {
+	return len(s.docs), len(s.vocab)
+}
+
+// Documents creates a channel and sequentially sends the Document in the
+// backing slice to the channel.
+func (s *SliceCorpus) Documents() chan Document {
+	c := make(chan Document)
+	go func() {
+		for _, d := range s.docs {
+			c <- d
+		}
+		close(c)
+	}()
+	return c
+}
+
+func (s *SliceCorpus) GobDecode(data []byte) error {
+	buf := bytes.NewBuffer(data)
+	decoder := gob.NewDecoder(buf)
+	if err := decoder.Decode(&s.docs); err != nil {
+		return err
+	}
+	if err := decoder.Decode(&s.vocab); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *SliceCorpus) GobEncode() ([]byte, error) {
+	var buf bytes.Buffer
+	encoder := gob.NewEncoder(&buf)
+	if err := encoder.Encode(s.docs); err != nil {
+		return nil, err
+	}
+	if err := encoder.Encode(s.vocab); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+// Vocabulary gets the vocabulary for the SliceCorpus.
+func (s *SliceCorpus) Vocabulary() []string {
+	return s.vocab
 }
 
 // Pipeline describes the process of constructing a new Corpus.
@@ -123,8 +177,8 @@ type Pipeline struct {
 	Filterer
 }
 
-// Run constructs a new Corpus using the Pipeline.
-func (p *Pipeline) Run() *Corpus {
+// RunSlice constructs a SliceCorpus backed by a slice of Document.
+func (p *Pipeline) RunSlice() *SliceCorpus {
 	var documents []Document
 	vocab := NewVocabBuilder()
 	for reader := range p.Input() {
@@ -138,33 +192,5 @@ func (p *Pipeline) Run() *Corpus {
 			}
 		}
 	}
-	return &Corpus{documents, vocab.tokens}
-}
-
-// RunGob reads a gob encoded Corpus from disk, or constructs a new Corpus
-// using the Pipeline and writes the gob encoded Corpus to disk.
-func (p *Pipeline) RunGob(filename string) *Corpus {
-	c := new(Corpus)
-
-	file, err := os.Open(filename)
-	if err == nil {
-		if err := gob.NewDecoder(file).Decode(c); err != nil {
-			panic(err)
-		}
-		return c
-	}
-
-	if !os.IsNotExist(err) {
-		panic(err)
-	}
-
-	c = p.Run()
-	file, err = os.Create(filename)
-	if err != nil {
-		panic(err)
-	}
-	if err := gob.NewEncoder(file).Encode(c); err != nil {
-		panic(err)
-	}
-	return c
+	return &SliceCorpus{documents, vocab.tokens}
 }
