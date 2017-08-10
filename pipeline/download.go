@@ -72,7 +72,7 @@ func ensureDownload(url, path string) {
 	}
 }
 
-// OpenDowload gets a NameReader for the given name, downloading the data from
+// OpenDownload gets a NameReader for the given name, downloading the data from
 // BaseURL to DataDir if needed.
 func OpenDownload(name string) NameReader {
 	url := getURL(name)

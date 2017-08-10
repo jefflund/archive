@@ -82,9 +82,9 @@ func (c *ChanLabeler) Label(n string) map[string]interface{} {
 	for l := range c.labels {
 		if l.Name == n {
 			return map[string]interface{}{c.attr: l.Value}
-		} else {
-			c.cache[l.Name] = l.Value
 		}
+
+		c.cache[l.Name] = l.Value
 	}
 
 	panic("ChanLabeler missing label")

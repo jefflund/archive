@@ -14,18 +14,18 @@ func BuildCooccurrence(c pipeline.Corpus) *mat.Dense {
 	Qdata := make([]float64, V*V) // Avoids bound checks of Dense.Set.
 
 	for doc := range c.Documents() {
-		n_d := len(doc.Tokens)
-		if n_d <= 1 {
+		nd := len(doc.Tokens)
+		if nd <= 1 {
 			continue
 		}
-		norm := 1 / float64(n_d*(n_d-1))
+		norm := 1 / float64(nd*(nd-1))
 
-		for i, t_i := range doc.Tokens {
-			for j, t_j := range doc.Tokens {
+		for i, ti := range doc.Tokens {
+			for j, tj := range doc.Tokens {
 				if i == j {
 					continue
 				}
-				Qdata[t_i.Type*V+t_j.Type] += norm // Write data in row-major order.
+				Qdata[ti.Type*V+tj.Type] += norm // Write data in row-major order.
 			}
 		}
 	}

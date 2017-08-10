@@ -150,7 +150,7 @@ type SliceCorpus struct {
 	Vocab []string
 }
 
-// RunSlice constructs a SliceCorpus backed by a slice of Document.
+// NewSliceCorpus constructs a SliceCorpus backed by a slice of Document.
 func NewSliceCorpus(p Pipeline) Corpus {
 	var documents []Document
 	vocab := p.Run(func(d Document) {
