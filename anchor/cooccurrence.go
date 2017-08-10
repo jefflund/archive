@@ -1,6 +1,9 @@
 package anchor
 
 import (
+	//"math"
+	//"math/rand"
+
 	"gonum.org/v1/gonum/mat"
 
 	"github.com/jefflund/modelt/pipeline"

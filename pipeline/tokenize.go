@@ -3,6 +3,7 @@ package pipeline
 import (
 	"bufio"
 	"io"
+	"math"
 	"regexp"
 	"strings"
 	"unicode"
@@ -208,9 +209,9 @@ func FrequencyTokenizer(p Pipeline, rare, common int) Tokenizer {
 		if rare < 0 && common < 0 {
 			return p.Tokenizer // No filtering done for this case.
 		} else if common < 0 {
-			common = MaxInt // No common filtering since no word is this common.
+			common = math.MaxInt64 // No common filtering since no word is this common.
 		} else if rare < 0 {
-			rare = MinInt // No rare word filtering since no word is this rare.
+			rare = math.MinInt64 // No rare word filtering since no word is this rare.
 		}
 
 		// Count per-document occurances of each token type.

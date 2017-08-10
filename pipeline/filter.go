@@ -1,5 +1,9 @@
 package pipeline
 
+import (
+	"math"
+)
+
 // FiltererFunc is an adaptor to allow a function with the appropriate
 // signature to serve as a Filterer.
 type FiltererFunc func(Document) bool
@@ -21,9 +25,9 @@ func LengthFilterer(min, max int) Filterer {
 	if min < 0 && max < 0 {
 		return KeepFilterer() // No filtering done for this case.
 	} else if max < 0 {
-		max = MaxInt // No max length since no Document is this long.
+		max = math.MaxInt64 // No max length since no Document is this long.
 	} else if min < 0 {
-		min = MinInt // No min length since no Document is this short.
+		min = math.MinInt64 // No min length since no Document is this short.
 	}
 	return FiltererFunc(func(d Document) bool {
 		return len(d.Tokens) >= min && len(d.Tokens) <= max
