@@ -52,6 +52,12 @@ func _RowNormalize(A *mat.Dense) {
 	}
 }
 
+// GramSchmidtAnchors uses stabilized Gram-Schmidt decomposition to find k
+// anchors. The original cooccurrence matrix Q will not be modified. If
+// projectDim is positive, then the coorrence matrix is randomly projected to
+// the given number of dimensions. If anchorThreshold is positive, then only
+// words which occur in a number of documents greater than the threshold will
+// be eligible as candidate anchor words.
 func GramSchmidtAnchors(c pipeline.Corpus, Q *mat.Dense, k, projectDim, anchorThreshold int) *mat.Dense {
 	// Using rare words leads to extremely eccentric anchors.
 	candidates := _FindCommonWords(c, anchorThreshold)

@@ -111,7 +111,7 @@ func RegexpReplaceTokenizer(base Tokenizer, pattern string, replace string) Toke
 // RegexpRemoveTokenizer is a Tokenzer which transforms the output of a base
 // Tokenizer by removing all tokens which match a regular expression. Note that
 // the entire token is replace if any part of it matches the regular expression
-// pattern, so it may be desireable to use ^ and $ anchors to match the entire
+// pattern, so it may be desirable to use ^ and $ anchors to match the entire
 // pattern.
 func RegexpRemoveTokenizer(base Tokenizer, pattern string) Tokenizer {
 	r := regexp.MustCompile(pattern)
@@ -214,7 +214,7 @@ func FrequencyTokenizer(p Pipeline, rare, common int) Tokenizer {
 			rare = math.MinInt64 // No rare word filtering since no word is this rare.
 		}
 
-		// Count per-document occurances of each token type.
+		// Count per-document occurrences of each token type.
 		counts := make(map[string]int)
 		for reader := range p.Input() {
 			for text := range p.Extract(reader) {
