@@ -30,3 +30,31 @@ func _RandomProjection(A *mat.Dense, k int) *mat.Dense {
 	proj.Mul(A, R)
 	return proj
 }
+
+// _RowNormalize scales each row of the given matrix so that it sums to 1. This
+// row normalization is done in place.
+func _RowNormalize(A *mat.Dense) {
+	r, c := A.Dims()
+	for i := 0; i < r; i++ {
+		row := A.RawRowView(i)
+		var sum float64
+		for j := 0; j < c; j++ {
+			sum += row[j]
+		}
+		for j := 0; j < c; j++ {
+			row[j] /= sum
+		}
+	}
+}
+
+func _RowSums(A *mat.Dense) []float64 {
+	r, c := A.Dims()
+	sums := make([]float64, r)
+	for i := 0; i < r; i++ {
+		row := A.RawRowView(i)
+		for j := 0; j < c; j++ {
+			sums[i] += row[j]
+		}
+	}
+	return sums
+}

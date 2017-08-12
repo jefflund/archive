@@ -38,26 +38,6 @@ func _FindCommonWords(c pipeline.Corpus, threshold int) []int {
 	return candidates
 }
 
-func _RowNormalize(A *mat.Dense) {
-	r, c := A.Dims()
-	for i := 0; i < r; i++ {
-		row := A.RawRowView(i)
-		var sum float64
-		for j := 0; j < c; j++ {
-			sum += row[j]
-		}
-		for j := 0; j < c; j++ {
-			row[j] /= sum
-		}
-	}
-}
-
-// GramSchmidtAnchors uses stabilized Gram-Schmidt decomposition to find k
-// anchors. The original cooccurrence matrix Q will not be modified. If
-// projectDim is positive, then the coorrence matrix is randomly projected to
-// the given number of dimensions. If anchorThreshold is positive, then only
-// words which occur in a number of documents greater than the threshold will
-// be eligible as candidate anchor words.
 func GramSchmidtAnchors(c pipeline.Corpus, Q *mat.Dense, k, projectDim, anchorThreshold int) *mat.Dense {
 	// Using rare words leads to extremely eccentric anchors.
 	candidates := _FindCommonWords(c, anchorThreshold)
