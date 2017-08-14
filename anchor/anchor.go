@@ -10,6 +10,8 @@ import (
 
 func _FindCommonWords(c pipeline.Corpus, threshold int) []int {
 	V := len(c.Vocabulary())
+
+	// If threshold negative, no filtering done, so return all words.
 	if threshold < 0 {
 		candidates := make([]int, V)
 		for v := 0; v < V; v++ {
@@ -18,6 +20,7 @@ func _FindCommonWords(c pipeline.Corpus, threshold int) []int {
 		return candidates
 	}
 
+	// Count how many times each word appears in a document.
 	counts := make(map[int]int)
 	for doc := range c.Documents() {
 		docwords := make(map[int]struct{})
@@ -29,6 +32,7 @@ func _FindCommonWords(c pipeline.Corpus, threshold int) []int {
 		}
 	}
 
+	// Find the words that appear in enough documents to be considered common.
 	candidates := make([]int, 0, V)
 	for i := 0; i < V; i++ {
 		if counts[i] > threshold {
@@ -38,21 +42,21 @@ func _FindCommonWords(c pipeline.Corpus, threshold int) []int {
 	return candidates
 }
 
-func GramSchmidtAnchors(c pipeline.Corpus, Q *mat.Dense, k, projectDim, anchorThreshold int) *mat.Dense {
+func GramSchmidtAnchors(c pipeline.Corpus, Q *mat.Dense, K, projectDim, anchorThreshold int) *mat.Dense {
 	// Using rare words leads to extremely eccentric anchors.
 	candidates := _FindCommonWords(c, anchorThreshold)
 
-	// Row normalize and project Q, but preserve original Q for anchors
+	// Row normalize and project Q, preserving original Q.
 	Qorig, Q := Q, mat.DenseCopyOf(Q)
-	_RowNormalize(Q)
+	_MatRowNormalize(Q)
 	if projectDim > 0 {
 		Q = _RandomProjection(Q, projectDim)
 	}
 
 	// Setup book keeping.
 	_, V := Q.Dims() // Use Q.Dims() not len(c.Vocabulary()) due to projection.
-	indices := make([]int, k)
-	basis := mat.NewDense(k-1, V, nil)
+	indices := make([]int, K)
+	basis := mat.NewDense(K-1, V, nil)
 
 	// Find farthest point from the origin.
 	var maxdist float64
@@ -66,7 +70,7 @@ func GramSchmidtAnchors(c pipeline.Corpus, Q *mat.Dense, k, projectDim, anchorTh
 
 	// Translate all points to our new coordinate system.
 	origin := mat.NewVecDense(V, nil)
-	origin.CopyVec(Q.RowView(indices[0]))
+	origin.CopyVec(Q.RowView(indices[0])) // Need copy for i > indices[0].
 	for _, i := range candidates {
 		row := Q.RowView(i)
 		row.SubVec(row, origin)
@@ -84,7 +88,7 @@ func GramSchmidtAnchors(c pipeline.Corpus, Q *mat.Dense, k, projectDim, anchorTh
 	basis.RowView(0).ScaleVec(1/math.Sqrt(maxdist), Q.RowView(indices[1]))
 
 	// Stabilized Gram-Schmidt to expand our subspace.
-	for j := 1; j < k-1; j++ {
+	for j := 1; j < K-1; j++ {
 		maxdist = 0
 		basisrow := basis.RowView(j - 1)
 		for _, i := range candidates {
@@ -102,8 +106,8 @@ func GramSchmidtAnchors(c pipeline.Corpus, Q *mat.Dense, k, projectDim, anchorTh
 
 	// Get anchors from original Q and anchor indices.
 	_, V = Q.Dims()
-	anchors := mat.NewDense(k, V, nil)
-	for i := 0; i < k; i++ {
+	anchors := mat.NewDense(K, V, nil)
+	for i := 0; i < K; i++ {
 		anchors.RowView(i).CopyVec(Qorig.RowView(indices[i]))
 	}
 	return anchors
