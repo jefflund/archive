@@ -1,4 +1,4 @@
-=Overivew of Information Retrieval=
+=Overview of Information Retrieval=
 * obtain info relevant to need
 ==Query Suggestion==
 suggest queries to users (query completion on google for ex)
@@ -30,3 +30,7 @@ Pushes info to user, rather than user pulling via query
 * Pseudo-relevance feedback
   * Suggest based on top clicks on base query
 * Query logs
+
+=Web Search=
+* Pick papers to present
+* Traditional IR = early IR systems pre-Google-esque web search
