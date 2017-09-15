@@ -34,3 +34,7 @@ Pushes info to user, rather than user pulling via query
 =Web Search=
 * Pick papers to present
 * Traditional IR = early IR systems pre-Google-esque web search
+
+=Question Answering=
+* Different from WS because we look for specific answers rather than documents
+* Leverage either document corpus, or community QA system

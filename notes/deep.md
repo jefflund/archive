@@ -28,6 +28,11 @@ review softmax - scores are unnormalized log probabilities
     * Varients: Leaky ReLU, ELU (exponential linear unit)
 * Activation functions are applied element-wise
 
+=Computation Graphs=
 * Computation Graphs - course analysis of computational dependencies
 * It is basically a parse tree for a complex mathematical expression
 * Tensorboard - part of Tensorflow to generate these graphs
+
+=Derivatives and Gradients=
+gradient is the vector of partial derivatives
+gradient gives us the direction of steepest ascent
