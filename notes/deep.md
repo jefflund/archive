@@ -34,5 +34,6 @@ review softmax - scores are unnormalized log probabilities
 * Tensorboard - part of Tensorflow to generate these graphs
 
 =Derivatives and Gradients=
-gradient is the vector of partial derivatives
-gradient gives us the direction of steepest ascent
+* gradient is the vector of partial derivatives
+* gradient gives us the direction of steepest ascent
+* chain rule of derivatives lets you break down complicated functions
