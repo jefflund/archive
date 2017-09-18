@@ -37,3 +37,13 @@ review softmax - scores are unnormalized log probabilities
 * gradient is the vector of partial derivatives
 * gradient gives us the direction of steepest ascent
 * chain rule of derivatives lets you break down complicated functions
+  * also lets you reuse work as you compute each element of gradient function
+
+dz/dx = dz/dy * dy/dx
+
+f(x, y, z) = (x + y) * z
+q = x + y
+f = q * z
+   *
+ +   z
+x y
