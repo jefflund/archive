@@ -1,0 +1,12 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+2. Why is the problem significant to solve in the first place?
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+5. Do you have any questions regarding the paper? If so, list them.

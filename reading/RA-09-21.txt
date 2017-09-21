@@ -1,0 +1,42 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+The authors want to accomplish query suggestion without the use of large query
+logs by instead leverging the document data.
+
+2. Why is the problem significant to solve in the first place?
+
+This problem is significant in domains where extensive query logs are absent,
+such as custom search engines for enterprise data.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+They first extract phrases from the data with a skip-gram idea (its basically
+just n-grams that don't count stopwords are part of the n). They then propose a
+probabalistic model which computes the probability of a phrase given the last
+word type multiplied by the probability of the completed part of the query
+given the phrase. They can then create a ranked list of phrase suggestions
+based on these probabilties.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+They measure the success rate of their system versus SimSearch and CompSearch
+(both discussed in related work) at completing a small number of queries on two
+different datasets. I was surprised that a) the number of queries was so small
+(only 20) and that b) the queries where not from real use cases, so I am
+somehwat suspicious about the validity of these results.
+
+The authors also conducted a user study in which users rated the quality of
+the query suggestions. However, since these users weren't actually performing a
+search task, I am suspicious that they are measuring something other than the
+task they claim to accomplish.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+* Why is the query size so tiny? Perhaps they could have leveraged a query-log
+  based dataset, and hid the logs from their system to have a more meaningful
+  (as in a larger) sample size.
+* How would this approach compare to query log based systems (assuming the logs
+  are avaiable)? What about a hybrid approach?
