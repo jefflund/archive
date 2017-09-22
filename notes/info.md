@@ -38,3 +38,8 @@ Pushes info to user, rather than user pulling via query
 =Question Answering=
 * Different from WS because we look for specific answers rather than documents
 * Leverage either document corpus, or community QA system
+
+=Recommender Systems=
+* Push rather than pull compared to web search
+* Content-based helps deal with cold-start issue of collaborative filtering
+* So far this class feels like it should be a 300-400 level class, not 600

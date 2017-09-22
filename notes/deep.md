@@ -47,3 +47,14 @@ f = q * z
    *
  +   z
 x y
+
+=Tensorflow=
+* placeholder - input to a computation graph
+  * Example: x = tf.placeholder(tf.float32, shape=[None, D])
+  * None in shape means variable size
+* variable - the parameters we want to learn
+  * Example: w1 = tf.Variable(1e-3 * np.random.randn(D, H).astype(np.float32))
+* we don't actually calculate - we declare steps in a computation graph
+  * Example: a = tf.matmul(x, w1)
+* optimizers are just part of the computation graph
+  * Example: train_step = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
