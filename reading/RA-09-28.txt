@@ -1,0 +1,36 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+Ranking answers from a query submitted to a community QA system like Yahoo
+Answers for both relevance and answer quality.
+
+2. Why is the problem significant to solve in the first place?
+
+Community QA systems like Yahoo Answers have a huge amount of content. Without
+good search mechanisms, effort will be duplicated as redundant questions are
+reanswered.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+The authors combine a bunch of hand-designed features from the query, question
+and answer, such as query length, number of overlapping terms, number stars
+recieved, etc, with a partial ordering produced by assuming a binomial
+distribution over votes with likelihood ratio tests. They then train a
+ranking function with hinge loss on all these features and use the resulting
+model to order the query/question.answer tuples.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+The authors used a TREC QA dataset with various evaluation metrics including
+MRR, Precision@K, and mean average precision. I liked that they measure various
+metrics to give us a better idea of the overall trends.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+Not a question but a comment: the paper states that web search cannot do QA,
+but the example query they gave about hurricane season works with Google. What
+Google apparently does is traditional websearch, and if possible, answers the
+question with an excerpt from a top result. This is important to the paper, I
+just thought it was funny that Google web search does in fact do QA.

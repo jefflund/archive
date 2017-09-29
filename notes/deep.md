@@ -58,3 +58,6 @@ x y
   * Example: a = tf.matmul(x, w1)
 * optimizers are just part of the computation graph
   * Example: train_step = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
+
+=Tensorboard=
+* summaries, written to file, can be opened by tensorboard
