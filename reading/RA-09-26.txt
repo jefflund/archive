@@ -1,0 +1,38 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+The authors are trying to resolve the differences between specific user tags
+(personomies) and the collective tags of an entire community (folksonomies).
+
+2. Why is the problem significant to solve in the first place?
+
+This work is helpful for sites which produces broad folksonomies such as
+Delicious.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+The authors start with a tensor encoding items, users and tags to represent a
+folksonomy. They also compute a cooccurence matrix between items and tags, and
+use the two to compute a translation matrix on a per user basis. Multiplying
+the cooccurrence matrix with the translation matrix and normalizing gives
+recomendation scores to the user from the folksomony.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+They evaluate by taking two tagged datasets, witholding 10% of the tags for
+testing, and measuring precision and recall predicting the missing test tags.
+I think this is technically sound, although I would be wary of equating the
+precision numbers on this test set with values in the real world. I feel this
+way since the goal is to predict tags the user missed, and even if you include
+the missing 10% I would expect there to be additional relevant tags.
+Nevertheless, since we know the 10% are valid, predicting those tags is good,
+so higher precision numbers are better here, even if they aren't comparable
+with real world application.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+How much data do you need from a user personomy for this method to be
+effective? It seems to me that most users will have very few tags, so I wonder
+how well this will work for those users.

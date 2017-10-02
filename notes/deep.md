@@ -72,3 +72,5 @@ x y
 * Try tanh, but don't expect anything
 * Screw sigmoid
 
+=Tensorboard=
+* summaries, written to file, can be opened by tensorboard
