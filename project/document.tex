@@ -1,0 +1,50 @@
+\documentclass[12pt]{article}
+\usepackage{url}
+
+\title{Reranking CQA Query Results with Deep Learning}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Abstract}
+
+This is an abstract. It summarizes the stuff I say below.
+
+\section{Introduction}
+
+In contrast to web search, which aims to retrieve relevant documents in
+response to a query, community question answering (hereafter CQA) systems such
+as Yahoo! Answers\footnote{\url{http://answers.yahoo.com}} or
+Naver\footnote{\url{http://www.naver.com}} seek to give users direct answers
+to questions written with natural language.
+However, as these systems acquire more and more answers, the ability to match
+new questions to previous question and answer pairs becomes increasingly
+important in order to avoid duplication of work.
+
+One approach is the one we covered in class~\cite{rightfact}.
+For factoid type queries, we can just do a simple machine learning thing.
+They use features and stuff.
+
+\section{Method}
+
+With respect to my chosen problem,
+I'm gonna use a Siamese style network~\cite{siamese} trained with contrastive
+loss.
+Except I'm gonna take an approach similar to skip-gram where I try and get
+close things to be close and far things to far.
+
+\section{Conclusions}
+
+Remark on uniqueness and merit of solution.
+Deep learning is revolutionary in NLP.
+Not much has been done in IR, but perhaps it is useful.
+If this works out, it might be evidence that perhaps deep learning has been
+overlooked in IR.
+
+
+\bibliographystyle{annotate}
+\bibliography{infobib}
+
+\end{document}
