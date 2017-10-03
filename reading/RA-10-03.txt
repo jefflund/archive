@@ -1,0 +1,45 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+The authors are trying to develop a book recommendation system tailored to suit
+the needs of K-12 readers.
+
+2. Why is the problem significant to solve in the first place?
+
+In contrast to traditional recommendation systems which account for user
+preference, this system takes into account reading abilities. Critically, it
+does so without serious privacy issues when dealing with K-12 children.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+The first component described is ABET (appeal based extraction tool) is a rule
+based system to categorize books by various facets such as tone, pacing and
+topic. Rabbit then generates recommendations based on a specific reader profile
+and ABET features. The reading difficulty is then assessed using TRoLL (tool
+for regression analysis of literacy levels). Finally, the recommendations are
+ranked using multivariate linear regression with all of the above features.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+ABET is evaluated in two ways: first, the authors manually annotated a small
+set of books and compared with ABET results; second, the authors utilized
+Amazon Mechanical Turk to perform a similar analysis with more books.
+I'm suspicious of the first analysis because it is on such a small set, and was
+manually done by the authors, who likely had some unconscious bias which could
+lead them to label in a similar manner as ABET. The Mechanical Turk analysis
+seems sound, albeit more expensive.
+
+Rabbit evaluation used normalized discounted cumulative gain with respect to
+different rankings on a dataset from BiblioNasium. Rabbit outperformed rankings
+using just appeal-based features, and linear combinations of the features.
+Rabbit also outperformed BReK12. I see no problems with the statistical
+analysis.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+* The improvements from Rabbit are statistically significant, but are they
+  practically significant?
+* For the Rabbit evaluation, why was only 10% of the data (~550 profiles) use
+  to train? That is a really small amount!
