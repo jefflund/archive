@@ -59,5 +59,18 @@ x y
 * optimizers are just part of the computation graph
   * Example: train_step = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)
 
+* summary writer saves things like computation graphs for Tensorboard
+  * Example: w = tf.summary.FileWriter('./tf_logs', sess.graph)
+  * Group parts of graph with name scopes and names:
+    * with tf.namescope('layer'):
+          w = tf.Variable(..., name='W')
+
+=Activation=
+* Use ReLU
+* Try Leaky ReLU / Maxout / ELU
+  * In theory, Leaky ReLU should work better; in practice, about the same
+* Try tanh, but don't expect anything
+* Screw sigmoid
+
 =Tensorboard=
 * summaries, written to file, can be opened by tensorboard
