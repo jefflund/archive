@@ -1,48 +1,46 @@
 \documentclass[12pt]{article}
 \usepackage{url}
 
-\title{Reranking CQA Query Results with Deep Learning}
+\title{}
 \date{}
 
 \begin{document}
 
 \maketitle
 
-\section*{Abstract}
-
-This is an abstract. It summarizes the stuff I say below.
+%\section*{Abstract}
 
 \section{Introduction}
 
-In contrast to web search, which aims to retrieve relevant documents in
-response to a query, community question answering (hereafter CQA) systems such
-as Yahoo! Answers\footnote{\url{http://answers.yahoo.com}} or
-Naver\footnote{\url{http://www.naver.com}} seek to give users direct answers
-to questions written with natural language.
-However, as these systems acquire more and more answers, the ability to match
-new questions to previous question and answer pairs becomes increasingly
-important in order to avoid duplication of work.
+For streaming movie services like Netflix, recommendation systems are hugely
+important for helping users to discover new content to enjoy.
+In fact, roughly 80\% of hours streamed at Netflix were influenced by their
+proprietary movie recommendation system~\cite{netflix}.
+With this in mind, the problem I propose to work on is movie recommendations
+through collaborative filtering.
 
-One approach is the one we covered in class~\cite{rightfact}.
-For factoid type queries, we can just do a simple machine learning thing.
-They use features and stuff.
+Collaborative filtering is an approach which recommendation systems which
+relies on the ratings and tags for particular user as well as the ratings and
+tags of similar users.
+As opposed to content-based systems, collaborative filtering accounts for
+users with diverse taste, so long as there are other users with similar
+preferences.
+There are many ways to perform collaborative filtering such as utilizing
+k-nearest neighbor clustering with user profiles~\cite{user-user}, or
+item-item systems which compute similarity between items with the idea that
+users who like a particular item will like similar items~\cite{item-item}.
+
+For my project, I propose working on a collaborative filtering problem for
+movie recommendations.
+I will work with the latest MovieLens dataset~\cite{movielens},
+which contains 26,000,000 ratings and 750,000 tags applied to 45,000 movies by
+270,000 users.
+Using the ratings and tags provided by users, I will try to predict user
+ratings of movies in order to produce novel movie recommendations.
 
 \section{Method}
 
-With respect to my chosen problem,
-I'm gonna use a Siamese style network~\cite{siamese} trained with contrastive
-loss.
-Except I'm gonna take an approach similar to skip-gram where I try and get
-close things to be close and far things to far.
-
 \section{Conclusions}
-
-Remark on uniqueness and merit of solution.
-Deep learning is revolutionary in NLP.
-Not much has been done in IR, but perhaps it is useful.
-If this works out, it might be evidence that perhaps deep learning has been
-overlooked in IR.
-
 
 \bibliographystyle{annotate}
 \bibliography{infobib}
