@@ -1,0 +1,38 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+The authors are trying to determine the best way of compiling reading lists for
+familiarizing oneself with a new research area.
+
+2. Why is the problem significant to solve in the first place?
+
+Figuring out the best set of papers to read when approaching a new field is
+daunting. For example, as an outsider, I have no idea what papers in
+information retrieval would be most important to read (outside class readings
+of course).
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+The authors tried a variety of algorithms, including page-rank, HITS (which I
+was unfamiliar with), SALSA (also unknown to me), collaborative filtering, and
+content-based filtering. They also tried hybridization of the above techniques.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+The first evaluation is a hold-out test where given a partial list of
+citations, the system must find the held-out citations. This evaluation seems
+fine to me, although it does presuppose that the new research already has a
+reading list, which doesn't really get at the problem stated in the
+introduction.
+
+I liked the second survey-based evaluation much better, in which they asked
+grad students to rate the recomended papers.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+Does this work really matter? When a new researcher comes into my lab, we
+already have the set of seminal papers we want them to read. They don't need a
+tool like this when I just forward the email of recomended papers to the new
+researcher.
