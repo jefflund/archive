@@ -74,3 +74,20 @@ x y
 
 =Tensorboard=
 * summaries, written to file, can be opened by tensorboard
+
+=Debugging=
+* overfit
+  * start out with small subset of data, should be able to quickly overfit
+  * turn off regularization and make sure loss is reasonable
+* learning rate
+  * very high learning rate -> nan, or increasing loss
+  * high learning rate -> flattens early, but too high
+  * low learning rate -> never flattens
+* initialization
+  * bad initialization -> sigmoidal loss
+  * diminishing/exploding gradient -> small/big weight initialization
+    * use xavier initialization (divide by 2 for relu)
+  * whiten data by subtracting mean and dividing by mean (makes data gaussian)
+* gaps between train and test accuracy
+  * overfitting -> big gap (increase regularization)
+  * low model capacity -> no gap
