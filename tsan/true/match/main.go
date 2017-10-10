@@ -32,7 +32,6 @@ func main() {
 	match := make(chan string)
 
 	for name := range people {
-		name := name // Shadows the variable to avoid race condition
 		go func() {
 			select {
 			case peer := <-match:
