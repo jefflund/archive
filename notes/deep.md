@@ -91,3 +91,19 @@ x y
 * gaps between train and test accuracy
   * overfitting -> big gap (increase regularization)
   * low model capacity -> no gap
+
+=Regularization=
+* L2, L1, Elastic Net (L2+L1) are old school
+==DNN Regularization: Dropout==
+* Randomly set some neurons to zero in the forward pass
+* Various interpretations of what this is doing:
+  * Hinton: for overfit, neurons must conspire - dropout prevents conspiracy
+  * Alternatively: dropout is training large ensemble of models
+* Can use a mask which is passed in via feed_dict
+* How to test?
+  * Integrate out noise with Monte Carlo approximation
+  * Leave all neurons on, but re-weighted so expected sum is same as training
+    * Approximately equivalent to using all models in the ensemble
+
+* DropConnect solves structured problems of multiplying rank 1 matrix multiply
+  * Makes sure the neurons dropped don't have structure between layers

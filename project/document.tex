@@ -1,0 +1,93 @@
+\documentclass[12pt]{article}
+\usepackage{url}
+\usepackage{fullpage}
+\usepackage{titlesec}
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+\title{Deep Learning to Predict Movie Ratings}
+\author{Jeffrey Lund}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Abstract}
+
+For services like Netflix, recommendation systems are essential for helping
+users find new movies to enjoy.
+Using the MovieLens dataset, I propose using deep learning to predict users'
+ratings on new movies.
+This approach also allows us to multiply the amount of training data by
+withholding each individual rating one at a time.
+Using these predicted ratings, I can recommend new movies to users.
+
+\clearpage
+
+\section{Introduction}
+
+For streaming movie services like Netflix, recommendation systems are
+important for helping users to discover new content to enjoy.
+In fact, roughly 80\% of hours streamed at Netflix were influenced by their
+proprietary recommendation system~\cite{netflix}.
+With this in mind, the problem I propose to work on is movie recommendations
+through collaborative filtering.
+
+Collaborative filtering is an approach which recommendation systems which
+relies on the ratings for particular user as well as the ratings
+of similar users.
+As opposed to content-based systems, collaborative filtering accounts for
+users with diverse taste, so long as there are other users with similar
+preferences.
+There are many ways to perform collaborative filtering such as utilizing
+k-nearest neighbor clustering with user profiles~\cite{user-user}, or
+item-item systems which compute similarity between items with the idea that
+users who like a particular item will like similar items~\cite{item-item}.
+
+For my project, I propose working on a collaborative filtering problem for
+movie recommendations.
+I will work with the latest MovieLens dataset~\cite{movielens},
+which contains 26,000,000 ratings applied to 45,000 movies by
+270,000 users.
+My goal will be to use this large movie rating database to produce novel movie
+recommendations.
+
+\section{Method}
+
+Rather than computing similarity scores between users or items to find the
+nearest neighbors, I will employ deep learning to predict user ratings on new
+movies.
+By predicting the user rating of new movies, I can show users previously
+unseen movies that they are likely to enjoy.
+While the exact structure of the deep neural network I will use is subject to
+change, I plan to use a vector-space representation of a user profile as input
+along with a one-hot encoding of the movie I wish to rate.
+
+One advantage of this approach is that I can drastically multiply the amount
+of training data I have by simply withhold a single rating from a particular
+user profile.
+In other words, if a user has rated $n$ different movies, I can produce $n$
+different training examples by withholding one of the $n$ ratings and training
+the network to predict the missing rating.
+
+Once I have trained the network to predict movie ratings given a user profile,
+producing recommendations is easy: simply select the movies with have the
+highest predicted ratings. I can then evaluate the overall system using
+standard metrics for recommendation systems such as prediction accuracy or
+rank accuracy.
+
+\section{Conclusions}
+
+Deep learning has revolutionized many fields of computer science, including
+natural language processing~\cite{deep-survey}.
+It appears that deep learning is starting to take hold in information
+retrieval as well, including recommendation systems~\cite{deep-cf}.
+However, to my knowledge it seems like deep learning is still relatively new
+in this field, so the best approaches may not have been discovered yet.
+This proposal suggest one possible way of employing deep learning to solve an
+important problem in information retrieval.
+
+\bibliographystyle{annotate}
+\bibliography{infobib}
+
+\end{document}
