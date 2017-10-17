@@ -1,0 +1,38 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+The authors are attempting to prove that domain bias (the tendency of users to
+click on results from reputable domains even when more relevant results may be
+available).
+
+2. Why is the problem significant to solve in the first place?
+
+Since click logs are used as a substitute for human judgements of relevancy,
+understanding the bias in those logs is essential for correctly assertaining
+the relevancy of retrieved items.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+The experiments seemed to mostly be variants of what they called "Pepsi/Coke
+taste tests." Essentially what they did was switch results with domains to see
+if users would maintain the same preferences. For example, if they prefer one
+result when domains are visible, and another when domains are hidden or
+switched, this is evidence that users are exhibting domain bias.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+I was convinced by the methodology. The statistical analysis also seemed sound.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+Is this an earthshattering result? There are two reasons it might not be:
+* Before seeing the results I would have already guess that there is domain
+  bias as I myself consciously use this bias when selecting results. For
+  example, I'll usually prefer Wikipedia over some random article, or a Stack
+  Overflow link over some random blog post.
+* Should you even correct for this? If what the users want really is reputable
+  sources to answer their informational needs, isn't the reputable sources more
+  relevant? In other words, do we need to do anything to click logs based on
+  these results? Don't we want to learn the user preferences?
