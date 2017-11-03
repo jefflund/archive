@@ -1,0 +1,28 @@
+BasicRNNCell just use LSTM cell from tensorflow
+MultiRNNCell is stacked LSTM cells (also imported from tensorflow)
+initial state is the thing fed into the RNN before we see our first character
+output is state_dim (128), pass that into fc layer to get logits over chars
+final state (same shape as initial state) as list of outputs
+
+lstm = BasicRNNCell(state_dim, ...)
+lstm = MultiRNNCell([lstm] * num_layers, ...)
+initial_state = lstm.zero_state(batch_size, tf.float32)
+
+outputs, final_state = tf.nn.seq2seq.rnn_decorder(inputs, initial_state, lstm)
+
+feed outputs through fc layer, and send those logits to loss function
+label is just input shifted by 1
+taken care of in the test loader
+
+logits = [out * W + b for out in outs]
+
+loss = tf.contrib.seq2seq.sequence_loss(...)
+train = tf.train.Adam().min(loss)
+
+sampler function is given
+
+state = sess.run(initial_state)
+^^ used in feed dict later
+
+need to look under legacy seq2seq to match this code
+tf.split syntax changed too
