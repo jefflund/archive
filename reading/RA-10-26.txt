@@ -1,0 +1,35 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+The authors are trying to solve the problem of query recomendation when the
+user issues a vague or poorly formated query.
+
+2. Why is the problem significant to solve in the first place?
+
+As stated in the paper, users looking for information on things they are not
+familiar with may issue poorly formatted queries due to lack of familiarity
+with the correct keywords.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+The authors use two metrics, namely query term overlap and query result overlap
+to find queries which have some overlap in results, but little overlap in
+queries. The idea is that they'll find queries which are "orthogonal" to the
+orignal query.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+After extensive experimentation with a large query log to determine the best
+cache policy, the authors rely on a user study to conclude that several known
+approaches, especially on queries in the long tail.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+Figure 1 perplexes me. It seems like if they just did a better job of standard
+query recommendation, they might have better precision and recall since the
+orthogal query is such a thin slice of the relevant results and contains so
+many irrelevant results. Apparently this works well for tail queries, but maybe
+some hybrid approach using this for tail, and standard for the more common
+queries would do better still?

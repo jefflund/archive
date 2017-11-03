@@ -1,0 +1,48 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+The authors are trying to solve the problem of automatically labeling mature
+content in app stores.
+
+2. Why is the problem significant to solve in the first place?
+
+The problem is significant because self-reported labels (such as the Google
+Play store) can be misleading, and manually assigned labels (such as the Apple
+Store) can be time consuming and costly. With automatic labels, parents can
+more easily ensure that children are not exposed to mature content without
+parental guidance or approval.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+The authors first employ word2vec in order to find highly sensitive words. For
+example, if a word has high cosine similarity with "sex", it is likely a word
+indicative of sexual content. The then use these extracted feature with a
+linear SVM to perform multi-label classification.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+The authors evaluate their approach against some other approaches designed
+specifically for app maturity rating (e.g., ALM, MCC). They measure statistics
+like precision and recall. I think the evaluation is sound, although I am
+curious whether or not their 85% precision is enough to make this a reliable
+system for parents to use in real life.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+Minor nit pick - in the intro they say that "teenagers who are exposed to
+content that glamorizes drug use, sex, or violence tend to engage in those
+activities themselves." They cite three articles, but they only deal with
+sexual behavior, not violence or drug use, making this claim in this paper
+misleading since they have no source to back up 2 of the 3 parts of this claim.
+I'd be curious to see if exposure to violence or drug use in media really does
+lead to increased violence or drug use. I wouldn't be surprised if there is a
+correlation, but I wouldn't be surprised if there wasn't a correlation as
+well.
+
+I'm also suspicious of their choice for SVM for classification on short text.
+Their citation justifying the choice of SVM is quite old (2008), so it can't
+possibly take advantage of recent advances in deep learning, despite the fact
+that the authors are clearly aware of deep learning literature since they use
+word2vec for feature extraction.
