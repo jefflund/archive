@@ -26,3 +26,15 @@ state = sess.run(initial_state)
 
 need to look under legacy seq2seq to match this code
 tf.split syntax changed too
+
+
+MyGRU - roll your own cell
+state_dim is num_units
+class MyGRU(RNNCell)
+    @prop state_size - return num_units
+    def __call__(in, state, scope):
+        input is one-hot encoded char
+        state is previous state
+        compute next state using GRU logic from wikipedia
+
+drop MyGRU in place of BasicLSTMCell
