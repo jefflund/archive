@@ -1,0 +1,170 @@
+\documentclass[12pt]{article}
+\usepackage{url}
+\usepackage{fullpage}
+\usepackage{titlesec}
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+\title{Movie Recommendations with Deep Learning}
+\author{Jeffrey Lund}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Abstract}
+
+For streaming movie services like Netflix, recommendation systems are
+essential for helping users find new movies to enjoy. Using the MovieLens
+dataset, I propose to explore the use of deep learning to predict users'
+ratings on new movies, thereby enabling movie recommendations. I will compare
+this approach to standard collaborative techniques such as k-nearest-neighbor
+and matrix-factorization.
+
+\section{Introduction}
+
+For streaming movie services like Netflix, recommendation systems are
+important for helping users to discover new content to enjoy.
+In fact, roughly 80\% of hours streamed at Netflix were influenced by their
+proprietary recommendation system~\cite{netflix}.
+Considering that Netflix is on track to exceed \$11 billion in revenue this
+year, the importance of movie recommendation systems cannot be understated---
+they are an integral part of how we consume video content today.
+With this in mind, the problem I propose to work on is movie recommendations
+through collaborative filtering.
+
+Collaborative filtering is an approach for recommendation systems which
+relies on the ratings for particular user as well as the ratings
+of similar users.
+As opposed to content-based systems, collaborative filtering accounts for
+users with diverse taste, so long as there are other users with similar
+preferences.
+By finding similar users, new items can be recommended based on the assumption
+that items which are liked by similar users will be liked by the user in
+question.
+
+There are many ways to perform collaborative filtering such as utilizing
+k-nearest neighbor clustering with user profiles~\cite{user-user}.
+Various approaches for measuring similarity have been proposed, but a simple
+approach is to represent a user profile as a vector, and then use some measure
+of similarity between those vectors (e.g., cosine similarity).
+An alternative k-nearest-neighbor approach instead computes similarity between
+pairs of items with the idea that users who like a particular item will like
+similar items~\cite{item-item}.
+
+Another common method for performing collaborative filtering is with matrix
+factorization~\cite{matrix-factorization}.
+With this technique a user-item matrix is factorized into two matrices with the
+inner dimension representing some latent factors.
+The resulting factorization represents both users and items in terms of the
+latent factors in such a way that new items can be recommended to users based
+on the latent factors.
+
+With movie recommendation in mind, for my project, I will explore deep learning
+as alternative to nearest-neighbor or matrix factorization for collaborative
+filtering.
+I will work with the latest version of the MovieLens dataset~\cite{movielens}, 
+which is is the version recommended for education and development.
+This dataset contains 26,000,000 ratings applied to 45,000 movies by 270,000
+users.
+My goal will to use the large movie ratings database to produce a deep neural
+network which can accurately predict user ratings on new movies.
+I will compare this approach to existing nearest neighbor and matrix
+factorization techniques.
+
+\section{Method}
+
+Deep learning has revolutionized many fields of computer science, including
+natural language processing~\cite{deep-survey}.
+Deep learning, which is essentially just deep artificial neural networks, is
+able to learn complex decision boundaries for classification, or complex
+non-linear regressions.
+By stacking large numbers of hidden layers in these networks, deep neural
+networks are able to learn complex functions by learning to extract many low
+level features from the data and composing them in useful non-linear
+combinations.
+
+\subsection{Network Architecture}
+
+While neural networks are theoretically able to approximate any computable
+function, including the mapping from user profiles to movie ratings, in
+practice great care must be taken when selecting the architecture of the
+neural network. While the extract structure of my network is subject to change,
+there are some reasonable starting places.
+
+\textbf{Inputs} The input to my network architecture will be two
+$n$-dimensional vectors, where $n$ is the number of movies in the MovieLens
+database.
+One vector will encode a particular user profile, with each dimension
+indicating the rating the user gave for a particular film (or a zero to
+indicate that no rating has been given).
+The other vector will be a one-hot encoding (i.e., a vector with a single
+``hot'' dimension set to 1, with all other values set to zero) of particular
+item.
+These two vectors will request that the network predict a rating for a
+particular user for a particular movie.
+
+One advantage of this input format is that I can without a single rating from
+a known user profile, and use the known rating for withheld item as a labeled
+examples. Consequently, even though I only have 270,000 user profiles, each
+one of the 26,000,000 individual ratings constitutes a train example.
+
+\textbf{Hidden Layers} There are a variety of ways to structure a simple
+feed-forward neural network.  I will start with a number of the standard
+fully-connected layers.  However, I will also experiment with alternative
+structures, such as ResNets~\cite{resnets}, which currently obtain
+state-of-the-art results in other fields such as image recognition.
+
+\textbf{Output} For this project, there are two main possibilities for the
+output of my network.
+The first is to treat this problem as a classification problem, with five
+different class representing the five start ratings that are present in the
+data.
+Under this architecture, I would likely treat the five outputs of my network
+as unnormalized log probabilities, and use cross entropy as my loss function.
+
+Alternatively, I may treat this problem as a regression problem, and have my
+network learn a non-linear regression between user profiles and predicted
+rating.
+In this case, I would likely use root mean square error as my loss function.
+
+It is unclear which approach will yield the best results, so I will try both
+classification and regression with various network architectures.
+However, once I have predict ratings, making movie recommendations is simple:
+simply recommend the movies with the highest predicted ratings.
+Assuming I am better able to predict user ratings on new movies, I should be
+able to improve the movie recommendations.
+
+\subsection{Evaluation}
+
+In order to evaluate the performance of my system, I will withhold a test set
+of ratings from the training data.
+Each rating is accompanied by a timestamp, so I will be able to split the data
+based on when ratings were made such that older ratings are used as training
+data, and newer ratings are used as test.
+In this way, I'll be simulating what a streaming movie service like Netflix
+might actually observe.
+
+I will evaluate the prediction performance using several metrics including
+accuracy, root mean squared error, and mean absolute error.
+Additionally, I can measure precision-at-K to see if the movies users actually
+watched are recommended by my system.
+For baselines, I will use both k-nearest-neighbor and matrix-factorization
+approaches for collaborative filtering.
+
+\section{Conclusions}
+
+Despite the successes of deep learning in other fields~\cite{deep-survey},
+it appears that deep learning is starting to take hold in information
+retrieval as well, including recommendation systems~\cite{deep-cf}.
+However, to my knowledge it seems like deep learning is still relatively new
+in this field, so the best approaches may not have been discovered yet.
+This proposal suggest one possible way of employing deep learning to solve the
+problem of collaborative filtering.
+If successful, I will have demonstrated that deep learning can outperform the
+most common approaches for solving this problem.
+
+\bibliographystyle{annotate}
+\bibliography{infobib}
+
+\end{document}
