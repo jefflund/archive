@@ -1,0 +1,31 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+The authors are trying to characterize web content both by reading level and by
+topic.
+
+2. Why is the problem significant to solve in the first place?
+
+This is useful for helping to understand how users at different reading levels
+use search. Potentially, this information could be used to customize search
+engines based on reading level of the user.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+As far as how they predict reading level, they say surprisingly little: just
+that it was a language model approach and almost nothing else. For topic
+prediction, they use logistic regression classifier with L2 regularization
+trained on Open Directory Project. They then use these results to build what
+they call profiles based on entities (which can be urls, users, or queries).
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+Overall, I thought the correlations they discovered were interesting, though
+the comparisons weren't terribly meaningful.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+How do the authors intend to actually use the information they uncovered with
+this analysis?
