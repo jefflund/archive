@@ -1,0 +1,83 @@
+\documentclass{sig-alternate-05-2015}
+
+\begin{document}
+
+\title{Deep Learning Movie Recommendations}
+\author{Jeffrey Lund}
+\date{}
+\maketitle
+
+\begin{abstract}
+This is an abstract.
+\end{abstract}
+
+\section{Introduction}
+
+Increasingly streaming movie services like Netflix, Hulu, Amazon Prime, and
+others are how consumers enjoy video content.
+For example, in 2017 Netflix subscribers collectively watch more than 140
+million hours per day.
+For streaming movie services like Netflix, recommendation systems are
+important for helping users to discover new content to enjoy.
+In fact, roughly 80\% of hours streamed at Netflix were influenced by their
+proprietary recommendation system~\cite{netflix}.
+Considering that Netflix is on track to exceed \$11 billion in revenue this
+year, the importance of movie recommendation systems cannot be understated---
+they are an integral part of how we consume video content today.
+With this in mind, the problem I will examine is movie recommendations through
+collaborative filtering.
+
+In the context of movie recommendation, collaborative filtering aims to predict
+unknown movie ratings for a particular user based on that user's known ratings
+as well as the movie ratings by other users in the system.
+The underlying assumption is that if we can accurately predict movie ratings,
+then we can recommend new movies to users by recommending movies they are
+likely to highly rate, including films the user may not have considered before.
+
+The most common method of performing collaborative filtering is to utilize a
+k-nearest-neighbor approach with correlation similarity measure to users which
+are similar to one another~\cite{user-user}.
+This relies on the assumption that two users rated the same item similarly,
+they are likely to rate other items similarly as well.
+At scale, data structures such as ball trees~\cite{ball-tree} and k-d trees (a
+binary space partition tree in k-dimensions) have been utilized to more
+efficiently compute local neighbors between user profiles.
+
+An alternative k-nearest-neighbor approach instead computes similarity between
+pairs of items (as opposed to users) with the idea that users who like a
+particular item will like similar items~\cite{item-item}.
+Since there tends to be many more users than items in a recommendation system,
+user-user collaborative filtering can be much performant, although in my
+preliminary experiments with movie ratings indicate that user-user is more
+accurate.
+
+Another common method for performing collaborative filtering is with matrix
+factorization~\cite{matrix-factorization}.
+With this technique a user-item matrix is factorized into two matrices with the
+inner dimension representing some latent factors.
+The resulting factorization represents both users and items in terms of the
+latent factors in such a way that new items can be recommended to users based
+on the latent factors.
+As with item-item neighborhood approaches, my preliminary experiments on movie
+ratings indicate that user-user neighborhood approaches are superior to matrix
+factorization.
+
+Deep learning has revolutionized many fields of computer science, including
+natural language processing~\cite{deep-survey}.
+Despite this, deep learning is relatively new in the area of recommendation
+systems, and has not received much attention~\cite{dl-recsys-survey}.
+The aim of this project is to experiment with deep learning for collaborative
+filtering on a large set of movie ratings.
+
+\section{Model Architecture}
+
+\section{Experimental Setup}
+
+\section{Results}
+
+\section{Conclusion}
+
+\bibliographystyle{abbrv}
+\bibliography{report}
+
+\end{document}
