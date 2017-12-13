@@ -8,3 +8,7 @@
 *.log
 *.pdf
 *.log
+
+model*/
+logs/
+*.pickle
