@@ -1,0 +1,37 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+Authors are trying to learn a vector representation of both queries and
+documents by leveraging click information.
+
+2. Why is the problem significant to solve in the first place?
+
+The authors apply this approach to the problem of reranking search results.
+Given that the top results are the most often clicked, if this algorithm were
+used in this way, it could significantly impact which results are actually
+viewed, so it must be able to push the most relevant results to the top.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+First, a bipartite graph with queries and documents is constructing using
+clicks as edges/weights between nodes. The authors then give a vector
+propoagation algorithm which allows both sides of the graph to be represented
+in the same semantic space (equations 1-4 essentially). Finally unit vectors
+for each item (document or query) are extracted.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+The authors did a reranking study and compared to a number of different
+baselines. I appreciated the effort to study multiple baselines, and they
+seemed like reasonable things to try. The metric used to measure how effective
+the reranking was is called NDCG@K, and they tried multiple values of K, which
+I appreciated. I'll admit I was reading quickly, but the statistical tests
+seemed to be done correctly. I do wonder if NDCG is the only metric worth
+reporting, or if there was insight to be gained from other metrics as well.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+Overall, this was one of the better papers we read this semester! I'm sure I'll
+have more questions in class, but for right now I'm satisfied :)

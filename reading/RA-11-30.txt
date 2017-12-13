@@ -1,0 +1,50 @@
+Jeffrey Lund
+
+1. What problem did the authors try to solve?
+
+The authors are trying to perform query suggestion in such a way that they
+increase the diversity of the latent topics returned by the suggested queries.
+
+2. Why is the problem significant to solve in the first place?
+
+If query suggestion only produces queries that are too similar to the original
+query, or are so semantically similar to the original query, the search results
+will be similarly dissatisfactory to the original query.
+
+3. What is the methodology the authors have adopted in solving the problem?
+
+The authors first obtain topics from Wikipedia using the category information
+already on Wikipedia. They then map query terms to topics using a simple
+emperical estimation of p(t|c), where t is the term, and c is a topic.  The
+authors then suggest queries which are similar to the original query, but
+topically diverse.
+
+4. Is the performance evaluation of the proposed solution technically sound
+and complete? Explain why.
+
+The authors compared their QS technique to several simple baseline techniques
+on the DBLP dataset. On measuring the quality of weighted topics, I really
+hated the case study they did - it is so limited and arbitrary that I cannot
+imagine any valid conclusions from it. The metrics like precision and NDCG were
+acceptable though. On measuring the quality of suggested query terms, the
+metrics like NDCG-IA were also acceptable.
+
+5. Do you have any questions regarding the paper? If so, list them.
+
+The authors claim that LDA can't do this mapping because the topics are given.
+Yes, LDA discovers those topics, but LDA with fixed topics (i.e., Explicit
+Dirichlet Allocation, or EDA) is a thing. Why not just use EDA to compute
+p(t|c)?
+
+I believe that Wikipedia might work for very broad topics where common queries
+in the query log would probable be just as helpful as this technique, but I
+can't imagine this being helpful in cases where query logs let me down since
+Wikipedia is only so specialized. The running "data mining" example in the
+paper sorta illustrates this. If I put in "data mining" but really meant
+"association rule mining", I probably know enough about data mining to want
+specifics beyond what Wikipedia categories can give me.
+
+The experiments where run on a *single* commodety machine. I get that they are
+happy about having such an efficient algorithm that can run and a slow single
+core with only a gigs of RAM, but is this really applicable to any real world
+search engines?
