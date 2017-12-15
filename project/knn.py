@@ -22,15 +22,3 @@ for i in trange(0, num_users, step):
     sse += np.sum(delta ** 2)
     n += delta.size
     print(sse/n)
-
-# actual = test_data[:10]
-# known = actual.nonzero()
-# print(predictions.shape, predictions)
-# print(actual.shape, actual)
-# print(known)
-
-# predictions = predictions[known]
-# actual = actual[known]
-
-# print(predictions.shape, predictions)
-# print(actual.shape, actual)
