@@ -1,0 +1,328 @@
+\documentclass[paper=a4, fontsize=11pt]{scrartcl}
+\usepackage{amsmath}
+
+\title{\huge Take-Home Final Exam}
+\author{Jeffrey Lund}
+\date{\normalsize\today}
+
+\begin{document}
+\maketitle
+
+\section*{1}
+
+\subsection*{a}
+
+Following the paper itself, we complete the partial query $Q_q^k$ using Bayes'
+theorem to rank the query completions $p_i$ by rewriting $P(p_i|Q_1^k)$ as.
+$$P(p_i|Q_1^k) = \frac{P(p_i) P(Q_1^k|p_i)}{P(Q_1^k)}$$
+Since Bayes' theorem just falls out from the definition of conditional
+probability, this rewrite is clearly valid.
+The authors then assume that the query terms are independent and so we can
+rewrite $P(Q_i^k|p_i)$ as
+$$P(Q_i^k|p_i) = P(Q_t|p_i) (Q_c|p_i)$$
+The independence assumption here is likely false, but nevertheless is quite
+useful from a mathematical standpoint.
+Plugging in this independence assumption in the first rewrite, we get
+$$P(p_i|Q_1^k) = \frac{P(p_i) (Q_t|p_i)  P(Q_c|p_i)}{P(Q_1^k)}$$
+Applying the definition of conditional probability, we can the rewrite
+$P(p_i)P(Q_t|p_i)$ as
+$$P(p_i)P(Q_t|p_i) = P(p_i,Q_t) = P(Q_t)P(p_i|Q_t)$$
+Plugging this rewrite back into the equation for $P(p_i|Q_1^k)$ we get
+$$P(p_i|Q_1^k) = \frac{P(Q_t)P(p_i|Q_t) P(Q_c|p_i)}{P(Q_1^k)}$$
+Finally the authors note that both $P(Q_t)$ and $P(Q_1^k)$ are constant given
+the user query so far, so we can drop them as constants of proportionality.
+Consequently, with respect to the ranking of possible query completions $p_i$,
+we have
+$$P(p_i|Q_1^k) \stackrel{rank}{=} P(p_i|Q_t) P(Q_c|p_i)$$
+The question then becomes how do we estimate the two terms of this equation.
+
+The first term $P(p_i|Q_t)$ is referred to as the phrase selection probability.
+This phrase selection probability is estimated simply using TF-IDF, which
+balances the frequency of the $c_i$ terms with the importance of the terms
+with the inverse document frequency.
+Since this is a probability, the TF-IDF counts are normalized.
+Critically, these TF-IDF terms come from the document corpus --- no query logs
+are needed.
+
+The second term $P(Q_c|p_i)$ is referred to as the phrase-query correlation.
+This term is estimated simply using the definition of conditional probability
+so
+$$P(Q_c|p_i) = \frac{P(Q_c,p_i)}{P(p_i)}$$
+Both of these terms can be estimated from the document corpus by simply
+counting how many documents contain both $Q_c$ and $p_i$, and by counting how
+many documents contain $p_i$.
+Once again, no query logs are needed to estimated these probabilities.
+
+With a clever indexing scheme, all of the document centric probabilities can
+be estimated quickly just from document data. We simply plug in the
+appropriate term-document counts in order to estimate $P(p_i|Q_1^k)$ and
+suggest the query completions which maximize this probability.
+
+\subsection*{b}
+
+Clarity depends on two terms: $P(w|q)$ and $P(w|C)$.
+The term $P(w|C)$ can be precomputed with a good indexing scheme.
+The authors using the Lemur search engine toolkit for example.
+
+The term $P(w|q)$ is a bit trickier to compute.
+In the original paper defining clarity, $P(w|q)$ is estimated using a unigram
+language model given by
+$$p(w|q) = \sum_{D \in C} P(w|C)P(D|Q)$$
+The weights $P(D|Q)$ are basically the probabilities given by the underlying
+search engine and once again the term $P(w|C)$ is estimated using Lemur for
+indexing terms.
+
+Essentially what this computes is Kullback-Leibler divergence, which says how
+many bits of information are needed to encoded the distribution $P(w|q)$ using
+the distribution $P(w|C)$.
+Essentially this asks how much information having the query gives us over just
+the corpus.
+The idea behind this is that a clear or unambiguous query will add a lot of
+information (or equivalently, take more information to encode) than just
+having the background document corpus.
+
+\section*{2}
+
+\subsection*{a}
+
+\subsubsection*{i}
+
+Figure 2 shows that there is a correlation between term-overlap and
+result-overlap. Since the authors define orthogonal queries as those which
+have high result-overlap but low term-overlap the authors conclude that they
+conclude that need to choose a threshold on result-overlap which gives a
+term-overlap below .3 (which is to say, about one overlapping term).
+
+\subsubsection*{ii}
+
+Given the size of the internet, the authors claim that non-zero result-overlap
+is very meaningful since the probability of result-overlap is so tiny. Thus
+the anticipate that there will be at least some term-overlap in related
+results.
+
+\subsubsection*{iii}
+
+The authors choose to go with around one-term overlapping. Since the average
+query in their data has 4 or fewer terms, the threshold on term-overlap they
+aimed for was .333. Based on Figure 2, they then choose to examine queries with
+a result-overlap in (0, .05].
+
+\subsection*{b}
+
+In order to compute result-overlap without a caching policy, the authors would
+essentially have to run every possible query through their system. Even if we
+restrict ourselves to a small query vocabulary, and a small number of terms
+per query, the number of possible queries is astronomically high. By using
+just cached queries to estimate result-overlap, the authors essentially get
+result-overlap estimates which are precomputed. Consequently, the algorithm
+can be computed online and efficiently. The second benefit of using caching to
+estimate result-overlap is that they benefit from temporal changes such as a
+high volume of queries related to a major news event.
+
+\section*{4}
+
+\subsection*{a}
+
+In contrast to traditional recommendation systems which simply take into
+account user preferences, Rabbit takes a multi-faceted approach which takes
+into account many important factors which making book recommendations to K-12
+readers.
+For example, unlike existing systems, Rabbit considers the readability levels
+of the user when making recommendations.
+Rabbit also considers appeal-factor when extracting features on which to base
+the recommendations.
+These appeal-factors are particular important since it is crucial since the
+recommendations must immediately grab the interest of K-12 readers if they are
+to become interested in reading.
+Additionally, Rabbit considers important privacy issues when making its
+recommendations, which is important for legal and ethical reasons when dealing
+with K-12 children.
+Existing systems failed to take all these factors into account, and could
+therefore make recommendations which seem relevant, but are actually
+inappropriate for the particular child using the system.
+
+\subsection*{b}
+
+\subsubsection*{i}
+
+The authors identify seven different appeal-factors such as pacing (e.g., slow
+pacing, fast pacing), storyline (e.g., action oriented, character-oriented),
+or tone (e.g., dark, happy, surreal).
+Associated with each of these seven appeal-factors are various appeal-terms
+which describe the various appeal-factors.
+The authors utilize a rule based approach to extract appeal-factor/appeal-term
+pairs from book reviews.
+For example, a sentence like "the narrative of the book is funny" could be
+passed though this rule based system to extract the pair $<storyline, funny>$
+the subject of the sentence (i.e., narrative) is described as funny.
+Note that these rules depend on a linguistic analysis of the sentences and so
+the sentences are first passed through the Stanford Parser to determine
+part-of-speech and dependencies in the sentence.
+
+\subsubsection*{ii}
+
+The first two rules capture direction relationships between subjects and
+objects.
+For example, in "the narrative of the book is funny", the parse of the
+sentence shows that subject of sentence (narrative) is related to funny, and
+so rule 1 extracts the pair <narrative, funny>.
+Similarly, in the sentence "he creates believable characters" the object
+(characters) is related to believable, generating the pair
+$<characterization, believable>$.
+
+Sometimes specific grammatical constructs change the meaning of grammatically
+related parts of a sentence.
+For example, in the sentence "The characters are not simple", rule 1 would
+mistakenly extract the pair $<characterization, simple>$. Consequently, rules
+3 and 4 take president over rules 1 and 2.
+In particular, rule 3 extracts pairs from grammatical constructs where the
+terms are indirectly related in the sentence,
+while rule 4 specifically considered negation in a sentence.
+
+The authors state that these simple rules extract the majority of
+appeal-factor/appeal-term pairs.
+However, they augment these rules with 3 additional rules which capture
+certain special cases.
+For example, rule 5 looks for the preposition ``about'' in conjunction with
+synonyms for various special topics like bullying or violence.
+
+\section*{5}
+
+\subsection*{a}
+
+\subsubsection*{i}
+
+Click-through information can be noisy depending on the issued query.
+Additionally, some queries are tail-queries and therefore have low coverage in
+the Click-through data.
+These sparsity and noise problems impact the overall quality of click-based
+features.
+
+\subsubsection*{ii}
+
+By placing documents and queries into a low-dimensional space, we can relate
+queries and documents. However, it hurts interpretability of the ranking
+function since the dimensions of the latent space are not necessarily human
+interpretable.
+
+\subsubsection*{iii}
+
+By simultaneously click and content data in the same vector representation, we
+solve some of the problems of the individual approaches. For example, if we
+can relate the content vector representations to click data, the ranking
+function becomes a little more interpretable. Similarly, if we can relate
+click data to query/document data, we can handle queries for which click data
+is sparse by leveraging click data from content which is similar according to
+the unified vector representation.
+
+\subsection*{b}
+
+\subsubsection*{i}
+
+$\mathcal{U}$ is the set of unigram units so for Figure 1 we have
+$\mathcal{U} = \{yahoo, finance, mail\}$.
+We denote the set of vectors corresponding to all queries containing the unit $u_i$ as
+$\mathcal{O}_{u_i}$, so we have three such sets:
+$\mathcal{O}_{yahoo} = \{q1, q2, q3\}$,
+$\mathcal{O}_{finance} = \{q1\}$, and
+$\mathcal{O}_{mail} = \{q3\}$.
+Finally, $K_{u_i}$ is the set of document vectors connected to a unit through
+the click-graph, so we have
+$\mathcal{K}_{yahoo} = \{d1, d2\}$,
+$\mathcal{K}_{finance} = \{d1\}$, and
+$\mathcal{K}_{mail} = \{d2\}$.
+
+\subsubsection*{ii}
+
+$$P_{yahoo,q1,d1} = 3$$
+$$P_{yahoo,q2,d1} = 5$$
+$$P_{yahoo,q3,d1} = 0$$
+$$P_{finance,q1,d1} = 3$$
+$$P_{finance,q1,d2} = 0$$
+$$P_{mail,q3,d1} = 0$$
+$$P_{mail,q3,d2} = 4$$
+
+\subsubsection*{iii}
+
+$$P_{yahoo,d1} = P_{yahoo,q1,d1} + P_{yahoo,q2,d1} + P_{yahoo,q3,d1} = 3 + 5 + 0 = 8$$
+$$P_{yahoo,d2} = P_{yahoo,q1,d2} + P_{yahoo,q2,d2} + P_{yahoo,q3,d2} = 0 + 1 + 4 = 5$$
+$$P_{finance,d1} = P_{finance,q1,d1} = 3$$
+$$P_{finance,d2} = P_{finance,q1,d2} = 0$$
+$$P_{mail,d1} = P_{finance,q3,d1} = 0$$
+$$P_{mail,d2} = P_{finance,q3,d2} = 4$$
+
+\section*{6}
+
+\subsection*{a}
+
+\subsubsection*{i}
+
+The authors operate under the assumption that similar questions should have
+similar answers.
+
+\subsubsection*{ii}
+
+In the first step, only the titles of past questions and the new question are
+used in the similarity comparison, while the second step both the similarity
+between titles and the title+body of past questions and the new question are
+considered.
+The first step is used a filter to the second step, so the first step always
+runs first, and only questions whose similarity is above a certain threshold
+are considered in the second step.
+
+\subsection*{b}
+
+\subsubsection*{i}
+
+Various surface level features are computed including text length, number of
+question marks, stopword count, number of http links, and number of figures.
+Additionally, the maximal, minimal, average and standard deviation of the IDF
+scores of all the terms in a text are computed. Each of these surface level
+features are computed on an individual text for $Q_{new}$, $Q_{past}$ and $A$,
+meaning that these are Type I features.
+
+For each entity, LDA topics are inferred. Since these are based on a single
+entity, these topic features are Type I.
+
+Various lexico-syntactic features are extracted for each node including the WH
+question type and the number of nouns, verbs and adjectives. Additionally, the
+main predicate of each individual question is extracted. These features
+are computed for the question nodes, so they are Type I.
+
+The clarity (i.e. KL-divergence between query and corpus) is computed for the
+title of $Q_{new}$. This only uses $Q_{new}$ so is Type I.
+
+Various intra-question similarities are computed such as $sim(title of
+Q_{new}, Q_{new})$. Since each of these compare the title of one question to
+its own body, these features apply to a single node, and are Type I features.
+
+\subsubsection*{ii}
+
+The ratio of word-length in $Q_{new}$ and $Q_{past}$ is computed as a surface
+level feature. Since this is the relation between two nodes (i.e., $Q_{new}$
+and $Q_{past}$, this is a Type II feature.
+
+Surface level similarities are computed between each pair of nodes in Figure
+4, so we have $sim(Q_{new}, Q_{past})$, $sim(Q_{new}, A)$, and $sim(Q_{past},
+A)$. Additionally, the difference between $sim(Q_{new}, A)$ and $sim(Q_{past},
+A)$ is computed. Each of these are an edge, since they compute a relationship
+between two nodes, and are therefore Type II.
+
+For each entity, LDA topics are inferred. Since these are based on a single
+entity, these topic features are Type I. However, topic similarity scores such
+as Jenson-Shannon and Helliger distances are computed comparing the topic
+distributions of nodes. Since those topic similarity scores compare the topic
+distributions of two nodes, these features are Type II.
+
+A binary feature indicating whether $Q_{new}$ and $Q_{past}$ have the same WH
+question type is generated. Additionally, a binary feature indicating whether
+the main predicate of $Q_{new}$ and $Q_{past}$ is given. These indicate a
+relation between $Q_{new}$ and $Q_{past}$ and so are Type II.
+
+Various inter-question similarities are computed such as $sim(title of
+Q_{new}, Q_{past})$. Similarly, there are question-answer similarity metrics
+such as $sim(title of Q_{new}, A)$.
+Since these features compare the relationship between two
+nodes, they are Type II features.
+
+\end{document}
