@@ -99,10 +99,10 @@ preliminary experiments with movie ratings indicate that user-user produced
 more accurate predictions of movie ratings.
 
 Another common method for performing collaborative filtering is with matrix
-factorization~\cite{matrix-factorization}.
+factorization.
 With this technique a user-item matrix is factorized into two matrices with the
 inner dimension representing some latent factors using techniques such as
-singular value decomposition.
+singular value decomposition~\cite{matrix-factorization}.
 The resulting factorization represents both users and items in terms of the
 latent factors in such a way that they can be used to recommend new items.
 As with item-item neighborhood approaches, my preliminary experiments on movie
@@ -306,10 +306,7 @@ always using powers of $2$ to increase and decrease the dimensionality.
 The network topology I finally settled on had 7 fully connected hidden layers,
 with the dimensions
 $[4096, 2048, 1024, 512, 1024, 2048, 4096]$.
-Each layer used a rectified linear unit%
-\footnote{The rectified linear unit, or ReLU, is defined as $max(0, x)$. While
-simple, it is currently the state-of-the-art in activation functions for deep
-neural networks.}
+Each layer used a rectified linear unit
 as the non-linear activation function.
 The connecting weights of the hidden layers were initialized using Xavier
 initialization~\cite{xavier}, and the biases were initialized to zeros.
