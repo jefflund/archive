@@ -30,7 +30,13 @@ var (
 	Ambiant  = createAmbiantImporters()
 	Moresque = createMoresqueImporters()
 
-	Test = NewDefaultImporter("data/test/data")
+	Test = Importer{
+		ImportSpec{
+			"data/test/data",
+			pipeline.BasicTokenizer,
+			[]string{}, false, 0},
+		ImportDir,
+		LabelDir}
 )
 
 func NewDefaultImporter(path string) Importer {
