@@ -1,0 +1,123 @@
+#!/usr/bin/env python
+"""XKCD style passphrase generator"""
+from __future__ import division
+
+import argparse
+import math
+import random
+import datetime
+
+DAYS_PER_YEAR = 365
+SECS_PER_YEAR = 3.15569e7
+YEARS_PER_CENT = 100
+YEARS_PER_MILLEN = 1000
+MICRO_PER_SEC = 1e6
+
+
+def get_words(word_file, min_length, max_length):
+    """Returns a set of usable words from the given file"""
+    words = open(word_file)
+    words = {word.strip().lower() for word in words}
+    words = {word for word in words if word.isalpha()}
+    words = {word for word in words if len(word) >= min_length}
+    words = {word for word in words if len(word) <= max_length}
+    return words
+
+
+def print_stats(words, phrase_length):
+    """Prints the rough amount of entropy and time to guess a passphrass"""
+    try:
+        entropy = math.log(len(words), 2) * phrase_length
+    except ValueError:
+        if not words:
+          entropy = 0
+        else:
+          raise
+    time = format_time(2 ** entropy / 1000)
+    print '~{} bits of entropy'.format(int(round(entropy)))
+    print '~{} at 1000 guesses/sec'.format(time)
+
+
+def format_time(seconds):
+    """Formats a seconds into a rough time estimate"""
+    try:
+        delta = datetime.timedelta(seconds=seconds)
+        if delta.days > DAYS_PER_YEAR * YEARS_PER_MILLEN:
+          time, unit = delta.days / (DAYS_PER_YEAR  * YEARS_PER_MILLEN), 'millennium'
+        elif delta.days > DAYS_PER_YEAR * YEARS_PER_CENT:
+          time, unit = delta.days / (DAYS_PER_YEAR  * YEARS_PER_CENT), 'century'
+        elif delta.days >= 365:
+            time, unit = delta.days / 365, 'year'
+        elif delta.days >= 7:
+            time, unit = delta.days / 7, 'week'
+        elif delta.days > 0:
+            time, unit = delta.days, 'day'
+        elif delta.seconds >= 3600:
+            time, unit = delta.seconds / 3600, 'hour'
+        elif delta.seconds >= 60:
+            time, unit = delta.seconds / 60, 'minute'
+        elif delta.seconds >= 1:
+            time, unit = delta.seconds, 'second'
+        elif delta.microseconds >= 1000:
+            time, unit = delta.microseconds / MICRO_PER_SEC, 'foosecond'
+        else:
+            time, unit = delta.microseconds, 'microsecond'
+    except OverflowError:
+        time, unit = seconds / (SECS_PER_YEAR * YEARS_PER_MILLEN), 'millennium'
+
+    if time > 1:
+        time = int(round(time))
+    else:
+        time = round(time, 4)
+
+    if time != 1:
+        if unit == 'millennium':
+            unit = 'millennia'
+        elif unit == 'century':
+            unit = 'centuries'
+        else:
+            unit += 's'
+
+    return '{} {}'.format(time, unit)
+
+
+def gen_pass(words, phrase_length, separator):
+    """Generates a passphrase from a set of words"""
+    return separator.join(random.sample(words, phrase_length))
+
+
+def get_args():
+    """Gets the command line arguments for genpass"""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--phrase-length', '-p', type=int, default=4,
+                        help='Number of words in the passphrases')
+    parser.add_argument('--min-word-length', '-w', type=int, default=3,
+                        help='Minimum length of words in the passphrases')
+    parser.add_argument('--max-word-length', '-W', type=int, default=6,
+                        help='Maximum length of words in the passphrases')
+    parser.add_argument('--word-file', type=str, default='words.txt',
+                        help='List of words to use in the passphrases')
+    parser.add_argument('--entropy', '-e', action='store_true', default=False,
+                        help='Print entropy statistics')
+    parser.add_argument('--num-phrases', '-n', type=int, default=1,
+                        help='Number of passphrases to generate')
+    parser.add_argument('--separator', '-s', default='',
+                        help='Separator between phrase words')
+    return parser.parse_args()
+
+
+def main():
+    """Runs the passphrase generator"""
+    args = get_args()
+    words = get_words(args.word_file,
+                      args.min_word_length,
+                      args.max_word_length)
+    if args.entropy:
+      print_stats(words, args.phrase_length)
+    else:
+      for _ in xrange(args.num_phrases):
+          print gen_pass(words, args.phrase_length, args.separator)
+
+
+if __name__ == '__main__':
+    main()
