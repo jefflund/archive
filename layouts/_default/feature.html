@@ -1,0 +1,11 @@
+<div class="col-lg-4">
+  {{ if .Params.banner }}
+    <a href="{{ .Permalink }}">
+      <img src="{{ .Params.banner | absURL }}" class="img-responsive feature-img">
+    </a>
+  {{ end }}
+  <a href="{{ .Permalink }}">
+    <h2>{{ .Title }}</h2>
+  </a>
+  <p>{{ .Description }}</p>
+</div>

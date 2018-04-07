@@ -1,0 +1,42 @@
+baseurl = "http://myblag.com/"
+languageCode = "en-us"
+title = "Blag"
+copyright = "&copy; 2017 John Doe"
+
+[params]
+heroimg = "img/hero.jpg"
+herotxt = "Hero Text Here!"
+herosubtxt = "Hero Subtext Here!"
+
+notfoundimg = "img/hero.jpg"
+notfoundtxt = "404"
+
+[[menu.nav]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.nav]]
+name = "About"
+url = "/about"
+weight = 2
+
+[[menu.nav]]
+name = "Blog"
+url = "/blog"
+weight = 3
+
+[[menu.social]]
+url = "https://twitter.com"
+pre = "<i class='fa fa-twitter'></i>"
+identifier = "twitter"
+
+[[menu.social]]
+url = "https://instagram.com"
+pre = "<i class='fa fa-instagram'></i>"
+identifier = "instagram"
+
+[[menu.social]]
+url = "https://facebook.com"
+pre = "<i class='fa fa-facebook-official'></i>"
+identifier = "facebook"

@@ -1,0 +1,12 @@
+{{ if .Site.Params.heroimg }}
+<div class="hero" style="background-image: url({{ .Site.Params.heroimg | absURL }})">
+  <div class="hero-text">
+    {{ if .Site.Params.herotxt }}
+      <h1>{{ .Site.Params.herotxt }}</h1>
+    {{ end }}
+    {{ if .Site.Params.herosubtxt }}
+      <h3>{{ .Site.Params.herosubtxt }}</h3>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
